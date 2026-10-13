@@ -35,16 +35,16 @@ enum QREXDocuments {
             throw ExportError.invalidHistory
         }
         // A4-ish PDF pages: one readable and printable QR code on each page.
-        // Validate all pages before creating a PDF; no partial document.
-        let images = try records.map { record -> UIImage in
-            guard let image = QREXImage.qr(record.raw) else {
-                throw ExportError.invalidCode
-            }
-            return image
-        }
+        // Render one QR image per page to bound peak memory usage when users
+        // have hundreds of saved codes. Do not hand out partial PDFs on failure.
+        var failed = false
         let pdf = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 595, height: 842))
         let result = pdf.pdfData { context in
-            for (index, image) in images.enumerated() {
+            for (index, record) in records.enumerated() {
+                guard let image = QREXImage.qr(record.raw) else {
+                    failed = true
+                    break
+                }
                 context.beginPage()
                 let titleAttributes: [NSAttributedString.Key: Any] = [
                     .font: UIFont.boldSystemFont(ofSize: 30),
@@ -64,6 +64,7 @@ enum QREXDocuments {
                     .draw(at: CGPoint(x: 58, y: 762), withAttributes: details)
             }
         }
+        guard !failed else { throw ExportError.invalidCode }
         guard result.count <= 60_000_000 else { throw ExportError.oversizedArchive }
         return try archive(file: "QREX-Saved-Codes.pdf", payload: result)
     }
