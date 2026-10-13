@@ -13,8 +13,8 @@ settings:
     # Codesigning is disabled explicitly for simulator CI, not for a release archive.
     # The Apple Developer team and provisioning profile are supplied at signing time.
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: "0.2.1"
-    CURRENT_PROJECT_VERSION: "6"
+    MARKETING_VERSION: "0.2.2"
+    CURRENT_PROJECT_VERSION: "7"
 targets:
   QREX:
     type: application
