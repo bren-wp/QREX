@@ -160,6 +160,7 @@ struct CreateScreen: View {
     @State private var revealPassword = false
     @State private var showMore = false
     @State private var showResult = false
+    @State private var renderedQR: UIImage?
     private var choices: [String] {
         ["url", "text", "wifi", "email", "phone", "location", "contact"].map(tr)
     }
@@ -227,7 +228,7 @@ struct CreateScreen: View {
                         Text(tr("wifi_warning"))
                             .font(.caption).foregroundStyle(.secondary)
                     }
-                    if let image = QREXImage.qr(raw) {
+                    if let image = renderedQR {
                         Image(uiImage: image).interpolation(.none).resizable()
                             .scaledToFit().frame(width: 210, height: 210)
                             .padding(12).background(.white, in: RoundedRectangle(cornerRadius: 20))
@@ -243,6 +244,19 @@ struct CreateScreen: View {
             }
             .background(QREXColors.background)
             .toolbar(.hidden, for: .navigationBar)
+            .task(id: raw) {
+                renderedQR = nil
+                let input = raw
+                guard QRContent.isSupported(input) else { return }
+                // Debounce input so QR rendering cannot stall typing or scrolling.
+                try? await Task.sleep(nanoseconds: 140_000_000)
+                guard !Task.isCancelled else { return }
+                let image = await Task.detached(priority: .userInitiated) {
+                    QREXImage.qr(input)
+                }.value
+                guard !Task.isCancelled else { return }
+                renderedQR = image
+            }
             .sheet(isPresented: $showResult) { ResultScreen(raw: raw) }
         }
     }
