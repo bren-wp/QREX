@@ -144,4 +144,16 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(reopened.clearAll())
     }
 
+    @MainActor
+    func testOversizedQrCannotCorruptKeychainHistory() {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let oversized = String(repeating: "x", count: 10001)
+        XCTAssertFalse(store.save(oversized))
+        store.record(oversized)
+        XCTAssertTrue(store.items.isEmpty)
+        XCTAssertTrue(QREXStore().items.isEmpty)
+        XCTAssertTrue(store.clearAll())
+    }
+
 }
