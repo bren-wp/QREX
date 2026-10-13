@@ -99,20 +99,16 @@ final class QREXStore: ObservableObject {
         }
         var stored = QREXHistoryVault.read()
         if let legacy, stored == nil {
-            if QREXHistoryVault.write(legacy) {
+            // Never delete a legacy record before proving it is readable.
+            // A corrupt payload needs to remain available for recovery.
+            if (try? JSONDecoder().decode([QRHistoryItem].self, from: legacy)) != nil,
+               QREXHistoryVault.write(legacy) {
                 defaults.removeObject(forKey: "qrex.history")
                 stored = legacy
             } else {
-                // Fall back to non-secret history only; never keep plaintext
-                // Wi-Fi credentials after a failed Keychain migration.
-                let nonSecret = (try? JSONDecoder().decode([QRHistoryItem].self, from: legacy))?
-                    .filter { !QRContent.isWifi($0.raw) } ?? []
-                if let safe = try? JSONEncoder().encode(nonSecret) {
-                    defaults.set(safe, forKey: "qrex.history")
-                    stored = safe
-                } else {
-                    defaults.removeObject(forKey: "qrex.history")
-                }
+                // A failed Keychain write is NOT a completed migration.
+                // Preserve the original legacy record for a later retry;
+                // silently filtering Wi-Fi values here would lose user data.
             }
         } else if stored != nil && legacy != nil {
             defaults.removeObject(forKey: "qrex.history")
@@ -122,7 +118,11 @@ final class QREXStore: ObservableObject {
             var unique: Set<String> = []
             items = Array(loaded.filter { unique.insert($0.raw).inserted && $0.raw.count <= 10000 }.prefix(250))
         }
-        migrateFlutterV1(defaults)
+        // A failed legacy Keychain migration must not be bypassed by writing
+        // a second Flutter payload and later deleting the first record.
+        if legacy == nil || stored != nil {
+            migrateFlutterV1(defaults)
+        }
     }
 
     private func migrateFlutterV1(_ defaults: UserDefaults) {
@@ -134,19 +134,24 @@ final class QREXStore: ObservableObject {
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let basicFormatter = ISO8601DateFormatter()
         basicFormatter.formatOptions = [.withInternetDateTime]
+        // Preserve the legacy input if any record cannot be parsed or retained.
+        // Deleting it after migrating only a prefix would lose user data.
+        guard rows.count <= 250 else { return }
         var known = Set(items.map(\.raw))
         var merged = items
-        for row in rows.prefix(250) {
-            guard let raw = row["raw"] as? String, !raw.isEmpty, raw.count <= 10000,
-                  known.insert(raw).inserted else { continue }
-            let dateText = row["date"] as? String ?? ""
-            let date = formatter.date(from: dateText)
-                ?? formatter.date(from: dateText + "Z")
-                ?? basicFormatter.date(from: dateText)
-                ?? basicFormatter.date(from: dateText + "Z") ?? Date()
+        for row in rows {
+            guard let raw = row["raw"] as? String,
+                  !raw.isEmpty, raw.count <= 10000,
+                  let dateText = row["date"] as? String,
+                  let date = formatter.date(from: dateText)
+                    ?? formatter.date(from: dateText + "Z")
+                    ?? basicFormatter.date(from: dateText)
+                    ?? basicFormatter.date(from: dateText + "Z") else { return }
+            if !known.insert(raw).inserted { continue }
+            guard merged.count < 250 else { return }
             merged.append(QRHistoryItem(id: UUID(), raw: raw,
-                                        timestamp: date, saved: row["saved"] as? Bool ?? false))
-            if merged.count == 250 { break }
+                                        timestamp: date,
+                                        saved: row["saved"] as? Bool ?? false))
         }
         // Do not remove the Flutter value until a protected Keychain write succeeds.
         guard persist(merged) else { return }

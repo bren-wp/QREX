@@ -65,3 +65,5 @@
 "language" = "Taal";
 "system" = "Apparaattaal gebruiken";
 "history_local" = "Op dit apparaat opgeslagen";
+"export_png" = "PNG exporteren";
+"png_save_failed" = "PNG-afbeelding kan niet worden opgeslagen.";

@@ -65,3 +65,5 @@
 "language" = "Limbă";
 "system" = "Limba dispozitivului";
 "history_local" = "Stocat pe acest dispozitiv";
+"export_png" = "Exportă PNG";
+"png_save_failed" = "Imaginea PNG nu poate fi salvată.";

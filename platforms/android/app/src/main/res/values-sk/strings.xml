@@ -67,4 +67,6 @@
     <string name="language">Jazyk</string>
     <string name="system">Jazyk zariadenia</string>
     <string name="history_local">Uložené v zariadení</string>
+    <string name="export_png">Exportovať PNG</string>
+    <string name="png_save_failed">Obrázok PNG sa nedá uložiť.</string>
 </resources>

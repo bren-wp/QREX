@@ -5,6 +5,11 @@ on:
     paths:
       - "platforms/**"
       - ".github/workflows/native-platforms.yml"
+      - ".github/workflows/capture-screenshots.yml"
+      - "tool/capture_android_screen.sh"
+      - "tool/test_capture_workflow.py"
+      - "tool/test_android_screen.py"
+      - "tool/check_android_screen.py"
   workflow_dispatch:
 
 permissions:
@@ -33,6 +38,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
+      - name: Check screenshot authenticity gate
+        run: python3 -m unittest discover -s tool -p 'test_*.py'
       - name: Check production UI labels
         run: python3 tool/check_public_ui.py
       - name: Verify 23-language translation coverage

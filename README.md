@@ -42,7 +42,7 @@ These are test-device captures, not claims of pixel-perfect parity with every re
 ## What QREX can do
 
 - **Scan securely:** locally detect QR codes using the camera or an image selected from your gallery. Preview URL destinations before choosing to open them.
-- **Create QR codes:** URLs, text, Wi-Fi, email, phone, location, and contact information. The latest public Flutter release also supports event codes; feature parity in the Kotlin/Swift projects is still being completed.
+- **Create QR codes:** URLs, text, Wi-Fi, email, phone, location, and contact information. The Kotlin and Swift projects now also offer user-initiated QR image export (Android PNG document picker; iOS image share sheet). The published Flutter release additionally supports event codes; full feature parity remains under verification.
 - **Save and find:** optional scan history, saved codes, local search, and the ability to erase your data.
 - **Share deliberately:** use system sharing and clipboard only when you tap an action.
 - **Personalize:** choose a light or dark interface and a preferred language.
@@ -78,7 +78,7 @@ The single [translation catalog](l10n/catalog.json) contains **67 complete messa
 
 **No sign-in. No ads. No analytics. No account backend.**
 
-QR detection and generation are performed on the device. Wi-Fi QR values are not added to scan history automatically. Manually saved Wi-Fi codes may contain passwords; the local settings storage is **not an encrypted password vault**. External links and system sharing may transfer data to external services only when the user chooses them.
+QR detection and generation are performed on the device. Wi-Fi QR values are not added to scan history automatically. The newer Kotlin app encrypts manually saved Wi-Fi entries with Android Keystore; the Swift app uses device-only Keychain for saved history. **The older publicly released Flutter v0.1.3 does not inherit these protections.** The system document picker and share sheet transfer content only when the user chooses to export or share it.
 
 Read the [privacy policy](docs/PRIVACY.md) and the [store submission checklist](docs/STORE_CHECKLIST.md). The QREX Settings page includes a **Developed by Brendigo** attribution linking to [brendigo.com](https://brendigo.com).
 

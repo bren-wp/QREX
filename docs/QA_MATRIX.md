@@ -4,7 +4,7 @@ This checklist defines release acceptance for the separate Kotlin/Android and Sw
 
 ## Visual reference, design and screenshot integrity
 
-- [ ] Capture actual iPhone and Android screens from running binaries with **English UI**.
+- [x] Capture an actual iPhone screen with English UI.\n- [ ] Capture a genuine Android app screen; an earlier screenshot depicted an **Android System UI ANR**, despite passing PNG structural verification.\n- [x] Reject Android captures unless the UI hierarchy confirms QREX's creation controls and no system ANR.
 - [ ] Keep original PNGs committed to `docs/screenshots` without marketing retouching; validate PNG chunks, image dimensions and completeness automatically.
 - [ ] Compare Scan / Create / Result / History / More on both platforms against the supplied QREX design, at representative mobile screen sizes.
 - [ ] Confirm there are no large black letterboxing bands, clipped content, text overlapping the bottom navigation, or layout jumps after keyboard dismissal.

@@ -65,3 +65,5 @@
 "language" = "Jazyk";
 "system" = "Jazyk zařízení";
 "history_local" = "Uloženo v zařízení";
+"export_png" = "Exportovat PNG";
+"png_save_failed" = "Obrázek PNG nelze uložit.";

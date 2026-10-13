@@ -65,3 +65,5 @@
 "language" = "Dil";
 "system" = "Cihaz dili";
 "history_local" = "Bu cihazda saklanır";
+"export_png" = "PNG dışa aktar";
+"png_save_failed" = "PNG görüntüsü kaydedilemedi.";

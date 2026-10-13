@@ -1,36 +1,37 @@
-# QREX — Android i iOS
+# QREX — Android and iOS
 
-Dva zasebna projekta implementirana platformskim alatima, bez Flutter enginea i bez WebViewa.
+Standalone Kotlin / Jetpack Compose and Swift / SwiftUI projects. QR scanning and creation are local-first, with no registration, ads or analytics.
 
-| | Android | iOS |
-| --- | --- | --- |
-| Jezik | Kotlin | Swift |
-| Sučelje | Jetpack Compose | SwiftUI |
-| Kamera | CameraX + ML Kit (lokalni QR model) | AVFoundation |
-| Fotografije | Sustavni odabir + ML Kit | PhotosPicker + Vision |
-| QR generiranje | ZXing | Core Image |
-| Pohrana | Privatni SharedPreferences | UserDefaults |
-| Pristup | Bez računa | Bez računa |
+| Feature | Android | iOS |
+|---|---|---|
+| Language and UI | Kotlin + Compose | Swift + SwiftUI |
+| QR camera | CameraX + on-device ML Kit | AVFoundation |
+| Photo QR | OS photo picker + ML Kit | PhotosPicker + Vision |
+| QR generation | ZXing | Core Image |
+| Protected history | SharedPreferences; Android Keystore AES-GCM for Wi-Fi values | Device-only Keychain |
+| Account needed | No | No |
+| Language support | 23 locales | 23 locales |
 
-**Status: razvojna grana, ne zamjena za izdanje v0.1.3.** Trenutna javna verzija aplikacije koristi Flutter; ne smije se označiti kao puna platformska zamjena dok svi zasloni i interakcije ne dosegnu funkcionalnu i vizualnu podudarnost i dok Android/iOS CI ne prođu. Potpisivanje, fotografije stvarnih uređaja i testovi kamere na fizičkim uređajima ostaju zasebni koraci.
+The last public v0.1.3 release still uses Flutter. The standalone projects require full device and visual verification before replacing it.
 
-U aplikacijama nema razvojnih poruka, testnih gumba, demonstracijskih računa, oglasa, analitike ni teksta o korištenoj tehnologiji. Opisi tehnologija ograničeni su na razvojnu dokumentaciju.
+## Build
 
-## Android
+Android: open `platforms/android` in Android Studio using JDK 17 / SDK 36, or run `gradle :app:assembleDebug :app:testDebugUnitTest` inside that directory.
 
-Otvoriti `platforms/android` u Android Studiju s JDK 17 i Android SDK 36 ili pokrenuti `gradle :app:assembleDebug :app:testDebugUnitTest` iz direktorija. APK je **razvojna datoteka** i nije za objavu na Google Playu bez potpisivanja i potpunih provjera.
+iOS: on macOS install XcodeGen, run `xcodegen generate --spec project.yml` under `platforms/ios`, and open the generated Xcode project. iPhone distribution requires valid Apple signing.
 
-## iOS
+## Screenshot integrity
 
-Instalirati XcodeGen, pokrenuti `xcodegen generate --spec project.yml` u `platforms/ios` i otvoriti `QREX.xcodeproj` u Xcodeu. iOS aplikacija zahtijeva valjano Apple potpisivanje za stvarne uređaje.
+The [screenshot workflow](../.github/workflows/capture-screenshots.yml) starts both apps in real emulators/simulators. Android screenshots additionally require a UI hierarchy assertion that the QREX create screen is in the foreground. A valid PNG alone does not prove this: an earlier capture showed a system ANR dialog and was rejected during visual review.
 
-## Usklađivanje prije zamjene
+## Release gates
 
-- [ ] Android Kotlin projekt prolazi vlastitu kompilaciju i testove.
-- [ ] iOS Swift projekt prolazi vlastitu kompilaciju i testove.
-- [ ] Uskladiti kreator za sve QR kategorije, PNG dijeljenje, pristup galeriji, zumiranje i bljeskalicu na oba sustava.
-- [ ] Napraviti stvarne snimke svih ekrana i usporediti s postojećim QREX prikazima.
-- [ ] Testirati dozvole, povratak iz pozadine i prekinuto skeniranje na fizičkim uređajima.
-- [ ] Validirati i dokumentirati privatnost i potpisivanje u Google Play Consoleu i App Store Connectu.
+- [x] Independent Android and iOS builds and simulator tests have passed on GitHub Actions.
+- [x] Real iOS screen captured with English text.
+- [ ] Android foreground capture passes and is visually inspected.
+- [ ] Scan, Create, Result, History and More match the supplied design on real screen sizes.
+- [ ] Verify physical camera, flash, permissions and photo picker on real devices.
+- [ ] Complete QR type and image-export parity, migration testing and store signing.
+- [ ] Deliver Android AAB and Apple-signed archive after passing release checks.
 
-**Razvio Brendigo** · https://brendigo.com
+**Developed by Brendigo** · https://brendigo.com

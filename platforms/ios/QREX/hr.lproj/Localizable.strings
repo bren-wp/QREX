@@ -65,3 +65,5 @@
 "language" = "Jezik";
 "system" = "Jezik uređaja";
 "history_local" = "Spremljeno na uređaju";
+"export_png" = "Izvezi PNG";
+"png_save_failed" = "PNG sliku nije moguće spremiti.";

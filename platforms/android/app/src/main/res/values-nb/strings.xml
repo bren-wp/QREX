@@ -67,4 +67,6 @@
     <string name="language">Språk</string>
     <string name="system">Enhetens språk</string>
     <string name="history_local">Lagret på denne enheten</string>
+    <string name="export_png">Eksporter PNG</string>
+    <string name="png_save_failed">Kunne ikke lagre PNG-bildet.</string>
 </resources>

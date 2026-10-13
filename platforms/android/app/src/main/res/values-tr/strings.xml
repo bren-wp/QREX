@@ -67,4 +67,6 @@
     <string name="language">Dil</string>
     <string name="system">Cihaz dili</string>
     <string name="history_local">Bu cihazda saklanır</string>
+    <string name="export_png">PNG dışa aktar</string>
+    <string name="png_save_failed">PNG görüntüsü kaydedilemedi.</string>
 </resources>

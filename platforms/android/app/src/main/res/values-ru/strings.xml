@@ -67,4 +67,6 @@
     <string name="language">Язык</string>
     <string name="system">Язык устройства</string>
     <string name="history_local">Сохранено на устройстве</string>
+    <string name="export_png">Экспорт PNG</string>
+    <string name="png_save_failed">Не удалось сохранить изображение PNG.</string>
 </resources>

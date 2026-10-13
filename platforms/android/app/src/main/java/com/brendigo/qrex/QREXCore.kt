@@ -103,10 +103,13 @@ class QREXStore(context: Context) {
                 items += QRRecord(raw, item.optLong("timestamp"), item.optBoolean("saved"))
             }
         }
-        if (upgradeNeeded && !persist()) {
-            // Never leave previous plaintext credentials on disk if encryption fails.
-            items.removeAll { QRContent.isWifi(it.raw) }
-            if (!persist()) preferences.edit().remove("history").commit()
+        if (upgradeNeeded) {
+            // Previous versions may have stored Wi-Fi values in plaintext.
+            // A successful commit atomically replaces them with AES-GCM values.
+            // If Keystore is unavailable, preserve the original records for a
+            // later retry rather than silently destroying the user's history.
+            // persist() never writes plaintext Wi-Fi values.
+            persist()
         }
         migrateFlutterV1(context)
     }
@@ -120,33 +123,41 @@ class QREXStore(context: Context) {
             preferences.edit().putBoolean("flutterMigrationV1", true).apply()
             return
         }
-        val migrated = mutableListOf<QRRecord>()
-        runCatching {
+        // Invalid or oversized legacy payloads must remain available for a
+        // future retry. Never mark migration complete after a partial parse.
+        val migrated = runCatching {
             val data = JSONArray(oldEntries)
-            for (i in 0 until minOf(data.length(), 250)) {
-                val value = data.optJSONObject(i) ?: continue
-                val raw = value.optString("raw")
-                if (raw.isBlank() || raw.length > 10000) continue
-                val date = value.optString("date")
+            require(data.length() <= 250) { "Legacy history exceeds supported capacity" }
+            val parsed = mutableListOf<QRRecord>()
+            for (i in 0 until data.length()) {
+                val value = data.getJSONObject(i)
+                val raw = value.getString("raw")
+                require(raw.isNotBlank() && raw.length <= 10000)
+                val date = value.getString("date")
                 val millis = runCatching { Instant.parse(date).toEpochMilli() }
                     .recoverCatching {
                         LocalDateTime.parse(date).atZone(ZoneId.systemDefault())
                             .toInstant().toEpochMilli()
-                    }.getOrDefault(System.currentTimeMillis())
-                migrated += QRRecord(raw, millis, value.optBoolean("saved"))
+                    }.getOrThrow()
+                parsed += QRRecord(raw, millis, value.optBoolean("saved"))
             }
-        }
+            parsed
+        }.getOrNull() ?: return
+
         val seen = items.map { it.raw }.toMutableSet()
         val merged = items.toMutableList()
         for (item in migrated) {
-            if (seen.add(item.raw)) merged.add(item)
-            if (merged.size == 250) break
+            if (seen.add(item.raw)) {
+                // Preserve every distinct existing and legacy item, or abort.
+                if (merged.size >= 250) return
+                merged.add(item)
+            }
         }
-        // Credential encryption is mandatory before deleting the older plaintext copy.
-        val safe = if (persist(merged)) merged else merged.filterNot { QRContent.isWifi(it.raw) }
-        if (!persist(safe)) return
+        // Do not delete the old Flutter values or silently drop Wi-Fi secrets
+        // if encryption or the durable preferences write is unavailable.
+        if (!persist(merged)) return
         items.clear()
-        items.addAll(safe)
+        items.addAll(merged)
         val light = old.getBoolean("flutter.qrex_light_v1", false)
         val history = old.getBoolean("flutter.qrex_record_v1", true)
         if (!preferences.contains("lightMode")) updateLightMode(light)

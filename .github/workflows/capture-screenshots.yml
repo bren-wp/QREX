@@ -2,11 +2,14 @@ name: Capture verified QREX screens
 
 on:
   push:
-    branches: [fix/screenshot-qa-and-stability]
+    branches: [fix/runtime-screenshots-and-qr-export]
     paths:
       - "platforms/**"
       - "l10n/**"
       - "tool/verify_screenshots.py"
+      - "tool/check_android_screen.py"
+      - "tool/capture_android_screen.sh"
+      - "tool/test_capture_workflow.py"
       - ".github/workflows/capture-screenshots.yml"
   workflow_dispatch:
 
@@ -43,19 +46,8 @@ jobs:
           target: default
           profile: pixel_6
           disable-animations: true
-          script: |
-            set -e
-            adb wait-for-device
-            adb install -r platforms/android/app/build/outputs/apk/debug/app-debug.apk
-            adb shell am start -n com.brendigo.qrex/.MainActivity --es qrex_screenshot create
-            sleep 12
-            mkdir -p docs/screenshots
-            # Stream directly to the CI runner. Android 14 denies writing to
-            # /sdcard from the shell in some managed emulator configurations.
-            adb exec-out screencap -p > docs/screenshots/android-create.png
-            python3 tool/verify_screenshots.py docs/screenshots/android-create.png
-            # Exercise the Keystore on a real Android runtime, not the JVM test runner.
-            gradle -p platforms/android --no-daemon --stacktrace :app:connectedDebugAndroidTest
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
+          script: bash tool/capture_android_screen.sh
       - uses: actions/upload-artifact@v4
         with:
           name: qrex-actual-android
@@ -124,7 +116,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix/screenshot-qa-and-stability
+          ref: fix/runtime-screenshots-and-qr-export
       - uses: actions/download-artifact@v4
         with:
           pattern: qrex-actual-*
@@ -139,6 +131,6 @@ jobs:
           git add docs/screenshots/android-create.png docs/screenshots/ios-create.png
           if ! git diff --cached --quiet; then
             git commit -m "docs: capture genuine QREX Android and iOS screens [skip ci]"
-            git pull --rebase origin fix/screenshot-qa-and-stability
-            git push origin HEAD:fix/screenshot-qa-and-stability
+            git pull --rebase origin fix/runtime-screenshots-and-qr-export
+            git push origin HEAD:fix/runtime-screenshots-and-qr-export
           fi

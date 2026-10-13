@@ -65,3 +65,5 @@
 "language" = "Nyelv";
 "system" = "Eszköz nyelve";
 "history_local" = "Ezen az eszközön tárolva";
+"export_png" = "PNG exportálása";
+"png_save_failed" = "A PNG-kép nem menthető.";

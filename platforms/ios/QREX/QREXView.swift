@@ -9,6 +9,16 @@ enum QREXColors {
     static let purple = Color(red: 144/255, green: 71/255, blue: 248/255)
 }
 
+struct QRImageShareSheet: UIViewControllerRepresentable {
+    let image: UIImage
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [image], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+
 struct ResultPayload: Identifiable {
     let raw: String
     var id: String { raw }
@@ -65,6 +75,7 @@ struct ResultScreen: View {
     @State private var showPassword = false
     @State private var showQR = false
     @State private var confirmSaveWifi = false
+    @State private var showImageShare = false
 
     var body: some View {
         NavigationStack {
@@ -103,6 +114,8 @@ struct ResultScreen: View {
                     }
                     Button(tr("show_qr")) { showQR = true }
                         .disabled(!QRContent.isSupported(raw))
+                    Button(tr("export_png")) { showImageShare = true }
+                        .disabled(!QRContent.isSupported(raw))
                     Button(store.items.contains(where: { $0.raw == raw && $0.saved }) ? tr("saved") : tr("save")) {
                         if QRContent.isWifi(raw) {
                             confirmSaveWifi = true
@@ -124,6 +137,11 @@ struct ResultScreen: View {
                     }.padding()
                 }
             }
+            .sheet(isPresented: $showImageShare) {
+                if let image = QREXImage.qr(raw) {
+                    QRImageShareSheet(image: image)
+                }
+            }
             .confirmationDialog(tr("wifi_save_warning"),
                 isPresented: $confirmSaveWifi) {
                     Button(tr("save")) { store.save(raw) }
@@ -142,6 +160,7 @@ struct CreateScreen: View {
     @State private var revealPassword = false
     @State private var showMore = false
     @State private var showResult = false
+    @State private var renderedQR: UIImage?
     private var choices: [String] {
         ["url", "text", "wifi", "email", "phone", "location", "contact"].map(tr)
     }
@@ -163,16 +182,31 @@ struct CreateScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 13) {
-                    Text(tr("create_qr")).font(.system(size: 27, weight: .bold))
+                    Text(tr("create_qr")).font(.system(size: 25, weight: .bold))
                     Text(tr("enter_details")).font(.subheadline).foregroundStyle(.secondary)
-                    Picker(tr("create"), selection: $kind) {
-                        ForEach(0..<(showMore ? choices.count : 3), id: \.self) { i in
-                            Text(choices[i]).tag(i)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(showMore ? [0, 1, 2, 6, 3, 4, 5] : [0, 1, 2, 6], id: \.self) { i in
+                                Button {
+                                    kind = i
+                                    content = ""
+                                    password = ""
+                                } label: {
+                                    Text(choices[i]).font(.subheadline.weight(.semibold))
+                                        .padding(.horizontal, 16).padding(.vertical, 11)
+                                        .foregroundStyle(kind == i ? Color.white : QREXColors.cyan)
+                                        .background(kind == i ? Color(red: 22/255, green: 119/255, blue: 1)
+                                                    : QREXColors.card,
+                                                    in: RoundedRectangle(cornerRadius: 12))
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityAddTraits(kind == i ? [.isSelected] : [])
+                            }
                         }
-                    }.pickerStyle(.menu)
+                    }
                     Button(showMore ? tr("fewer_options") : tr("more_options")) {
                         showMore.toggle()
-                        if !showMore && kind > 2 { kind = 0 }
+                        if !showMore && ![0, 1, 2, 6].contains(kind) { kind = 0 }
                     }.font(.footnote)
                     TextField(choices[kind], text: $content, axis: .vertical)
                         .textInputAutocapitalization(.never)
@@ -194,7 +228,7 @@ struct CreateScreen: View {
                         Text(tr("wifi_warning"))
                             .font(.caption).foregroundStyle(.secondary)
                     }
-                    if let image = QREXImage.qr(raw) {
+                    if let image = renderedQR {
                         Image(uiImage: image).interpolation(.none).resizable()
                             .scaledToFit().frame(width: 210, height: 210)
                             .padding(12).background(.white, in: RoundedRectangle(cornerRadius: 20))
@@ -210,6 +244,19 @@ struct CreateScreen: View {
             }
             .background(QREXColors.background)
             .toolbar(.hidden, for: .navigationBar)
+            .task(id: raw) {
+                renderedQR = nil
+                let input = raw
+                guard QRContent.isSupported(input) else { return }
+                // Debounce input so QR rendering cannot stall typing or scrolling.
+                try? await Task.sleep(nanoseconds: 140_000_000)
+                guard !Task.isCancelled else { return }
+                let image = await Task.detached(priority: .userInitiated) {
+                    QREXImage.qr(input)
+                }.value
+                guard !Task.isCancelled else { return }
+                renderedQR = image
+            }
             .sheet(isPresented: $showResult) { ResultScreen(raw: raw) }
         }
     }

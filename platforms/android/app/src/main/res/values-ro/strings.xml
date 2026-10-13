@@ -67,4 +67,6 @@
     <string name="language">Limbă</string>
     <string name="system">Limba dispozitivului</string>
     <string name="history_local">Stocat pe acest dispozitiv</string>
+    <string name="export_png">Exportă PNG</string>
+    <string name="png_save_failed">Imaginea PNG nu poate fi salvată.</string>
 </resources>
