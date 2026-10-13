@@ -228,7 +228,7 @@ class QREXStorageTest {
             java.util.zip.ZipInputStream(document.inputStream().buffered()).use { zip ->
                 while (true) {
                     val entry = zip.nextEntry ?: break
-                    assertEquals("QREX-Code-%03d.pdf".format(java.util.Locale.ROOT, checked + 1), entry.name)
+                    assertEquals("QREX-Saved-Codes.pdf", entry.name)
                     val bytes = zip.readBytes()
                     assertTrue(bytes.take(5).toByteArray().contentEquals("%PDF-".toByteArray()))
                     assertTrue(bytes.size > 1000)
@@ -236,7 +236,8 @@ class QREXStorageTest {
                     checked++
                 }
             }
-            assertEquals(2, checked)
+            // Both native editions now export one multi-page PDF per ZIP.
+            assertEquals(1, checked)
             assertFalse(document.readBytes().toString(Charsets.ISO_8859_1).contains("private-secret"))
             assertFalse(QREXDocuments.exportSavedPdfZip(
                 context, emptyList(), android.net.Uri.fromFile(document)))
