@@ -13,13 +13,31 @@ enum QREXHistoryVault {
         ]
     }
 
-    static func read() -> Data? {
+    enum LoadResult {
+        case missing
+        case available(Data)
+        case unavailable(OSStatus)
+    }
+
+    /// Never conflate a temporarily locked or unavailable Keychain with an
+    /// empty vault: doing so would allow later saves to erase older records.
+    static func load() -> LoadResult {
         var result: CFTypeRef?
         var request = query
         request[kSecReturnData as String] = kCFBooleanTrue
         request[kSecMatchLimit as String] = kSecMatchLimitOne
-        guard SecItemCopyMatching(request as CFDictionary, &result) == errSecSuccess else { return nil }
-        return result as? Data
+        let status = SecItemCopyMatching(request as CFDictionary, &result)
+        if status == errSecItemNotFound { return .missing }
+        guard status == errSecSuccess else { return .unavailable(status) }
+        guard let data = result as? Data else { return .unavailable(errSecInternalError) }
+        return .available(data)
+    }
+
+    /// Convenient nullable accessor for tests and diagnostics only. The app
+    /// store must use load() to distinguish missing data from access errors.
+    static func read() -> Data? {
+        if case let .available(data) = load() { return data }
+        return nil
     }
 
     @discardableResult
