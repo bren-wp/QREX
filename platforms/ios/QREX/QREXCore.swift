@@ -230,11 +230,11 @@ final class QREXStore: ObservableObject {
         var next = items.filter { $0.raw != raw }
         next.insert(QRHistoryItem(id: UUID(), raw: raw, timestamp: Date(), saved: saved), at: 0)
         if next.count > 250 {
-            if let lastUnsaved = next.lastIndex(where: { !$0.saved }) {
-                next.remove(at: lastUnsaved)
-            } else {
-                next.removeLast()
-            }
+            // Never discard a manually saved QR code just to add a new entry.
+            // The first item is the new record; evict older unsaved scans only.
+            guard let lastUnsaved = next.lastIndex(where: { !$0.saved }),
+                  lastUnsaved > 0 else { return false }
+            next.remove(at: lastUnsaved)
         }
         guard persist(next) else { return false }
         items = next
