@@ -66,8 +66,18 @@
     <string name="delete_warning">História, uložené kódy a nastavenia sa natrvalo odstránia.</string>
     <string name="language">Jazyk</string>
     <string name="system">Jazyk zariadenia</string>
-    <string name="history_local">Uložené v zariadení</string>
+    <string name="history_local">Vaša zbierka QR</string>
     <string name="export_png">Exportovať PNG</string>
     <string name="png_save_failed">Obrázok PNG sa nedá uložiť.</string>
     <string name="operation_failed">Akcia zlyhala. Skúste to znova.</string>
+    <string name="data_tools">Vaše kódy a súbory</string>
+    <string name="export_archive">Exportovať uložené QR kódy do PDF · ZIP</string>
+    <string name="export_archive_hint">Uložte si obľúbené kódy do PDF archívu vhodného na tlač.</string>
+    <string name="export_archive_warning">Exportované PDF môžu obsahovať uložené heslá Wi-Fi. ZIP zdieľajte len s dôveryhodnými osobami.</string>
+    <string name="archive_failed">Archív ZIP sa nepodarilo vytvoriť.</string>
+    <string name="archive_ready">Archív ZIP uložený.</string>
+    <string name="privacy_policy">Zásady ochrany osobných údajov</string>
+    <string name="terms_of_use">Podmienky používania</string>
+    <string name="terms_summary">Pred otvorením odkazu skontrolujte cieľ QR kódu. Zdieľajte len kódy, na ktoré máte oprávnenie. ZIP môže obsahovať heslá Wi-Fi. QREX je poskytovaný bez záruk v rozsahu povolenom zákonom. Podpora: brendigo.com.</string>
+    <string name="read_full_policy">Prečítať celé zásady</string>
 </resources>

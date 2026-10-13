@@ -79,6 +79,16 @@ object QREXStrings {
         "export_png" -> R.string.export_png
         "png_save_failed" -> R.string.png_save_failed
         "operation_failed" -> R.string.operation_failed
+        "data_tools" -> R.string.data_tools
+        "export_archive" -> R.string.export_archive
+        "export_archive_hint" -> R.string.export_archive_hint
+        "export_archive_warning" -> R.string.export_archive_warning
+        "archive_failed" -> R.string.archive_failed
+        "archive_ready" -> R.string.archive_ready
+        "privacy_policy" -> R.string.privacy_policy
+        "terms_of_use" -> R.string.terms_of_use
+        "terms_summary" -> R.string.terms_summary
+        "read_full_policy" -> R.string.read_full_policy
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

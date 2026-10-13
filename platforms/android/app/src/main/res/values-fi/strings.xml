@@ -66,8 +66,18 @@
     <string name="delete_warning">Historia, tallennetut koodit ja asetukset poistetaan pysyvästi.</string>
     <string name="language">Kieli</string>
     <string name="system">Laitteen kieli</string>
-    <string name="history_local">Tallennettu tälle laitteelle</string>
+    <string name="history_local">Oma QR-kokoelmasi</string>
     <string name="export_png">Vie PNG</string>
     <string name="png_save_failed">PNG-kuvaa ei voitu tallentaa.</string>
     <string name="operation_failed">Toiminto epäonnistui. Yritä uudelleen.</string>
+    <string name="data_tools">Koodisi ja tiedostosi</string>
+    <string name="export_archive">Vie tallennetut QR-koodit PDF · ZIP -muodossa</string>
+    <string name="export_archive_hint">Tallenna suosikkikoodisi tulostettavaan PDF-arkistoon.</string>
+    <string name="export_archive_warning">Viedyt PDF-tiedostot voivat sisältää tallennettuja Wi-Fi-salasanoja. Jaa ZIP vain luotettaville henkilöille.</string>
+    <string name="archive_failed">ZIP-arkistoa ei voitu luoda.</string>
+    <string name="archive_ready">ZIP-arkisto tallennettu.</string>
+    <string name="privacy_policy">Tietosuojakäytäntö</string>
+    <string name="terms_of_use">Käyttöehdot</string>
+    <string name="terms_summary">Tarkista QR-kohteet ennen linkkien avaamista. Jaa tai vie vain koodeja, joihin sinulla on lupa. ZIP voi sisältää Wi-Fi-salasanoja. QREX tarjotaan ilman takuita lain sallimissa rajoissa. Tuki: brendigo.com.</string>
+    <string name="read_full_policy">Lue koko käytäntö</string>
 </resources>

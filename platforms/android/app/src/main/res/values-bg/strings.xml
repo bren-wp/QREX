@@ -66,8 +66,18 @@
     <string name="delete_warning">Историята, кодовете и настройките ще бъдат изтрити завинаги.</string>
     <string name="language">Език</string>
     <string name="system">Език на устройството</string>
-    <string name="history_local">Запазено на устройството</string>
+    <string name="history_local">Вашата QR колекция</string>
     <string name="export_png">Експортирай PNG</string>
     <string name="png_save_failed">PNG изображението не може да се запази.</string>
     <string name="operation_failed">Действието е неуспешно. Опитайте отново.</string>
+    <string name="data_tools">Вашите кодове и файлове</string>
+    <string name="export_archive">Експорт на запазени QR кодове в PDF · ZIP</string>
+    <string name="export_archive_hint">Запазете любимите си кодове в PDF архив за печат.</string>
+    <string name="export_archive_warning">Експортираните PDF файлове може да съдържат Wi-Fi пароли. Споделяйте ZIP само с доверени лица.</string>
+    <string name="archive_failed">ZIP архивът не може да бъде създаден.</string>
+    <string name="archive_ready">ZIP архивът е запазен.</string>
+    <string name="privacy_policy">Политика за поверителност</string>
+    <string name="terms_of_use">Условия за ползване</string>
+    <string name="terms_summary">Проверявайте QR адресите преди отваряне. Споделяйте само кодове, за които имате разрешение. ZIP архивите може да съдържат Wi-Fi пароли. QREX се предоставя без гаранции в законовите граници. Поддръжка: brendigo.com.</string>
+    <string name="read_full_policy">Прочетете пълната политика</string>
 </resources>
