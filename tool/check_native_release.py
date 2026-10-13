@@ -32,8 +32,9 @@ def check_configuration(
 ) -> list[str]:
     issues: list[str] = []
     for key in ("compileSdk", "targetSdk"):
-        if field(android_gradle, key) != "36":
-            issues.append(f"Android {key} must be API 36 or newer; verify policy before raising")
+        actual = field(android_gradle, key)
+        if actual is None or not actual.isdecimal() or int(actual) < 36:
+            issues.append(f"Android {key} must be API 36 or newer")
     if field(android_gradle, "applicationId") != APP_ID:
         issues.append("Android application ID unexpectedly changed")
     if field(ios_project, "PRODUCT_BUNDLE_IDENTIFIER") != APP_ID:
