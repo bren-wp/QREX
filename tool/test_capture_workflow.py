@@ -25,6 +25,20 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertNotIn("script: |\n            for attempt", body)
         self.assertIn('"tool/capture_android_screen.sh"', body)
 
+    def test_workflows_cannot_write_to_obsolete_development_branch(self):
+        screenshot = WORKFLOW.read_text(encoding="utf-8")
+        locales = (ROOT / ".github/workflows/generate-localizations.yml").read_text(
+            encoding="utf-8"
+        )
+        for body in (screenshot, locales):
+            self.assertNotIn("fix/runtime-screenshots-and-qr-export", body)
+            self.assertNotIn("contents: write", body)
+            self.assertNotIn("git push", body)
+            self.assertIn("contents: read", body)
+        self.assertIn("pull_request:", screenshot)
+        self.assertIn("pull_request:", locales)
+        self.assertIn("python3 tool/generate_localizations.py --check", locales)
+
     def test_capture_shell_syntax(self):
         subprocess.run(["bash", "-n", str(SCRIPT)], check=True)
 

@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import android.Manifest
+import android.graphics.BitmapFactory
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,13 +27,19 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 
 @OptIn(androidx.camera.core.ExperimentalGetImage::class)
 @Composable
 fun ScanScreen(onRead: (String) -> Unit) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
     var allowed by remember {
         mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
             PackageManager.PERMISSION_GRANTED)
@@ -53,24 +60,39 @@ fun ScanScreen(onRead: (String) -> Unit) {
     }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
-            // Do not eagerly decode enormous gallery content into process memory.
-            val fileSize = runCatching {
-                context.contentResolver.openAssetFileDescriptor(uri, "r")?.use { it.length }
-            }.getOrNull() ?: -1L
-            val image = if (fileSize > 20_000_000L) null else
-                runCatching { InputImage.fromFilePath(context, uri) }.getOrNull()
-            if (image == null) {
-                message = imageFailed
-            } else {
-                val client = BarcodeScanning.getClient(options)
-                client.process(image).addOnSuccessListener { codes ->
-                    val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
-                    if (!raw.isNullOrEmpty()) {
-                        if (handled.compareAndSet(false, true)) onRead(raw)
-                    } else message = qrNotFound
-                }.addOnFailureListener {
+            scope.launch {
+                // Gallery providers can be slow and can return decompression bombs.
+                // Check dimensions before decoding, off the Compose UI thread.
+                val image = withContext(Dispatchers.IO) {
+                    runCatching {
+                        val resolver = context.contentResolver
+                        val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
+                        if (size > 20_000_000L) return@runCatching null
+                        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                        val stream = resolver.openInputStream(uri) ?: return@runCatching null
+                        stream.use { BitmapFactory.decodeStream(it, null, bounds) }
+                        val width = bounds.outWidth.toLong()
+                        val height = bounds.outHeight.toLong()
+                        if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
+                            return@runCatching null
+                        }
+                        InputImage.fromFilePath(context, uri)
+                    }.getOrNull()
+                }
+                if (image == null) {
                     message = imageFailed
-                }.addOnCompleteListener { client.close() }
+                } else {
+                    val client = BarcodeScanning.getClient(options)
+                    client.process(image).addOnSuccessListener { codes ->
+                        if (!scope.coroutineContext.isActive) return@addOnSuccessListener
+                        val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
+                        if (!raw.isNullOrEmpty()) {
+                            if (handled.compareAndSet(false, true)) onRead(raw)
+                        } else message = qrNotFound
+                    }.addOnFailureListener {
+                        if (scope.coroutineContext.isActive) message = imageFailed
+                    }.addOnCompleteListener { client.close() }
+                }
             }
         }
     }
@@ -90,47 +112,70 @@ fun ScanScreen(onRead: (String) -> Unit) {
                 val cameraFuture = ProcessCameraProvider.getInstance(context)
                 val disposed = AtomicBoolean(false)
                 val scanner = BarcodeScanning.getClient(options)
+                val analysisExecutor = Executors.newSingleThreadExecutor()
+                var analyzer: ImageAnalysis? = null
                 cameraFuture.addListener({
                     if (disposed.get()) return@addListener
                     runCatching {
                         val provider = cameraFuture.get()
+                        if (disposed.get()) return@runCatching
                         val cameraPreview = Preview.Builder().build().also {
                             it.surfaceProvider = preview.surfaceProvider
                         }
-                        val analyzer = ImageAnalysis.Builder()
+                        val newAnalyzer = ImageAnalysis.Builder()
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
-                        analyzer.setAnalyzer(ContextCompat.getMainExecutor(context)) { frame ->
-                            fun process() {
-                                val media = frame.image
-                                if (media == null || handled.get()) { frame.close(); return }
-                                val input = InputImage.fromMediaImage(media,
-                                    frame.imageInfo.rotationDegrees)
+                        newAnalyzer.setAnalyzer(analysisExecutor) { frame ->
+                            val media = frame.image
+                            if (disposed.get() || media == null || handled.get()) {
+                                frame.close()
+                            } else {
                                 runCatching {
-                                    scanner.process(input).addOnSuccessListener { codes ->
-                                        val value = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
-                                        if (!value.isNullOrEmpty() && handled.compareAndSet(false, true)) onRead(value)
+                                    val input = InputImage.fromMediaImage(
+                                        media, frame.imageInfo.rotationDegrees
+                                    )
+                                    scanner.process(input).addOnSuccessListener(
+                                        ContextCompat.getMainExecutor(context)
+                                    ) { codes ->
+                                        if (!disposed.get()) {
+                                            val value = codes.firstOrNull {
+                                                it.format == Barcode.FORMAT_QR_CODE
+                                            }?.rawValue
+                                            if (!value.isNullOrEmpty() &&
+                                                handled.compareAndSet(false, true)) onRead(value)
+                                        }
+                                    }.addOnFailureListener(
+                                        ContextCompat.getMainExecutor(context)
+                                    ) {
+                                        if (!disposed.get()) message = cameraFailed
                                     }.addOnCompleteListener { frame.close() }
                                 }.onFailure {
                                     frame.close()
-                                    message = cameraFailed
+                                    if (!disposed.get()) {
+                                        ContextCompat.getMainExecutor(context).execute {
+                                            if (!disposed.get()) message = cameraFailed
+                                        }
+                                    }
                                 }
                             }
-                            process()
                         }
                         provider.unbindAll()
+                        analyzer = newAnalyzer
                         camera = provider.bindToLifecycle(
-                            owner, CameraSelector.DEFAULT_BACK_CAMERA, cameraPreview, analyzer
+                            owner, CameraSelector.DEFAULT_BACK_CAMERA,
+                            cameraPreview, newAnalyzer
                         )
-                    }.onFailure { message = cameraFailed }
+                    }.onFailure { if (!disposed.get()) message = cameraFailed }
                 }, ContextCompat.getMainExecutor(context))
                 onDispose {
                     disposed.set(true)
                     runCatching { camera?.cameraControl?.enableTorch(false) }
                     camera = null
                     torchOn = false
+                    analyzer?.clearAnalyzer()
                     if (cameraFuture.isDone) runCatching { cameraFuture.get().unbindAll() }
                     scanner.close()
+                    analysisExecutor.shutdown()
                 }
             }
             AndroidView(factory = { preview }, modifier = Modifier

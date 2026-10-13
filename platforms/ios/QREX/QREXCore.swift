@@ -94,7 +94,10 @@ final class QREXStore: ObservableObject {
         // Device-only Keychain items can survive reinstall on some OS versions.
         // Reset orphaned items on a truly fresh installation, but keep legacy data.
         if defaults.object(forKey: "qrex.installation.vault") == nil {
-            if legacy == nil { QREXHistoryVault.delete() }
+            // Keychain may survive an app reinstall. A failed attempt to wipe
+            // orphaned history must NOT mark this installation as initialized.
+            // Keep the screen empty and retry next launch instead.
+            if legacy == nil && !QREXHistoryVault.delete() { return }
             defaults.set(true, forKey: "qrex.installation.vault")
         }
         var stored = QREXHistoryVault.read()
@@ -110,8 +113,33 @@ final class QREXStore: ObservableObject {
                 // Preserve the original legacy record for a later retry;
                 // silently filtering Wi-Fi values here would lose user data.
             }
-        } else if stored != nil && legacy != nil {
-            defaults.removeObject(forKey: "qrex.history")
+        } else if let vault = stored, let legacy,
+                  let existing = try? JSONDecoder().decode([QRHistoryItem].self, from: vault),
+                  let previous = try? JSONDecoder().decode([QRHistoryItem].self, from: legacy) {
+            // Two stores may coexist after a partially completed migration.
+            // Never discard the legacy side unless all distinct records have
+            // been merged into Keychain and a protected write has succeeded.
+            var merged = existing
+            var complete = true
+            for item in previous {
+                if let index = merged.firstIndex(where: { $0.raw == item.raw }) {
+                    if item.saved && !merged[index].saved {
+                        let current = merged[index]
+                        merged[index] = QRHistoryItem(id: current.id, raw: current.raw,
+                            timestamp: current.timestamp, saved: true)
+                    }
+                } else if merged.count < 250 {
+                    merged.append(item)
+                } else {
+                    complete = false
+                    break
+                }
+            }
+            if complete, let encoded = try? JSONEncoder().encode(merged),
+               QREXHistoryVault.write(encoded) {
+                defaults.removeObject(forKey: "qrex.history")
+                stored = encoded
+            }
         }
         if let data = stored,
            let loaded = try? JSONDecoder().decode([QRHistoryItem].self, from: data) {
@@ -198,13 +226,21 @@ final class QREXStore: ObservableObject {
         if persist(next) { items = next }
     }
 
-    func clearAll() {
+    /** Remove both protected history and every known pre-migration QR record. */
+    @discardableResult
+    func clearAll() -> Bool {
+        // A Keychain failure cannot be reported as a successful erase.
+        guard QREXHistoryVault.delete() else { return false }
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "qrex.history")
+        defaults.removeObject(forKey: "flutter.qrex_history_v1")
+        defaults.removeObject(forKey: "flutter.qrex_light_v1")
+        defaults.removeObject(forKey: "flutter.qrex_record_v1")
         items.removeAll()
-        QREXHistoryVault.delete()
-        UserDefaults.standard.removeObject(forKey: "qrex.history")
         historyEnabled = true
         lightMode = false
         language = "en"
+        return true
     }
 
     private func persist(_ records: [QRHistoryItem]) -> Bool {

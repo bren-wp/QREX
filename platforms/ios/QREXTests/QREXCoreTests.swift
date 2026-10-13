@@ -90,4 +90,58 @@ final class QREXCoreTests: XCTestCase {
         restored.clearAll()
     }
 
+    @MainActor
+    func testDeleteAllErasesPendingFlutterSecretsAndPreventsResurrection() {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let original = "[{\"raw\":\"WIFI:T:WPA;S:Office;P:private;;\",\"date\":\"invalid\",\"saved\":true}]"
+        UserDefaults.standard.set(original, forKey: "flutter.qrex_history_v1")
+        UserDefaults.standard.set(false, forKey: "flutter.qrex_record_v1")
+        UserDefaults.standard.set(true, forKey: "flutter.qrex_light_v1")
+        let pending = QREXStore()
+        XCTAssertTrue(pending.items.isEmpty)
+        XCTAssertTrue(pending.clearAll())
+        XCTAssertNil(UserDefaults.standard.string(forKey: "flutter.qrex_history_v1"))
+        XCTAssertNil(UserDefaults.standard.object(forKey: "flutter.qrex_record_v1"))
+        XCTAssertNil(UserDefaults.standard.object(forKey: "flutter.qrex_light_v1"))
+        XCTAssertTrue(QREXStore().items.isEmpty)
+    }
+
+    @MainActor
+    func testFreshInstallDoesNotResurrectOrphanedKeychainHistory() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        initial.save(QRContent.wifi(ssid: "Old install", password: "private"))
+        XCTAssertNotNil(QREXHistoryVault.read())
+
+        // Emulate app UserDefaults being reset while Keychain survives uninstall.
+        UserDefaults.standard.removeObject(forKey: "qrex.installation.vault")
+        let fresh = QREXStore()
+        XCTAssertTrue(fresh.items.isEmpty)
+        XCTAssertNil(QREXHistoryVault.read())
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: "qrex.installation.vault"))
+        XCTAssertTrue(fresh.clearAll())
+    }
+
+    @MainActor
+    func testCoexistingKeychainAndLegacyHistoryMergeWithoutLosingSavedFlags() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let shared = "https://example.com/shared"
+        initial.record(shared)
+        let original = QRHistoryItem(id: UUID(), raw: shared,
+            timestamp: Date(timeIntervalSince1970: 1_700_000_000), saved: true)
+        let extra = QRHistoryItem(id: UUID(), raw: "https://example.com/legacy",
+            timestamp: Date(timeIntervalSince1970: 1_700_000_100), saved: true)
+        let data = try! JSONEncoder().encode([original, extra])
+        UserDefaults.standard.set(data, forKey: "qrex.history")
+
+        let reopened = QREXStore()
+        XCTAssertEqual(reopened.items.count, 2)
+        XCTAssertTrue(reopened.items.contains { $0.raw == shared && $0.saved })
+        XCTAssertTrue(reopened.items.contains { $0.raw == extra.raw && $0.saved })
+        XCTAssertNil(UserDefaults.standard.data(forKey: "qrex.history"))
+        XCTAssertTrue(reopened.clearAll())
+    }
+
 }

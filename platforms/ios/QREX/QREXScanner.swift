@@ -46,9 +46,9 @@ struct CameraScanner: UIViewRepresentable {
             queue.async { [weak self] in
                 guard let self else { return }
                 guard AVCaptureDevice.authorizationStatus(for: .video) == .authorized else { return }
-                guard let device = AVCaptureDevice.default(for: .video),
-                      let input = try? AVCaptureDeviceInput(device: device) else { return }
                 if !self.configured {
+                    guard let device = AVCaptureDevice.default(for: .video),
+                          let input = try? AVCaptureDeviceInput(device: device) else { return }
                     self.session.beginConfiguration()
                     defer { self.session.commitConfiguration() }
                     guard self.session.canAddInput(input) else { return }
@@ -71,16 +71,23 @@ struct CameraScanner: UIViewRepresentable {
         func stop() {
             queue.async { [weak self] in
                 guard let self else { return }
+                // Camera permission and torch should never outlive this view.
+                self.configureTorch(false)
                 if self.session.isRunning { self.session.stopRunning() }
             }
         }
 
+        private func configureTorch(_ enabled: Bool) {
+            guard let device = AVCaptureDevice.default(for: .video),
+                  device.hasTorch,
+                  (try? device.lockForConfiguration()) != nil else { return }
+            defer { device.unlockForConfiguration() }
+            device.torchMode = enabled ? .on : .off
+        }
+
         func setTorch(_ enabled: Bool) {
-            queue.async {
-                guard let device = AVCaptureDevice.default(for: .video), device.hasTorch,
-                      (try? device.lockForConfiguration()) != nil else { return }
-                defer { device.unlockForConfiguration() }
-                device.torchMode = enabled ? .on : .off
+            queue.async { [weak self] in
+                self?.configureTorch(enabled)
             }
         }
 
@@ -113,7 +120,7 @@ struct ScanScreen: View {
                     .foregroundStyle(QREXColors.cyan)
                 Text(tr("scan_qr")).font(.title2.bold()).foregroundStyle(.white)
                 ZStack {
-                    if access == .authorized && scenePhase == .active {
+                    if access == .authorized && scenePhase == .active && code == nil {
                         CameraScanner(onRead: receive, torchOn: $torch)
                             .id(cameraRevision)
                             .clipShape(RoundedRectangle(cornerRadius: 28))
@@ -142,7 +149,7 @@ struct ScanScreen: View {
                         torch.toggle()
                     } label: {
                         Label(tr("flashlight"), systemImage: torch ? "flashlight.on.fill" : "flashlight.off.fill")
-                    }.buttonStyle(.bordered).disabled(access != .authorized || scenePhase != .active)
+                    }.buttonStyle(.bordered).disabled(access != .authorized || scenePhase != .active || code != nil)
                     PhotosPicker(selection: $selectedPhoto, matching: .images) {
                         Label(tr("from_gallery"), systemImage: "photo")
                     }.buttonStyle(.bordered)

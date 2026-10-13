@@ -112,4 +112,44 @@ class QREXStorageTest {
         flutter.edit().clear().commit()
     }
 
+    @Test
+    fun corruptEncryptedHistoryIsNeverOverwrittenByNewSave() {
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(prefs.edit().clear().commit())
+        assertTrue(flutter.edit().clear().commit())
+        val corrupted = org.json.JSONArray().put(org.json.JSONObject()
+            .put("raw", "qrex-gcm:v1:bad-iv:unreadable")
+            .put("timestamp", 99L).put("saved", true)).toString()
+        assertTrue(prefs.edit().putString("history", corrupted).commit())
+        val store = QREXStore(context)
+        assertTrue(store.items.isEmpty())
+        store.save("https://example.com/new")
+        assertTrue(store.items.isEmpty())
+        assertEquals(corrupted, prefs.getString("history", null))
+        assertTrue(store.clearAll())
+        assertFalse(prefs.contains("history"))
+    }
+
+    @Test
+    fun deleteAllRemovesUnmigratedFlutterSecretsAndPreventsResurrection() {
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(prefs.edit().clear().commit())
+        assertTrue(flutter.edit().clear().commit())
+        val old = "[{\"raw\":\"WIFI:T:WPA;S:Private;P:secret;;\",\"date\":false}]"
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", old)
+            .putBoolean("flutter.qrex_light_v1", true)
+            .putBoolean("flutter.qrex_record_v1", false)
+            .commit())
+        val store = QREXStore(context)
+        assertTrue(store.items.isEmpty())
+        assertTrue(store.clearAll())
+        assertFalse(flutter.contains("flutter.qrex_history_v1"))
+        assertFalse(flutter.contains("flutter.qrex_light_v1"))
+        assertFalse(flutter.contains("flutter.qrex_record_v1"))
+        assertTrue(QREXStore(context).items.isEmpty())
+        assertFalse(prefs.contains("history"))
+    }
+
 }
