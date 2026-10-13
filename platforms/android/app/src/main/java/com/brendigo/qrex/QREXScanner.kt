@@ -1,3 +1,5 @@
+@file:OptIn(androidx.camera.core.ExperimentalGetImage::class)
+
 package com.brendigo.qrex
 
 import android.Manifest
@@ -35,7 +37,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
-@OptIn(androidx.camera.core.ExperimentalGetImage::class)
 @Composable
 fun ScanScreen(onRead: (String) -> Unit) {
     val context = LocalContext.current
