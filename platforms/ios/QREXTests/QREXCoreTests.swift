@@ -107,4 +107,20 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(QREXStore().items.isEmpty)
     }
 
+    @MainActor
+    func testFreshInstallDoesNotResurrectOrphanedKeychainHistory() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        initial.save(QRContent.wifi(ssid: "Old install", password: "private"))
+        XCTAssertNotNil(QREXHistoryVault.read())
+
+        // Emulate app UserDefaults being reset while Keychain survives uninstall.
+        UserDefaults.standard.removeObject(forKey: "qrex.installation.vault")
+        let fresh = QREXStore()
+        XCTAssertTrue(fresh.items.isEmpty)
+        XCTAssertNil(QREXHistoryVault.read())
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: "qrex.installation.vault"))
+        XCTAssertTrue(fresh.clearAll())
+    }
+
 }
