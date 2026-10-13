@@ -45,7 +45,7 @@ object QRContent {
     fun wifi(ssid: String, password: String): String {
         fun escape(text: String): String = buildString {
             for (ch in text) {
-                if (ch == ';' || ch == ':' || ch == ',' || ch.code == 92) append(Char(92))
+                if (ch == ';' || ch == ':' || ch == ',' || ch == '"' || ch.code == 92) append(Char(92))
                 append(ch)
             }
         }
@@ -182,12 +182,13 @@ class QREXStore(context: Context) {
     }
 
     fun record(raw: String) {
-        if (!historyEnabled || QRContent.isWifi(raw) || raw.isBlank()) return
+        if (!historyEnabled || QRContent.isWifi(raw) ||
+            raw.isBlank() || raw.length > 10000) return
         update(raw, items.find { it.raw == raw }?.saved == true)
     }
 
     fun save(raw: String) {
-        if (raw.isBlank()) return
+        if (raw.isBlank() || raw.length > 10000) return
         update(raw, true)
     }
 
