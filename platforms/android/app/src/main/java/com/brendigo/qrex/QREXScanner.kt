@@ -4,9 +4,12 @@ import android.Manifest
 import android.graphics.BitmapFactory
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -19,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -34,7 +37,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
-@OptIn(androidx.camera.core.ExperimentalGetImage::class)
 @Composable
 fun ScanScreen(onRead: (String) -> Unit) {
     val context = LocalContext.current
@@ -58,7 +60,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
         BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()
     }
-    val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             scope.launch {
                 // Gallery providers can be slow and can return decompression bombs.
@@ -125,8 +127,10 @@ fun ScanScreen(onRead: (String) -> Unit) {
                         val newAnalyzer = ImageAnalysis.Builder()
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
-                        newAnalyzer.setAnalyzer(analysisExecutor) { frame ->
-                            val media = frame.image
+                        newAnalyzer.setAnalyzer(analysisExecutor, object : ImageAnalysis.Analyzer {
+                            @ExperimentalGetImage
+                            override fun analyze(frame: ImageProxy) {
+                                val media = frame.image
                             if (disposed.get() || media == null || handled.get()) {
                                 frame.close()
                             } else {
@@ -158,7 +162,8 @@ fun ScanScreen(onRead: (String) -> Unit) {
                                     }
                                 }
                             }
-                        }
+                            }
+                        })
                         provider.unbindAll()
                         analyzer = newAnalyzer
                         camera = provider.bindToLifecycle(
@@ -206,12 +211,16 @@ fun ScanScreen(onRead: (String) -> Unit) {
             ) {
                 Text(tr("flashlight"))
             }
-            OutlinedButton(onClick = { photoPicker.launch("image/*") }) {
+            OutlinedButton(onClick = {
+                photoPicker.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }) {
                 Text(tr("from_gallery"))
             }
         }
         Spacer(Modifier.height(8.dp))
-        Text(tr("point_camera"), color = Color.LightGray)
+        Text(tr("point_camera"), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
     if (message != null) AlertDialog(onDismissRequest = { message = null },

@@ -75,6 +75,9 @@ struct QRHistoryItem: Codable, Identifiable, Equatable {
 
 @MainActor
 final class QREXStore: ObservableObject {
+    // A corrupt or unavailable Keychain vault is read-only until erased or
+    // restored; silently replacing it with an empty list loses customer data.
+    private var historyWritable = true
     @Published private(set) var items: [QRHistoryItem] = []
     @Published var historyEnabled: Bool {
         didSet { UserDefaults.standard.set(historyEnabled, forKey: "qrex.history.enabled") }
@@ -91,66 +94,80 @@ final class QREXStore: ObservableObject {
         lightMode = defaults.bool(forKey: "qrex.light")
         language = defaults.string(forKey: "qrex.language") ?? "en"
         let legacy = defaults.data(forKey: "qrex.history")
-        // Device-only Keychain items can survive reinstall on some OS versions.
-        // Reset orphaned items on a truly fresh installation, but keep legacy data.
+        // Keychain entries can survive an uninstall; prevent an orphaned vault
+        // from reappearing when there is no earlier app data to migrate.
         if defaults.object(forKey: "qrex.installation.vault") == nil {
-            // Keychain may survive an app reinstall. A failed attempt to wipe
-            // orphaned history must NOT mark this installation as initialized.
-            // Keep the screen empty and retry next launch instead.
-            if legacy == nil && !QREXHistoryVault.delete() { return }
+            if legacy == nil && !QREXHistoryVault.delete() {
+                historyWritable = false
+                return
+            }
             defaults.set(true, forKey: "qrex.installation.vault")
         }
-        var stored = QREXHistoryVault.read()
-        if let legacy, stored == nil {
-            // Never delete a legacy record before proving it is readable.
-            // A corrupt payload needs to remain available for recovery.
-            if (try? JSONDecoder().decode([QRHistoryItem].self, from: legacy)) != nil,
-               QREXHistoryVault.write(legacy) {
-                defaults.removeObject(forKey: "qrex.history")
-                stored = legacy
-            } else {
-                // A failed Keychain write is NOT a completed migration.
-                // Preserve the original legacy record for a later retry;
-                // silently filtering Wi-Fi values here would lose user data.
+
+        var existing: [QRHistoryItem] = []
+        switch QREXHistoryVault.load() {
+        case .missing:
+            break
+        case .unavailable:
+            historyWritable = false
+            return
+        case .available(let data):
+            guard let loaded = try? JSONDecoder().decode([QRHistoryItem].self, from: data),
+                  Self.validHistory(loaded) else {
+                // Never replace corrupt, unreadable or oversized Keychain data.
+                historyWritable = false
+                return
             }
-        } else if let vault = stored, let legacy,
-                  let existing = try? JSONDecoder().decode([QRHistoryItem].self, from: vault),
-                  let previous = try? JSONDecoder().decode([QRHistoryItem].self, from: legacy) {
-            // Two stores may coexist after a partially completed migration.
-            // Never discard the legacy side unless all distinct records have
-            // been merged into Keychain and a protected write has succeeded.
+            existing = loaded
+            items = loaded
+        }
+
+        if let legacy {
+            // Do not delete or rewrite the older preference until *all*
+            // records have been parsed, merged, and protected successfully.
+            guard let previous = try? JSONDecoder().decode([QRHistoryItem].self, from: legacy),
+                  Self.validHistory(previous) else {
+                historyWritable = false
+                return
+            }
             var merged = existing
-            var complete = true
             for item in previous {
                 if let index = merged.firstIndex(where: { $0.raw == item.raw }) {
                     if item.saved && !merged[index].saved {
-                        let current = merged[index]
-                        merged[index] = QRHistoryItem(id: current.id, raw: current.raw,
-                            timestamp: current.timestamp, saved: true)
+                        let original = merged[index]
+                        merged[index] = QRHistoryItem(id: original.id, raw: original.raw,
+                            timestamp: original.timestamp, saved: true)
                     }
-                } else if merged.count < 250 {
-                    merged.append(item)
                 } else {
-                    complete = false
-                    break
+                    guard merged.count < 250 else {
+                        historyWritable = false
+                        return
+                    }
+                    merged.append(item)
                 }
             }
-            if complete, let encoded = try? JSONEncoder().encode(merged),
-               QREXHistoryVault.write(encoded) {
-                defaults.removeObject(forKey: "qrex.history")
-                stored = encoded
+            guard let data = try? JSONEncoder().encode(merged),
+                  QREXHistoryVault.write(data) else {
+                historyWritable = false
+                return
             }
+            defaults.removeObject(forKey: "qrex.history")
+            items = merged
         }
-        if let data = stored,
-           let loaded = try? JSONDecoder().decode([QRHistoryItem].self, from: data) {
-            var unique: Set<String> = []
-            items = Array(loaded.filter { unique.insert($0.raw).inserted && $0.raw.count <= 10000 }.prefix(250))
+
+        // Legacy Flutter data remains in place if parsing or a protected write
+        // fails. No other format is silently discarded during migration.
+        migrateFlutterV1(defaults)
+    }
+
+    private static func validHistory(_ history: [QRHistoryItem]) -> Bool {
+        guard history.count <= 250 else { return false }
+        var seen = Set<String>()
+        for record in history {
+            guard !record.raw.isEmpty, record.raw.count <= 10000,
+                  seen.insert(record.raw).inserted else { return false }
         }
-        // A failed legacy Keychain migration must not be bypassed by writing
-        // a second Flutter payload and later deleting the first record.
-        if legacy == nil || stored != nil {
-            migrateFlutterV1(defaults)
-        }
+        return true
     }
 
     private func migrateFlutterV1(_ defaults: UserDefaults) {
@@ -182,7 +199,10 @@ final class QREXStore: ObservableObject {
                                         saved: row["saved"] as? Bool ?? false))
         }
         // Do not remove the Flutter value until a protected Keychain write succeeds.
-        guard persist(merged) else { return }
+        guard persist(merged) else {
+            historyWritable = false
+            return
+        }
         items = merged
         if defaults.object(forKey: "qrex.light") == nil {
             lightMode = defaults.bool(forKey: "flutter.qrex_light_v1")
@@ -194,36 +214,47 @@ final class QREXStore: ObservableObject {
     }
 
     func record(_ raw: String) {
-        guard historyEnabled, !QRContent.isWifi(raw), !raw.isEmpty else { return }
+        guard historyEnabled, !QRContent.isWifi(raw), !raw.isEmpty,
+              raw.count <= 10000 else { return }
         update(raw, saved: items.first(where: { $0.raw == raw })?.saved ?? false)
     }
 
-    func save(_ raw: String) {
-        guard !raw.isEmpty else { return }
-        update(raw, saved: true)
+    @discardableResult
+    func save(_ raw: String) -> Bool {
+        guard !raw.isEmpty, raw.count <= 10000 else { return false }
+        return update(raw, saved: true)
     }
 
-    private func update(_ raw: String, saved: Bool) {
+    @discardableResult
+    private func update(_ raw: String, saved: Bool) -> Bool {
         var next = items.filter { $0.raw != raw }
         next.insert(QRHistoryItem(id: UUID(), raw: raw, timestamp: Date(), saved: saved), at: 0)
         if next.count > 250 {
-            if let lastUnsaved = next.lastIndex(where: { !$0.saved }) {
-                next.remove(at: lastUnsaved)
-            } else {
-                next.removeLast()
-            }
+            // Never discard a manually saved QR code just to add a new entry.
+            // The first item is the new record; evict older unsaved scans only.
+            guard let lastUnsaved = next.lastIndex(where: { !$0.saved }),
+                  lastUnsaved > 0 else { return false }
+            next.remove(at: lastUnsaved)
         }
-        if persist(next) { items = next }
+        guard persist(next) else { return false }
+        items = next
+        return true
     }
 
-    func delete(_ item: QRHistoryItem) {
+    @discardableResult
+    func delete(_ item: QRHistoryItem) -> Bool {
         let next = items.filter { $0.id != item.id }
-        if persist(next) { items = next }
+        guard persist(next) else { return false }
+        items = next
+        return true
     }
 
-    func clearHistory() {
+    @discardableResult
+    func clearHistory() -> Bool {
         let next = items.filter { $0.saved }
-        if persist(next) { items = next }
+        guard persist(next) else { return false }
+        items = next
+        return true
     }
 
     /** Remove both protected history and every known pre-migration QR record. */
@@ -237,6 +268,7 @@ final class QREXStore: ObservableObject {
         defaults.removeObject(forKey: "flutter.qrex_light_v1")
         defaults.removeObject(forKey: "flutter.qrex_record_v1")
         items.removeAll()
+        historyWritable = true
         historyEnabled = true
         lightMode = false
         language = "en"
@@ -244,7 +276,8 @@ final class QREXStore: ObservableObject {
     }
 
     private func persist(_ records: [QRHistoryItem]) -> Bool {
-        guard let data = try? JSONEncoder().encode(records) else { return false }
+        guard historyWritable, Self.validHistory(records),
+              let data = try? JSONEncoder().encode(records) else { return false }
         return QREXHistoryVault.write(data)
     }
 }

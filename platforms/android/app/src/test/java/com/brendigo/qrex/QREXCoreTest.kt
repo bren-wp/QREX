@@ -22,4 +22,12 @@ class QREXCoreTest {
         assertFalse(QRContent.canRender("x".repeat(1501)))
         assertTrue(QRContent.canRender("hello"))
     }
+    @Test fun wifiEscapesDoubleQuotesAcrossPlatforms() {
+        val ssid = "Guest\"Room"
+        val password = "a\\b\"c;d"
+        val raw = QRContent.wifi(ssid, password)
+        assertEquals(ssid, QRContent.wifiField(raw, "S"))
+        assertEquals(password, QRContent.wifiField(raw, "P"))
+    }
+
 }

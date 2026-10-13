@@ -24,6 +24,23 @@ struct ResultPayload: Identifiable {
     var id: String { raw }
 }
 
+// Centralized failure presentation avoids four divergent storage error dialogs.
+private struct StorageFailureAlert: ViewModifier {
+    @Binding var isPresented: Bool
+
+    func body(content: Content) -> some View {
+        content.alert(tr("operation_failed"), isPresented: $isPresented) {
+            Button(tr("ok"), role: .cancel) {}
+        }
+    }
+}
+
+private extension View {
+    func storageFailureAlert(_ isPresented: Binding<Bool>) -> some View {
+        modifier(StorageFailureAlert(isPresented: isPresented))
+    }
+}
+
 enum QREXImage {
     // CIContext is costly to initialize and safe to reuse for rendering.
     private static let renderContext = CIContext()
@@ -78,6 +95,7 @@ struct ResultScreen: View {
     @State private var showQR = false
     @State private var confirmSaveWifi = false
     @State private var showImageShare = false
+    @State private var operationFailed = false
 
     var body: some View {
         NavigationStack {
@@ -121,7 +139,7 @@ struct ResultScreen: View {
                     Button(store.items.contains(where: { $0.raw == raw && $0.saved }) ? tr("saved") : tr("save")) {
                         if QRContent.isWifi(raw) {
                             confirmSaveWifi = true
-                        } else { store.save(raw) }
+                        } else if !store.save(raw) { operationFailed = true }
                     }.disabled(store.items.contains(where: { $0.raw == raw && $0.saved }))
                         .buttonStyle(.borderedProminent)
                 }
@@ -146,9 +164,12 @@ struct ResultScreen: View {
             }
             .confirmationDialog(tr("wifi_save_warning"),
                 isPresented: $confirmSaveWifi) {
-                    Button(tr("save")) { store.save(raw) }
+                    Button(tr("save")) {
+                        if !store.save(raw) { operationFailed = true }
+                    }
                     Button(tr("cancel"), role: .cancel) {}
                 }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
@@ -162,7 +183,9 @@ struct CreateScreen: View {
     @State private var revealPassword = false
     @State private var showMore = false
     @State private var showResult = false
-    @State private var renderedQR: UIImage?
+    @State private var renderedQR: (payload: String, image: UIImage)?
+    @State private var operationFailed = false
+    @State private var confirmWifiSave = false
     private var choices: [String] {
         ["url", "text", "wifi", "email", "phone", "location", "contact"].map(tr)
     }
@@ -230,11 +253,14 @@ struct CreateScreen: View {
                         Text(tr("wifi_warning"))
                             .font(.caption).foregroundStyle(.secondary)
                     }
-                    if let image = renderedQR {
-                        Image(uiImage: image).interpolation(.none).resizable()
+                    if let frame = renderedQR, frame.payload == raw {
+                        Image(uiImage: frame.image).interpolation(.none).resizable()
                             .scaledToFit().frame(width: 210, height: 210)
                             .padding(12).background(.white, in: RoundedRectangle(cornerRadius: 20))
-                        Button(tr("save_qr")) { store.save(raw) }.buttonStyle(.bordered)
+                        Button(tr("save_qr")) {
+                            if QRContent.isWifi(raw) { confirmWifiSave = true }
+                            else if !store.save(raw) { operationFailed = true }
+                        }.buttonStyle(.bordered)
                         Button(tr("create_share")) { showResult = true }.buttonStyle(.borderedProminent)
                     } else {
                         VStack(spacing: 12) {
@@ -257,9 +283,17 @@ struct CreateScreen: View {
                     QREXImage.qr(input)
                 }.value
                 guard !Task.isCancelled else { return }
-                renderedQR = image
+                renderedQR = image.map { (payload: input, image: $0) }
             }
             .sheet(isPresented: $showResult) { ResultScreen(raw: raw) }
+            .confirmationDialog(tr("wifi_save_warning"),
+                isPresented: $confirmWifiSave) {
+                    Button(tr("save")) {
+                        if !store.save(raw) { operationFailed = true }
+                    }
+                    Button(tr("cancel"), role: .cancel) {}
+                }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
@@ -268,6 +302,7 @@ struct HistoryScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var search = ""
     @State private var selected: ResultPayload?
+    @State private var operationFailed = false
 
     private var filtered: [QRHistoryItem] {
         store.items.filter { search.isEmpty || QRContent.title($0.raw)
@@ -293,7 +328,9 @@ struct HistoryScreen: View {
                             Image(systemName: "chevron.right")
                         }
                     }.swipeActions {
-                        Button(role: .destructive) { store.delete(item) } label: {
+                        Button(role: .destructive) {
+                            if !store.delete(item) { operationFailed = true }
+                        } label: {
                             Label(tr("delete"), systemImage: "trash")
                         }
                     }
@@ -311,10 +348,13 @@ struct HistoryScreen: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(tr("clear")) { store.clearHistory() }.disabled(store.items.isEmpty)
+                    Button(tr("clear")) {
+                        if !store.clearHistory() { operationFailed = true }
+                    }.disabled(store.items.isEmpty)
                 }
             }
             .sheet(item: $selected) { item in ResultScreen(raw: item.raw) }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
@@ -322,6 +362,11 @@ struct HistoryScreen: View {
 struct MoreScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var confirmDelete = false
+    @State private var confirmExport = false
+    @State private var operationFailed = false
+    @State private var exporting = false
+    @State private var archiveDocument: QREXZipDocument?
+    @State private var showFileExporter = false
     private var displayLanguages: [String] { QREXStrings.supported }
 
     var body: some View {
@@ -330,15 +375,6 @@ struct MoreScreen: View {
                 Section(tr("settings")) {
                     Toggle(tr("save_history"), isOn: $store.historyEnabled)
                     Toggle(tr("light_theme"), isOn: $store.lightMode)
-                    Button(tr("delete_all"), role: .destructive) { confirmDelete = true }
-                }
-                Section(tr("privacy")) {
-                    NavigationLink(tr("privacy")) {
-                        ScrollView {
-                            Text(tr("privacy_summary"))
-                                .padding()
-                        }.navigationTitle(tr("privacy"))
-                    }
                 }
                 Section(tr("language")) {
                     Picker(tr("language"), selection: $store.language) {
@@ -349,19 +385,84 @@ struct MoreScreen: View {
                         }
                     }
                 }
+                Section(tr("data_tools")) {
+                    Button {
+                        confirmExport = true
+                    } label: {
+                        Label(tr("export_archive"), systemImage: "doc.zipper")
+                    }
+                    .disabled(exporting || !store.items.contains(where: { $0.saved }))
+                    Text(tr("export_archive_hint"))
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button(tr("delete_all"), role: .destructive) {
+                        confirmDelete = true
+                    }
+                }
                 Section(tr("about")) {
                     LabeledContent(tr("about"), value: "QREX")
                     Link(destination: URL(string: "https://brendigo.com")!) {
                         Label(tr("developed_by"), systemImage: "chevron.up.right.square")
                     }
                 }
+                // Legal documents live at the very bottom of Settings.
+                Section(tr("privacy")) {
+                    NavigationLink(tr("privacy_policy")) {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 18) {
+                                Text(tr("privacy_summary"))
+                                Link(tr("read_full_policy"),
+                                     destination: URL(string:
+                                        "https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md")!)
+                            }.padding()
+                        }.navigationTitle(tr("privacy_policy"))
+                    }
+                    NavigationLink(tr("terms_of_use")) {
+                        ScrollView {
+                            Text(tr("terms_summary"))
+                                .padding()
+                        }.navigationTitle(tr("terms_of_use"))
+                    }
+                }
             }
             .navigationTitle(tr("more"))
             .confirmationDialog(tr("confirm_delete"),
                 isPresented: $confirmDelete, titleVisibility: .visible) {
-                Button(tr("delete_all"), role: .destructive) { store.clearAll() }
+                Button(tr("delete_all"), role: .destructive) {
+                    if !store.clearAll() { operationFailed = true }
+                }
                 Button(tr("cancel"), role: .cancel) {}
             }
+            .confirmationDialog(tr("export_archive_warning"),
+                isPresented: $confirmExport, titleVisibility: .visible) {
+                Button(tr("export_archive")) { exportSavedCodes() }
+                Button(tr("cancel"), role: .cancel) {}
+            }
+            .fileExporter(isPresented: $showFileExporter, document: archiveDocument,
+                          contentType: .zip, defaultFilename: "QREX-Saved-Codes") { result in
+                if case .failure = result { operationFailed = true }
+                archiveDocument = nil
+            }
+            .storageFailureAlert($operationFailed)
+        }
+    }
+
+    private func exportSavedCodes() {
+        // User confirmed that manually saved QR records, including any Wi-Fi
+        // credentials, will be embedded in a portable ZIP/PDF document.
+        let selected = store.items.filter(\.saved)
+        guard !selected.isEmpty, !exporting else { return }
+        exporting = true
+        Task {
+            do {
+                let archive = try await Task.detached(priority: .userInitiated) {
+                    try QREXDocuments.exportSavedPdfZip(selected)
+                }.value
+                archiveDocument = QREXZipDocument(contents: archive)
+                showFileExporter = true
+            } catch {
+                operationFailed = true
+            }
+            exporting = false
         }
     }
 }

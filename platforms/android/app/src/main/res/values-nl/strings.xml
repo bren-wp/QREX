@@ -66,7 +66,18 @@
     <string name="delete_warning">Geschiedenis, opgeslagen codes en instellingen worden permanent verwijderd.</string>
     <string name="language">Taal</string>
     <string name="system">Apparaattaal gebruiken</string>
-    <string name="history_local">Op dit apparaat opgeslagen</string>
+    <string name="history_local">Jouw QR-verzameling</string>
     <string name="export_png">PNG exporteren</string>
     <string name="png_save_failed">PNG-afbeelding kan niet worden opgeslagen.</string>
+    <string name="operation_failed">Actie mislukt. Probeer het opnieuw.</string>
+    <string name="data_tools">Jouw codes en bestanden</string>
+    <string name="export_archive">Opgeslagen QR-codes exporteren als PDF · ZIP</string>
+    <string name="export_archive_hint">Bewaar je favoriete codes in een afdrukbaar PDF-archief.</string>
+    <string name="export_archive_warning">Geëxporteerde PDF\'s kunnen opgeslagen wifiwachtwoorden bevatten. Deel de ZIP alleen met vertrouwde personen.</string>
+    <string name="archive_failed">ZIP-archief kon niet worden gemaakt.</string>
+    <string name="archive_ready">ZIP-archief opgeslagen.</string>
+    <string name="privacy_policy">Privacybeleid</string>
+    <string name="terms_of_use">Gebruiksvoorwaarden</string>
+    <string name="terms_summary">Controleer QR-bestemmingen voordat je links opent. Deel of exporteer alleen codes waarvoor je toestemming hebt. ZIP-bestanden kunnen wifiwachtwoorden bevatten. QREX wordt zonder garanties geleverd voor zover wettelijk toegestaan. Hulp: brendigo.com.</string>
+    <string name="read_full_policy">Volledig beleid lezen</string>
 </resources>

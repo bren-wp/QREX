@@ -4,8 +4,13 @@ on:
   pull_request:
     paths:
       - "platforms/**"
+      - ".github/workflows/**"
       - ".github/workflows/native-platforms.yml"
       - ".github/workflows/capture-screenshots.yml"
+      - "tool/check_native_release.py"
+      - "tool/test_native_release.py"
+      - "tool/publish_native_rc.sh"
+      - ".github/workflows/release-native-preview.yml"
       - "tool/capture_android_screen.sh"
       - "tool/test_capture_workflow.py"
       - "tool/test_android_screen.py"
@@ -49,12 +54,25 @@ jobs:
       - name: Compile Kotlin app and execute unit tests
         working-directory: platforms/android
         run: gradle --no-daemon --stacktrace :app:assembleDebug :app:testDebugUnitTest :app:assembleDebugAndroidTest
+      - name: Check native distribution metadata
+        run: python3 tool/check_native_release.py
+      - name: Validate Android lint and R8 release variants
+        working-directory: platforms/android
+        run: gradle --no-daemon --stacktrace :app:lintDebug :app:assembleRelease :app:bundleRelease
       - name: Confirm Android package
-        run: test -s platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        run: |
+          test -s platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          test -s platforms/android/app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4
         with:
           name: QREX-Kotlin-Android-debug
           path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Upload unsigned Android AAB QA candidate (not store ready)
+        uses: actions/upload-artifact@v4
+        with:
+          name: QREX-Kotlin-Android-unsigned-AAB-QA
+          path: platforms/android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
 
   ios:
@@ -63,6 +81,14 @@ jobs:
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
+      - name: Verify current App Store SDK requirements
+        run: |
+          set -euo pipefail
+          XCODE_MAJOR="$(xcodebuild -version | awk '/^Xcode / { split($2, v, "."); print v[1] }')"
+          SDK_MAJOR="$(xcrun --sdk iphoneos --show-sdk-version | cut -d. -f1)"
+          echo "Xcode major: $XCODE_MAJOR, iOS SDK major: $SDK_MAJOR"
+          test "$XCODE_MAJOR" -ge 26
+          test "$SDK_MAJOR" -ge 26
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate bundled QREX app icon
@@ -79,6 +105,10 @@ jobs:
             "info": {"author":"xcode","version":1}
           }), encoding="utf-8")
           PY
+      - name: Verify native release metadata and signing readiness
+        run: python3 tool/check_native_release.py
+      - name: Check release metadata regression tests
+        run: python3 -m unittest discover -s tool -p 'test_native_release.py'
       - name: Verify localization resource parity
         run: |
           python3 tool/generate_localizations.py --check
@@ -122,3 +152,19 @@ jobs:
             -destination "platform=iOS Simulator,id=$DEVICE" \
             -derivedDataPath build -parallel-testing-enabled NO \
             CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=YES test
+      - name: Build unsigned iOS device archive as a signing QA candidate
+        working-directory: platforms/ios
+        run: |
+          xcodebuild -project QREX.xcodeproj -scheme QREX \
+            -configuration Release -destination "generic/platform=iOS" \
+            -archivePath build/QREX-unsigned.xcarchive -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO archive
+          test -s build/QREX-unsigned.xcarchive/Products/Applications/QREX.app/QREX
+          plutil -lint build/QREX-unsigned.xcarchive/Products/Applications/QREX.app/PrivacyInfo.xcprivacy
+      - name: Upload unsigned iOS device archive (not an IPA)
+        uses: actions/upload-artifact@v4
+        with:
+          name: QREX-iOS-unsigned-archive-QA
+          path: platforms/ios/build/QREX-unsigned.xcarchive
+          if-no-files-found: error
+

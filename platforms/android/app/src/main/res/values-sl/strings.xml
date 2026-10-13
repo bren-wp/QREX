@@ -66,7 +66,18 @@
     <string name="delete_warning">Zgodovina, kode in nastavitve bodo trajno izbrisane.</string>
     <string name="language">Jezik</string>
     <string name="system">Jezik naprave</string>
-    <string name="history_local">Shranjeno v tej napravi</string>
+    <string name="history_local">Vaša zbirka QR</string>
     <string name="export_png">Izvozi PNG</string>
     <string name="png_save_failed">Slike PNG ni mogoče shraniti.</string>
+    <string name="operation_failed">Dejanje ni uspelo. Poskusite znova.</string>
+    <string name="data_tools">Vaše kode in datoteke</string>
+    <string name="export_archive">Izvozi shranjene kode QR v PDF · ZIP</string>
+    <string name="export_archive_hint">Najljubše kode shranite v arhiv PDF za tiskanje.</string>
+    <string name="export_archive_warning">Izvoženi PDF-ji lahko vsebujejo shranjena gesla Wi-Fi. ZIP delite le z osebami, ki jim zaupate.</string>
+    <string name="archive_failed">Arhiva ZIP ni bilo mogoče ustvariti.</string>
+    <string name="archive_ready">Arhiv ZIP shranjen.</string>
+    <string name="privacy_policy">Pravilnik o zasebnosti</string>
+    <string name="terms_of_use">Pogoji uporabe</string>
+    <string name="terms_summary">Pred odpiranjem povezav preverite cilj kode QR. Delite ali izvažajte le dovoljene kode. ZIP lahko vsebuje gesla Wi-Fi. QREX je na voljo brez jamstev v zakonsko dovoljenem obsegu. Podpora: brendigo.com.</string>
+    <string name="read_full_policy">Preberi celoten pravilnik</string>
 </resources>

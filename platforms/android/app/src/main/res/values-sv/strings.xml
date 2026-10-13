@@ -66,7 +66,18 @@
     <string name="delete_warning">Historik, sparade koder och inställningar raderas permanent.</string>
     <string name="language">Språk</string>
     <string name="system">Enhetens språk</string>
-    <string name="history_local">Sparas på den här enheten</string>
+    <string name="history_local">Din QR-samling</string>
     <string name="export_png">Exportera PNG</string>
     <string name="png_save_failed">Det gick inte att spara PNG-bilden.</string>
+    <string name="operation_failed">Åtgärden misslyckades. Försök igen.</string>
+    <string name="data_tools">Dina koder och filer</string>
+    <string name="export_archive">Exportera sparade QR-koder som PDF · ZIP</string>
+    <string name="export_archive_hint">Spara favoritkoder i ett utskrivbart PDF-arkiv.</string>
+    <string name="export_archive_warning">Exporterade PDF-filer kan innehålla sparade wifi-lösenord. Dela ZIP endast med betrodda personer.</string>
+    <string name="archive_failed">Det gick inte att skapa ZIP-arkivet.</string>
+    <string name="archive_ready">ZIP-arkivet har sparats.</string>
+    <string name="privacy_policy">Integritetspolicy</string>
+    <string name="terms_of_use">Användarvillkor</string>
+    <string name="terms_summary">Kontrollera QR-mål innan du öppnar länkar. Dela eller exportera endast koder du har tillstånd att dela. ZIP kan innehålla wifi-lösenord. QREX erbjuds utan garantier i den mån lagen tillåter. Support: brendigo.com.</string>
+    <string name="read_full_policy">Läs hela policyn</string>
 </resources>

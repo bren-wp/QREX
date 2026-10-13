@@ -144,4 +144,91 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(reopened.clearAll())
     }
 
+    @MainActor
+    func testOversizedQrCannotCorruptKeychainHistory() {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let oversized = String(repeating: "x", count: 10001)
+        XCTAssertFalse(store.save(oversized))
+        store.record(oversized)
+        XCTAssertTrue(store.items.isEmpty)
+        XCTAssertTrue(QREXStore().items.isEmpty)
+        XCTAssertTrue(store.clearAll())
+    }
+
+    @MainActor
+    func testCorruptKeychainHistoryIsNeverOverwrittenByNextSave() {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let original = Data("not-valid-json-private-history".utf8)
+        XCTAssertTrue(QREXHistoryVault.write(original))
+        let reopened = QREXStore()
+        XCTAssertTrue(reopened.items.isEmpty)
+        XCTAssertFalse(reopened.save("https://example.com/new"))
+        XCTAssertEqual(QREXHistoryVault.read(), original)
+        XCTAssertTrue(reopened.clearAll())
+        XCTAssertTrue(QREXStore().save("https://example.com/recovered"))
+        XCTAssertTrue(QREXStore().clearAll())
+    }
+
+    @MainActor
+    func testTooManyKeychainRowsCannotBeSilentlyTruncatedAndOverwritten() throws {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let rows = (0...250).map { i in
+            QRHistoryItem(id: UUID(), raw: "https://example.com/\\(i)",
+                timestamp: Date(timeIntervalSince1970: Double(i)), saved: true)
+        }
+        let original = try JSONEncoder().encode(rows)
+        XCTAssertTrue(QREXHistoryVault.write(original))
+        let reopened = QREXStore()
+        XCTAssertTrue(reopened.items.isEmpty)
+        XCTAssertFalse(reopened.save("https://example.com/new"))
+        XCTAssertEqual(QREXHistoryVault.read(), original)
+        XCTAssertTrue(reopened.clearAll())
+    }
+
+    @MainActor
+    func testFullSavedHistoryNeverEvictsFavorites() throws {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let favourites = (0..<250).map { index in
+            QRHistoryItem(id: UUID(), raw: "https://example.com/favorite/\(index)",
+                          timestamp: Date(timeIntervalSince1970: Double(index)), saved: true)
+        }
+        let protected = try JSONEncoder().encode(favourites)
+        XCTAssertTrue(QREXHistoryVault.write(protected))
+        let store = QREXStore()
+        XCTAssertEqual(store.items.count, 250)
+        XCTAssertFalse(store.save("https://example.org/251"))
+        store.record("https://example.org/auto-scan")
+        XCTAssertEqual(store.items.count, 250)
+        XCTAssertTrue(store.items.allSatisfy(\.saved))
+        XCTAssertTrue(store.items.contains(where: { $0.raw == favourites[249].raw }))
+        XCTAssertEqual(QREXHistoryVault.read(), protected)
+        XCTAssertTrue(store.clearAll())
+    }
+
+    func testZipArchiveHasValidHeadersAndExpectedCRC() throws {
+        let bytes = try QREXDocuments.archive(file: "test.txt",
+                                              payload: Data("hello".utf8))
+        XCTAssertGreaterThan(bytes.count, 90)
+        let raw = [UInt8](bytes)
+        XCTAssertEqual(Array(raw[0..<4]), [0x50, 0x4B, 0x03, 0x04])
+        XCTAssertEqual(Array(raw[14..<18]), [0x86, 0xA6, 0x10, 0x36])
+        XCTAssertTrue(bytes.range(of: Data("test.txt".utf8)) != nil)
+        XCTAssertTrue(bytes.range(of: Data([0x50, 0x4B, 0x01, 0x02])) != nil)
+        XCTAssertEqual(Array(raw.suffix(22).prefix(4)), [0x50, 0x4B, 0x05, 0x06])
+    }
+
+    func testSavedQrPdfZipContainsPrintablePdf() throws {
+        let record = QRHistoryItem(id: UUID(), raw: "https://brendigo.com",
+                                   timestamp: Date(), saved: true)
+        let archive = try QREXDocuments.exportSavedPdfZip([record])
+        XCTAssertTrue(archive.starts(with: Data([0x50, 0x4B, 0x03, 0x04])))
+        XCTAssertNotNil(archive.range(of: Data("%PDF-".utf8)))
+        XCTAssertNotNil(archive.range(of: Data("QREX-Saved-Codes.pdf".utf8)))
+        XCTAssertThrowsError(try QREXDocuments.exportSavedPdfZip([]))
+    }
+
 }

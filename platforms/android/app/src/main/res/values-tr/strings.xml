@@ -66,7 +66,18 @@
     <string name="delete_warning">Geçmiş, kayıtlı kodlar ve ayarlar kalıcı olarak silinecek.</string>
     <string name="language">Dil</string>
     <string name="system">Cihaz dili</string>
-    <string name="history_local">Bu cihazda saklanır</string>
+    <string name="history_local">QR koleksiyonun</string>
     <string name="export_png">PNG dışa aktar</string>
     <string name="png_save_failed">PNG görüntüsü kaydedilemedi.</string>
+    <string name="operation_failed">İşlem başarısız oldu. Tekrar deneyin.</string>
+    <string name="data_tools">Kodların ve dosyaların</string>
+    <string name="export_archive">Kaydedilen QR kodlarını PDF · ZIP olarak dışa aktar</string>
+    <string name="export_archive_hint">Favori kodlarını yazdırılabilir bir PDF arşivinde sakla.</string>
+    <string name="export_archive_warning">Dışa aktarılan PDF\'ler kayıtlı Wi-Fi parolaları içerebilir. ZIP\'i yalnızca güvendiğin kişilerle paylaş.</string>
+    <string name="archive_failed">ZIP arşivi oluşturulamadı.</string>
+    <string name="archive_ready">ZIP arşivi kaydedildi.</string>
+    <string name="privacy_policy">Gizlilik Politikası</string>
+    <string name="terms_of_use">Kullanım Koşulları</string>
+    <string name="terms_summary">Bağlantıları açmadan önce QR hedeflerini kontrol et. Yalnızca izinli kodları paylaş veya dışa aktar. ZIP dosyaları Wi-Fi parolaları içerebilir. QREX yasanın izin verdiği ölçüde garantisiz sunulur. Destek: brendigo.com.</string>
+    <string name="read_full_policy">Politikanın tamamını oku</string>
 </resources>

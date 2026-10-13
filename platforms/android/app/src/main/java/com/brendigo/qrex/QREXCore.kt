@@ -45,7 +45,7 @@ object QRContent {
     fun wifi(ssid: String, password: String): String {
         fun escape(text: String): String = buildString {
             for (ch in text) {
-                if (ch == ';' || ch == ':' || ch == ',' || ch.code == 92) append(Char(92))
+                if (ch == ';' || ch == ':' || ch == ',' || ch == '"' || ch.code == 92) append(Char(92))
                 append(ch)
             }
         }
@@ -61,10 +61,10 @@ object QRContent {
         }.getOrNull()
     }
 
-    fun label(raw: String): String = when {
-        isWifi(raw) -> wifiField(raw, "S") ?: "Wi-Fi"
-        safeUrl(raw) != null -> safeUrl(raw)?.host ?: raw
-        else -> raw.replace("\n", " ").take(56)
+    fun label(raw: String): String {
+        if (isWifi(raw)) return wifiField(raw, "S") ?: "Wi-Fi"
+        // Decode URLs once; history filtering can call this for every entry.
+        return safeUrl(raw)?.host ?: raw.replace("\n", " ").take(56)
     }
 
     fun canRender(raw: String): Boolean =
@@ -78,6 +78,9 @@ class QREXStore(context: Context) {
         context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
     // Corrupt or temporarily undecryptable history must never be overwritten.
     private var historyReadable = true
+    // Reuse authenticated ciphertext of unchanged Wi-Fi records on subsequent
+    // edits instead of performing up to 250 Keystore encryptions per tap.
+    private val protectedWifi = mutableMapOf<String, String>()
     val items = mutableStateListOf<QRRecord>()
     var historyEnabled by mutableStateOf(preferences.getBoolean("historyEnabled", true))
         private set
@@ -105,6 +108,7 @@ class QREXStore(context: Context) {
                 require(raw.isNotBlank() && raw.length <= 10000)
                 // Keep duplicate identities once; this is a no-loss canonicalization.
                 if (!seen.add(raw)) continue
+                if (encrypted && QRContent.isWifi(raw)) protectedWifi[raw] = value
                 if (QRContent.isWifi(raw) && !encrypted) {
                     upgradeNeeded = true
                     require(QREXSecretCipher.available())
@@ -114,6 +118,7 @@ class QREXStore(context: Context) {
         }.onFailure {
             historyReadable = false
             items.clear()
+            protectedWifi.clear()
         }
         if (upgradeNeeded && historyReadable) {
             // Replace plaintext legacy Wi-Fi records only after encryption and
@@ -177,36 +182,46 @@ class QREXStore(context: Context) {
     }
 
     fun record(raw: String) {
-        if (!historyEnabled || QRContent.isWifi(raw) || raw.isBlank()) return
+        if (!historyEnabled || QRContent.isWifi(raw) ||
+            raw.isBlank() || raw.length > 10000) return
         update(raw, items.find { it.raw == raw }?.saved == true)
     }
 
-    fun save(raw: String) {
-        if (raw.isBlank()) return
-        update(raw, true)
+    fun save(raw: String): Boolean {
+        if (raw.isBlank() || raw.length > 10000) return false
+        return update(raw, true)
     }
 
-    private fun update(raw: String, saved: Boolean) {
+    private fun update(raw: String, saved: Boolean): Boolean {
         val next = items.filterNot { it.raw == raw }.toMutableList()
         next.add(0, QRRecord(raw, System.currentTimeMillis(), saved))
         if (next.size > 250) {
+            // An automatic scan or a new favorite must never evict a favorite.
+            // If every previous entry is saved, reject the new entry instead.
             val lastUnsaved = next.indexOfLast { !it.saved }
-            next.removeAt(if (lastUnsaved >= 0) lastUnsaved else next.lastIndex)
+            if (lastUnsaved <= 0) return false
+            next.removeAt(lastUnsaved)
         }
-        if (persist(next)) {
-            items.clear()
-            items.addAll(next)
-        }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
     }
 
-    fun remove(item: QRRecord) {
+    fun remove(item: QRRecord): Boolean {
         val next = items.filterNot { it == item }
-        if (persist(next)) { items.clear(); items.addAll(next) }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
     }
 
-    fun clearHistory() {
+    fun clearHistory(): Boolean {
         val next = items.filter { it.saved }
-        if (persist(next)) { items.clear(); items.addAll(next) }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
     }
 
     /** Explicit erasure also removes untransferred Flutter records and settings. */
@@ -221,6 +236,7 @@ class QREXStore(context: Context) {
         if (!legacyCleared || !preferences.edit().clear().commit()) return false
         historyReadable = true
         items.clear()
+        protectedWifi.clear()
         historyEnabled = true
         lightMode = false
         language = "en"
@@ -246,13 +262,22 @@ class QREXStore(context: Context) {
     private fun persist(records: List<QRRecord> = items): Boolean {
         if (!historyReadable) return false
         val array = JSONArray()
+        val nextProtected = mutableMapOf<String, String>()
         for (item in records) {
-            val protected = if (QRContent.isWifi(item.raw))
-                QREXSecretCipher.encrypt(item.raw) ?: return false
-            else item.raw
-            array.put(JSONObject().put("raw", protected)
+            val value = if (QRContent.isWifi(item.raw)) {
+                // Ciphertext already authenticated during load; retaining it
+                // for unchanged data avoids expensive KeyStore round-trips.
+                val ciphertext = protectedWifi[item.raw]
+                    ?: QREXSecretCipher.encrypt(item.raw) ?: return false
+                nextProtected[item.raw] = ciphertext
+                ciphertext
+            } else item.raw
+            array.put(JSONObject().put("raw", value)
                 .put("timestamp", item.timestamp).put("saved", item.saved))
         }
-        return preferences.edit().putString("history", array.toString()).commit()
+        if (!preferences.edit().putString("history", array.toString()).commit()) return false
+        protectedWifi.clear()
+        protectedWifi.putAll(nextProtected)
+        return true
     }
 }

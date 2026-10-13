@@ -70,9 +70,20 @@
         "delete_warning": "History, saved QR codes and settings will be permanently erased.",
         "language": "Language",
         "system": "Follow device language",
-        "history_local": "Stored on this device",
+        "history_local": "Your collection",
         "export_png": "Export PNG",
-        "png_save_failed": "Unable to save PNG image."
+        "png_save_failed": "Unable to save PNG image.",
+        "operation_failed": "Action failed. Please try again.",
+        "data_tools": "Your codes & files",
+        "export_archive": "Export saved QR codes as PDF · ZIP",
+        "export_archive_hint": "Keep your favorite QR codes in a printable PDF archive.",
+        "export_archive_warning": "Exported PDFs may contain saved Wi-Fi passwords. Only share this ZIP with people you trust.",
+        "archive_failed": "Could not create the ZIP archive.",
+        "archive_ready": "ZIP archive saved.",
+        "privacy_policy": "Privacy Policy",
+        "terms_of_use": "Terms of Use",
+        "terms_summary": "Check QR destinations before opening links. Share or export only codes you have permission to disclose. ZIP exports may include saved Wi-Fi passwords. QREX is provided without warranties to the extent allowed by law. Support: brendigo.com.",
+        "read_full_policy": "Read full policy"
       }
     },
     "hr": {
@@ -144,9 +155,20 @@
         "delete_warning": "Povijest, spremljeni kodovi i postavke trajno će se izbrisati.",
         "language": "Jezik",
         "system": "Jezik uređaja",
-        "history_local": "Spremljeno na uređaju",
+        "history_local": "Vaša zbirka",
         "export_png": "Izvezi PNG",
-        "png_save_failed": "PNG sliku nije moguće spremiti."
+        "png_save_failed": "PNG sliku nije moguće spremiti.",
+        "operation_failed": "Radnja nije uspjela. Pokušajte ponovno.",
+        "data_tools": "Vaši kodovi i datoteke",
+        "export_archive": "Izvezi spremljene QR kodove u PDF · ZIP",
+        "export_archive_hint": "Svoje omiljene QR kodove spremite u PDF arhivu spremnu za ispis.",
+        "export_archive_warning": "Izvezeni PDF dokumenti mogu sadržavati spremljene Wi-Fi lozinke. ZIP dijelite samo s osobama kojima vjerujete.",
+        "archive_failed": "ZIP arhivu nije moguće izraditi.",
+        "archive_ready": "ZIP arhiva je spremljena.",
+        "privacy_policy": "Politika privatnosti",
+        "terms_of_use": "Uvjeti korištenja",
+        "terms_summary": "Provjerite odredište QR koda prije otvaranja poveznice. Dijelite ili izvozite samo kodove za koje imate dopuštenje. ZIP arhive mogu sadržavati spremljene Wi-Fi lozinke. QREX se pruža bez jamstava u mjeri dopuštenoj zakonom. Podrška: brendigo.com.",
+        "read_full_policy": "Pročitaj cijelu politiku"
       }
     },
     "de": {
@@ -218,9 +240,20 @@
         "delete_warning": "Verlauf, gespeicherte Codes und Einstellungen werden dauerhaft gelöscht.",
         "language": "Sprache",
         "system": "Gerätesprache verwenden",
-        "history_local": "Auf diesem Gerät gespeichert",
+        "history_local": "Deine QR-Sammlung",
         "export_png": "PNG exportieren",
-        "png_save_failed": "PNG-Bild konnte nicht gespeichert werden."
+        "png_save_failed": "PNG-Bild konnte nicht gespeichert werden.",
+        "operation_failed": "Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "data_tools": "Deine Codes und Dateien",
+        "export_archive": "Gespeicherte QR-Codes als PDF · ZIP exportieren",
+        "export_archive_hint": "Deine Lieblingscodes in einem druckbaren PDF-Archiv sichern.",
+        "export_archive_warning": "Exportierte PDFs können gespeicherte WLAN-Passwörter enthalten. Teile ZIP-Dateien nur mit Vertrauenspersonen.",
+        "archive_failed": "ZIP-Archiv konnte nicht erstellt werden.",
+        "archive_ready": "ZIP-Archiv gespeichert.",
+        "privacy_policy": "Datenschutzerklärung",
+        "terms_of_use": "Nutzungsbedingungen",
+        "terms_summary": "Prüfe QR-Ziele vor dem Öffnen. Teile oder exportiere nur Codes, für die du eine Berechtigung hast. ZIP-Dateien können WLAN-Passwörter enthalten. QREX wird ohne Gewährleistung bereitgestellt, soweit gesetzlich zulässig. Hilfe: brendigo.com.",
+        "read_full_policy": "Vollständige Erklärung lesen"
       }
     },
     "fr": {
@@ -292,9 +325,20 @@
         "delete_warning": "L'historique, les codes et les paramètres seront effacés définitivement.",
         "language": "Langue",
         "system": "Langue de l'appareil",
-        "history_local": "Stocké sur cet appareil",
+        "history_local": "Votre collection QR",
         "export_png": "Exporter en PNG",
-        "png_save_failed": "Impossible d’enregistrer l’image PNG."
+        "png_save_failed": "Impossible d’enregistrer l’image PNG.",
+        "operation_failed": "Échec de l’action. Veuillez réessayer.",
+        "data_tools": "Vos codes et fichiers",
+        "export_archive": "Exporter les QR enregistrés en PDF · ZIP",
+        "export_archive_hint": "Conservez vos codes favoris dans une archive PDF imprimable.",
+        "export_archive_warning": "Les PDF exportés peuvent contenir des mots de passe Wi-Fi. Partagez ce ZIP uniquement avec des personnes de confiance.",
+        "archive_failed": "Impossible de créer l’archive ZIP.",
+        "archive_ready": "Archive ZIP enregistrée.",
+        "privacy_policy": "Politique de confidentialité",
+        "terms_of_use": "Conditions d’utilisation",
+        "terms_summary": "Vérifiez les destinations QR avant d’ouvrir les liens. Partagez ou exportez uniquement les codes autorisés. Les ZIP peuvent contenir des mots de passe Wi-Fi. QREX est fourni sans garantie dans les limites de la loi. Assistance : brendigo.com.",
+        "read_full_policy": "Lire la politique complète"
       }
     },
     "es": {
@@ -366,9 +410,20 @@
         "delete_warning": "El historial, los códigos guardados y los ajustes se borrarán permanentemente.",
         "language": "Idioma",
         "system": "Idioma del dispositivo",
-        "history_local": "Guardado en este dispositivo",
+        "history_local": "Tu colección QR",
         "export_png": "Exportar PNG",
-        "png_save_failed": "No se pudo guardar la imagen PNG."
+        "png_save_failed": "No se pudo guardar la imagen PNG.",
+        "operation_failed": "La acción falló. Inténtalo de nuevo.",
+        "data_tools": "Tus códigos y archivos",
+        "export_archive": "Exportar códigos guardados como PDF · ZIP",
+        "export_archive_hint": "Guarda tus códigos favoritos en un archivo PDF listo para imprimir.",
+        "export_archive_warning": "Los PDF exportados pueden contener contraseñas Wi-Fi guardadas. Comparte el ZIP solo con personas de confianza.",
+        "archive_failed": "No se pudo crear el archivo ZIP.",
+        "archive_ready": "Archivo ZIP guardado.",
+        "privacy_policy": "Política de privacidad",
+        "terms_of_use": "Condiciones de uso",
+        "terms_summary": "Comprueba los destinos QR antes de abrir enlaces. Comparte o exporta solo códigos que tengas permiso para divulgar. Los ZIP pueden incluir contraseñas Wi-Fi. QREX se ofrece sin garantías en la medida permitida por la ley. Ayuda: brendigo.com.",
+        "read_full_policy": "Leer la política completa"
       }
     },
     "it": {
@@ -440,9 +495,20 @@
         "delete_warning": "Cronologia, codici e impostazioni saranno eliminati definitivamente.",
         "language": "Lingua",
         "system": "Lingua del dispositivo",
-        "history_local": "Salvato su questo dispositivo",
+        "history_local": "La tua raccolta QR",
         "export_png": "Esporta PNG",
-        "png_save_failed": "Impossibile salvare l’immagine PNG."
+        "png_save_failed": "Impossibile salvare l’immagine PNG.",
+        "operation_failed": "Operazione non riuscita. Riprova.",
+        "data_tools": "I tuoi codici e file",
+        "export_archive": "Esporta i QR salvati come PDF · ZIP",
+        "export_archive_hint": "Conserva i tuoi codici preferiti in un archivio PDF stampabile.",
+        "export_archive_warning": "I PDF esportati possono contenere password Wi-Fi salvate. Condividi lo ZIP solo con persone fidate.",
+        "archive_failed": "Impossibile creare l’archivio ZIP.",
+        "archive_ready": "Archivio ZIP salvato.",
+        "privacy_policy": "Informativa sulla privacy",
+        "terms_of_use": "Condizioni d’uso",
+        "terms_summary": "Controlla le destinazioni QR prima di aprire i link. Condividi o esporta solo codici autorizzati. Gli ZIP possono contenere password Wi-Fi. QREX è fornito senza garanzie nei limiti di legge. Assistenza: brendigo.com.",
+        "read_full_policy": "Leggi l’informativa completa"
       }
     },
     "pt": {
@@ -514,9 +580,20 @@
         "delete_warning": "O histórico, códigos e definições serão eliminados permanentemente.",
         "language": "Idioma",
         "system": "Idioma do dispositivo",
-        "history_local": "Guardado neste dispositivo",
+        "history_local": "A sua coleção QR",
         "export_png": "Exportar PNG",
-        "png_save_failed": "Não foi possível guardar a imagem PNG."
+        "png_save_failed": "Não foi possível guardar a imagem PNG.",
+        "operation_failed": "A ação falhou. Tente novamente.",
+        "data_tools": "Os seus códigos e ficheiros",
+        "export_archive": "Exportar códigos guardados em PDF · ZIP",
+        "export_archive_hint": "Guarde os seus códigos favoritos num arquivo PDF pronto a imprimir.",
+        "export_archive_warning": "Os PDFs exportados podem conter palavras-passe Wi-Fi guardadas. Partilhe o ZIP apenas com pessoas de confiança.",
+        "archive_failed": "Não foi possível criar o arquivo ZIP.",
+        "archive_ready": "Arquivo ZIP guardado.",
+        "privacy_policy": "Política de privacidade",
+        "terms_of_use": "Termos de utilização",
+        "terms_summary": "Verifique os destinos QR antes de abrir ligações. Partilhe ou exporte apenas códigos autorizados. Os ZIP podem incluir palavras-passe Wi-Fi. O QREX é fornecido sem garantias nos limites legais. Apoio: brendigo.com.",
+        "read_full_policy": "Ler a política completa"
       }
     },
     "nl": {
@@ -588,9 +665,20 @@
         "delete_warning": "Geschiedenis, opgeslagen codes en instellingen worden permanent verwijderd.",
         "language": "Taal",
         "system": "Apparaattaal gebruiken",
-        "history_local": "Op dit apparaat opgeslagen",
+        "history_local": "Jouw QR-verzameling",
         "export_png": "PNG exporteren",
-        "png_save_failed": "PNG-afbeelding kan niet worden opgeslagen."
+        "png_save_failed": "PNG-afbeelding kan niet worden opgeslagen.",
+        "operation_failed": "Actie mislukt. Probeer het opnieuw.",
+        "data_tools": "Jouw codes en bestanden",
+        "export_archive": "Opgeslagen QR-codes exporteren als PDF · ZIP",
+        "export_archive_hint": "Bewaar je favoriete codes in een afdrukbaar PDF-archief.",
+        "export_archive_warning": "Geëxporteerde PDF's kunnen opgeslagen wifiwachtwoorden bevatten. Deel de ZIP alleen met vertrouwde personen.",
+        "archive_failed": "ZIP-archief kon niet worden gemaakt.",
+        "archive_ready": "ZIP-archief opgeslagen.",
+        "privacy_policy": "Privacybeleid",
+        "terms_of_use": "Gebruiksvoorwaarden",
+        "terms_summary": "Controleer QR-bestemmingen voordat je links opent. Deel of exporteer alleen codes waarvoor je toestemming hebt. ZIP-bestanden kunnen wifiwachtwoorden bevatten. QREX wordt zonder garanties geleverd voor zover wettelijk toegestaan. Hulp: brendigo.com.",
+        "read_full_policy": "Volledig beleid lezen"
       }
     },
     "pl": {
@@ -662,9 +750,20 @@
         "delete_warning": "Historia, zapisane kody i ustawienia zostaną trwale usunięte.",
         "language": "Język",
         "system": "Język urządzenia",
-        "history_local": "Zapisano na tym urządzeniu",
+        "history_local": "Twoja kolekcja QR",
         "export_png": "Eksportuj PNG",
-        "png_save_failed": "Nie można zapisać obrazu PNG."
+        "png_save_failed": "Nie można zapisać obrazu PNG.",
+        "operation_failed": "Nie udało się wykonać działania. Spróbuj ponownie.",
+        "data_tools": "Twoje kody i pliki",
+        "export_archive": "Eksportuj zapisane kody QR jako PDF · ZIP",
+        "export_archive_hint": "Zachowaj ulubione kody w archiwum PDF gotowym do druku.",
+        "export_archive_warning": "Wyeksportowane pliki PDF mogą zawierać zapisane hasła Wi-Fi. Udostępniaj ZIP tylko zaufanym osobom.",
+        "archive_failed": "Nie można utworzyć archiwum ZIP.",
+        "archive_ready": "Archiwum ZIP zapisane.",
+        "privacy_policy": "Polityka prywatności",
+        "terms_of_use": "Warunki korzystania",
+        "terms_summary": "Sprawdzaj adresy QR przed otwarciem. Udostępniaj lub eksportuj tylko kody, do których masz prawa. Archiwa ZIP mogą zawierać hasła Wi-Fi. QREX jest udostępniany bez gwarancji w zakresie dozwolonym prawem. Pomoc: brendigo.com.",
+        "read_full_policy": "Przeczytaj pełną politykę"
       }
     },
     "cs": {
@@ -736,9 +835,20 @@
         "delete_warning": "Historie, uložené kódy a nastavení budou trvale smazány.",
         "language": "Jazyk",
         "system": "Jazyk zařízení",
-        "history_local": "Uloženo v zařízení",
+        "history_local": "Vaše sbírka QR",
         "export_png": "Exportovat PNG",
-        "png_save_failed": "Obrázek PNG nelze uložit."
+        "png_save_failed": "Obrázek PNG nelze uložit.",
+        "operation_failed": "Akce se nezdařila. Zkuste to znovu.",
+        "data_tools": "Vaše kódy a soubory",
+        "export_archive": "Exportovat uložené QR kódy do PDF · ZIP",
+        "export_archive_hint": "Uložte oblíbené kódy do tisknutelného PDF archivu.",
+        "export_archive_warning": "Exportovaná PDF mohou obsahovat uložená hesla Wi-Fi. ZIP sdílejte jen s důvěryhodnými osobami.",
+        "archive_failed": "Archiv ZIP se nepodařilo vytvořit.",
+        "archive_ready": "Archiv ZIP uložen.",
+        "privacy_policy": "Zásady ochrany osobních údajů",
+        "terms_of_use": "Podmínky používání",
+        "terms_summary": "Před otevřením odkazu ověřte cíl QR kódu. Sdílejte jen kódy, k nimž máte oprávnění. ZIP může obsahovat hesla Wi-Fi. QREX se poskytuje bez záruky v rozsahu povoleném zákonem. Podpora: brendigo.com.",
+        "read_full_policy": "Přečíst celé zásady"
       }
     },
     "sk": {
@@ -810,9 +920,20 @@
         "delete_warning": "História, uložené kódy a nastavenia sa natrvalo odstránia.",
         "language": "Jazyk",
         "system": "Jazyk zariadenia",
-        "history_local": "Uložené v zariadení",
+        "history_local": "Vaša zbierka QR",
         "export_png": "Exportovať PNG",
-        "png_save_failed": "Obrázok PNG sa nedá uložiť."
+        "png_save_failed": "Obrázok PNG sa nedá uložiť.",
+        "operation_failed": "Akcia zlyhala. Skúste to znova.",
+        "data_tools": "Vaše kódy a súbory",
+        "export_archive": "Exportovať uložené QR kódy do PDF · ZIP",
+        "export_archive_hint": "Uložte si obľúbené kódy do PDF archívu vhodného na tlač.",
+        "export_archive_warning": "Exportované PDF môžu obsahovať uložené heslá Wi-Fi. ZIP zdieľajte len s dôveryhodnými osobami.",
+        "archive_failed": "Archív ZIP sa nepodarilo vytvoriť.",
+        "archive_ready": "Archív ZIP uložený.",
+        "privacy_policy": "Zásady ochrany osobných údajov",
+        "terms_of_use": "Podmienky používania",
+        "terms_summary": "Pred otvorením odkazu skontrolujte cieľ QR kódu. Zdieľajte len kódy, na ktoré máte oprávnenie. ZIP môže obsahovať heslá Wi-Fi. QREX je poskytovaný bez záruk v rozsahu povolenom zákonom. Podpora: brendigo.com.",
+        "read_full_policy": "Prečítať celé zásady"
       }
     },
     "sl": {
@@ -884,9 +1005,20 @@
         "delete_warning": "Zgodovina, kode in nastavitve bodo trajno izbrisane.",
         "language": "Jezik",
         "system": "Jezik naprave",
-        "history_local": "Shranjeno v tej napravi",
+        "history_local": "Vaša zbirka QR",
         "export_png": "Izvozi PNG",
-        "png_save_failed": "Slike PNG ni mogoče shraniti."
+        "png_save_failed": "Slike PNG ni mogoče shraniti.",
+        "operation_failed": "Dejanje ni uspelo. Poskusite znova.",
+        "data_tools": "Vaše kode in datoteke",
+        "export_archive": "Izvozi shranjene kode QR v PDF · ZIP",
+        "export_archive_hint": "Najljubše kode shranite v arhiv PDF za tiskanje.",
+        "export_archive_warning": "Izvoženi PDF-ji lahko vsebujejo shranjena gesla Wi-Fi. ZIP delite le z osebami, ki jim zaupate.",
+        "archive_failed": "Arhiva ZIP ni bilo mogoče ustvariti.",
+        "archive_ready": "Arhiv ZIP shranjen.",
+        "privacy_policy": "Pravilnik o zasebnosti",
+        "terms_of_use": "Pogoji uporabe",
+        "terms_summary": "Pred odpiranjem povezav preverite cilj kode QR. Delite ali izvažajte le dovoljene kode. ZIP lahko vsebuje gesla Wi-Fi. QREX je na voljo brez jamstev v zakonsko dovoljenem obsegu. Podpora: brendigo.com.",
+        "read_full_policy": "Preberi celoten pravilnik"
       }
     },
     "hu": {
@@ -958,9 +1090,20 @@
         "delete_warning": "Az előzmények, kódok és beállítások végleg törlődnek.",
         "language": "Nyelv",
         "system": "Eszköz nyelve",
-        "history_local": "Ezen az eszközön tárolva",
+        "history_local": "Saját QR-gyűjtemény",
         "export_png": "PNG exportálása",
-        "png_save_failed": "A PNG-kép nem menthető."
+        "png_save_failed": "A PNG-kép nem menthető.",
+        "operation_failed": "A művelet sikertelen. Próbálja újra.",
+        "data_tools": "Kódok és fájlok",
+        "export_archive": "Mentett QR-kódok exportálása PDF · ZIP formátumban",
+        "export_archive_hint": "Kedvenc kódjaid nyomtatható PDF-archívumban tárolhatod.",
+        "export_archive_warning": "Az exportált PDF-ek mentett Wi-Fi-jelszavakat tartalmazhatnak. A ZIP-et csak megbízható személyekkel oszd meg.",
+        "archive_failed": "Nem sikerült létrehozni a ZIP-archívumot.",
+        "archive_ready": "ZIP-archívum mentve.",
+        "privacy_policy": "Adatvédelmi szabályzat",
+        "terms_of_use": "Felhasználási feltételek",
+        "terms_summary": "A hivatkozások megnyitása előtt ellenőrizd a QR-célcímet. Csak engedélyezett kódokat ossz meg. A ZIP Wi-Fi-jelszavakat tartalmazhat. A QREX jogszabály szerint megengedett mértékig garancia nélkül érhető el. Támogatás: brendigo.com.",
+        "read_full_policy": "Teljes szabályzat"
       }
     },
     "ro": {
@@ -1032,9 +1175,20 @@
         "delete_warning": "Istoricul, codurile și setările vor fi șterse definitiv.",
         "language": "Limbă",
         "system": "Limba dispozitivului",
-        "history_local": "Stocat pe acest dispozitiv",
+        "history_local": "Colecția ta QR",
         "export_png": "Exportă PNG",
-        "png_save_failed": "Imaginea PNG nu poate fi salvată."
+        "png_save_failed": "Imaginea PNG nu poate fi salvată.",
+        "operation_failed": "Acțiunea a eșuat. Încercați din nou.",
+        "data_tools": "Codurile și fișierele tale",
+        "export_archive": "Exportă codurile QR salvate în PDF · ZIP",
+        "export_archive_hint": "Păstrează codurile preferate într-o arhivă PDF imprimabilă.",
+        "export_archive_warning": "PDF-urile exportate pot conține parole Wi-Fi salvate. Partajează ZIP-ul doar cu persoane de încredere.",
+        "archive_failed": "Nu s-a putut crea arhiva ZIP.",
+        "archive_ready": "Arhiva ZIP a fost salvată.",
+        "privacy_policy": "Politica de confidențialitate",
+        "terms_of_use": "Termeni de utilizare",
+        "terms_summary": "Verifică destinațiile QR înainte de a deschide linkuri. Distribuie doar codurile pentru care ai permisiune. ZIP-urile pot conține parole Wi-Fi. QREX este oferit fără garanții în limitele legii. Suport: brendigo.com.",
+        "read_full_policy": "Citește politica integrală"
       }
     },
     "bg": {
@@ -1106,9 +1260,20 @@
         "delete_warning": "Историята, кодовете и настройките ще бъдат изтрити завинаги.",
         "language": "Език",
         "system": "Език на устройството",
-        "history_local": "Запазено на устройството",
+        "history_local": "Вашата QR колекция",
         "export_png": "Експортирай PNG",
-        "png_save_failed": "PNG изображението не може да се запази."
+        "png_save_failed": "PNG изображението не може да се запази.",
+        "operation_failed": "Действието е неуспешно. Опитайте отново.",
+        "data_tools": "Вашите кодове и файлове",
+        "export_archive": "Експорт на запазени QR кодове в PDF · ZIP",
+        "export_archive_hint": "Запазете любимите си кодове в PDF архив за печат.",
+        "export_archive_warning": "Експортираните PDF файлове може да съдържат Wi-Fi пароли. Споделяйте ZIP само с доверени лица.",
+        "archive_failed": "ZIP архивът не може да бъде създаден.",
+        "archive_ready": "ZIP архивът е запазен.",
+        "privacy_policy": "Политика за поверителност",
+        "terms_of_use": "Условия за ползване",
+        "terms_summary": "Проверявайте QR адресите преди отваряне. Споделяйте само кодове, за които имате разрешение. ZIP архивите може да съдържат Wi-Fi пароли. QREX се предоставя без гаранции в законовите граници. Поддръжка: brendigo.com.",
+        "read_full_policy": "Прочетете пълната политика"
       }
     },
     "el": {
@@ -1180,9 +1345,20 @@
         "delete_warning": "Το ιστορικό, οι κωδικοί και οι ρυθμίσεις θα διαγραφούν οριστικά.",
         "language": "Γλώσσα",
         "system": "Γλώσσα συσκευής",
-        "history_local": "Αποθηκεύτηκε στη συσκευή",
+        "history_local": "Η συλλογή QR σας",
         "export_png": "Εξαγωγή PNG",
-        "png_save_failed": "Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG."
+        "png_save_failed": "Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG.",
+        "operation_failed": "Η ενέργεια απέτυχε. Δοκιμάστε ξανά.",
+        "data_tools": "Οι κωδικοί και τα αρχεία σας",
+        "export_archive": "Εξαγωγή αποθηκευμένων QR σε PDF · ZIP",
+        "export_archive_hint": "Διατηρήστε τους αγαπημένους κωδικούς σε εκτυπώσιμο αρχείο PDF.",
+        "export_archive_warning": "Τα PDF μπορεί να περιέχουν αποθηκευμένους κωδικούς Wi-Fi. Μοιραστείτε το ZIP μόνο με έμπιστα άτομα.",
+        "archive_failed": "Δεν ήταν δυνατή η δημιουργία του ZIP.",
+        "archive_ready": "Το αρχείο ZIP αποθηκεύτηκε.",
+        "privacy_policy": "Πολιτική απορρήτου",
+        "terms_of_use": "Όροι χρήσης",
+        "terms_summary": "Ελέγχετε τους προορισμούς QR πριν ανοίξετε συνδέσμους. Μοιραστείτε μόνο κωδικούς που επιτρέπεται. Τα ZIP μπορεί να περιέχουν κωδικούς Wi-Fi. Το QREX παρέχεται χωρίς εγγυήσεις στον βαθμό που επιτρέπει ο νόμος. Υποστήριξη: brendigo.com.",
+        "read_full_policy": "Διαβάστε όλη την πολιτική"
       }
     },
     "tr": {
@@ -1254,9 +1430,20 @@
         "delete_warning": "Geçmiş, kayıtlı kodlar ve ayarlar kalıcı olarak silinecek.",
         "language": "Dil",
         "system": "Cihaz dili",
-        "history_local": "Bu cihazda saklanır",
+        "history_local": "QR koleksiyonun",
         "export_png": "PNG dışa aktar",
-        "png_save_failed": "PNG görüntüsü kaydedilemedi."
+        "png_save_failed": "PNG görüntüsü kaydedilemedi.",
+        "operation_failed": "İşlem başarısız oldu. Tekrar deneyin.",
+        "data_tools": "Kodların ve dosyaların",
+        "export_archive": "Kaydedilen QR kodlarını PDF · ZIP olarak dışa aktar",
+        "export_archive_hint": "Favori kodlarını yazdırılabilir bir PDF arşivinde sakla.",
+        "export_archive_warning": "Dışa aktarılan PDF'ler kayıtlı Wi-Fi parolaları içerebilir. ZIP'i yalnızca güvendiğin kişilerle paylaş.",
+        "archive_failed": "ZIP arşivi oluşturulamadı.",
+        "archive_ready": "ZIP arşivi kaydedildi.",
+        "privacy_policy": "Gizlilik Politikası",
+        "terms_of_use": "Kullanım Koşulları",
+        "terms_summary": "Bağlantıları açmadan önce QR hedeflerini kontrol et. Yalnızca izinli kodları paylaş veya dışa aktar. ZIP dosyaları Wi-Fi parolaları içerebilir. QREX yasanın izin verdiği ölçüde garantisiz sunulur. Destek: brendigo.com.",
+        "read_full_policy": "Politikanın tamamını oku"
       }
     },
     "uk": {
@@ -1328,9 +1515,20 @@
         "delete_warning": "Історію, коди й налаштування буде видалено назавжди.",
         "language": "Мова",
         "system": "Мова пристрою",
-        "history_local": "Збережено на пристрої",
+        "history_local": "Ваша QR-колекція",
         "export_png": "Експортувати PNG",
-        "png_save_failed": "Не вдалося зберегти зображення PNG."
+        "png_save_failed": "Не вдалося зберегти зображення PNG.",
+        "operation_failed": "Не вдалося виконати дію. Спробуйте ще раз.",
+        "data_tools": "Ваші коди та файли",
+        "export_archive": "Експортувати збережені QR-коди в PDF · ZIP",
+        "export_archive_hint": "Збережіть улюблені коди в PDF-архіві для друку.",
+        "export_archive_warning": "Експортовані PDF можуть містити паролі Wi-Fi. Діліться ZIP лише з довіреними особами.",
+        "archive_failed": "Не вдалося створити ZIP-архів.",
+        "archive_ready": "ZIP-архів збережено.",
+        "privacy_policy": "Політика конфіденційності",
+        "terms_of_use": "Умови використання",
+        "terms_summary": "Перевіряйте адреси QR перед відкриттям посилань. Діліться лише кодами, на які маєте дозвіл. ZIP може містити паролі Wi-Fi. QREX надається без гарантій у межах закону. Підтримка: brendigo.com.",
+        "read_full_policy": "Прочитати повну політику"
       }
     },
     "ru": {
@@ -1402,9 +1600,20 @@
         "delete_warning": "История, коды и настройки будут удалены навсегда.",
         "language": "Язык",
         "system": "Язык устройства",
-        "history_local": "Сохранено на устройстве",
+        "history_local": "Ваша QR-коллекция",
         "export_png": "Экспорт PNG",
-        "png_save_failed": "Не удалось сохранить изображение PNG."
+        "png_save_failed": "Не удалось сохранить изображение PNG.",
+        "operation_failed": "Не удалось выполнить действие. Попробуйте ещё раз.",
+        "data_tools": "Ваши коды и файлы",
+        "export_archive": "Экспортировать сохранённые QR в PDF · ZIP",
+        "export_archive_hint": "Сохраните избранные коды в PDF-архиве для печати.",
+        "export_archive_warning": "Экспортированные PDF могут содержать пароли Wi-Fi. Делитесь ZIP только с доверенными людьми.",
+        "archive_failed": "Не удалось создать ZIP-архив.",
+        "archive_ready": "ZIP-архив сохранён.",
+        "privacy_policy": "Политика конфиденциальности",
+        "terms_of_use": "Условия использования",
+        "terms_summary": "Проверяйте QR-адреса перед открытием ссылок. Делитесь только разрешёнными кодами. ZIP может содержать пароли Wi-Fi. QREX предоставляется без гарантий в пределах закона. Поддержка: brendigo.com.",
+        "read_full_policy": "Читать политику полностью"
       }
     },
     "sv": {
@@ -1476,9 +1685,20 @@
         "delete_warning": "Historik, sparade koder och inställningar raderas permanent.",
         "language": "Språk",
         "system": "Enhetens språk",
-        "history_local": "Sparas på den här enheten",
+        "history_local": "Din QR-samling",
         "export_png": "Exportera PNG",
-        "png_save_failed": "Det gick inte att spara PNG-bilden."
+        "png_save_failed": "Det gick inte att spara PNG-bilden.",
+        "operation_failed": "Åtgärden misslyckades. Försök igen.",
+        "data_tools": "Dina koder och filer",
+        "export_archive": "Exportera sparade QR-koder som PDF · ZIP",
+        "export_archive_hint": "Spara favoritkoder i ett utskrivbart PDF-arkiv.",
+        "export_archive_warning": "Exporterade PDF-filer kan innehålla sparade wifi-lösenord. Dela ZIP endast med betrodda personer.",
+        "archive_failed": "Det gick inte att skapa ZIP-arkivet.",
+        "archive_ready": "ZIP-arkivet har sparats.",
+        "privacy_policy": "Integritetspolicy",
+        "terms_of_use": "Användarvillkor",
+        "terms_summary": "Kontrollera QR-mål innan du öppnar länkar. Dela eller exportera endast koder du har tillstånd att dela. ZIP kan innehålla wifi-lösenord. QREX erbjuds utan garantier i den mån lagen tillåter. Support: brendigo.com.",
+        "read_full_policy": "Läs hela policyn"
       }
     },
     "da": {
@@ -1550,9 +1770,20 @@
         "delete_warning": "Historik, gemte koder og indstillinger slettes permanent.",
         "language": "Sprog",
         "system": "Enhedens sprog",
-        "history_local": "Gemt på denne enhed",
+        "history_local": "Din QR-samling",
         "export_png": "Eksportér PNG",
-        "png_save_failed": "PNG-billedet kunne ikke gemmes."
+        "png_save_failed": "PNG-billedet kunne ikke gemmes.",
+        "operation_failed": "Handlingen mislykkedes. Prøv igen.",
+        "data_tools": "Dine koder og filer",
+        "export_archive": "Eksportér gemte QR-koder som PDF · ZIP",
+        "export_archive_hint": "Gem favoritkoder i et PDF-arkiv klar til udskrivning.",
+        "export_archive_warning": "Eksporterede PDF-filer kan indeholde gemte Wi-Fi-adgangskoder. Del kun ZIP med personer, du stoler på.",
+        "archive_failed": "ZIP-arkivet kunne ikke oprettes.",
+        "archive_ready": "ZIP-arkivet er gemt.",
+        "privacy_policy": "Privatlivspolitik",
+        "terms_of_use": "Brugsvilkår",
+        "terms_summary": "Kontrollér QR-mål, før du åbner links. Del kun koder, du har tilladelse til at dele. ZIP kan indeholde Wi-Fi-adgangskoder. QREX leveres uden garantier i lovens omfang. Support: brendigo.com.",
+        "read_full_policy": "Læs hele politikken"
       }
     },
     "fi": {
@@ -1624,9 +1855,20 @@
         "delete_warning": "Historia, tallennetut koodit ja asetukset poistetaan pysyvästi.",
         "language": "Kieli",
         "system": "Laitteen kieli",
-        "history_local": "Tallennettu tälle laitteelle",
+        "history_local": "Oma QR-kokoelmasi",
         "export_png": "Vie PNG",
-        "png_save_failed": "PNG-kuvaa ei voitu tallentaa."
+        "png_save_failed": "PNG-kuvaa ei voitu tallentaa.",
+        "operation_failed": "Toiminto epäonnistui. Yritä uudelleen.",
+        "data_tools": "Koodisi ja tiedostosi",
+        "export_archive": "Vie tallennetut QR-koodit PDF · ZIP -muodossa",
+        "export_archive_hint": "Tallenna suosikkikoodisi tulostettavaan PDF-arkistoon.",
+        "export_archive_warning": "Viedyt PDF-tiedostot voivat sisältää tallennettuja Wi-Fi-salasanoja. Jaa ZIP vain luotettaville henkilöille.",
+        "archive_failed": "ZIP-arkistoa ei voitu luoda.",
+        "archive_ready": "ZIP-arkisto tallennettu.",
+        "privacy_policy": "Tietosuojakäytäntö",
+        "terms_of_use": "Käyttöehdot",
+        "terms_summary": "Tarkista QR-kohteet ennen linkkien avaamista. Jaa tai vie vain koodeja, joihin sinulla on lupa. ZIP voi sisältää Wi-Fi-salasanoja. QREX tarjotaan ilman takuita lain sallimissa rajoissa. Tuki: brendigo.com.",
+        "read_full_policy": "Lue koko käytäntö"
       }
     },
     "nb": {
@@ -1698,9 +1940,20 @@
         "delete_warning": "Historikk, lagrede koder og innstillinger slettes permanent.",
         "language": "Språk",
         "system": "Enhetens språk",
-        "history_local": "Lagret på denne enheten",
+        "history_local": "QR-samlingen din",
         "export_png": "Eksporter PNG",
-        "png_save_failed": "Kunne ikke lagre PNG-bildet."
+        "png_save_failed": "Kunne ikke lagre PNG-bildet.",
+        "operation_failed": "Handlingen mislyktes. Prøv igjen.",
+        "data_tools": "Kodene og filene dine",
+        "export_archive": "Eksporter lagrede QR-koder som PDF · ZIP",
+        "export_archive_hint": "Ta vare på favorittkodene i et utskrivbart PDF-arkiv.",
+        "export_archive_warning": "Eksporterte PDF-filer kan inneholde lagrede Wi-Fi-passord. Del bare ZIP med personer du stoler på.",
+        "archive_failed": "Kunne ikke opprette ZIP-arkivet.",
+        "archive_ready": "ZIP-arkivet er lagret.",
+        "privacy_policy": "Personvernerklæring",
+        "terms_of_use": "Bruksvilkår",
+        "terms_summary": "Sjekk QR-mål før du åpner lenker. Del eller eksporter bare koder du har lov til å dele. ZIP kan inneholde Wi-Fi-passord. QREX leveres uten garantier så langt loven tillater. Støtte: brendigo.com.",
+        "read_full_policy": "Les hele erklæringen"
       }
     }
   }

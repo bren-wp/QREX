@@ -66,7 +66,18 @@
     <string name="delete_warning">Το ιστορικό, οι κωδικοί και οι ρυθμίσεις θα διαγραφούν οριστικά.</string>
     <string name="language">Γλώσσα</string>
     <string name="system">Γλώσσα συσκευής</string>
-    <string name="history_local">Αποθηκεύτηκε στη συσκευή</string>
+    <string name="history_local">Η συλλογή QR σας</string>
     <string name="export_png">Εξαγωγή PNG</string>
     <string name="png_save_failed">Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG.</string>
+    <string name="operation_failed">Η ενέργεια απέτυχε. Δοκιμάστε ξανά.</string>
+    <string name="data_tools">Οι κωδικοί και τα αρχεία σας</string>
+    <string name="export_archive">Εξαγωγή αποθηκευμένων QR σε PDF · ZIP</string>
+    <string name="export_archive_hint">Διατηρήστε τους αγαπημένους κωδικούς σε εκτυπώσιμο αρχείο PDF.</string>
+    <string name="export_archive_warning">Τα PDF μπορεί να περιέχουν αποθηκευμένους κωδικούς Wi-Fi. Μοιραστείτε το ZIP μόνο με έμπιστα άτομα.</string>
+    <string name="archive_failed">Δεν ήταν δυνατή η δημιουργία του ZIP.</string>
+    <string name="archive_ready">Το αρχείο ZIP αποθηκεύτηκε.</string>
+    <string name="privacy_policy">Πολιτική απορρήτου</string>
+    <string name="terms_of_use">Όροι χρήσης</string>
+    <string name="terms_summary">Ελέγχετε τους προορισμούς QR πριν ανοίξετε συνδέσμους. Μοιραστείτε μόνο κωδικούς που επιτρέπεται. Τα ZIP μπορεί να περιέχουν κωδικούς Wi-Fi. Το QREX παρέχεται χωρίς εγγυήσεις στον βαθμό που επιτρέπει ο νόμος. Υποστήριξη: brendigo.com.</string>
+    <string name="read_full_policy">Διαβάστε όλη την πολιτική</string>
 </resources>

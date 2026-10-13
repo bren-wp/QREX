@@ -3,12 +3,16 @@ name: Validate QREX localization resources
 on:
   pull_request:
     paths:
+      - "platforms/**"
+      - ".github/workflows/**"
       - "l10n/**"
       - "platforms/android/app/src/main/res/values*/strings.xml"
       - "platforms/ios/QREX/*.lproj/Localizable.strings"
       - "tool/generate_localizations.py"
       - "tool/check_translation_usage.py"
       - ".github/workflows/generate-localizations.yml"
+      - "tool/publish_native_rc.sh"
+      - ".github/workflows/release-native-preview.yml"
   push:
     branches: [main]
     paths:

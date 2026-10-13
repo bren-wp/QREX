@@ -1,0 +1,38 @@
+name: Publish verified native QREX RC
+
+on:
+  push:
+    branches: [fix/native-release-hardening-20261013]
+    paths:
+      - "platforms/**"
+      - "tool/**"
+      - "l10n/**"
+      - "README.md"
+      - "docs/releases/v0.2.0-rc.1.md"
+      - ".github/workflows/release-native-preview.yml"
+      - ".github/workflows/native-platforms.yml"
+      - ".github/workflows/capture-screenshots.yml"
+      - ".github/workflows/generate-localizations.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: qrex-native-rc-preview
+  cancel-in-progress: true
+
+jobs:
+  candidate:
+    name: Verified QREX pre-release (never a signed store build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CI_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check publication script syntax
+        run: bash -n tool/publish_native_rc.sh
+      - name: Gate and publish verified candidate
+        run: bash tool/publish_native_rc.sh

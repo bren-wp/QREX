@@ -152,4 +152,98 @@ class QREXStorageTest {
         assertFalse(prefs.contains("history"))
     }
 
+    @Test
+    fun unchangedWifiCiphertextIsNotReencryptedForUnrelatedChanges() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val secret = QRContent.wifi("Office", "keep-encrypted")
+        store.save(secret)
+        val preferences = context.getSharedPreferences("qrex.user", 0)
+        val first = org.json.JSONArray(preferences.getString("history", "[]"))
+            .getJSONObject(0).getString("raw")
+        assertTrue(first.startsWith("qrex-gcm:v1:"))
+        store.save("https://example.com/new")
+        val secondHistory = org.json.JSONArray(preferences.getString("history", "[]"))
+        val second = (0 until secondHistory.length()).map {
+            secondHistory.getJSONObject(it).getString("raw")
+        }.single { it.startsWith("qrex-gcm:v1:") }
+        assertEquals(first, second)
+        assertFalse(preferences.getString("history", "").orEmpty().contains("keep-encrypted"))
+        val restored = QREXStore(context)
+        assertTrue(restored.items.any { it.raw == secret })
+        assertTrue(restored.clearAll())
+    }
+
+    @Test
+    fun oversizedQrCannotPoisonPersistentHistory() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val malformed = "x".repeat(10001)
+        assertFalse(store.save(malformed))
+        store.record(malformed)
+        assertTrue(store.items.isEmpty())
+        assertTrue(QREXStore(context).items.isEmpty())
+        assertTrue(store.clearAll())
+    }
+
+    @Test
+    fun fullSavedHistoryNeverEvictsFavoritesOrAcceptsInvisibleNewEntry() {
+        val context = androidx.test.platform.app.InstrumentationRegistry
+            .getInstrumentation().targetContext
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val legacy = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(prefs.edit().clear().commit())
+        assertTrue(legacy.edit().clear().commit())
+        val initial = org.json.JSONArray()
+        for (i in 0 until 250) {
+            initial.put(org.json.JSONObject()
+                .put("raw", "https://example.com/favorite/$i")
+                .put("timestamp", i.toLong())
+                .put("saved", true))
+        }
+        assertTrue(prefs.edit().putString("history", initial.toString()).commit())
+        val store = QREXStore(context)
+        assertEquals(250, store.items.size)
+        assertFalse(store.save("https://example.org/251"))
+        store.record("https://example.org/auto-scan")
+        assertEquals(250, store.items.size)
+        assertTrue(store.items.all { it.saved })
+        assertTrue(store.items.any { it.raw == "https://example.com/favorite/249" })
+        assertEquals(initial.toString(), prefs.getString("history", null))
+        assertTrue(store.clearAll())
+    }
+
+    @Test
+    fun savedQrPdfZipExportContainsRealPrintablePdfAndNoUnsafeEntryNames() {
+        val document = java.io.File.createTempFile("qrex-export-", ".zip", context.cacheDir)
+        try {
+            val records = listOf(
+                QRRecord("https://brendigo.com", 0L, true),
+                QRRecord(QRContent.wifi("Guest", "private-secret"), 0L, true)
+            )
+            assertTrue(QREXDocuments.exportSavedPdfZip(
+                context, records, android.net.Uri.fromFile(document)
+            ))
+            var checked = 0
+            java.util.zip.ZipInputStream(document.inputStream().buffered()).use { zip ->
+                while (true) {
+                    val entry = zip.nextEntry ?: break
+                    assertEquals("QREX-Saved-Codes.pdf", entry.name)
+                    val bytes = zip.readBytes()
+                    assertTrue(bytes.take(5).toByteArray().contentEquals("%PDF-".toByteArray()))
+                    assertTrue(bytes.size > 1000)
+                    zip.closeEntry()
+                    checked++
+                }
+            }
+            // Both native editions now export one multi-page PDF per ZIP.
+            assertEquals(1, checked)
+            assertFalse(document.readBytes().toString(Charsets.ISO_8859_1).contains("private-secret"))
+            assertFalse(QREXDocuments.exportSavedPdfZip(
+                context, emptyList(), android.net.Uri.fromFile(document)))
+        } finally {
+            document.delete()
+        }
+    }
+
 }

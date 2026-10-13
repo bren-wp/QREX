@@ -66,7 +66,18 @@
     <string name="delete_warning">Az előzmények, kódok és beállítások végleg törlődnek.</string>
     <string name="language">Nyelv</string>
     <string name="system">Eszköz nyelve</string>
-    <string name="history_local">Ezen az eszközön tárolva</string>
+    <string name="history_local">Saját QR-gyűjtemény</string>
     <string name="export_png">PNG exportálása</string>
     <string name="png_save_failed">A PNG-kép nem menthető.</string>
+    <string name="operation_failed">A művelet sikertelen. Próbálja újra.</string>
+    <string name="data_tools">Kódok és fájlok</string>
+    <string name="export_archive">Mentett QR-kódok exportálása PDF · ZIP formátumban</string>
+    <string name="export_archive_hint">Kedvenc kódjaid nyomtatható PDF-archívumban tárolhatod.</string>
+    <string name="export_archive_warning">Az exportált PDF-ek mentett Wi-Fi-jelszavakat tartalmazhatnak. A ZIP-et csak megbízható személyekkel oszd meg.</string>
+    <string name="archive_failed">Nem sikerült létrehozni a ZIP-archívumot.</string>
+    <string name="archive_ready">ZIP-archívum mentve.</string>
+    <string name="privacy_policy">Adatvédelmi szabályzat</string>
+    <string name="terms_of_use">Felhasználási feltételek</string>
+    <string name="terms_summary">A hivatkozások megnyitása előtt ellenőrizd a QR-célcímet. Csak engedélyezett kódokat ossz meg. A ZIP Wi-Fi-jelszavakat tartalmazhat. A QREX jogszabály szerint megengedett mértékig garancia nélkül érhető el. Támogatás: brendigo.com.</string>
+    <string name="read_full_policy">Teljes szabályzat</string>
 </resources>

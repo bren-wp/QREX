@@ -34,6 +34,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,8 +108,8 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
                         label = { Text(label) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = cyan, selectedTextColor = cyan,
-                            unselectedIconColor = Color.LightGray,
-                            unselectedTextColor = Color.LightGray))
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
                 }
             }
         }) { padding ->
@@ -138,7 +139,7 @@ private fun AppHeader(title: String, subtitle: String) {
         Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp,
             color = MaterialTheme.colorScheme.onBackground)
         Spacer(Modifier.height(6.dp))
-        Text(subtitle, fontSize = 13.sp, color = Color(0xFF9FB1CC))
+        Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -164,22 +165,33 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val shareTitle = tr("share")
     val savedMessage = tr("saved")
     val exportFailedMessage = tr("png_save_failed")
-    val exportBitmap by produceState<Bitmap?>(initialValue = null, key1 = raw) {
-        value = withContext(Dispatchers.Default) { generateQR(raw) }
+    val operationFailed = tr("operation_failed")
+    val exportScope = rememberCoroutineScope()
+    // Associate each bitmap with its exact payload: stale frames must never
+    // be exported after a user switches to a different QR result.
+    val exportFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = raw) {
+        value = null
+        val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
+        value = bitmap?.let { raw to it }
     }
+    val exportBitmap = exportFrame?.takeIf { it.first == raw }?.second
     val pngExport = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("image/png")
     ) { uri ->
         if (uri != null) {
-            runCatching {
-                val image = exportBitmap ?: error("Missing QR bitmap")
-                context.contentResolver.openOutputStream(uri)?.use { stream ->
-                    check(image.compress(Bitmap.CompressFormat.PNG, 100, stream))
-                } ?: error("Cannot open document")
-            }.onSuccess {
-                Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
-            }.onFailure {
-                Toast.makeText(context, exportFailedMessage, Toast.LENGTH_SHORT).show()
+            // Content providers may block. Never compress or write on the UI thread.
+            val image = exportBitmap
+            exportScope.launch {
+                val saved = withContext(Dispatchers.IO) {
+                    runCatching {
+                        val bitmap = image ?: error("Missing QR bitmap")
+                        context.contentResolver.openOutputStream(uri)?.use { stream ->
+                            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
+                        } ?: error("Cannot open document")
+                    }.isSuccess
+                }
+                Toast.makeText(context, if (saved) savedMessage else exportFailedMessage,
+                    Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -206,7 +218,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 } else {
                     Text(raw, color = MaterialTheme.colorScheme.onSurface)
                     if (url != null) Text(tr("check_url"),
-                        color = Color.LightGray, fontSize = 12.sp)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
             }
         }
@@ -249,7 +261,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
-            if (wifi) confirmWifiSave = true else store.save(raw)
+            if (wifi) confirmWifiSave = true
+            else if (!store.save(raw)) {
+                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            }
         }
         Spacer(Modifier.height(10.dp))
         TextButton(onClick = onClose) { Text(tr("close")) }
@@ -259,7 +274,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             title = { Text(tr("wifi_save_title")) },
             text = { Text(tr("wifi_save_warning")) },
             confirmButton = { TextButton(onClick = {
-                store.save(raw); confirmWifiSave = false
+                if (!store.save(raw)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                }
+                confirmWifiSave = false
             }) { Text(tr("save")) } },
             dismissButton = { TextButton(onClick = { confirmWifiSave = false }) { Text(tr("cancel")) } })
     }
@@ -293,6 +311,9 @@ fun generateQR(raw: String): Bitmap? {
 
 @Composable
 private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, onResult: (String) -> Unit) {
+    val context = LocalContext.current
+    val operationFailed = tr("operation_failed")
+    var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
     var kind by remember { mutableIntStateOf(0) }
     var content by remember { mutableStateOf(if (screenshotCreate) "https://brendigo.com" else "") }
@@ -311,10 +332,14 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             "BEGIN:VCARD\nVERSION:3.0\nFN:${input.replace("\n", " ")}\nEND:VCARD"
     }
     // Cancel obsolete renders when the user keeps typing; avoid blocking the UI thread.
-    val qr by produceState<Bitmap?>(initialValue = null, key1 = payload) {
+    // A previous preview cannot be used for another payload while typing.
+    val qrFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = payload) {
+        value = null
         delay(140)
-        value = withContext(Dispatchers.Default) { generateQR(payload) }
+        val image = withContext(Dispatchers.Default) { generateQR(payload) }
+        value = image?.let { payload to it }
     }
+    val qr = qrFrame?.takeIf { it.first == payload }?.second
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
@@ -351,7 +376,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                     }
                 })
             Text(tr("wifi_warning"), fontSize = 12.sp,
-                color = Color.LightGray)
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.height(18.dp))
         Surface(shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surface,
@@ -362,19 +387,40 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 val previewBitmap = qr
                 if (previewBitmap != null) Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                     modifier = Modifier.size(238.dp).background(white).padding(14.dp))
-                else Text(tr("invalid_content"), color = Color.LightGray)
+                else Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(tr("show_qr"), enabled = qr != null) { onResult(payload) }
         Spacer(Modifier.height(10.dp))
-        OutlinedButton(onClick = { store.save(payload) }, enabled = qr != null,
+        OutlinedButton(onClick = {
+            if (QRContent.isWifi(payload)) confirmWifiSave = true
+            else if (!store.save(payload)) {
+                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            }
+        }, enabled = qr != null,
             modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
+    }
+    if (confirmWifiSave) {
+        AlertDialog(onDismissRequest = { confirmWifiSave = false },
+            title = { Text(tr("wifi_save_title")) },
+            text = { Text(tr("wifi_save_warning")) },
+            confirmButton = { TextButton(onClick = {
+                if (!store.save(payload)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                }
+                confirmWifiSave = false
+            }) { Text(tr("save")) } },
+            dismissButton = { TextButton(onClick = { confirmWifiSave = false }) {
+                Text(tr("cancel"))
+            } })
     }
 }
 
 @Composable
 private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
+    val context = LocalContext.current
+    val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
     val found = store.items.filter { QRContent.label(it.raw).contains(search, ignoreCase = true) }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
@@ -383,7 +429,7 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
             label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(12.dp))
         if (found.isEmpty()) {
-            Text(tr("no_saved"), color = Color.LightGray)
+            Text(tr("no_saved"), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(found, key = { it.raw }) { item ->
@@ -393,11 +439,15 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                             Column(horizontalAlignment = Alignment.Start) {
                                 Text(QRContent.label(item.raw), color = MaterialTheme.colorScheme.onSurface)
                                 Text(DateFormat.getDateTimeInstance().format(Date(item.timestamp)),
-                                    color = Color.LightGray, fontSize = 11.sp)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
-                        IconButton(onClick = { store.remove(item) }) {
-                            Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = Color.LightGray)
+                        IconButton(onClick = {
+                            if (!store.remove(item)) {
+                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                            }
+                        }) {
+                            Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -409,8 +459,29 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
 @Composable
 private fun MoreScreen(store: QREXStore) {
     val context = LocalContext.current
+    val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
+    var showTerms by remember { mutableStateOf(false) }
+    var confirmExport by remember { mutableStateOf(false) }
+    val archiveScope = rememberCoroutineScope()
+    val exportFailed = tr("archive_failed")
+    val exportReady = tr("archive_ready")
+    val exportZip = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/zip")
+    ) { destination ->
+        if (destination != null) {
+            // Snapshot chosen at user confirmation, never read while writing.
+            val records = store.items.filter { it.saved }.toList()
+            archiveScope.launch {
+                val exported = withContext(Dispatchers.IO) {
+                    QREXDocuments.exportSavedPdfZip(context, records, destination)
+                }
+                Toast.makeText(context, if (exported) exportReady else exportFailed,
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     var languageMenu by remember { mutableStateOf(false) }
     val selectedLanguage = store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
@@ -426,10 +497,16 @@ private fun MoreScreen(store: QREXStore) {
             Text(tr("light_theme"), Modifier.weight(1f))
             Switch(checked = store.lightMode, onCheckedChange = store::updateLightMode)
         }
+        Spacer(Modifier.height(12.dp))
+        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        OutlinedButton(
+            onClick = { confirmExport = true },
+            enabled = store.items.any { it.saved },
+            modifier = Modifier.fillMaxWidth()
+        ) { Text(tr("export_archive")) }
         OutlinedButton(onClick = { showDelete = true }) { Text(tr("delete_all")) }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy")) }
         Spacer(Modifier.height(20.dp))
         Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Box {
@@ -447,18 +524,48 @@ private fun MoreScreen(store: QREXStore) {
         }
         Spacer(Modifier.height(16.dp))
         Text(tr("about"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text("QREX", color = Color.LightGray)
+        Text("QREX", color = MaterialTheme.colorScheme.onSurfaceVariant)
         TextButton(onClick = {
             openLink(context, Uri.parse("https://brendigo.com"))
         }) { Text(tr("developed_by")) }
+        Spacer(Modifier.height(20.dp))
+        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
+        TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
     }
+    if (confirmExport) AlertDialog(onDismissRequest = { confirmExport = false },
+        title = { Text(tr("export_archive")) },
+        text = { Text(tr("export_archive_warning")) },
+        confirmButton = { TextButton(onClick = {
+            confirmExport = false
+            exportZip.launch("QREX-Saved-Codes.zip")
+        }) { Text(tr("export_archive")) } },
+        dismissButton = { TextButton(onClick = { confirmExport = false }) {
+            Text(tr("cancel"))
+        } })
     if (showDelete) AlertDialog(onDismissRequest = { showDelete = false },
         title = { Text(tr("confirm_delete")) },
         text = { Text(tr("delete_warning")) },
-        confirmButton = { TextButton(onClick = { store.clearAll(); showDelete = false }) { Text(tr("delete_all")) } },
+        confirmButton = { TextButton(onClick = {
+            if (store.clearAll()) showDelete = false
+            else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+        }) { Text(tr("delete_all")) } },
         dismissButton = { TextButton(onClick = { showDelete = false }) { Text(tr("cancel")) } })
     if (showPrivacy) AlertDialog(onDismissRequest = { showPrivacy = false },
-        title = { Text(tr("privacy")) },
+        title = { Text(tr("privacy_policy")) },
         text = { Text(tr("privacy_summary")) },
-        confirmButton = { TextButton(onClick = { showPrivacy = false }) { Text(tr("close")) } })
+        confirmButton = { TextButton(onClick = { showPrivacy = false }) {
+            Text(tr("close"))
+        } },
+        dismissButton = { TextButton(onClick = {
+            showPrivacy = false
+            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md"))
+        }) { Text(tr("read_full_policy")) } })
+    if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
+        title = { Text(tr("terms_of_use")) },
+        text = { Text(tr("terms_summary")) },
+        confirmButton = { TextButton(onClick = { showTerms = false }) {
+            Text(tr("close"))
+        } })
 }

@@ -5,7 +5,6 @@ The runner executes newline-separated commands in separate /bin/sh sessions,
 so shell control flow must be called from one standalone script.
 """
 from pathlib import Path
-import re
 import subprocess
 import unittest
 
