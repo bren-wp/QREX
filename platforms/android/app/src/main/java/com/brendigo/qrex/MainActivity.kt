@@ -565,7 +565,7 @@ private fun MoreScreen(store: QREXStore) {
         } },
         dismissButton = { TextButton(onClick = {
             showPrivacy = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md"))
+            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md"))
         }) { Text(tr("read_full_policy")) } })
     if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
         title = { Text(tr("terms_of_use")) },
@@ -575,6 +575,6 @@ private fun MoreScreen(store: QREXStore) {
         } },
         dismissButton = { TextButton(onClick = {
             showTerms = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md"))
+            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"))
         }) { Text(tr("terms_of_use")) } })
 }
