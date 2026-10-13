@@ -63,6 +63,46 @@ final class QREXCoreTests: XCTestCase {
     }
 
     @MainActor
+    func testFlutterFavoriteUpgradesExistingUnsavedQrWithoutChangingIdentity() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let shared = "https://example.com/shared"
+        initial.record(shared)
+        let original = try! XCTUnwrap(initial.items.first)
+        XCTAssertFalse(original.saved)
+
+        let old = """
+        [{"raw":"https://example.com/shared","date":"2026-10-09T10:12:13.123","saved":true}]
+        """
+        UserDefaults.standard.set(old, forKey: "flutter.qrex_history_v1")
+        let migrated = QREXStore()
+        XCTAssertEqual(migrated.items.count, 1)
+        XCTAssertEqual(migrated.items.first?.id, original.id)
+        XCTAssertTrue(migrated.items.first?.saved == true)
+        XCTAssertNil(UserDefaults.standard.string(forKey: "flutter.qrex_history_v1"))
+        XCTAssertTrue(QREXStore().items.first?.saved == true)
+        XCTAssertTrue(migrated.clearAll())
+    }
+
+    @MainActor
+    func testRepeatedFlutterQrKeepsSavedStatusAcrossDuplicateRows() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let raw = "https://example.com/legacy-duplicate"
+        let old = """
+        [{"raw":"https://example.com/legacy-duplicate","date":"2026-10-09T10:12:13.123","saved":false},
+         {"raw":"https://example.com/legacy-duplicate","date":"2026-10-09T10:12:14.123","saved":true}]
+        """
+        UserDefaults.standard.set(old, forKey: "flutter.qrex_history_v1")
+        let migrated = QREXStore()
+        XCTAssertEqual(migrated.items.count, 1)
+        XCTAssertEqual(migrated.items.first?.raw, raw)
+        XCTAssertTrue(migrated.items.first?.saved == true)
+        XCTAssertTrue(QREXStore().items.first?.saved == true)
+        XCTAssertTrue(migrated.clearAll())
+    }
+
+    @MainActor
     func testNoAutomaticWifiHistory() {
         let store = QREXStore()
         store.clearAll()
