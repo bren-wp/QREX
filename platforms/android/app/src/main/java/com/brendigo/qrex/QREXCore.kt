@@ -78,6 +78,9 @@ class QREXStore(context: Context) {
         context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
     // Corrupt or temporarily undecryptable history must never be overwritten.
     private var historyReadable = true
+    // Reuse authenticated ciphertext of unchanged Wi-Fi records on subsequent
+    // edits instead of performing up to 250 Keystore encryptions per tap.
+    private val protectedWifi = mutableMapOf<String, String>()
     val items = mutableStateListOf<QRRecord>()
     var historyEnabled by mutableStateOf(preferences.getBoolean("historyEnabled", true))
         private set
@@ -105,6 +108,7 @@ class QREXStore(context: Context) {
                 require(raw.isNotBlank() && raw.length <= 10000)
                 // Keep duplicate identities once; this is a no-loss canonicalization.
                 if (!seen.add(raw)) continue
+                if (encrypted && QRContent.isWifi(raw)) protectedWifi[raw] = value
                 if (QRContent.isWifi(raw) && !encrypted) {
                     upgradeNeeded = true
                     require(QREXSecretCipher.available())
@@ -114,6 +118,7 @@ class QREXStore(context: Context) {
         }.onFailure {
             historyReadable = false
             items.clear()
+            protectedWifi.clear()
         }
         if (upgradeNeeded && historyReadable) {
             // Replace plaintext legacy Wi-Fi records only after encryption and
@@ -221,6 +226,7 @@ class QREXStore(context: Context) {
         if (!legacyCleared || !preferences.edit().clear().commit()) return false
         historyReadable = true
         items.clear()
+        protectedWifi.clear()
         historyEnabled = true
         lightMode = false
         language = "en"
@@ -246,13 +252,22 @@ class QREXStore(context: Context) {
     private fun persist(records: List<QRRecord> = items): Boolean {
         if (!historyReadable) return false
         val array = JSONArray()
+        val nextProtected = mutableMapOf<String, String>()
         for (item in records) {
-            val protected = if (QRContent.isWifi(item.raw))
-                QREXSecretCipher.encrypt(item.raw) ?: return false
-            else item.raw
-            array.put(JSONObject().put("raw", protected)
+            val value = if (QRContent.isWifi(item.raw)) {
+                // Ciphertext already authenticated during load; retaining it
+                // for unchanged data avoids expensive KeyStore round-trips.
+                val ciphertext = protectedWifi[item.raw]
+                    ?: QREXSecretCipher.encrypt(item.raw) ?: return false
+                nextProtected[item.raw] = ciphertext
+                ciphertext
+            } else item.raw
+            array.put(JSONObject().put("raw", value)
                 .put("timestamp", item.timestamp).put("saved", item.saved))
         }
-        return preferences.edit().putString("history", array.toString()).commit()
+        if (!preferences.edit().putString("history", array.toString()).commit()) return false
+        protectedWifi.clear()
+        protectedWifi.putAll(nextProtected)
+        return true
     }
 }
