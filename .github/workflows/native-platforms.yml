@@ -141,3 +141,19 @@ jobs:
             -destination "platform=iOS Simulator,id=$DEVICE" \
             -derivedDataPath build -parallel-testing-enabled NO \
             CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=YES test
+      - name: Build unsigned iOS device archive as a signing QA candidate
+        working-directory: platforms/ios
+        run: |
+          xcodebuild -project QREX.xcodeproj -scheme QREX \
+            -configuration Release -destination "generic/platform=iOS" \
+            -archivePath build/QREX-unsigned.xcarchive -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO archive
+          test -s build/QREX-unsigned.xcarchive/Products/Applications/QREX.app/QREX
+          plutil -lint build/QREX-unsigned.xcarchive/Products/Applications/QREX.app/PrivacyInfo.xcprivacy
+      - name: Upload unsigned iOS device archive (not an IPA)
+        uses: actions/upload-artifact@v4
+        with:
+          name: QREX-iOS-unsigned-archive-QA
+          path: platforms/ios/build/QREX-unsigned.xcarchive
+          if-no-files-found: error
+
