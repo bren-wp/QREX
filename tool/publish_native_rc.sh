@@ -29,7 +29,7 @@ screen_run=""
 for attempt in $(seq 1 100); do
   check_current_head
   ready=true
-  for workflow in native-platforms.yml capture-screenshots.yml generate-localizations.yml; do
+  for workflow in native-platforms.yml capture-screenshots.yml generate-localizations.yml mobile.yml; do
     entry="$(gh run list --repo "$GITHUB_REPOSITORY" \
       --workflow "$workflow" --branch "$BRANCH" --limit 50 \
       --json databaseId,headSha,status,conclusion |
