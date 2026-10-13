@@ -99,7 +99,10 @@ final class QREXStore: ObservableObject {
         }
         var stored = QREXHistoryVault.read()
         if let legacy, stored == nil {
-            if QREXHistoryVault.write(legacy) {
+            // Never delete a legacy record before proving it is readable.
+            // A corrupt payload needs to remain available for recovery.
+            if (try? JSONDecoder().decode([QRHistoryItem].self, from: legacy)) != nil,
+               QREXHistoryVault.write(legacy) {
                 defaults.removeObject(forKey: "qrex.history")
                 stored = legacy
             } else {
@@ -115,7 +118,11 @@ final class QREXStore: ObservableObject {
             var unique: Set<String> = []
             items = Array(loaded.filter { unique.insert($0.raw).inserted && $0.raw.count <= 10000 }.prefix(250))
         }
-        migrateFlutterV1(defaults)
+        // A failed legacy Keychain migration must not be bypassed by writing
+        // a second Flutter payload and later deleting the first record.
+        if legacy == nil || stored != nil {
+            migrateFlutterV1(defaults)
+        }
     }
 
     private func migrateFlutterV1(_ defaults: UserDefaults) {
