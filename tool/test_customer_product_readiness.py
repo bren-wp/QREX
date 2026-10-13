@@ -56,6 +56,15 @@ class CustomerProductReadinessTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/PRIVACY.md").exists())
         self.assertTrue((ROOT / "docs/TERMS.md").exists())
 
+    def test_screenshot_test_fixtures_are_debug_only(self):
+        kotlin = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
+        swift = (IOS / "QREXView.swift").read_text("utf-8")
+        screenshots = (ROOT / ".github/workflows/capture-screenshots.yml").read_text("utf-8")
+        self.assertIn("ApplicationInfo.FLAG_DEBUGGABLE", kotlin)
+        self.assertIn("#if DEBUG", swift)
+        self.assertIn("ScreenshotFixture.enabled", swift)
+        self.assertIn("Debug-iphonesimulator", screenshots)
+
     def test_pdf_zip_exports_dont_require_third_party_storage_permissions(self):
         text = (ROOT / "platforms/android/app/src/main/AndroidManifest.xml").read_text("utf-8")
         for forbidden in ("READ_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",

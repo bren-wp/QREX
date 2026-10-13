@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""Prevent accidental stable releases or unsigned APK/AAB store claims."""
+from pathlib import Path
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class ReleaseIntegrityTests(unittest.TestCase):
+    def test_no_legacy_flutter_automatic_release_workflow(self):
+        self.assertFalse((ROOT / ".github/workflows/release.yml").exists())
+
+    def test_release_rc_is_provenance_checked_and_classified(self):
+        script = (ROOT / "tool/publish_native_rc.sh").read_text("utf-8")
+        workflow = (ROOT / ".github/workflows/release-native-preview.yml").read_text("utf-8")
+        self.assertIn("gh release create", script)
+        self.assertIn("--prerelease", script)
+        self.assertIn("make_latest=false", script)
+        self.assertIn("prerelease=true", script)
+        self.assertIn("check_current_head", script)
+        for check in ("native-platforms.yml", "capture-screenshots.yml",
+                      "generate-localizations.yml"):
+            self.assertIn(check, script)
+        for text in ("v0.2.1-rc.1", "v0.2.0-rc.1", "gh api -X PATCH",
+                     "contents: write"):
+            self.assertIn(text, workflow)
+        self.assertIn("test -s dist/android/aab/app-release.aab", script)
+        self.assertIn("test -s dist/ios/archive/Products/Applications/QREX.app/QREX", script)
+
+    def test_native_build_version_monotonicity_and_release_notes(self):
+        gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
+        ios = (ROOT / "platforms/ios/project.yml").read_text("utf-8")
+        self.assertIn("versionCode = 6", gradle)
+        self.assertIn('versionName = "0.2.1"', gradle)
+        self.assertIn('CURRENT_PROJECT_VERSION: "6"', ios)
+        self.assertIn('MARKETING_VERSION: "0.2.1"', ios)
+        self.assertTrue((ROOT / "docs/releases/v0.2.1-rc.1.md").exists())
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -246,4 +246,39 @@ class QREXStorageTest {
         }
     }
 
+    @Test
+    fun literalCryptoPrefixQrTextDoesNotLockUserHistoryAfterRestart() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        // This is ordinary QR text, not an encrypted Wi-Fi record.
+        val literal = "qrex-gcm:v1:not-a-secret:not-a-ciphertext"
+        assertTrue(store.save(literal))
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val saved = org.json.JSONArray(prefs.getString("history", "[]"))
+            .getJSONObject(0)
+        assertFalse(saved.getBoolean("protected"))
+        assertEquals(literal, saved.getString("raw"))
+        val reopened = QREXStore(context)
+        assertTrue(reopened.items.any { it.raw == literal && it.saved })
+        assertTrue(reopened.save("https://example.org/after-restart"))
+        assertEquals(2, reopened.items.size)
+        assertTrue(reopened.clearAll())
+    }
+
+    @Test
+    fun newWifiHistoryEntryExplicitlyMarksProtectedCiphertext() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val secret = QRContent.wifi("Secure guest", "password-never-in-preferences")
+        assertTrue(store.save(secret))
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val row = org.json.JSONArray(prefs.getString("history", "[]")).getJSONObject(0)
+        assertTrue(row.getBoolean("protected"))
+        assertTrue(row.getString("raw").startsWith("qrex-gcm:v1:"))
+        assertFalse(prefs.getString("history", "").orEmpty().contains("password-never-in-preferences"))
+        val reloaded = QREXStore(context)
+        assertTrue(reloaded.items.any { it.raw == secret })
+        assertTrue(reloaded.clearAll())
+    }
+
 }

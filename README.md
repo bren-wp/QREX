@@ -10,7 +10,7 @@ Scan what matters, turn everyday information into a QR code, and keep the things
 
 <br>
 
-[**Get QREX for Android**](https://github.com/bren-wp/Qivio/releases/latest) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
+[**Get QREX for Android**](https://github.com/bren-wp/Qivio/releases) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
 
 <br>
 
@@ -51,7 +51,7 @@ Whether you're scanning a code from the camera, sharing your Wi-Fi details, or m
 | **🔖 Keep the useful ones** | Save favorite codes, search local history and clear your information. |
 | **🎨 Make it yours** | Choose light or dark appearance and a language that feels familiar. |
 | **📱 Share anywhere** | Copy results, send a code or export its QR artwork with the system share options. |
-| **📄 Keep a beautiful record** | Save your favorite QR codes as printable PDF documents packed into one ZIP archive in the upcoming Android and iPhone editions. |
+| **📄 Keep a beautiful record** | Save favorite QR codes as printable PDF documents in one ZIP archive, with export only when you ask. |
 
 ## Designed for everyday moments
 
@@ -79,7 +79,7 @@ Your everyday QR experience shouldn't require handing over personal information.
 - **You choose what to keep** — saved QR codes and history are under your control.
 - **You decide what to open or share** — scanning a link never automatically opens it.
 
-The current public Android edition and the upcoming dedicated Android/iOS editions have different storage implementations. In the newer editions, manually saved Wi-Fi QR credentials are protected using Android Keystore or the iOS Keychain. Please consult the [privacy policy](docs/PRIVACY.md) for the edition you install.
+The Android and iPhone editions use protected storage for manually saved Wi-Fi QR credentials: Android Keystore and iOS Keychain. The earlier Flutter Android edition has a different storage design. Exported PDF/ZIP files are **not encrypted**, so choose a destination you trust. Read the [privacy policy](docs/PRIVACY.md).
 
 ## Get QREX
 
@@ -87,13 +87,13 @@ The current public Android edition and the upcoming dedicated Android/iOS editio
 
 ### Android
 
-**[Download the latest public Android APK →](https://github.com/bren-wp/Qivio/releases/latest)**
+**[Explore Android builds →](https://github.com/bren-wp/Qivio/releases)**
 
-Latest published edition: **v0.1.3**. See the release page for its verified APK and checksum.
+The earlier **v0.1.3** Flutter APK remains the last legacy edition. **v0.2.0 RC1** is a dedicated Android **testing preview**, not a Google Play-signed release. Its download page includes the APK, checksums and actual device-emulator screenshots.
 
 ### iPhone & iPad
 
-A dedicated iOS edition is in validation and is **not yet publicly available on the App Store**.
+The dedicated iPhone edition is in validation. A reviewable unsigned iOS archive is available with the RC1 preview; **an App Store-installable version is not yet available**.
 
 <br>
 

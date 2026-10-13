@@ -13,6 +13,13 @@ on:
       - "tool/publish_native_rc.sh"
       - ".github/workflows/release-native-preview.yml"
       - ".github/workflows/capture-screenshots.yml"
+  push:
+    branches: [main]
+    paths:
+      - "platforms/**"
+      - "tool/**"
+      - "l10n/**"
+      - ".github/workflows/capture-screenshots.yml"
   workflow_dispatch:
 
 permissions:
@@ -84,7 +91,7 @@ jobs:
       - name: Compile standalone SwiftUI app
         working-directory: platforms/ios
         run: |
-          xcodebuild -project QREX.xcodeproj -scheme QREX -configuration Release \
+          xcodebuild -project QREX.xcodeproj -scheme QREX -configuration Debug \
             -sdk iphonesimulator -destination "generic/platform=iOS Simulator" \
             -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
       - name: Run QREX and capture actual display pixels
@@ -99,7 +106,7 @@ jobs:
           )
           xcrun simctl boot "$DEVICE"
           xcrun simctl bootstatus "$DEVICE" -b
-          xcrun simctl install "$DEVICE" platforms/ios/build/Build/Products/Release-iphonesimulator/QREX.app
+          xcrun simctl install "$DEVICE" platforms/ios/build/Build/Products/Debug-iphonesimulator/QREX.app
           xcrun simctl launch "$DEVICE" com.brendigo.qrex -qrex-screenshot-create
           sleep 10
           mkdir -p docs/screenshots

@@ -41,8 +41,8 @@ def check_configuration(
         issues.append("iOS bundle ID unexpectedly changed")
     code = field(android_gradle, "versionCode")
     version = field(android_gradle, "versionName")
-    if not code or not code.isdecimal() or int(code) <= 4:
-        issues.append("Android versionCode must advance beyond public Flutter +4")
+    if not code or not code.isdecimal() or int(code) <= 5:
+        issues.append("Android versionCode must advance beyond published native RC build 5")
     if not version or version != field(ios_project, "MARKETING_VERSION"):
         issues.append("Android/iOS marketing versions differ")
     if code != field(ios_project, "CURRENT_PROJECT_VERSION"):

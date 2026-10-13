@@ -72,8 +72,18 @@ struct QREXApp: App {
     }
 }
 
+private enum ScreenshotFixture {
+    static var enabled: Bool {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("-qrex-screenshot-create")
+        #else
+        return false
+        #endif
+    }
+}
+
 struct QREXRoot: View {
-    @State private var tab = ProcessInfo.processInfo.arguments.contains("-qrex-screenshot-create") ? 1 : 0
+    @State private var tab = ScreenshotFixture.enabled ? 1 : 0
 
     var body: some View {
         TabView(selection: $tab) {
@@ -177,7 +187,7 @@ struct ResultScreen: View {
 struct CreateScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var kind = 0
-    @State private var content = ProcessInfo.processInfo.arguments.contains("-qrex-screenshot-create")
+    @State private var content = ScreenshotFixture.enabled
         ? "https://brendigo.com" : ""
     @State private var password = ""
     @State private var revealPassword = false
@@ -418,8 +428,12 @@ struct MoreScreen: View {
                     }
                     NavigationLink(tr("terms_of_use")) {
                         ScrollView {
-                            Text(tr("terms_summary"))
-                                .padding()
+                            VStack(alignment: .leading, spacing: 18) {
+                                Text(tr("terms_summary"))
+                                Link(tr("terms_of_use"),
+                                     destination: URL(string:
+                                        "https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md")!)
+                            }.padding()
                         }.navigationTitle(tr("terms_of_use"))
                     }
                 }
