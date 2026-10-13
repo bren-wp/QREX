@@ -6,6 +6,8 @@ on:
       - "platforms/**"
       - ".github/workflows/native-platforms.yml"
       - ".github/workflows/capture-screenshots.yml"
+      - "tool/check_native_release.py"
+      - "tool/test_native_release.py"
       - "tool/capture_android_screen.sh"
       - "tool/test_capture_workflow.py"
       - "tool/test_android_screen.py"
@@ -49,12 +51,25 @@ jobs:
       - name: Compile Kotlin app and execute unit tests
         working-directory: platforms/android
         run: gradle --no-daemon --stacktrace :app:assembleDebug :app:testDebugUnitTest :app:assembleDebugAndroidTest
+      - name: Check native distribution metadata
+        run: python3 tool/check_native_release.py
+      - name: Validate Android lint and R8 release variants
+        working-directory: platforms/android
+        run: gradle --no-daemon --stacktrace :app:lintDebug :app:assembleRelease :app:bundleRelease
       - name: Confirm Android package
-        run: test -s platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        run: |
+          test -s platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          test -s platforms/android/app/build/outputs/bundle/release/app-release.aab
       - uses: actions/upload-artifact@v4
         with:
           name: QREX-Kotlin-Android-debug
           path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Upload unsigned Android AAB QA candidate (not store ready)
+        uses: actions/upload-artifact@v4
+        with:
+          name: QREX-Kotlin-Android-unsigned-AAB-QA
+          path: platforms/android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
 
   ios:
@@ -79,6 +94,10 @@ jobs:
             "info": {"author":"xcode","version":1}
           }), encoding="utf-8")
           PY
+      - name: Verify native release metadata and signing readiness
+        run: python3 tool/check_native_release.py
+      - name: Check release metadata regression tests
+        run: python3 -m unittest discover -s tool -p 'test_native_release.py'
       - name: Verify localization resource parity
         run: |
           python3 tool/generate_localizations.py --check
