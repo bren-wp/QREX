@@ -508,10 +508,6 @@ private fun MoreScreen(store: QREXStore) {
         ) { Text(tr("export_archive")) }
         OutlinedButton(onClick = { showDelete = true }) { Text(tr("delete_all")) }
         Spacer(Modifier.height(20.dp))
-        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
-        TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
-        Spacer(Modifier.height(20.dp))
         Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Box {
             OutlinedButton(onClick = { languageMenu = true }) { Text(languageName) }
@@ -532,6 +528,11 @@ private fun MoreScreen(store: QREXStore) {
         TextButton(onClick = {
             openLink(context, Uri.parse("https://brendigo.com"))
         }) { Text(tr("developed_by")) }
+        Spacer(Modifier.height(20.dp))
+        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
+        TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
     }
     if (confirmExport) AlertDialog(onDismissRequest = { confirmExport = false },
         title = { Text(tr("export_archive")) },
