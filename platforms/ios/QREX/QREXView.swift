@@ -186,7 +186,7 @@ struct CreateScreen: View {
                     Text(tr("enter_details")).font(.subheadline).foregroundStyle(.secondary)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(0..<(showMore ? choices.count : 3), id: \.self) { i in
+                            ForEach(showMore ? [0, 1, 2, 6, 3, 4, 5] : [0, 1, 2, 6], id: \.self) { i in
                                 Button {
                                     kind = i
                                     content = ""
@@ -206,7 +206,7 @@ struct CreateScreen: View {
                     }
                     Button(showMore ? tr("fewer_options") : tr("more_options")) {
                         showMore.toggle()
-                        if !showMore && kind > 2 { kind = 0 }
+                        if !showMore && ![0, 1, 2, 6].contains(kind) { kind = 0 }
                     }.font(.footnote)
                     TextField(choices[kind], text: $content, axis: .vertical)
                         .textInputAutocapitalization(.never)

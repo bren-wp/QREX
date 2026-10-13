@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -317,18 +318,21 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
-        types.take(if (more) types.size else 3).chunked(3).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                row.forEach { type ->
-                    val index = types.indexOf(type)
-                    FilterChip(selected = kind == index,
-                        onClick = { kind = index; content = ""; password = "" },
-                        label = { Text(type) })
-                    Spacer(Modifier.width(5.dp))
-                }
+        val visibleKinds = if (more) listOf(0, 1, 2, 6, 3, 4, 5)
+            else listOf(0, 1, 2, 6)
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            visibleKinds.forEach { index ->
+                FilterChip(
+                    selected = kind == index,
+                    onClick = { kind = index; content = ""; password = "" },
+                    label = { Text(types[index]) }
+                )
             }
         }
-        TextButton(onClick = { more = !more; if (!more && kind > 2) kind = 0 }) {
+        TextButton(onClick = { more = !more; if (!more && kind !in listOf(0, 1, 2, 6)) kind = 0 }) {
             Text(if (more) tr("fewer_options") else tr("more_options"))
         }
         Spacer(Modifier.height(10.dp))
