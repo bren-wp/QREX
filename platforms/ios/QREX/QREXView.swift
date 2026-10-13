@@ -24,6 +24,23 @@ struct ResultPayload: Identifiable {
     var id: String { raw }
 }
 
+// Centralized failure presentation avoids four divergent storage error dialogs.
+private struct StorageFailureAlert: ViewModifier {
+    @Binding var isPresented: Bool
+
+    func body(content: Content) -> some View {
+        content.alert(tr("operation_failed"), isPresented: $isPresented) {
+            Button(tr("ok"), role: .cancel) {}
+        }
+    }
+}
+
+private extension View {
+    func storageFailureAlert(_ isPresented: Binding<Bool>) -> some View {
+        modifier(StorageFailureAlert(isPresented: isPresented))
+    }
+}
+
 enum QREXImage {
     // CIContext is costly to initialize and safe to reuse for rendering.
     private static let renderContext = CIContext()
@@ -78,6 +95,7 @@ struct ResultScreen: View {
     @State private var showQR = false
     @State private var confirmSaveWifi = false
     @State private var showImageShare = false
+    @State private var operationFailed = false
 
     var body: some View {
         NavigationStack {
@@ -121,7 +139,7 @@ struct ResultScreen: View {
                     Button(store.items.contains(where: { $0.raw == raw && $0.saved }) ? tr("saved") : tr("save")) {
                         if QRContent.isWifi(raw) {
                             confirmSaveWifi = true
-                        } else { store.save(raw) }
+                        } else if !store.save(raw) { operationFailed = true }
                     }.disabled(store.items.contains(where: { $0.raw == raw && $0.saved }))
                         .buttonStyle(.borderedProminent)
                 }
@@ -146,9 +164,12 @@ struct ResultScreen: View {
             }
             .confirmationDialog(tr("wifi_save_warning"),
                 isPresented: $confirmSaveWifi) {
-                    Button(tr("save")) { store.save(raw) }
+                    Button(tr("save")) {
+                        if !store.save(raw) { operationFailed = true }
+                    }
                     Button(tr("cancel"), role: .cancel) {}
                 }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
@@ -163,6 +184,8 @@ struct CreateScreen: View {
     @State private var showMore = false
     @State private var showResult = false
     @State private var renderedQR: UIImage?
+    @State private var operationFailed = false
+    @State private var confirmWifiSave = false
     private var choices: [String] {
         ["url", "text", "wifi", "email", "phone", "location", "contact"].map(tr)
     }
@@ -234,7 +257,10 @@ struct CreateScreen: View {
                         Image(uiImage: image).interpolation(.none).resizable()
                             .scaledToFit().frame(width: 210, height: 210)
                             .padding(12).background(.white, in: RoundedRectangle(cornerRadius: 20))
-                        Button(tr("save_qr")) { store.save(raw) }.buttonStyle(.bordered)
+                        Button(tr("save_qr")) {
+                            if QRContent.isWifi(raw) { confirmWifiSave = true }
+                            else if !store.save(raw) { operationFailed = true }
+                        }.buttonStyle(.bordered)
                         Button(tr("create_share")) { showResult = true }.buttonStyle(.borderedProminent)
                     } else {
                         VStack(spacing: 12) {
@@ -260,6 +286,14 @@ struct CreateScreen: View {
                 renderedQR = image
             }
             .sheet(isPresented: $showResult) { ResultScreen(raw: raw) }
+            .confirmationDialog(tr("wifi_save_warning"),
+                isPresented: $confirmWifiSave) {
+                    Button(tr("save")) {
+                        if !store.save(raw) { operationFailed = true }
+                    }
+                    Button(tr("cancel"), role: .cancel) {}
+                }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
@@ -268,6 +302,7 @@ struct HistoryScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var search = ""
     @State private var selected: ResultPayload?
+    @State private var operationFailed = false
 
     private var filtered: [QRHistoryItem] {
         store.items.filter { search.isEmpty || QRContent.title($0.raw)
@@ -293,7 +328,9 @@ struct HistoryScreen: View {
                             Image(systemName: "chevron.right")
                         }
                     }.swipeActions {
-                        Button(role: .destructive) { store.delete(item) } label: {
+                        Button(role: .destructive) {
+                            if !store.delete(item) { operationFailed = true }
+                        } label: {
                             Label(tr("delete"), systemImage: "trash")
                         }
                     }
@@ -311,10 +348,13 @@ struct HistoryScreen: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(tr("clear")) { store.clearHistory() }.disabled(store.items.isEmpty)
+                    Button(tr("clear")) {
+                        if !store.clearHistory() { operationFailed = true }
+                    }.disabled(store.items.isEmpty)
                 }
             }
             .sheet(item: $selected) { item in ResultScreen(raw: item.raw) }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
@@ -322,6 +362,7 @@ struct HistoryScreen: View {
 struct MoreScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var confirmDelete = false
+    @State private var operationFailed = false
     private var displayLanguages: [String] { QREXStrings.supported }
 
     var body: some View {
@@ -359,9 +400,12 @@ struct MoreScreen: View {
             .navigationTitle(tr("more"))
             .confirmationDialog(tr("confirm_delete"),
                 isPresented: $confirmDelete, titleVisibility: .visible) {
-                Button(tr("delete_all"), role: .destructive) { store.clearAll() }
+                Button(tr("delete_all"), role: .destructive) {
+                    if !store.clearAll() { operationFailed = true }
+                }
                 Button(tr("cancel"), role: .cancel) {}
             }
+            .storageFailureAlert($operationFailed)
         }
     }
 }
