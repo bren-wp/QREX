@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.graphics.Bitmap
 import android.graphics.Color as AndroidColor
 import android.net.Uri
@@ -77,7 +78,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val screenshotCreate = intent.getStringExtra("qrex_screenshot") == "create"
+        // Screenshot fixtures must never be activated by external intents in
+        // production/store builds, even if the launch activity is exported.
+        val isDebug = (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        val screenshotCreate = isDebug &&
+            intent.getStringExtra("qrex_screenshot") == "create"
         setContent { QREXApp(store, screenshotCreate) }
     }
 }
