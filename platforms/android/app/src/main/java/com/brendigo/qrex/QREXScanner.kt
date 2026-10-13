@@ -4,6 +4,7 @@ import android.Manifest
 import android.graphics.BitmapFactory
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -58,7 +59,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
         BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()
     }
-    val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             scope.launch {
                 // Gallery providers can be slow and can return decompression bombs.
@@ -206,7 +207,11 @@ fun ScanScreen(onRead: (String) -> Unit) {
             ) {
                 Text(tr("flashlight"))
             }
-            OutlinedButton(onClick = { photoPicker.launch("image/*") }) {
+            OutlinedButton(onClick = {
+                photoPicker.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }) {
                 Text(tr("from_gallery"))
             }
         }
