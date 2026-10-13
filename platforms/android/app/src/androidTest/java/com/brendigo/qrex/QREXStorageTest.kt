@@ -55,6 +55,50 @@ class QREXStorageTest {
     }
 
     @Test
+    fun flutterFavoritePromotesExistingUnsavedScanWithoutDroppingRecord() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val shared = "https://example.com/shared"
+        initial.record(shared)
+        assertTrue(initial.items.any { it.raw == shared && !it.saved })
+        val legacy = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        val rows = org.json.JSONArray().put(org.json.JSONObject()
+            .put("raw", shared)
+            .put("date", "2026-10-09T10:12:13.123")
+            .put("saved", true))
+        assertTrue(legacy.edit().putString("flutter.qrex_history_v1", rows.toString()).commit())
+
+        val migrated = QREXStore(context)
+        assertEquals(1, migrated.items.size)
+        assertTrue(migrated.items.single().saved)
+        assertFalse(legacy.contains("flutter.qrex_history_v1"))
+        assertTrue(QREXStore(context).items.single().saved)
+        assertTrue(migrated.clearAll())
+    }
+
+    @Test
+    fun duplicatedStoredScanMustNotDowngradeFavoriteWhenCanonicalized() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val raw = "https://example.com/same-code"
+        val records = org.json.JSONArray()
+            .put(org.json.JSONObject().put("raw", raw)
+                .put("protected", false).put("timestamp", 1L).put("saved", false))
+            .put(org.json.JSONObject().put("raw", raw)
+                .put("protected", false).put("timestamp", 2L).put("saved", true))
+        assertTrue(prefs.edit().putString("history", records.toString()).commit())
+
+        val migrated = QREXStore(context)
+        assertEquals(1, migrated.items.size)
+        assertTrue(migrated.items.single().saved)
+        val persisted = org.json.JSONArray(prefs.getString("history", "[]"))
+        assertEquals(1, persisted.length())
+        assertTrue(persisted.getJSONObject(0).getBoolean("saved"))
+        assertTrue(migrated.clearAll())
+    }
+
+    @Test
     fun oldUnencryptedWifiHistoryIsMigratedOnStartup() {
         val prefs = context.getSharedPreferences("qrex.user", 0)
         prefs.edit().clear().commit()
