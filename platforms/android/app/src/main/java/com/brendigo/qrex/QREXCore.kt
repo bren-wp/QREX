@@ -15,6 +15,16 @@ import java.time.ZoneId
 
 data class QRRecord(val raw: String, val timestamp: Long, val saved: Boolean)
 
+/** Search saved QR information without exposing Wi-Fi secrets through keyword matches. */
+object QRHistory {
+    fun matches(record: QRRecord, query: String, savedOnly: Boolean): Boolean {
+        if (savedOnly && !record.saved) return false
+        if (query.isBlank()) return true
+        return QRContent.label(record.raw).contains(query, ignoreCase = true) ||
+            (!QRContent.isWifi(record.raw) && record.raw.contains(query, ignoreCase = true))
+    }
+}
+
 object QRContent {
     fun isWifi(raw: String): Boolean = raw.startsWith("WIFI:", ignoreCase = true)
 

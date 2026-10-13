@@ -335,7 +335,9 @@ struct HistoryScreen: View {
     private var filtered: [QRHistoryItem] {
         store.items.filter {
             (!savedOnly || $0.saved) && (search.isEmpty ||
-                QRContent.title($0.raw).localizedCaseInsensitiveContains(search))
+                QRContent.title($0.raw).localizedCaseInsensitiveContains(search) ||
+                (!QRContent.isWifi($0.raw) &&
+                    $0.raw.localizedCaseInsensitiveContains(search)))
         }
     }
 

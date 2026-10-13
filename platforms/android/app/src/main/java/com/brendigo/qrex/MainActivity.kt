@@ -427,12 +427,20 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
-    val found = store.items.filter { QRContent.label(it.raw).contains(search, ignoreCase = true) }
+    var savedOnly by remember { mutableStateOf(false) }
+    var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
+    val found = store.items.filter { QRHistory.matches(it, search, savedOnly) }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
         AppHeader(tr("history"), tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
             label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
+        FilterChip(
+            selected = savedOnly,
+            onClick = { savedOnly = !savedOnly },
+            label = { Text(tr("saved")) }
+        )
+        Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
             Text(tr("no_saved"), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -447,17 +455,33 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                                     color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
-                        IconButton(onClick = {
-                            if (!store.remove(item)) {
-                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
-                            }
-                        }) {
+                        IconButton(onClick = { pendingDelete = item }) {
                             Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
             }
         }
+    }
+    val target = pendingDelete
+    if (target != null) {
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text(tr("delete")) },
+            text = { Text(tr("confirm_delete")) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val actual = store.items.firstOrNull { it.raw == target.raw }
+                    if (actual != null && !store.remove(actual)) {
+                        Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                    }
+                    pendingDelete = null
+                }) { Text(tr("delete")) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) { Text(tr("cancel")) }
+            }
+        )
     }
 }
 
