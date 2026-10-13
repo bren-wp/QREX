@@ -462,6 +462,26 @@ private fun MoreScreen(store: QREXStore) {
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
+    var showTerms by remember { mutableStateOf(false) }
+    var confirmExport by remember { mutableStateOf(false) }
+    val archiveScope = rememberCoroutineScope()
+    val exportFailed = tr("archive_failed")
+    val exportReady = tr("archive_ready")
+    val exportZip = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/zip")
+    ) { destination ->
+        if (destination != null) {
+            // Snapshot chosen at user confirmation, never read while writing.
+            val records = store.items.filter { it.saved }.toList()
+            archiveScope.launch {
+                val exported = withContext(Dispatchers.IO) {
+                    QREXDocuments.exportSavedPdfZip(context, records, destination)
+                }
+                Toast.makeText(context, if (exported) exportReady else exportFailed,
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     var languageMenu by remember { mutableStateOf(false) }
     val selectedLanguage = store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
@@ -477,10 +497,20 @@ private fun MoreScreen(store: QREXStore) {
             Text(tr("light_theme"), Modifier.weight(1f))
             Switch(checked = store.lightMode, onCheckedChange = store::updateLightMode)
         }
+        Spacer(Modifier.height(12.dp))
+        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        OutlinedButton(
+            onClick = { confirmExport = true },
+            enabled = store.items.any { it.saved },
+            modifier = Modifier.fillMaxWidth()
+        ) { Text(tr("export_archive")) }
         OutlinedButton(onClick = { showDelete = true }) { Text(tr("delete_all")) }
         Spacer(Modifier.height(20.dp))
         Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy")) }
+        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
+        TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
         Spacer(Modifier.height(20.dp))
         Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Box {
@@ -503,6 +533,16 @@ private fun MoreScreen(store: QREXStore) {
             openLink(context, Uri.parse("https://brendigo.com"))
         }) { Text(tr("developed_by")) }
     }
+    if (confirmExport) AlertDialog(onDismissRequest = { confirmExport = false },
+        title = { Text(tr("export_archive")) },
+        text = { Text(tr("export_archive_warning")) },
+        confirmButton = { TextButton(onClick = {
+            confirmExport = false
+            exportZip.launch("QREX-Saved-Codes.zip")
+        }) { Text(tr("export_archive")) } },
+        dismissButton = { TextButton(onClick = { confirmExport = false }) {
+            Text(tr("cancel"))
+        } })
     if (showDelete) AlertDialog(onDismissRequest = { showDelete = false },
         title = { Text(tr("confirm_delete")) },
         text = { Text(tr("delete_warning")) },
@@ -512,7 +552,19 @@ private fun MoreScreen(store: QREXStore) {
         }) { Text(tr("delete_all")) } },
         dismissButton = { TextButton(onClick = { showDelete = false }) { Text(tr("cancel")) } })
     if (showPrivacy) AlertDialog(onDismissRequest = { showPrivacy = false },
-        title = { Text(tr("privacy")) },
+        title = { Text(tr("privacy_policy")) },
         text = { Text(tr("privacy_summary")) },
-        confirmButton = { TextButton(onClick = { showPrivacy = false }) { Text(tr("close")) } })
+        confirmButton = { TextButton(onClick = { showPrivacy = false }) {
+            Text(tr("close"))
+        } },
+        dismissButton = { TextButton(onClick = {
+            showPrivacy = false
+            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md"))
+        }) { Text(tr("read_full_policy")) } })
+    if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
+        title = { Text(tr("terms_of_use")) },
+        text = { Text(tr("terms_summary")) },
+        confirmButton = { TextButton(onClick = { showTerms = false }) {
+            Text(tr("close"))
+        } })
 }
