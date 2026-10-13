@@ -67,3 +67,4 @@
 "history_local" = "Shranjeno v tej napravi";
 "export_png" = "Izvozi PNG";
 "png_save_failed" = "Slike PNG ni mogoče shraniti.";
+"operation_failed" = "Dejanje ni uspelo. Poskusite znova.";

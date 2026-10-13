@@ -67,3 +67,4 @@
 "history_local" = "Tallennettu tälle laitteelle";
 "export_png" = "Vie PNG";
 "png_save_failed" = "PNG-kuvaa ei voitu tallentaa.";
+"operation_failed" = "Toiminto epäonnistui. Yritä uudelleen.";

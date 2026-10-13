@@ -69,4 +69,5 @@
     <string name="history_local">Uloženo v zařízení</string>
     <string name="export_png">Exportovat PNG</string>
     <string name="png_save_failed">Obrázek PNG nelze uložit.</string>
+    <string name="operation_failed">Akce se nezdařila. Zkuste to znovu.</string>
 </resources>

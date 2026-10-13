@@ -67,3 +67,4 @@
 "history_local" = "Lagret på denne enheten";
 "export_png" = "Eksporter PNG";
 "png_save_failed" = "Kunne ikke lagre PNG-bildet.";
+"operation_failed" = "Handlingen mislyktes. Prøv igjen.";

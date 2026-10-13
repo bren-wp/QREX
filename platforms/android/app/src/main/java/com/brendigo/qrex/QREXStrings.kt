@@ -78,6 +78,7 @@ object QREXStrings {
         "history_local" -> R.string.history_local
         "export_png" -> R.string.export_png
         "png_save_failed" -> R.string.png_save_failed
+        "operation_failed" -> R.string.operation_failed
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

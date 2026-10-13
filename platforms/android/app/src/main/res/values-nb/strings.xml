@@ -69,4 +69,5 @@
     <string name="history_local">Lagret på denne enheten</string>
     <string name="export_png">Eksporter PNG</string>
     <string name="png_save_failed">Kunne ikke lagre PNG-bildet.</string>
+    <string name="operation_failed">Handlingen mislyktes. Prøv igjen.</string>
 </resources>

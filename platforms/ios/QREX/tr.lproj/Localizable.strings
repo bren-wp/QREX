@@ -67,3 +67,4 @@
 "history_local" = "Bu cihazda saklanır";
 "export_png" = "PNG dışa aktar";
 "png_save_failed" = "PNG görüntüsü kaydedilemedi.";
+"operation_failed" = "İşlem başarısız oldu. Tekrar deneyin.";

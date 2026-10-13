@@ -69,4 +69,5 @@
     <string name="history_local">Shranjeno v tej napravi</string>
     <string name="export_png">Izvozi PNG</string>
     <string name="png_save_failed">Slike PNG ni mogoče shraniti.</string>
+    <string name="operation_failed">Dejanje ni uspelo. Poskusite znova.</string>
 </resources>

@@ -67,3 +67,4 @@
 "history_local" = "Uložené v zariadení";
 "export_png" = "Exportovať PNG";
 "png_save_failed" = "Obrázok PNG sa nedá uložiť.";
+"operation_failed" = "Akcia zlyhala. Skúste to znova.";

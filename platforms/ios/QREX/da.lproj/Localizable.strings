@@ -67,3 +67,4 @@
 "history_local" = "Gemt på denne enhed";
 "export_png" = "Eksportér PNG";
 "png_save_failed" = "PNG-billedet kunne ikke gemmes.";
+"operation_failed" = "Handlingen mislykkedes. Prøv igen.";

@@ -69,4 +69,5 @@
     <string name="history_local">Stocké sur cet appareil</string>
     <string name="export_png">Exporter en PNG</string>
     <string name="png_save_failed">Impossible d’enregistrer l’image PNG.</string>
+    <string name="operation_failed">Échec de l’action. Veuillez réessayer.</string>
 </resources>

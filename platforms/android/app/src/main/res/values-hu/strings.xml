@@ -69,4 +69,5 @@
     <string name="history_local">Ezen az eszközön tárolva</string>
     <string name="export_png">PNG exportálása</string>
     <string name="png_save_failed">A PNG-kép nem menthető.</string>
+    <string name="operation_failed">A művelet sikertelen. Próbálja újra.</string>
 </resources>

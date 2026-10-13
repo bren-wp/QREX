@@ -67,3 +67,4 @@
 "history_local" = "Stocké sur cet appareil";
 "export_png" = "Exporter en PNG";
 "png_save_failed" = "Impossible d’enregistrer l’image PNG.";
+"operation_failed" = "Échec de l’action. Veuillez réessayer.";

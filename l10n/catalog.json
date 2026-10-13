@@ -72,7 +72,8 @@
         "system": "Follow device language",
         "history_local": "Stored on this device",
         "export_png": "Export PNG",
-        "png_save_failed": "Unable to save PNG image."
+        "png_save_failed": "Unable to save PNG image.",
+        "operation_failed": "Action failed. Please try again."
       }
     },
     "hr": {
@@ -146,7 +147,8 @@
         "system": "Jezik uređaja",
         "history_local": "Spremljeno na uređaju",
         "export_png": "Izvezi PNG",
-        "png_save_failed": "PNG sliku nije moguće spremiti."
+        "png_save_failed": "PNG sliku nije moguće spremiti.",
+        "operation_failed": "Radnja nije uspjela. Pokušajte ponovno."
       }
     },
     "de": {
@@ -220,7 +222,8 @@
         "system": "Gerätesprache verwenden",
         "history_local": "Auf diesem Gerät gespeichert",
         "export_png": "PNG exportieren",
-        "png_save_failed": "PNG-Bild konnte nicht gespeichert werden."
+        "png_save_failed": "PNG-Bild konnte nicht gespeichert werden.",
+        "operation_failed": "Aktion fehlgeschlagen. Bitte versuchen Sie es erneut."
       }
     },
     "fr": {
@@ -294,7 +297,8 @@
         "system": "Langue de l'appareil",
         "history_local": "Stocké sur cet appareil",
         "export_png": "Exporter en PNG",
-        "png_save_failed": "Impossible d’enregistrer l’image PNG."
+        "png_save_failed": "Impossible d’enregistrer l’image PNG.",
+        "operation_failed": "Échec de l’action. Veuillez réessayer."
       }
     },
     "es": {
@@ -368,7 +372,8 @@
         "system": "Idioma del dispositivo",
         "history_local": "Guardado en este dispositivo",
         "export_png": "Exportar PNG",
-        "png_save_failed": "No se pudo guardar la imagen PNG."
+        "png_save_failed": "No se pudo guardar la imagen PNG.",
+        "operation_failed": "La acción falló. Inténtalo de nuevo."
       }
     },
     "it": {
@@ -442,7 +447,8 @@
         "system": "Lingua del dispositivo",
         "history_local": "Salvato su questo dispositivo",
         "export_png": "Esporta PNG",
-        "png_save_failed": "Impossibile salvare l’immagine PNG."
+        "png_save_failed": "Impossibile salvare l’immagine PNG.",
+        "operation_failed": "Operazione non riuscita. Riprova."
       }
     },
     "pt": {
@@ -516,7 +522,8 @@
         "system": "Idioma do dispositivo",
         "history_local": "Guardado neste dispositivo",
         "export_png": "Exportar PNG",
-        "png_save_failed": "Não foi possível guardar a imagem PNG."
+        "png_save_failed": "Não foi possível guardar a imagem PNG.",
+        "operation_failed": "A ação falhou. Tente novamente."
       }
     },
     "nl": {
@@ -590,7 +597,8 @@
         "system": "Apparaattaal gebruiken",
         "history_local": "Op dit apparaat opgeslagen",
         "export_png": "PNG exporteren",
-        "png_save_failed": "PNG-afbeelding kan niet worden opgeslagen."
+        "png_save_failed": "PNG-afbeelding kan niet worden opgeslagen.",
+        "operation_failed": "Actie mislukt. Probeer het opnieuw."
       }
     },
     "pl": {
@@ -664,7 +672,8 @@
         "system": "Język urządzenia",
         "history_local": "Zapisano na tym urządzeniu",
         "export_png": "Eksportuj PNG",
-        "png_save_failed": "Nie można zapisać obrazu PNG."
+        "png_save_failed": "Nie można zapisać obrazu PNG.",
+        "operation_failed": "Nie udało się wykonać działania. Spróbuj ponownie."
       }
     },
     "cs": {
@@ -738,7 +747,8 @@
         "system": "Jazyk zařízení",
         "history_local": "Uloženo v zařízení",
         "export_png": "Exportovat PNG",
-        "png_save_failed": "Obrázek PNG nelze uložit."
+        "png_save_failed": "Obrázek PNG nelze uložit.",
+        "operation_failed": "Akce se nezdařila. Zkuste to znovu."
       }
     },
     "sk": {
@@ -812,7 +822,8 @@
         "system": "Jazyk zariadenia",
         "history_local": "Uložené v zariadení",
         "export_png": "Exportovať PNG",
-        "png_save_failed": "Obrázok PNG sa nedá uložiť."
+        "png_save_failed": "Obrázok PNG sa nedá uložiť.",
+        "operation_failed": "Akcia zlyhala. Skúste to znova."
       }
     },
     "sl": {
@@ -886,7 +897,8 @@
         "system": "Jezik naprave",
         "history_local": "Shranjeno v tej napravi",
         "export_png": "Izvozi PNG",
-        "png_save_failed": "Slike PNG ni mogoče shraniti."
+        "png_save_failed": "Slike PNG ni mogoče shraniti.",
+        "operation_failed": "Dejanje ni uspelo. Poskusite znova."
       }
     },
     "hu": {
@@ -960,7 +972,8 @@
         "system": "Eszköz nyelve",
         "history_local": "Ezen az eszközön tárolva",
         "export_png": "PNG exportálása",
-        "png_save_failed": "A PNG-kép nem menthető."
+        "png_save_failed": "A PNG-kép nem menthető.",
+        "operation_failed": "A művelet sikertelen. Próbálja újra."
       }
     },
     "ro": {
@@ -1034,7 +1047,8 @@
         "system": "Limba dispozitivului",
         "history_local": "Stocat pe acest dispozitiv",
         "export_png": "Exportă PNG",
-        "png_save_failed": "Imaginea PNG nu poate fi salvată."
+        "png_save_failed": "Imaginea PNG nu poate fi salvată.",
+        "operation_failed": "Acțiunea a eșuat. Încercați din nou."
       }
     },
     "bg": {
@@ -1108,7 +1122,8 @@
         "system": "Език на устройството",
         "history_local": "Запазено на устройството",
         "export_png": "Експортирай PNG",
-        "png_save_failed": "PNG изображението не може да се запази."
+        "png_save_failed": "PNG изображението не може да се запази.",
+        "operation_failed": "Действието е неуспешно. Опитайте отново."
       }
     },
     "el": {
@@ -1182,7 +1197,8 @@
         "system": "Γλώσσα συσκευής",
         "history_local": "Αποθηκεύτηκε στη συσκευή",
         "export_png": "Εξαγωγή PNG",
-        "png_save_failed": "Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG."
+        "png_save_failed": "Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG.",
+        "operation_failed": "Η ενέργεια απέτυχε. Δοκιμάστε ξανά."
       }
     },
     "tr": {
@@ -1256,7 +1272,8 @@
         "system": "Cihaz dili",
         "history_local": "Bu cihazda saklanır",
         "export_png": "PNG dışa aktar",
-        "png_save_failed": "PNG görüntüsü kaydedilemedi."
+        "png_save_failed": "PNG görüntüsü kaydedilemedi.",
+        "operation_failed": "İşlem başarısız oldu. Tekrar deneyin."
       }
     },
     "uk": {
@@ -1330,7 +1347,8 @@
         "system": "Мова пристрою",
         "history_local": "Збережено на пристрої",
         "export_png": "Експортувати PNG",
-        "png_save_failed": "Не вдалося зберегти зображення PNG."
+        "png_save_failed": "Не вдалося зберегти зображення PNG.",
+        "operation_failed": "Не вдалося виконати дію. Спробуйте ще раз."
       }
     },
     "ru": {
@@ -1404,7 +1422,8 @@
         "system": "Язык устройства",
         "history_local": "Сохранено на устройстве",
         "export_png": "Экспорт PNG",
-        "png_save_failed": "Не удалось сохранить изображение PNG."
+        "png_save_failed": "Не удалось сохранить изображение PNG.",
+        "operation_failed": "Не удалось выполнить действие. Попробуйте ещё раз."
       }
     },
     "sv": {
@@ -1478,7 +1497,8 @@
         "system": "Enhetens språk",
         "history_local": "Sparas på den här enheten",
         "export_png": "Exportera PNG",
-        "png_save_failed": "Det gick inte att spara PNG-bilden."
+        "png_save_failed": "Det gick inte att spara PNG-bilden.",
+        "operation_failed": "Åtgärden misslyckades. Försök igen."
       }
     },
     "da": {
@@ -1552,7 +1572,8 @@
         "system": "Enhedens sprog",
         "history_local": "Gemt på denne enhed",
         "export_png": "Eksportér PNG",
-        "png_save_failed": "PNG-billedet kunne ikke gemmes."
+        "png_save_failed": "PNG-billedet kunne ikke gemmes.",
+        "operation_failed": "Handlingen mislykkedes. Prøv igen."
       }
     },
     "fi": {
@@ -1626,7 +1647,8 @@
         "system": "Laitteen kieli",
         "history_local": "Tallennettu tälle laitteelle",
         "export_png": "Vie PNG",
-        "png_save_failed": "PNG-kuvaa ei voitu tallentaa."
+        "png_save_failed": "PNG-kuvaa ei voitu tallentaa.",
+        "operation_failed": "Toiminto epäonnistui. Yritä uudelleen."
       }
     },
     "nb": {
@@ -1700,7 +1722,8 @@
         "system": "Enhetens språk",
         "history_local": "Lagret på denne enheten",
         "export_png": "Eksporter PNG",
-        "png_save_failed": "Kunne ikke lagre PNG-bildet."
+        "png_save_failed": "Kunne ikke lagre PNG-bildet.",
+        "operation_failed": "Handlingen mislyktes. Prøv igjen."
       }
     }
   }

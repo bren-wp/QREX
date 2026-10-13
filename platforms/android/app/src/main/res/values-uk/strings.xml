@@ -69,4 +69,5 @@
     <string name="history_local">Збережено на пристрої</string>
     <string name="export_png">Експортувати PNG</string>
     <string name="png_save_failed">Не вдалося зберегти зображення PNG.</string>
+    <string name="operation_failed">Не вдалося виконати дію. Спробуйте ще раз.</string>
 </resources>

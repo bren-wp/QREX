@@ -67,3 +67,4 @@
 "history_local" = "Stored on this device";
 "export_png" = "Export PNG";
 "png_save_failed" = "Unable to save PNG image.";
+"operation_failed" = "Action failed. Please try again.";

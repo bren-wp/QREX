@@ -67,3 +67,4 @@
 "history_local" = "Stocat pe acest dispozitiv";
 "export_png" = "Exportă PNG";
 "png_save_failed" = "Imaginea PNG nu poate fi salvată.";
+"operation_failed" = "Acțiunea a eșuat. Încercați din nou.";

@@ -67,3 +67,4 @@
 "history_local" = "Spremljeno na uređaju";
 "export_png" = "Izvezi PNG";
 "png_save_failed" = "PNG sliku nije moguće spremiti.";
+"operation_failed" = "Radnja nije uspjela. Pokušajte ponovno.";
