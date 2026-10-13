@@ -119,7 +119,7 @@ struct ScanScreen: View {
             VStack(spacing: 20) {
                 Text("QREX").font(.system(size: 30, weight: .black, design: .rounded))
                     .foregroundStyle(QREXColors.cyan)
-                Text(tr("scan_qr")).font(.title2.bold()).foregroundStyle(.white)
+                Text(tr("scan_qr")).font(.title2.bold()).foregroundStyle(.primary)
                 ZStack {
                     if access == .authorized && scenePhase == .active && code == nil {
                         CameraScanner(onRead: receive, torchOn: $torch)
@@ -137,7 +137,7 @@ struct ScanScreen: View {
                                 .multilineTextAlignment(.center)
                             Button(tr("enable_camera")) { requestCamera() }
                                 .buttonStyle(.borderedProminent)
-                        }.foregroundStyle(.white).padding()
+                        }.foregroundStyle(.primary).padding()
                     }
                     RoundedRectangle(cornerRadius: 28)
                         .stroke(QREXColors.cyan, lineWidth: 3)

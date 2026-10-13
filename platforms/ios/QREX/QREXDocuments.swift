@@ -24,6 +24,31 @@ struct QREXZipDocument: FileDocument {
     }
 }
 
+/// A real PNG file that users can save through the iOS Files picker.
+struct QREXPNGDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.png] }
+    var contents: Data
+
+    init(contents: Data) {
+        self.contents = contents
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents,
+              data.starts(with: Data([137, 80, 78, 71, 13, 10, 26, 10])) else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        contents = data
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        guard contents.starts(with: Data([137, 80, 78, 71, 13, 10, 26, 10])) else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        return FileWrapper(regularFileWithContents: contents)
+    }
+}
+
 /// Local-only document export. QR payloads are embedded in PDF QR artwork;
 /// no raw passwords in ZIP entries, file names, logs, or cloud requests.
 enum QREXDocuments {

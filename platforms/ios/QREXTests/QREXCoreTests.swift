@@ -1,4 +1,5 @@
 import XCTest
+import UniformTypeIdentifiers
 @testable import QREX
 
 final class QREXCoreTests: XCTestCase {
@@ -247,6 +248,14 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(store.items.contains(where: { $0.raw == favourites[249].raw }))
         XCTAssertEqual(QREXHistoryVault.read(), protected)
         XCTAssertTrue(store.clearAll())
+    }
+
+    func testPngExportContainsRealPngDataAndUsesPngDocumentType() throws {
+        let png = try XCTUnwrap(QREXImage.qr("https://brendigo.com")?.pngData())
+        XCTAssertTrue(png.starts(with: Data([137, 80, 78, 71, 13, 10, 26, 10])))
+        let document = QREXPNGDocument(contents: png)
+        XCTAssertEqual(QREXPNGDocument.readableContentTypes, [.png])
+        XCTAssertEqual(document.contents, png)
     }
 
     func testZipArchiveHasValidHeadersAndExpectedCRC() throws {
