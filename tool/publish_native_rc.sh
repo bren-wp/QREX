@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Publish native QA artifacts only when all independent GitHub checks pass.
 set -euo pipefail
-BRANCH="${QREX_RC_BRANCH:-fix/qrex-release-integrity-20261014}"
-TAG="${QREX_RC_TAG:-v0.2.1-rc.1}"
+BRANCH="${QREX_RC_BRANCH:-fix/qrex-legal-release-0.2.2-20261014}"
+TAG="${QREX_RC_TAG:-v0.2.2-rc.1}"
 VERSION="${TAG#v}"
 NOTES="docs/releases/${TAG}.md"
 case "$TAG" in
