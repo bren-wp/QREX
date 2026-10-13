@@ -25,7 +25,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brendigo.qrex
         PRODUCT_NAME: QREX
-        CODE_SIGN_ENTITLEMENTS: QREX/QREX.entitlements
         INFOPLIST_KEY_CFBundleDisplayName: QREX
         INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
         INFOPLIST_KEY_NSCameraUsageDescription: "Camera access is used only to scan QR codes."
