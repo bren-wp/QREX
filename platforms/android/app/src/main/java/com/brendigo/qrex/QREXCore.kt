@@ -187,32 +187,38 @@ class QREXStore(context: Context) {
         update(raw, items.find { it.raw == raw }?.saved == true)
     }
 
-    fun save(raw: String) {
-        if (raw.isBlank() || raw.length > 10000) return
-        update(raw, true)
+    fun save(raw: String): Boolean {
+        if (raw.isBlank() || raw.length > 10000) return false
+        return update(raw, true)
     }
 
-    private fun update(raw: String, saved: Boolean) {
+    private fun update(raw: String, saved: Boolean): Boolean {
         val next = items.filterNot { it.raw == raw }.toMutableList()
         next.add(0, QRRecord(raw, System.currentTimeMillis(), saved))
         if (next.size > 250) {
             val lastUnsaved = next.indexOfLast { !it.saved }
             next.removeAt(if (lastUnsaved >= 0) lastUnsaved else next.lastIndex)
         }
-        if (persist(next)) {
-            items.clear()
-            items.addAll(next)
-        }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
     }
 
-    fun remove(item: QRRecord) {
+    fun remove(item: QRRecord): Boolean {
         val next = items.filterNot { it == item }
-        if (persist(next)) { items.clear(); items.addAll(next) }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
     }
 
-    fun clearHistory() {
+    fun clearHistory(): Boolean {
         val next = items.filter { it.saved }
-        if (persist(next)) { items.clear(); items.addAll(next) }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
     }
 
     /** Explicit erasure also removes untransferred Flutter records and settings. */
