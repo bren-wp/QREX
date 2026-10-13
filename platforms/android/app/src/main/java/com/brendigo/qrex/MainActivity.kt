@@ -34,6 +34,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -165,6 +166,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val savedMessage = tr("saved")
     val exportFailedMessage = tr("png_save_failed")
     val operationFailed = tr("operation_failed")
+    val exportScope = rememberCoroutineScope()
     // Associate each bitmap with its exact payload: stale frames must never
     // be exported after a user switches to a different QR result.
     val exportFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = raw) {
@@ -177,15 +179,19 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         ActivityResultContracts.CreateDocument("image/png")
     ) { uri ->
         if (uri != null) {
-            runCatching {
-                val image = exportBitmap ?: error("Missing QR bitmap")
-                context.contentResolver.openOutputStream(uri)?.use { stream ->
-                    check(image.compress(Bitmap.CompressFormat.PNG, 100, stream))
-                } ?: error("Cannot open document")
-            }.onSuccess {
-                Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
-            }.onFailure {
-                Toast.makeText(context, exportFailedMessage, Toast.LENGTH_SHORT).show()
+            // Content providers may block. Never compress or write on the UI thread.
+            val image = exportBitmap
+            exportScope.launch {
+                val saved = withContext(Dispatchers.IO) {
+                    runCatching {
+                        val bitmap = image ?: error("Missing QR bitmap")
+                        context.contentResolver.openOutputStream(uri)?.use { stream ->
+                            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
+                        } ?: error("Cannot open document")
+                    }.isSuccess
+                }
+                Toast.makeText(context, if (saved) savedMessage else exportFailedMessage,
+                    Toast.LENGTH_SHORT).show()
             }
         }
     }
