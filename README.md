@@ -10,7 +10,7 @@ Scan what matters, turn everyday information into a QR code, and keep the things
 
 <br>
 
-[**Get QREX for Android**](https://github.com/bren-wp/Qivio/releases) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
+[**Get QREX for Android**](https://github.com/bren-wp/QREX/releases) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
 
 <br>
 
@@ -87,9 +87,9 @@ The Android and iPhone editions use protected storage for manually saved Wi-Fi Q
 
 ### Android
 
-**[Explore Android builds →](https://github.com/bren-wp/Qivio/releases)**
+**[Explore Android builds →](https://github.com/bren-wp/QREX/releases)**
 
-The earlier **v0.1.3** Flutter APK remains the last legacy edition. **v0.2.0 RC1** is a dedicated Android **testing preview**, not a Google Play-signed release. Its download page includes the APK, checksums and actual device-emulator screenshots.
+The earlier **v0.1.3** Flutter APK remains the last legacy edition. **Native QREX release candidates** are Android **testing previews**, not Google Play-signed releases. Its download page includes the APK, checksums and actual device-emulator screenshots.
 
 ### iPhone & iPad
 
@@ -97,7 +97,7 @@ The dedicated iPhone edition is in validation. A reviewable unsigned iOS archive
 
 <br>
 
-[All releases](https://github.com/bren-wp/Qivio/releases) · [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
+[All releases](https://github.com/bren-wp/QREX/releases) · [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
 
 </div>
 
