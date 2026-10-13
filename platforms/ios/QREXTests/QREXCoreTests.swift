@@ -123,4 +123,25 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(fresh.clearAll())
     }
 
+    @MainActor
+    func testCoexistingKeychainAndLegacyHistoryMergeWithoutLosingSavedFlags() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let shared = "https://example.com/shared"
+        initial.record(shared)
+        let original = QRHistoryItem(id: UUID(), raw: shared,
+            timestamp: Date(timeIntervalSince1970: 1_700_000_000), saved: true)
+        let extra = QRHistoryItem(id: UUID(), raw: "https://example.com/legacy",
+            timestamp: Date(timeIntervalSince1970: 1_700_000_100), saved: true)
+        let data = try! JSONEncoder().encode([original, extra])
+        UserDefaults.standard.set(data, forKey: "qrex.history")
+
+        let reopened = QREXStore()
+        XCTAssertEqual(reopened.items.count, 2)
+        XCTAssertTrue(reopened.items.contains { $0.raw == shared && $0.saved })
+        XCTAssertTrue(reopened.items.contains { $0.raw == extra.raw && $0.saved })
+        XCTAssertNil(UserDefaults.standard.data(forKey: "qrex.history"))
+        XCTAssertTrue(reopened.clearAll())
+    }
+
 }
