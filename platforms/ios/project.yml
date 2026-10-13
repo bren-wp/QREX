@@ -10,7 +10,11 @@ settings:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1,2"
     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    CODE_SIGNING_ALLOWED: "NO"
+    # Codesigning is disabled explicitly for simulator CI, not for a release archive.
+    # The Apple Developer team and provisioning profile are supplied at signing time.
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "5"
 targets:
   QREX:
     type: application
