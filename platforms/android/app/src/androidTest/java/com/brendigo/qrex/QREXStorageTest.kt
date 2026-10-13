@@ -174,4 +174,16 @@ class QREXStorageTest {
         assertTrue(restored.clearAll())
     }
 
+    @Test
+    fun oversizedQrCannotPoisonPersistentHistory() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val malformed = "x".repeat(10001)
+        assertFalse(store.save(malformed))
+        store.record(malformed)
+        assertTrue(store.items.isEmpty())
+        assertTrue(QREXStore(context).items.isEmpty())
+        assertTrue(store.clearAll())
+    }
+
 }
