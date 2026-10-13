@@ -69,4 +69,47 @@ class QREXStorageTest {
         assertTrue(stored.contains("qrex-gcm:v1:"))
         reopened.clearAll()
     }
+    @Test
+    fun malformedFlutterHistoryMustNotBeDeletedOrMarkedMigrated() {
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        prefs.edit().clear().commit()
+        flutter.edit().clear().commit()
+        val original = "[{\"raw\":\"https://example.com\",\"date\":42}]"
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", original).commit())
+        val store = QREXStore(context)
+        assertTrue(store.items.isEmpty())
+        assertFalse(prefs.getBoolean("flutterMigrationV1", false))
+        assertEquals(original, flutter.getString("flutter.qrex_history_v1", null))
+        store.clearAll()
+        flutter.edit().clear().commit()
+    }
+
+    @Test
+    fun migrationKeepsOriginalWhenHistoryHasNoRoomForNewRecords() {
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        prefs.edit().clear().commit()
+        flutter.edit().clear().commit()
+        val current = org.json.JSONArray()
+        for (i in 0 until 250) {
+            current.put(org.json.JSONObject()
+                .put("raw", "https://example.com/item/$i")
+                .put("timestamp", 42L)
+                .put("saved", true))
+        }
+        assertTrue(prefs.edit().putString("history", current.toString()).commit())
+        val old = org.json.JSONArray().put(org.json.JSONObject()
+            .put("raw", "https://example.org/new")
+            .put("date", "2026-10-09T10:12:13.123")
+            .put("saved", true))
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", old.toString()).commit())
+        val store = QREXStore(context)
+        assertEquals(250, store.items.size)
+        assertFalse(prefs.getBoolean("flutterMigrationV1", false))
+        assertEquals(old.toString(), flutter.getString("flutter.qrex_history_v1", null))
+        store.clearAll()
+        flutter.edit().clear().commit()
+    }
+
 }
