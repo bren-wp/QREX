@@ -152,4 +152,26 @@ class QREXStorageTest {
         assertFalse(prefs.contains("history"))
     }
 
+    @Test
+    fun unchangedWifiCiphertextIsNotReencryptedForUnrelatedChanges() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val secret = QRContent.wifi("Office", "keep-encrypted")
+        store.save(secret)
+        val preferences = context.getSharedPreferences("qrex.user", 0)
+        val first = org.json.JSONArray(preferences.getString("history", "[]"))
+            .getJSONObject(0).getString("raw")
+        assertTrue(first.startsWith("qrex-gcm:v1:"))
+        store.save("https://example.com/new")
+        val secondHistory = org.json.JSONArray(preferences.getString("history", "[]"))
+        val second = (0 until secondHistory.length()).map {
+            secondHistory.getJSONObject(it).getString("raw")
+        }.single { it.startsWith("qrex-gcm:v1:") }
+        assertEquals(first, second)
+        assertFalse(preferences.getString("history", "").orEmpty().contains("keep-encrypted"))
+        val restored = QREXStore(context)
+        assertTrue(restored.items.any { it.raw == secret })
+        assertTrue(restored.clearAll())
+    }
+
 }
