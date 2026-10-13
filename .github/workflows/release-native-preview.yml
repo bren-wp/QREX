@@ -2,7 +2,7 @@ name: Publish verified native QREX QA preview
 
 on:
   push:
-    branches: [fix/qrex-release-integrity-20261014]
+    branches: [fix/qrex-legal-release-0.2.2-20261014]
     paths:
       - "platforms/**"
       - "tool/**"
@@ -16,7 +16,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: qrex-native-v021-rc-publish
+  group: qrex-native-v022-rc-publish
   cancel-in-progress: true
 
 jobs:
@@ -27,18 +27,21 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       CI_SHA: ${{ github.sha }}
-      QREX_RC_BRANCH: fix/qrex-release-integrity-20261014
-      QREX_RC_TAG: v0.2.1-rc.1
+      QREX_RC_BRANCH: fix/qrex-legal-release-0.2.2-20261014
+      QREX_RC_TAG: v0.2.2-rc.1
     steps:
       - uses: actions/checkout@v4
-      - name: Correct previous RC1 release classification
+      - name: Correct previously misclassified unsigned release candidates
         run: |
           set -euo pipefail
-          id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v0.2.0-rc.1" --jq .id)"
-          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
-            -F prerelease=true -f make_latest=false \
-            -f name="QREX 0.2.0 RC1 — Android & iPhone testing preview (not store-signed)" >/dev/null
-          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/$id" --jq .prerelease)" = true
+          for tag in v0.2.0-rc.1 v0.2.1-rc.1; do
+            id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq .id)"
+            version="${tag#v}"
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+              -F prerelease=true -f make_latest=false \
+              -f name="QREX ${version} — Native QA preview (not store-signed)" >/dev/null
+            test "$(gh api "repos/$GITHUB_REPOSITORY/releases/$id" --jq .prerelease)" = true
+          done
       - name: Check release gate shell syntax
         run: bash -n tool/publish_native_rc.sh
       - name: Release native preview only after green exact-SHA CI
