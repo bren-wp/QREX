@@ -94,7 +94,10 @@ final class QREXStore: ObservableObject {
         // Device-only Keychain items can survive reinstall on some OS versions.
         // Reset orphaned items on a truly fresh installation, but keep legacy data.
         if defaults.object(forKey: "qrex.installation.vault") == nil {
-            if legacy == nil { QREXHistoryVault.delete() }
+            // Keychain may survive an app reinstall. A failed attempt to wipe
+            // orphaned history must NOT mark this installation as initialized.
+            // Keep the screen empty and retry next launch instead.
+            if legacy == nil && !QREXHistoryVault.delete() { return }
             defaults.set(true, forKey: "qrex.installation.vault")
         }
         var stored = QREXHistoryVault.read()
