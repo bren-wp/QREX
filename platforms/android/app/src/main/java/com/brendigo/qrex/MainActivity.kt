@@ -108,8 +108,8 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
                         label = { Text(label) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = cyan, selectedTextColor = cyan,
-                            unselectedIconColor = Color.LightGray,
-                            unselectedTextColor = Color.LightGray))
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
                 }
             }
         }) { padding ->
@@ -139,7 +139,7 @@ private fun AppHeader(title: String, subtitle: String) {
         Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp,
             color = MaterialTheme.colorScheme.onBackground)
         Spacer(Modifier.height(6.dp))
-        Text(subtitle, fontSize = 13.sp, color = Color(0xFF9FB1CC))
+        Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -218,7 +218,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 } else {
                     Text(raw, color = MaterialTheme.colorScheme.onSurface)
                     if (url != null) Text(tr("check_url"),
-                        color = Color.LightGray, fontSize = 12.sp)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
             }
         }
@@ -376,7 +376,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                     }
                 })
             Text(tr("wifi_warning"), fontSize = 12.sp,
-                color = Color.LightGray)
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.height(18.dp))
         Surface(shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surface,
@@ -387,7 +387,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 val previewBitmap = qr
                 if (previewBitmap != null) Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                     modifier = Modifier.size(238.dp).background(white).padding(14.dp))
-                else Text(tr("invalid_content"), color = Color.LightGray)
+                else Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -429,7 +429,7 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
             label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(12.dp))
         if (found.isEmpty()) {
-            Text(tr("no_saved"), color = Color.LightGray)
+            Text(tr("no_saved"), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(found, key = { it.raw }) { item ->
@@ -439,7 +439,7 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                             Column(horizontalAlignment = Alignment.Start) {
                                 Text(QRContent.label(item.raw), color = MaterialTheme.colorScheme.onSurface)
                                 Text(DateFormat.getDateTimeInstance().format(Date(item.timestamp)),
-                                    color = Color.LightGray, fontSize = 11.sp)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
                         IconButton(onClick = {
@@ -447,7 +447,7 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                             }
                         }) {
-                            Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = Color.LightGray)
+                            Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -498,7 +498,7 @@ private fun MoreScreen(store: QREXStore) {
         }
         Spacer(Modifier.height(16.dp))
         Text(tr("about"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text("QREX", color = Color.LightGray)
+        Text("QREX", color = MaterialTheme.colorScheme.onSurfaceVariant)
         TextButton(onClick = {
             openLink(context, Uri.parse("https://brendigo.com"))
         }) { Text(tr("developed_by")) }
