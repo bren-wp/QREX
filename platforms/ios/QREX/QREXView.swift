@@ -362,7 +362,11 @@ struct HistoryScreen: View {
 struct MoreScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var confirmDelete = false
+    @State private var confirmExport = false
     @State private var operationFailed = false
+    @State private var exporting = false
+    @State private var archiveDocument: QREXZipDocument?
+    @State private var showFileExporter = false
     private var displayLanguages: [String] { QREXStrings.supported }
 
     var body: some View {
@@ -371,15 +375,6 @@ struct MoreScreen: View {
                 Section(tr("settings")) {
                     Toggle(tr("save_history"), isOn: $store.historyEnabled)
                     Toggle(tr("light_theme"), isOn: $store.lightMode)
-                    Button(tr("delete_all"), role: .destructive) { confirmDelete = true }
-                }
-                Section(tr("privacy")) {
-                    NavigationLink(tr("privacy")) {
-                        ScrollView {
-                            Text(tr("privacy_summary"))
-                                .padding()
-                        }.navigationTitle(tr("privacy"))
-                    }
                 }
                 Section(tr("language")) {
                     Picker(tr("language"), selection: $store.language) {
@@ -390,10 +385,42 @@ struct MoreScreen: View {
                         }
                     }
                 }
+                Section(tr("data_tools")) {
+                    Button {
+                        confirmExport = true
+                    } label: {
+                        Label(tr("export_archive"), systemImage: "doc.zipper")
+                    }
+                    .disabled(exporting || !store.items.contains(where: { $0.saved }))
+                    Text(tr("export_archive_hint"))
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Button(tr("delete_all"), role: .destructive) {
+                        confirmDelete = true
+                    }
+                }
                 Section(tr("about")) {
                     LabeledContent(tr("about"), value: "QREX")
                     Link(destination: URL(string: "https://brendigo.com")!) {
                         Label(tr("developed_by"), systemImage: "chevron.up.right.square")
+                    }
+                }
+                // Legal documents live at the very bottom of Settings.
+                Section(tr("privacy")) {
+                    NavigationLink(tr("privacy_policy")) {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 18) {
+                                Text(tr("privacy_summary"))
+                                Link(tr("read_full_policy"),
+                                     destination: URL(string:
+                                        "https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md")!)
+                            }.padding()
+                        }.navigationTitle(tr("privacy_policy"))
+                    }
+                    NavigationLink(tr("terms_of_use")) {
+                        ScrollView {
+                            Text(tr("terms_summary"))
+                                .padding()
+                        }.navigationTitle(tr("terms_of_use"))
                     }
                 }
             }
@@ -405,7 +432,37 @@ struct MoreScreen: View {
                 }
                 Button(tr("cancel"), role: .cancel) {}
             }
+            .confirmationDialog(tr("export_archive_warning"),
+                isPresented: $confirmExport, titleVisibility: .visible) {
+                Button(tr("export_archive")) { exportSavedCodes() }
+                Button(tr("cancel"), role: .cancel) {}
+            }
+            .fileExporter(isPresented: $showFileExporter, document: archiveDocument,
+                          contentType: .zip, defaultFilename: "QREX-Saved-Codes") { result in
+                if case .failure = result { operationFailed = true }
+                archiveDocument = nil
+            }
             .storageFailureAlert($operationFailed)
+        }
+    }
+
+    private func exportSavedCodes() {
+        // User confirmed that manually saved QR records, including any Wi-Fi
+        // credentials, will be embedded in a portable ZIP/PDF document.
+        let selected = store.items.filter(\.saved)
+        guard !selected.isEmpty, !exporting else { return }
+        exporting = true
+        Task {
+            do {
+                let archive = try await Task.detached(priority: .userInitiated) {
+                    try QREXDocuments.exportSavedPdfZip(selected)
+                }.value
+                archiveDocument = QREXZipDocument(contents: archive)
+                showFileExporter = true
+            } catch {
+                operationFailed = true
+            }
+            exporting = false
         }
     }
 }
