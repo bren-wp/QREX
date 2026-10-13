@@ -209,4 +209,26 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(store.clearAll())
     }
 
+    func testZipArchiveHasValidHeadersAndExpectedCRC() throws {
+        let bytes = try QREXDocuments.archive(file: "test.txt",
+                                              payload: Data("hello".utf8))
+        XCTAssertGreaterThan(bytes.count, 90)
+        let raw = [UInt8](bytes)
+        XCTAssertEqual(Array(raw[0..<4]), [0x50, 0x4B, 0x03, 0x04])
+        XCTAssertEqual(Array(raw[14..<18]), [0x86, 0xA6, 0x10, 0x36])
+        XCTAssertTrue(bytes.range(of: Data("test.txt".utf8)) != nil)
+        XCTAssertTrue(bytes.range(of: Data([0x50, 0x4B, 0x01, 0x02])) != nil)
+        XCTAssertEqual(Array(raw.suffix(22).prefix(4)), [0x50, 0x4B, 0x05, 0x06])
+    }
+
+    func testSavedQrPdfZipContainsPrintablePdf() throws {
+        let record = QRHistoryItem(id: UUID(), raw: "https://brendigo.com",
+                                   timestamp: Date(), saved: true)
+        let archive = try QREXDocuments.exportSavedPdfZip([record])
+        XCTAssertTrue(archive.starts(with: Data([0x50, 0x4B, 0x03, 0x04])))
+        XCTAssertNotNil(archive.range(of: Data("%PDF-".utf8)))
+        XCTAssertNotNil(archive.range(of: Data("QREX-Saved-Codes.pdf".utf8)))
+        XCTAssertThrowsError(try QREXDocuments.exportSavedPdfZip([]))
+    }
+
 }
