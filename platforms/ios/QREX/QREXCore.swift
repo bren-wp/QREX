@@ -113,8 +113,33 @@ final class QREXStore: ObservableObject {
                 // Preserve the original legacy record for a later retry;
                 // silently filtering Wi-Fi values here would lose user data.
             }
-        } else if stored != nil && legacy != nil {
-            defaults.removeObject(forKey: "qrex.history")
+        } else if let vault = stored, let legacy,
+                  let existing = try? JSONDecoder().decode([QRHistoryItem].self, from: vault),
+                  let previous = try? JSONDecoder().decode([QRHistoryItem].self, from: legacy) {
+            // Two stores may coexist after a partially completed migration.
+            // Never discard the legacy side unless all distinct records have
+            // been merged into Keychain and a protected write has succeeded.
+            var merged = existing
+            var complete = true
+            for item in previous {
+                if let index = merged.firstIndex(where: { $0.raw == item.raw }) {
+                    if item.saved && !merged[index].saved {
+                        let current = merged[index]
+                        merged[index] = QRHistoryItem(id: current.id, raw: current.raw,
+                            timestamp: current.timestamp, saved: true)
+                    }
+                } else if merged.count < 250 {
+                    merged.append(item)
+                } else {
+                    complete = false
+                    break
+                }
+            }
+            if complete, let encoded = try? JSONEncoder().encode(merged),
+               QREXHistoryVault.write(encoded) {
+                defaults.removeObject(forKey: "qrex.history")
+                stored = encoded
+            }
         }
         if let data = stored,
            let loaded = try? JSONDecoder().decode([QRHistoryItem].self, from: data) {
