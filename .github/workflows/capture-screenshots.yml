@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "platforms/**"
+      - ".github/workflows/**"
       - "l10n/**"
       - "tool/verify_screenshots.py"
       - "tool/check_android_screen.py"

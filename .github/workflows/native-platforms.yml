@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "platforms/**"
+      - ".github/workflows/**"
       - ".github/workflows/native-platforms.yml"
       - ".github/workflows/capture-screenshots.yml"
       - "tool/check_native_release.py"
