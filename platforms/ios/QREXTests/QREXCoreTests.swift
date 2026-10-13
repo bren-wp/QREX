@@ -156,4 +156,36 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(store.clearAll())
     }
 
+    @MainActor
+    func testCorruptKeychainHistoryIsNeverOverwrittenByNextSave() {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let original = Data("not-valid-json-private-history".utf8)
+        XCTAssertTrue(QREXHistoryVault.write(original))
+        let reopened = QREXStore()
+        XCTAssertTrue(reopened.items.isEmpty)
+        XCTAssertFalse(reopened.save("https://example.com/new"))
+        XCTAssertEqual(QREXHistoryVault.read(), original)
+        XCTAssertTrue(reopened.clearAll())
+        XCTAssertTrue(QREXStore().save("https://example.com/recovered"))
+        XCTAssertTrue(QREXStore().clearAll())
+    }
+
+    @MainActor
+    func testTooManyKeychainRowsCannotBeSilentlyTruncatedAndOverwritten() throws {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let rows = (0...250).map { i in
+            QRHistoryItem(id: UUID(), raw: "https://example.com/\\(i)",
+                timestamp: Date(timeIntervalSince1970: Double(i)), saved: true)
+        }
+        let original = try JSONEncoder().encode(rows)
+        XCTAssertTrue(QREXHistoryVault.write(original))
+        let reopened = QREXStore()
+        XCTAssertTrue(reopened.items.isEmpty)
+        XCTAssertFalse(reopened.save("https://example.com/new"))
+        XCTAssertEqual(QREXHistoryVault.read(), original)
+        XCTAssertTrue(reopened.clearAll())
+    }
+
 }
