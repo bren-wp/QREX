@@ -418,8 +418,12 @@ struct MoreScreen: View {
                     }
                     NavigationLink(tr("terms_of_use")) {
                         ScrollView {
-                            Text(tr("terms_summary"))
-                                .padding()
+                            VStack(alignment: .leading, spacing: 18) {
+                                Text(tr("terms_summary"))
+                                Link(tr("terms_of_use"),
+                                     destination: URL(string:
+                                        "https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md")!)
+                            }.padding()
                         }.navigationTitle(tr("terms_of_use"))
                     }
                 }

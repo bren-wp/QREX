@@ -567,5 +567,9 @@ private fun MoreScreen(store: QREXStore) {
         text = { Text(tr("terms_summary")) },
         confirmButton = { TextButton(onClick = { showTerms = false }) {
             Text(tr("close"))
-        } })
+        } },
+        dismissButton = { TextButton(onClick = {
+            showTerms = false
+            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md"))
+        }) { Text(tr("terms_of_use")) } })
 }
