@@ -32,7 +32,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add platforms/android/app/src/main/res platforms/ios/QREX \
+          # The repository intentionally ignores platform build folders; force-add
+          # only the generated language assets (not intermediates or build output).
+          git add -f platforms/android/app/src/main/res/values*/strings.xml \
+            platforms/ios/QREX/*.lproj/Localizable.strings \
             platforms/android/app/src/main/java/com/brendigo/qrex/QREXStrings.kt
           if ! git diff --cached --quiet; then
             git commit -m "l10n: regenerate synchronized 23-language PNG export labels [skip ci]"
