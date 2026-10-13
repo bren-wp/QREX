@@ -1,7 +1,6 @@
 package com.brendigo.qrex
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
@@ -12,7 +11,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
- * Creates a ZIP containing one genuine, scan-ready PDF per manually saved QR.
+ * Creates a ZIP containing one multi-page, printable PDF of saved QR codes.
  * It never creates temporary plaintext files and uses only a user-selected
  * Storage Access Framework destination; credentials never appear in filenames.
  * Call on Dispatchers.IO, not on the Compose main thread.
