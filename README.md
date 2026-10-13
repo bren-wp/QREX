@@ -50,7 +50,8 @@ Whether you're scanning a code from the camera, sharing your Wi-Fi details, or m
 | **🛡️ Stay in control** | Preview a destination before opening it. Sharing and export happen only when you choose. |
 | **🔖 Keep the useful ones** | Save favorite codes, search local history and clear your information. |
 | **🎨 Make it yours** | Choose light or dark appearance and a language that feels familiar. |
-| **📱 Share anywhere** | Copy a QR result, send it through your phone's share menu or export a QR image in the newer platform editions. |
+| **📱 Share anywhere** | Copy results, send a code or export its QR artwork with the system share options. |
+| **📄 Keep a beautiful record** | Save your favorite QR codes as printable PDF documents packed into one ZIP archive in the upcoming Android and iPhone editions. |
 
 ## Designed for everyday moments
 
@@ -66,7 +67,7 @@ QREX includes **23 interface languages**, with English as the default:
 
 English · Hrvatski · Deutsch · Français · Español · Italiano · Português · Nederlands · Polski · Čeština · Slovenčina · Slovenščina · Magyar · Română · Български · Ελληνικά · Türkçe · Українська · Русский · Svenska · Dansk · Suomi · Norsk bokmål.
 
-Switch languages from the app's settings. No account or connection required.
+Switch languages directly in **Settings**. English is the first-launch default, and Croatian is fully available alongside 21 more languages. No account or connection required.
 
 ## Made for your privacy
 
@@ -96,7 +97,7 @@ A dedicated iOS edition is in validation and is **not yet publicly available on 
 
 <br>
 
-[All releases](https://github.com/bren-wp/Qivio/releases) · [Privacy](docs/PRIVACY.md) · [Report a problem](https://github.com/bren-wp/Qivio/issues)
+[All releases](https://github.com/bren-wp/Qivio/releases) · [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
 
 </div>
 
