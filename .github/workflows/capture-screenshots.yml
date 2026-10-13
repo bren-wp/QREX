@@ -8,6 +8,8 @@ on:
       - "l10n/**"
       - "tool/verify_screenshots.py"
       - "tool/check_android_screen.py"
+      - "tool/capture_android_screen.sh"
+      - "tool/test_capture_workflow.py"
       - ".github/workflows/capture-screenshots.yml"
   workflow_dispatch:
 
@@ -45,33 +47,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
-          script: |
-            set -e
-            adb wait-for-device
-            # Run device instrumentation first: testing can interrupt QREX and
-            # create an unrelated system dialog before screenshot capture.
-            gradle -p platforms/android --no-daemon --stacktrace :app:connectedDebugAndroidTest
-            adb install -r platforms/android/app/build/outputs/apk/debug/app-debug.apk
-            adb shell am force-stop com.brendigo.qrex || true
-            adb shell input keyevent KEYCODE_HOME
-            adb shell am start -n com.brendigo.qrex/.MainActivity --es qrex_screenshot create
-            mkdir -p docs/screenshots
-            # A valid PNG can depict an ANR or system dialog, so assert that
-            # the actual QR creation screen belongs to QREX before capture.
-            for attempt in 1 2 3 4; do
-              sleep 7
-              if adb shell uiautomator dump /sdcard/qrex-window.xml >/dev/null 2>&1 \
-                && adb exec-out cat /sdcard/qrex-window.xml > docs/screenshots/android-hierarchy.xml \
-                && python3 tool/check_android_screen.py docs/screenshots/android-hierarchy.xml; then
-                adb exec-out screencap -p > docs/screenshots/android-create.png
-                python3 tool/verify_screenshots.py docs/screenshots/android-create.png
-                exit 0
-              fi
-              echo "QREX foreground check failed, retrying ($attempt/4)"
-              adb shell am start -n com.brendigo.qrex/.MainActivity --es qrex_screenshot create || true
-            done
-            echo "Refusing to publish a System UI ANR or non-QREX screenshot"
-            exit 1
+          script: bash tool/capture_android_screen.sh
       - uses: actions/upload-artifact@v4
         with:
           name: qrex-actual-android
