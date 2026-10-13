@@ -154,7 +154,7 @@ class QREXStore(context: Context) {
         // if encryption or the durable preferences write is unavailable.
         if (!persist(merged)) return
         items.clear()
-        items.addAll(safe)
+        items.addAll(merged)
         val light = old.getBoolean("flutter.qrex_light_v1", false)
         val history = old.getBoolean("flutter.qrex_record_v1", true)
         if (!preferences.contains("lightMode")) updateLightMode(light)
