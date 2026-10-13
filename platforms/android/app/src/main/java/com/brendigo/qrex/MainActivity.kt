@@ -164,6 +164,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val shareTitle = tr("share")
     val savedMessage = tr("saved")
     val exportFailedMessage = tr("png_save_failed")
+    val operationFailed = tr("operation_failed")
     val exportBitmap by produceState<Bitmap?>(initialValue = null, key1 = raw) {
         value = withContext(Dispatchers.Default) { generateQR(raw) }
     }
@@ -249,7 +250,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
-            if (wifi) confirmWifiSave = true else store.save(raw)
+            if (wifi) confirmWifiSave = true
+            else if (!store.save(raw)) {
+                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            }
         }
         Spacer(Modifier.height(10.dp))
         TextButton(onClick = onClose) { Text(tr("close")) }
@@ -259,7 +263,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             title = { Text(tr("wifi_save_title")) },
             text = { Text(tr("wifi_save_warning")) },
             confirmButton = { TextButton(onClick = {
-                store.save(raw); confirmWifiSave = false
+                if (!store.save(raw)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                }
+                confirmWifiSave = false
             }) { Text(tr("save")) } },
             dismissButton = { TextButton(onClick = { confirmWifiSave = false }) { Text(tr("cancel")) } })
     }
@@ -293,6 +300,9 @@ fun generateQR(raw: String): Bitmap? {
 
 @Composable
 private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, onResult: (String) -> Unit) {
+    val context = LocalContext.current
+    val operationFailed = tr("operation_failed")
+    var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
     var kind by remember { mutableIntStateOf(0) }
     var content by remember { mutableStateOf(if (screenshotCreate) "https://brendigo.com" else "") }
@@ -368,13 +378,34 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         Spacer(Modifier.height(12.dp))
         PrimaryAction(tr("show_qr"), enabled = qr != null) { onResult(payload) }
         Spacer(Modifier.height(10.dp))
-        OutlinedButton(onClick = { store.save(payload) }, enabled = qr != null,
+        OutlinedButton(onClick = {
+            if (QRContent.isWifi(payload)) confirmWifiSave = true
+            else if (!store.save(payload)) {
+                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            }
+        }, enabled = qr != null,
             modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
+    }
+    if (confirmWifiSave) {
+        AlertDialog(onDismissRequest = { confirmWifiSave = false },
+            title = { Text(tr("wifi_save_title")) },
+            text = { Text(tr("wifi_save_warning")) },
+            confirmButton = { TextButton(onClick = {
+                if (!store.save(payload)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                }
+                confirmWifiSave = false
+            }) { Text(tr("save")) } },
+            dismissButton = { TextButton(onClick = { confirmWifiSave = false }) {
+                Text(tr("cancel"))
+            } })
     }
 }
 
 @Composable
 private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
+    val context = LocalContext.current
+    val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
     val found = store.items.filter { QRContent.label(it.raw).contains(search, ignoreCase = true) }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
@@ -396,7 +427,11 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                                     color = Color.LightGray, fontSize = 11.sp)
                             }
                         }
-                        IconButton(onClick = { store.remove(item) }) {
+                        IconButton(onClick = {
+                            if (!store.remove(item)) {
+                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                            }
+                        }) {
                             Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = Color.LightGray)
                         }
                     }
@@ -409,6 +444,7 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
 @Composable
 private fun MoreScreen(store: QREXStore) {
     val context = LocalContext.current
+    val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var languageMenu by remember { mutableStateOf(false) }
@@ -455,7 +491,10 @@ private fun MoreScreen(store: QREXStore) {
     if (showDelete) AlertDialog(onDismissRequest = { showDelete = false },
         title = { Text(tr("confirm_delete")) },
         text = { Text(tr("delete_warning")) },
-        confirmButton = { TextButton(onClick = { store.clearAll(); showDelete = false }) { Text(tr("delete_all")) } },
+        confirmButton = { TextButton(onClick = {
+            if (store.clearAll()) showDelete = false
+            else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+        }) { Text(tr("delete_all")) } },
         dismissButton = { TextButton(onClick = { showDelete = false }) { Text(tr("cancel")) } })
     if (showPrivacy) AlertDialog(onDismissRequest = { showPrivacy = false },
         title = { Text(tr("privacy")) },
