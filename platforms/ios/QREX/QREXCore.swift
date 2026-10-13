@@ -198,13 +198,21 @@ final class QREXStore: ObservableObject {
         if persist(next) { items = next }
     }
 
-    func clearAll() {
+    /** Remove both protected history and every known pre-migration QR record. */
+    @discardableResult
+    func clearAll() -> Bool {
+        // A Keychain failure cannot be reported as a successful erase.
+        guard QREXHistoryVault.delete() else { return false }
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "qrex.history")
+        defaults.removeObject(forKey: "flutter.qrex_history_v1")
+        defaults.removeObject(forKey: "flutter.qrex_light_v1")
+        defaults.removeObject(forKey: "flutter.qrex_record_v1")
         items.removeAll()
-        QREXHistoryVault.delete()
-        UserDefaults.standard.removeObject(forKey: "qrex.history")
         historyEnabled = true
         lightMode = false
         language = "en"
+        return true
     }
 
     private func persist(_ records: [QRHistoryItem]) -> Bool {
