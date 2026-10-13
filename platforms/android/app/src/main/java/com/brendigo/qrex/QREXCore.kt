@@ -103,10 +103,13 @@ class QREXStore(context: Context) {
                 items += QRRecord(raw, item.optLong("timestamp"), item.optBoolean("saved"))
             }
         }
-        if (upgradeNeeded && !persist()) {
-            // Never leave previous plaintext credentials on disk if encryption fails.
-            items.removeAll { QRContent.isWifi(it.raw) }
-            if (!persist()) preferences.edit().remove("history").commit()
+        if (upgradeNeeded) {
+            // Previous versions may have stored Wi-Fi values in plaintext.
+            // A successful commit atomically replaces them with AES-GCM values.
+            // If Keystore is unavailable, preserve the original records for a
+            // later retry rather than silently destroying the user's history.
+            // persist() never writes plaintext Wi-Fi values.
+            persist()
         }
         migrateFlutterV1(context)
     }
