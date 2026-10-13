@@ -213,4 +213,36 @@ class QREXStorageTest {
         assertTrue(store.clearAll())
     }
 
+    @Test
+    fun savedQrPdfZipExportContainsRealPrintablePdfAndNoUnsafeEntryNames() {
+        val document = java.io.File.createTempFile("qrex-export-", ".zip", context.cacheDir)
+        try {
+            val records = listOf(
+                QRRecord("https://brendigo.com", 0L, true),
+                QRRecord(QRContent.wifi("Guest", "private-secret"), 0L, true)
+            )
+            assertTrue(QREXDocuments.exportSavedPdfZip(
+                context, records, android.net.Uri.fromFile(document)
+            ))
+            var checked = 0
+            java.util.zip.ZipInputStream(document.inputStream().buffered()).use { zip ->
+                while (true) {
+                    val entry = zip.nextEntry ?: break
+                    assertEquals("QREX-Code-%03d.pdf".format(java.util.Locale.ROOT, checked + 1), entry.name)
+                    val bytes = zip.readBytes()
+                    assertTrue(bytes.take(5).toByteArray().contentEquals("%PDF-".toByteArray()))
+                    assertTrue(bytes.size > 1000)
+                    zip.closeEntry()
+                    checked++
+                }
+            }
+            assertEquals(2, checked)
+            assertFalse(document.readBytes().toString(Charsets.ISO_8859_1).contains("private-secret"))
+            assertFalse(QREXDocuments.exportSavedPdfZip(
+                context, emptyList(), android.net.Uri.fromFile(document)))
+        } finally {
+            document.delete()
+        }
+    }
+
 }
