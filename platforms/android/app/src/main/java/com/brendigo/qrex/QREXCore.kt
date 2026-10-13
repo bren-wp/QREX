@@ -100,11 +100,22 @@ class QREXStore(context: Context) {
             for (i in 0 until stored.length()) {
                 val item = stored.getJSONObject(i)
                 val value = item.getString("raw")
-                val encrypted = QREXSecretCipher.isEncrypted(value)
+                // New entries carry explicit protection metadata. Legacy entries
+                // without this field retain the previous prefix-based decoding.
+                // Otherwise a harmless QR text starting with "qrex-gcm:v1:"
+                // could be mistaken for encrypted Wi-Fi data on the next launch.
+                val flag = item.opt("protected")
+                val encrypted = when (flag) {
+                    null -> QREXSecretCipher.isEncrypted(value)
+                    is Boolean -> flag
+                    else -> error("Invalid history protection metadata")
+                }
                 val raw = if (encrypted) {
+                    require(QREXSecretCipher.isEncrypted(value))
                     QREXSecretCipher.decrypt(value)
                         ?: error("Saved history unavailable for decryption")
                 } else value
+                require(!encrypted || QRContent.isWifi(raw))
                 require(raw.isNotBlank() && raw.length <= 10000)
                 // Keep duplicate identities once; this is a no-loss canonicalization.
                 if (!seen.add(raw)) continue
@@ -273,6 +284,7 @@ class QREXStore(context: Context) {
                 ciphertext
             } else item.raw
             array.put(JSONObject().put("raw", value)
+                .put("protected", QRContent.isWifi(item.raw))
                 .put("timestamp", item.timestamp).put("saved", item.saved))
         }
         if (!preferences.edit().putString("history", array.toString()).commit()) return false
