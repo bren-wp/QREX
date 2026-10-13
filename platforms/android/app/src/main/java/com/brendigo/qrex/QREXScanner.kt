@@ -1,5 +1,3 @@
-@file:OptIn(androidx.camera.core.ExperimentalGetImage::class)
-
 package com.brendigo.qrex
 
 import android.Manifest
@@ -10,6 +8,8 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -127,8 +127,10 @@ fun ScanScreen(onRead: (String) -> Unit) {
                         val newAnalyzer = ImageAnalysis.Builder()
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
-                        newAnalyzer.setAnalyzer(analysisExecutor) { frame ->
-                            val media = frame.image
+                        newAnalyzer.setAnalyzer(analysisExecutor, object : ImageAnalysis.Analyzer {
+                            @ExperimentalGetImage
+                            override fun analyze(frame: ImageProxy) {
+                                val media = frame.image
                             if (disposed.get() || media == null || handled.get()) {
                                 frame.close()
                             } else {
@@ -160,7 +162,8 @@ fun ScanScreen(onRead: (String) -> Unit) {
                                     }
                                 }
                             }
-                        }
+                            }
+                        })
                         provider.unbindAll()
                         analyzer = newAnalyzer
                         camera = provider.bindToLifecycle(
