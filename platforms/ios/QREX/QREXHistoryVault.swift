@@ -39,7 +39,10 @@ enum QREXHistoryVault {
         return inserted == errSecSuccess
     }
 
-    static func delete() {
-        SecItemDelete(query as CFDictionary)
+    @discardableResult
+    static func delete() -> Bool {
+        let status = SecItemDelete(query as CFDictionary)
+        // Deleting a record that is already absent is a successful reset.
+        return status == errSecSuccess || status == errSecItemNotFound
     }
 }
