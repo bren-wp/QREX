@@ -422,7 +422,7 @@ struct MoreScreen: View {
                                 Text(tr("privacy_summary"))
                                 Link(tr("read_full_policy"),
                                      destination: URL(string:
-                                        "https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md")!)
+                                        "https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md")!)
                             }.padding()
                         }.navigationTitle(tr("privacy_policy"))
                     }
@@ -432,7 +432,7 @@ struct MoreScreen: View {
                                 Text(tr("terms_summary"))
                                 Link(tr("terms_of_use"),
                                      destination: URL(string:
-                                        "https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md")!)
+                                        "https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md")!)
                             }.padding()
                         }.navigationTitle(tr("terms_of_use"))
                     }
