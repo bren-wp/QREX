@@ -80,6 +80,14 @@ jobs:
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
+      - name: Verify current App Store SDK requirements
+        run: |
+          set -euo pipefail
+          XCODE_MAJOR="$(xcodebuild -version | awk '/^Xcode / { split($2, v, "."); print v[1] }')"
+          SDK_MAJOR="$(xcrun --sdk iphoneos --show-sdk-version | cut -d. -f1)"
+          echo "Xcode major: $XCODE_MAJOR, iOS SDK major: $SDK_MAJOR"
+          test "$XCODE_MAJOR" -ge 26
+          test "$SDK_MAJOR" -ge 26
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate bundled QREX app icon
