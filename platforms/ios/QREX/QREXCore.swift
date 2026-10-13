@@ -182,7 +182,6 @@ final class QREXStore: ObservableObject {
         // Preserve the legacy input if any record cannot be parsed or retained.
         // Deleting it after migrating only a prefix would lose user data.
         guard rows.count <= 250 else { return }
-        var known = Set(items.map(\.raw))
         var merged = items
         for row in rows {
             guard let raw = row["raw"] as? String,
@@ -192,11 +191,20 @@ final class QREXStore: ObservableObject {
                     ?? formatter.date(from: dateText + "Z")
                     ?? basicFormatter.date(from: dateText)
                     ?? basicFormatter.date(from: dateText + "Z") else { return }
-            if !known.insert(raw).inserted { continue }
-            guard merged.count < 250 else { return }
-            merged.append(QRHistoryItem(id: UUID(), raw: raw,
-                                        timestamp: date,
-                                        saved: row["saved"] as? Bool ?? false))
+            let saved = row["saved"] as? Bool ?? false
+            if let index = merged.firstIndex(where: { $0.raw == raw }) {
+                // Keep the identity and timestamp of an existing record,
+                // but never drop a legacy favorite when its QR already exists.
+                if saved && !merged[index].saved {
+                    let original = merged[index]
+                    merged[index] = QRHistoryItem(id: original.id, raw: original.raw,
+                                                  timestamp: original.timestamp, saved: true)
+                }
+            } else {
+                guard merged.count < 250 else { return }
+                merged.append(QRHistoryItem(id: UUID(), raw: raw,
+                                            timestamp: date, saved: saved))
+            }
         }
         // Do not remove the Flutter value until a protected Keychain write succeeds.
         guard persist(merged) else {
