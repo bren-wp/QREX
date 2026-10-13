@@ -13,6 +13,13 @@ on:
       - "tool/publish_native_rc.sh"
       - ".github/workflows/release-native-preview.yml"
       - ".github/workflows/capture-screenshots.yml"
+  push:
+    branches: [main]
+    paths:
+      - "platforms/**"
+      - "tool/**"
+      - "l10n/**"
+      - ".github/workflows/capture-screenshots.yml"
   workflow_dispatch:
 
 permissions:

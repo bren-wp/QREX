@@ -15,6 +15,13 @@ on:
       - "tool/test_capture_workflow.py"
       - "tool/test_android_screen.py"
       - "tool/check_android_screen.py"
+  push:
+    branches: [main]
+    paths:
+      - "platforms/**"
+      - "tool/**"
+      - "l10n/**"
+      - ".github/workflows/native-platforms.yml"
   workflow_dispatch:
 
 permissions:

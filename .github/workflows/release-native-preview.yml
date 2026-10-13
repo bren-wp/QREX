@@ -1,38 +1,45 @@
-name: Publish verified native QREX RC
+name: Publish verified native QREX QA preview
 
 on:
   push:
-    branches: [fix/native-release-hardening-20261013]
+    branches: [fix/qrex-release-integrity-20261014]
     paths:
       - "platforms/**"
       - "tool/**"
       - "l10n/**"
       - "README.md"
-      - "docs/releases/v0.2.0-rc.1.md"
-      - ".github/workflows/release-native-preview.yml"
-      - ".github/workflows/native-platforms.yml"
-      - ".github/workflows/capture-screenshots.yml"
-      - ".github/workflows/generate-localizations.yml"
+      - "docs/releases/**"
+      - ".github/workflows/**"
 
 permissions:
   contents: write
   actions: read
 
 concurrency:
-  group: qrex-native-rc-preview
+  group: qrex-native-v021-rc-publish
   cancel-in-progress: true
 
 jobs:
   candidate:
-    name: Verified QREX pre-release (never a signed store build)
+    name: Publish native QA candidate after all platform and screenshot checks
     runs-on: ubuntu-latest
     timeout-minutes: 100
     env:
       GH_TOKEN: ${{ github.token }}
       CI_SHA: ${{ github.sha }}
+      QREX_RC_BRANCH: fix/qrex-release-integrity-20261014
+      QREX_RC_TAG: v0.2.1-rc.1
     steps:
       - uses: actions/checkout@v4
-      - name: Check publication script syntax
+      - name: Correct previous RC1 release classification
+        run: |
+          set -euo pipefail
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v0.2.0-rc.1" --jq .id)"
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+            -F prerelease=true -f make_latest=false \
+            -f name="QREX 0.2.0 RC1 — Android & iPhone testing preview (not store-signed)" >/dev/null
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/$id" --jq .prerelease)" = true
+      - name: Check release gate shell syntax
         run: bash -n tool/publish_native_rc.sh
-      - name: Gate and publish verified candidate
+      - name: Release native preview only after green exact-SHA CI
         run: bash tool/publish_native_rc.sh
