@@ -1,0 +1,41 @@
+name: Generate QREX localization resources
+
+on:
+  push:
+    branches: [fix/runtime-screenshots-and-qr-export]
+    paths:
+      - "l10n/catalog.json"
+      - ".github/workflows/generate-localizations.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: qrex-localizations-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/runtime-screenshots-and-qr-export
+      - name: Generate all 23 Android and iOS localizations
+        run: |
+          python3 tool/generate_localizations.py
+          python3 tool/generate_localizations.py --check
+          python3 tool/check_translation_usage.py
+      - name: Commit reproducible translations
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add platforms/android/app/src/main/res platforms/ios/QREX \
+            platforms/android/app/src/main/java/com/brendigo/qrex/QREXStrings.kt
+          if ! git diff --cached --quiet; then
+            git commit -m "l10n: regenerate synchronized 23-language PNG export labels [skip ci]"
+            git pull --rebase origin fix/runtime-screenshots-and-qr-export
+            git push origin HEAD:fix/runtime-screenshots-and-qr-export
+          fi
