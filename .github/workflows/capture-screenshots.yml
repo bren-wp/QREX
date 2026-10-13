@@ -9,6 +9,8 @@ on:
       - "tool/check_android_screen.py"
       - "tool/capture_android_screen.sh"
       - "tool/test_capture_workflow.py"
+      - "tool/publish_native_rc.sh"
+      - ".github/workflows/release-native-preview.yml"
       - ".github/workflows/capture-screenshots.yml"
   workflow_dispatch:
 
