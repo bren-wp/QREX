@@ -67,4 +67,6 @@
     <string name="language">Taal</string>
     <string name="system">Apparaattaal gebruiken</string>
     <string name="history_local">Op dit apparaat opgeslagen</string>
+    <string name="export_png">PNG exporteren</string>
+    <string name="png_save_failed">PNG-afbeelding kan niet worden opgeslagen.</string>
 </resources>

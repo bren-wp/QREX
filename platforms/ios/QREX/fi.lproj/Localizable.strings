@@ -65,3 +65,5 @@
 "language" = "Kieli";
 "system" = "Laitteen kieli";
 "history_local" = "Tallennettu tälle laitteelle";
+"export_png" = "Vie PNG";
+"png_save_failed" = "PNG-kuvaa ei voitu tallentaa.";

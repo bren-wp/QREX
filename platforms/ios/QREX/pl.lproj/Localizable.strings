@@ -65,3 +65,5 @@
 "language" = "Język";
 "system" = "Język urządzenia";
 "history_local" = "Zapisano na tym urządzeniu";
+"export_png" = "Eksportuj PNG";
+"png_save_failed" = "Nie można zapisać obrazu PNG.";

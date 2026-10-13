@@ -67,4 +67,6 @@
     <string name="language">Γλώσσα</string>
     <string name="system">Γλώσσα συσκευής</string>
     <string name="history_local">Αποθηκεύτηκε στη συσκευή</string>
+    <string name="export_png">Εξαγωγή PNG</string>
+    <string name="png_save_failed">Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG.</string>
 </resources>

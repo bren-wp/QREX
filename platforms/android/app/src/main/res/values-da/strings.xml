@@ -67,4 +67,6 @@
     <string name="language">Sprog</string>
     <string name="system">Enhedens sprog</string>
     <string name="history_local">Gemt på denne enhed</string>
+    <string name="export_png">Eksportér PNG</string>
+    <string name="png_save_failed">PNG-billedet kunne ikke gemmes.</string>
 </resources>

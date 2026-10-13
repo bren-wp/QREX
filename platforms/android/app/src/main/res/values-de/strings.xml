@@ -67,4 +67,6 @@
     <string name="language">Sprache</string>
     <string name="system">Gerätesprache verwenden</string>
     <string name="history_local">Auf diesem Gerät gespeichert</string>
+    <string name="export_png">PNG exportieren</string>
+    <string name="png_save_failed">PNG-Bild konnte nicht gespeichert werden.</string>
 </resources>

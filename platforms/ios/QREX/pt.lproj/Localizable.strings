@@ -65,3 +65,5 @@
 "language" = "Idioma";
 "system" = "Idioma do dispositivo";
 "history_local" = "Guardado neste dispositivo";
+"export_png" = "Exportar PNG";
+"png_save_failed" = "Não foi possível guardar a imagem PNG.";
