@@ -186,4 +186,31 @@ class QREXStorageTest {
         assertTrue(store.clearAll())
     }
 
+    @Test
+    fun fullSavedHistoryNeverEvictsFavoritesOrAcceptsInvisibleNewEntry() {
+        val context = androidx.test.platform.app.InstrumentationRegistry
+            .getInstrumentation().targetContext
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val legacy = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(prefs.edit().clear().commit())
+        assertTrue(legacy.edit().clear().commit())
+        val initial = org.json.JSONArray()
+        for (i in 0 until 250) {
+            initial.put(org.json.JSONObject()
+                .put("raw", "https://example.com/favorite/$i")
+                .put("timestamp", i.toLong())
+                .put("saved", true))
+        }
+        assertTrue(prefs.edit().putString("history", initial.toString()).commit())
+        val store = QREXStore(context)
+        assertEquals(250, store.items.size)
+        assertFalse(store.save("https://example.org/251"))
+        store.record("https://example.org/auto-scan")
+        assertEquals(250, store.items.size)
+        assertTrue(store.items.all { it.saved })
+        assertTrue(store.items.any { it.raw == "https://example.com/favorite/249" })
+        assertEquals(initial.toString(), prefs.getString("history", null))
+        assertTrue(store.clearAll())
+    }
+
 }
