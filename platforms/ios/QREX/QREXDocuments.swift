@@ -35,12 +35,16 @@ enum QREXDocuments {
             throw ExportError.invalidHistory
         }
         // A4-ish PDF pages: one readable and printable QR code on each page.
+        // Validate all pages before creating a PDF; no partial document.
+        let images = try records.map { record -> UIImage in
+            guard let image = QREXImage.qr(record.raw) else {
+                throw ExportError.invalidCode
+            }
+            return image
+        }
         let pdf = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 595, height: 842))
-        let result = try pdf.pdfData { context in
-            for (index, record) in records.enumerated() {
-                guard let image = QREXImage.qr(record.raw) else {
-                    throw ExportError.invalidCode
-                }
+        let result = pdf.pdfData { context in
+            for (index, image) in images.enumerated() {
                 context.beginPage()
                 let titleAttributes: [NSAttributedString.Key: Any] = [
                     .font: UIFont.boldSystemFont(ofSize: 30),
