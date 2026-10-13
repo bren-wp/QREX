@@ -9,6 +9,8 @@ on:
       - "tool/generate_localizations.py"
       - "tool/check_translation_usage.py"
       - ".github/workflows/generate-localizations.yml"
+      - "tool/publish_native_rc.sh"
+      - ".github/workflows/release-native-preview.yml"
   push:
     branches: [main]
     paths:
