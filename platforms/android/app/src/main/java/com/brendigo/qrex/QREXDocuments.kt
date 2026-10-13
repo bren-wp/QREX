@@ -21,21 +21,16 @@ object QREXDocuments {
     fun exportSavedPdfZip(context: Context, records: List<QRRecord>, destination: Uri): Boolean {
         if (records.isEmpty() || records.size > 250 || records.any { !it.saved }) return false
         return runCatching {
-            // A stream to the selected document only; no shared folders or backups.
-            val stream = context.contentResolver.openOutputStream(destination, "w")
-                ?: error("Unable to open document destination")
-            stream.use { output ->
-                ZipOutputStream(output.buffered()).use { archive ->
-                    records.forEachIndexed { index, record ->
-                        require(record.raw.isNotBlank() && record.raw.length <= 10000)
-                        val bitmap = generateQR(record.raw)
-                            ?: error("A saved QR code is too large to render")
-                        val page = pdfPage(bitmap, index + 1, records.size)
-                        val entry = ZipEntry("QREX-Code-%03d.pdf".format(java.util.Locale.ROOT, index + 1))
-                        archive.putNextEntry(entry)
-                        archive.write(page)
-                        archive.closeEntry()
-                    }
+            // Same interoperable structure as iOS: one multi-page PDF in ZIP.
+            val pdf = createSavedCodesPdf(records)
+            require(pdf.size <= 60_000_000)
+            val output = context.contentResolver.openOutputStream(destination, "w")
+                ?: error("Cannot open selected ZIP destination")
+            output.use { stream ->
+                ZipOutputStream(stream.buffered()).use { archive ->
+                    archive.putNextEntry(ZipEntry("QREX-Saved-Codes.pdf"))
+                    archive.write(pdf)
+                    archive.closeEntry()
                     archive.finish()
                 }
             }
@@ -43,34 +38,40 @@ object QREXDocuments {
         }.getOrDefault(false)
     }
 
-    private fun pdfPage(bitmap: Bitmap, index: Int, total: Int): ByteArray {
-        val document = PdfDocument()
+    private fun createSavedCodesPdf(records: List<QRRecord>): ByteArray {
+        val pdf = PdfDocument()
         try {
-            val info = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-            val page = document.startPage(info)
-            val canvas: Canvas = page.canvas
-            canvas.drawColor(android.graphics.Color.WHITE)
-            val label = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            val title = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = android.graphics.Color.rgb(3, 12, 27)
                 textSize = 28f
                 isFakeBoldText = true
             }
-            canvas.drawText("QREX", 58f, 82f, label)
-            label.textSize = 15f
-            label.isFakeBoldText = false
-            canvas.drawText("Scan. Create. Share.", 58f, 111f, label)
-            canvas.drawBitmap(bitmap, null, RectF(78f, 188f, 517f, 627f),
-                Paint(Paint.FILTER_BITMAP_FLAG))
-            label.textSize = 12f
-            canvas.drawText("Saved code $index of $total", 58f, 743f, label)
-            canvas.drawText("Created with QREX by Brendigo", 58f, 765f, label)
-            document.finishPage(page)
-            return ByteArrayOutputStream().use { output ->
-                document.writeTo(output)
-                output.toByteArray()
+            val ink = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = android.graphics.Color.rgb(3, 12, 27)
+                textSize = 13f
+            }
+            records.forEachIndexed { index, record ->
+                require(record.raw.isNotBlank() && record.raw.length <= 10000)
+                val bitmap = generateQR(record.raw)
+                    ?: error("Saved code cannot be rendered as QR")
+                val page = pdf.startPage(PdfDocument.PageInfo.Builder(595, 842, index + 1).create())
+                val canvas: Canvas = page.canvas
+                canvas.drawColor(android.graphics.Color.WHITE)
+                canvas.drawText("QREX", 58f, 82f, title)
+                canvas.drawText("Scan. Create. Share.", 58f, 111f, ink)
+                canvas.drawBitmap(bitmap, null, RectF(78f, 188f, 517f, 627f),
+                    Paint(Paint.FILTER_BITMAP_FLAG))
+                canvas.drawText("Saved code ${index + 1} of ${records.size}", 58f, 743f, ink)
+                canvas.drawText("Created with QREX by Brendigo", 58f, 765f, ink)
+                pdf.finishPage(page)
+            }
+            return ByteArrayOutputStream().use { bytes ->
+                pdf.writeTo(bytes)
+                bytes.toByteArray()
             }
         } finally {
-            document.close()
+            pdf.close()
         }
     }
+
 }
