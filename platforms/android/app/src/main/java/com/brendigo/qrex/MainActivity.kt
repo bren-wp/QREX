@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -159,6 +161,27 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val copied = tr("copied")
     val sharingFailed = tr("share_failed")
     val shareTitle = tr("share")
+    val savedMessage = tr("saved")
+    val exportFailedMessage = tr("png_save_failed")
+    val exportBitmap by produceState<Bitmap?>(initialValue = null, key1 = raw) {
+        value = withContext(Dispatchers.Default) { generateQR(raw) }
+    }
+    val pngExport = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("image/png")
+    ) { uri ->
+        if (uri != null) {
+            runCatching {
+                val image = exportBitmap ?: error("Missing QR bitmap")
+                context.contentResolver.openOutputStream(uri)?.use { stream ->
+                    check(image.compress(Bitmap.CompressFormat.PNG, 100, stream))
+                } ?: error("Cannot open document")
+            }.onSuccess {
+                Toast.makeText(context, savedMessage, Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(context, exportFailedMessage, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
@@ -213,10 +236,15 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        val bitmap = remember(raw) { generateQR(raw) }
+        val bitmap = exportBitmap
         if (bitmap != null) {
             Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                 modifier = Modifier.size(230.dp).background(white).padding(12.dp))
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = { pngExport.launch("QREX-QR.png") },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text(tr("export_png")) }
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {

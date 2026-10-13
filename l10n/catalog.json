@@ -70,7 +70,9 @@
         "delete_warning": "History, saved QR codes and settings will be permanently erased.",
         "language": "Language",
         "system": "Follow device language",
-        "history_local": "Stored on this device"
+        "history_local": "Stored on this device",
+        "export_png": "Export PNG",
+        "png_save_failed": "Unable to save PNG image."
       }
     },
     "hr": {
@@ -142,7 +144,9 @@
         "delete_warning": "Povijest, spremljeni kodovi i postavke trajno će se izbrisati.",
         "language": "Jezik",
         "system": "Jezik uređaja",
-        "history_local": "Spremljeno na uređaju"
+        "history_local": "Spremljeno na uređaju",
+        "export_png": "Izvezi PNG",
+        "png_save_failed": "PNG sliku nije moguće spremiti."
       }
     },
     "de": {
@@ -214,7 +218,9 @@
         "delete_warning": "Verlauf, gespeicherte Codes und Einstellungen werden dauerhaft gelöscht.",
         "language": "Sprache",
         "system": "Gerätesprache verwenden",
-        "history_local": "Auf diesem Gerät gespeichert"
+        "history_local": "Auf diesem Gerät gespeichert",
+        "export_png": "PNG exportieren",
+        "png_save_failed": "PNG-Bild konnte nicht gespeichert werden."
       }
     },
     "fr": {
@@ -286,7 +292,9 @@
         "delete_warning": "L'historique, les codes et les paramètres seront effacés définitivement.",
         "language": "Langue",
         "system": "Langue de l'appareil",
-        "history_local": "Stocké sur cet appareil"
+        "history_local": "Stocké sur cet appareil",
+        "export_png": "Exporter en PNG",
+        "png_save_failed": "Impossible d’enregistrer l’image PNG."
       }
     },
     "es": {
@@ -358,7 +366,9 @@
         "delete_warning": "El historial, los códigos guardados y los ajustes se borrarán permanentemente.",
         "language": "Idioma",
         "system": "Idioma del dispositivo",
-        "history_local": "Guardado en este dispositivo"
+        "history_local": "Guardado en este dispositivo",
+        "export_png": "Exportar PNG",
+        "png_save_failed": "No se pudo guardar la imagen PNG."
       }
     },
     "it": {
@@ -430,7 +440,9 @@
         "delete_warning": "Cronologia, codici e impostazioni saranno eliminati definitivamente.",
         "language": "Lingua",
         "system": "Lingua del dispositivo",
-        "history_local": "Salvato su questo dispositivo"
+        "history_local": "Salvato su questo dispositivo",
+        "export_png": "Esporta PNG",
+        "png_save_failed": "Impossibile salvare l’immagine PNG."
       }
     },
     "pt": {
@@ -502,7 +514,9 @@
         "delete_warning": "O histórico, códigos e definições serão eliminados permanentemente.",
         "language": "Idioma",
         "system": "Idioma do dispositivo",
-        "history_local": "Guardado neste dispositivo"
+        "history_local": "Guardado neste dispositivo",
+        "export_png": "Exportar PNG",
+        "png_save_failed": "Não foi possível guardar a imagem PNG."
       }
     },
     "nl": {
@@ -574,7 +588,9 @@
         "delete_warning": "Geschiedenis, opgeslagen codes en instellingen worden permanent verwijderd.",
         "language": "Taal",
         "system": "Apparaattaal gebruiken",
-        "history_local": "Op dit apparaat opgeslagen"
+        "history_local": "Op dit apparaat opgeslagen",
+        "export_png": "PNG exporteren",
+        "png_save_failed": "PNG-afbeelding kan niet worden opgeslagen."
       }
     },
     "pl": {
@@ -646,7 +662,9 @@
         "delete_warning": "Historia, zapisane kody i ustawienia zostaną trwale usunięte.",
         "language": "Język",
         "system": "Język urządzenia",
-        "history_local": "Zapisano na tym urządzeniu"
+        "history_local": "Zapisano na tym urządzeniu",
+        "export_png": "Eksportuj PNG",
+        "png_save_failed": "Nie można zapisać obrazu PNG."
       }
     },
     "cs": {
@@ -718,7 +736,9 @@
         "delete_warning": "Historie, uložené kódy a nastavení budou trvale smazány.",
         "language": "Jazyk",
         "system": "Jazyk zařízení",
-        "history_local": "Uloženo v zařízení"
+        "history_local": "Uloženo v zařízení",
+        "export_png": "Exportovat PNG",
+        "png_save_failed": "Obrázek PNG nelze uložit."
       }
     },
     "sk": {
@@ -790,7 +810,9 @@
         "delete_warning": "História, uložené kódy a nastavenia sa natrvalo odstránia.",
         "language": "Jazyk",
         "system": "Jazyk zariadenia",
-        "history_local": "Uložené v zariadení"
+        "history_local": "Uložené v zariadení",
+        "export_png": "Exportovať PNG",
+        "png_save_failed": "Obrázok PNG sa nedá uložiť."
       }
     },
     "sl": {
@@ -862,7 +884,9 @@
         "delete_warning": "Zgodovina, kode in nastavitve bodo trajno izbrisane.",
         "language": "Jezik",
         "system": "Jezik naprave",
-        "history_local": "Shranjeno v tej napravi"
+        "history_local": "Shranjeno v tej napravi",
+        "export_png": "Izvozi PNG",
+        "png_save_failed": "Slike PNG ni mogoče shraniti."
       }
     },
     "hu": {
@@ -934,7 +958,9 @@
         "delete_warning": "Az előzmények, kódok és beállítások végleg törlődnek.",
         "language": "Nyelv",
         "system": "Eszköz nyelve",
-        "history_local": "Ezen az eszközön tárolva"
+        "history_local": "Ezen az eszközön tárolva",
+        "export_png": "PNG exportálása",
+        "png_save_failed": "A PNG-kép nem menthető."
       }
     },
     "ro": {
@@ -1006,7 +1032,9 @@
         "delete_warning": "Istoricul, codurile și setările vor fi șterse definitiv.",
         "language": "Limbă",
         "system": "Limba dispozitivului",
-        "history_local": "Stocat pe acest dispozitiv"
+        "history_local": "Stocat pe acest dispozitiv",
+        "export_png": "Exportă PNG",
+        "png_save_failed": "Imaginea PNG nu poate fi salvată."
       }
     },
     "bg": {
@@ -1078,7 +1106,9 @@
         "delete_warning": "Историята, кодовете и настройките ще бъдат изтрити завинаги.",
         "language": "Език",
         "system": "Език на устройството",
-        "history_local": "Запазено на устройството"
+        "history_local": "Запазено на устройството",
+        "export_png": "Експортирай PNG",
+        "png_save_failed": "PNG изображението не може да се запази."
       }
     },
     "el": {
@@ -1150,7 +1180,9 @@
         "delete_warning": "Το ιστορικό, οι κωδικοί και οι ρυθμίσεις θα διαγραφούν οριστικά.",
         "language": "Γλώσσα",
         "system": "Γλώσσα συσκευής",
-        "history_local": "Αποθηκεύτηκε στη συσκευή"
+        "history_local": "Αποθηκεύτηκε στη συσκευή",
+        "export_png": "Εξαγωγή PNG",
+        "png_save_failed": "Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG."
       }
     },
     "tr": {
@@ -1222,7 +1254,9 @@
         "delete_warning": "Geçmiş, kayıtlı kodlar ve ayarlar kalıcı olarak silinecek.",
         "language": "Dil",
         "system": "Cihaz dili",
-        "history_local": "Bu cihazda saklanır"
+        "history_local": "Bu cihazda saklanır",
+        "export_png": "PNG dışa aktar",
+        "png_save_failed": "PNG görüntüsü kaydedilemedi."
       }
     },
     "uk": {
@@ -1294,7 +1328,9 @@
         "delete_warning": "Історію, коди й налаштування буде видалено назавжди.",
         "language": "Мова",
         "system": "Мова пристрою",
-        "history_local": "Збережено на пристрої"
+        "history_local": "Збережено на пристрої",
+        "export_png": "Експортувати PNG",
+        "png_save_failed": "Не вдалося зберегти зображення PNG."
       }
     },
     "ru": {
@@ -1366,7 +1402,9 @@
         "delete_warning": "История, коды и настройки будут удалены навсегда.",
         "language": "Язык",
         "system": "Язык устройства",
-        "history_local": "Сохранено на устройстве"
+        "history_local": "Сохранено на устройстве",
+        "export_png": "Экспорт PNG",
+        "png_save_failed": "Не удалось сохранить изображение PNG."
       }
     },
     "sv": {
@@ -1438,7 +1476,9 @@
         "delete_warning": "Historik, sparade koder och inställningar raderas permanent.",
         "language": "Språk",
         "system": "Enhetens språk",
-        "history_local": "Sparas på den här enheten"
+        "history_local": "Sparas på den här enheten",
+        "export_png": "Exportera PNG",
+        "png_save_failed": "Det gick inte att spara PNG-bilden."
       }
     },
     "da": {
@@ -1510,7 +1550,9 @@
         "delete_warning": "Historik, gemte koder og indstillinger slettes permanent.",
         "language": "Sprog",
         "system": "Enhedens sprog",
-        "history_local": "Gemt på denne enhed"
+        "history_local": "Gemt på denne enhed",
+        "export_png": "Eksportér PNG",
+        "png_save_failed": "PNG-billedet kunne ikke gemmes."
       }
     },
     "fi": {
@@ -1582,7 +1624,9 @@
         "delete_warning": "Historia, tallennetut koodit ja asetukset poistetaan pysyvästi.",
         "language": "Kieli",
         "system": "Laitteen kieli",
-        "history_local": "Tallennettu tälle laitteelle"
+        "history_local": "Tallennettu tälle laitteelle",
+        "export_png": "Vie PNG",
+        "png_save_failed": "PNG-kuvaa ei voitu tallentaa."
       }
     },
     "nb": {
@@ -1654,7 +1698,9 @@
         "delete_warning": "Historikk, lagrede koder og innstillinger slettes permanent.",
         "language": "Språk",
         "system": "Enhetens språk",
-        "history_local": "Lagret på denne enheten"
+        "history_local": "Lagret på denne enheten",
+        "export_png": "Eksporter PNG",
+        "png_save_failed": "Kunne ikke lagre PNG-bildet."
       }
     }
   }

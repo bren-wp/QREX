@@ -9,6 +9,16 @@ enum QREXColors {
     static let purple = Color(red: 144/255, green: 71/255, blue: 248/255)
 }
 
+struct QRImageShareSheet: UIViewControllerRepresentable {
+    let image: UIImage
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [image], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+
 struct ResultPayload: Identifiable {
     let raw: String
     var id: String { raw }
@@ -65,6 +75,7 @@ struct ResultScreen: View {
     @State private var showPassword = false
     @State private var showQR = false
     @State private var confirmSaveWifi = false
+    @State private var showImageShare = false
 
     var body: some View {
         NavigationStack {
@@ -103,6 +114,8 @@ struct ResultScreen: View {
                     }
                     Button(tr("show_qr")) { showQR = true }
                         .disabled(!QRContent.isSupported(raw))
+                    Button(tr("export_png")) { showImageShare = true }
+                        .disabled(!QRContent.isSupported(raw))
                     Button(store.items.contains(where: { $0.raw == raw && $0.saved }) ? tr("saved") : tr("save")) {
                         if QRContent.isWifi(raw) {
                             confirmSaveWifi = true
@@ -122,6 +135,11 @@ struct ResultScreen: View {
                             .scaledToFit().frame(width: 240, height: 240)
                         Button(tr("close")) { showQR = false }
                     }.padding()
+                }
+            }
+            .sheet(isPresented: $showImageShare) {
+                if let image = QREXImage.qr(raw) {
+                    QRImageShareSheet(image: image)
                 }
             }
             .confirmationDialog(tr("wifi_save_warning"),
