@@ -56,6 +56,24 @@ class CustomerProductReadinessTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/PRIVACY.md").exists())
         self.assertTrue((ROOT / "docs/TERMS.md").exists())
 
+    def test_customer_links_target_the_current_qrex_repository(self):
+        public_sources = (
+            ROOT / "README.md",
+            ROOT / "lib/screens/more_page.dart",
+            ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt",
+            IOS / "QREXView.swift",
+        )
+        for path in public_sources:
+            content = path.read_text("utf-8")
+            with self.subTest(path=str(path.relative_to(ROOT))):
+                self.assertNotIn("github.com/bren-wp/Qivio", content)
+        for path in public_sources[1:]:
+            content = path.read_text("utf-8")
+            self.assertIn("https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md", content)
+        for path in public_sources[2:]:
+            content = path.read_text("utf-8")
+            self.assertIn("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md", content)
+
     def test_screenshot_test_fixtures_are_debug_only(self):
         kotlin = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         swift = (IOS / "QREXView.swift").read_text("utf-8")
