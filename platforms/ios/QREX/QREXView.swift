@@ -183,7 +183,7 @@ struct CreateScreen: View {
     @State private var revealPassword = false
     @State private var showMore = false
     @State private var showResult = false
-    @State private var renderedQR: UIImage?
+    @State private var renderedQR: (payload: String, image: UIImage)?
     @State private var operationFailed = false
     @State private var confirmWifiSave = false
     private var choices: [String] {
@@ -253,8 +253,8 @@ struct CreateScreen: View {
                         Text(tr("wifi_warning"))
                             .font(.caption).foregroundStyle(.secondary)
                     }
-                    if let image = renderedQR {
-                        Image(uiImage: image).interpolation(.none).resizable()
+                    if let frame = renderedQR, frame.payload == raw {
+                        Image(uiImage: frame.image).interpolation(.none).resizable()
                             .scaledToFit().frame(width: 210, height: 210)
                             .padding(12).background(.white, in: RoundedRectangle(cornerRadius: 20))
                         Button(tr("save_qr")) {
@@ -283,7 +283,7 @@ struct CreateScreen: View {
                     QREXImage.qr(input)
                 }.value
                 guard !Task.isCancelled else { return }
-                renderedQR = image
+                renderedQR = image.map { (payload: input, image: $0) }
             }
             .sheet(isPresented: $showResult) { ResultScreen(raw: raw) }
             .confirmationDialog(tr("wifi_save_warning"),
