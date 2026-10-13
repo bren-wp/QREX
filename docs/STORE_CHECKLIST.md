@@ -30,6 +30,16 @@ This is an engineering checklist, **not** a statement that either store has appr
 - [ ] Sign an **iOS device archive** with the correct Apple Developer Team ID, App Store distribution certificate and provisioning profile; verify bundle ID, version, build number, exported IPA and TestFlight install.
 - [ ] Use authentic runtime screenshots for App Store Connect; mockups are not substitutes.
 
+## Settings, PDF and ZIP export validation
+
+- [x] New PDF/ZIP export implementation added on Kotlin Android and SwiftUI iOS, using user-selected system file destinations rather than broad device-storage permissions.
+- [x] Warning before exporting saved codes, including those that may encode Wi-Fi passwords; exported PDF/ZIP files are **not encrypted**.
+- [x] Settings contain the Privacy Policy, Terms of Use, Brendigo attribution, and English as default plus Croatian and 21 other translations.
+- [x] Android adaptive and themed launcher resources added; Xcode icon packaging remains in simulator/device archive CI.
+- [ ] Verify PDF readability, ZIP extraction, sharing and cancellation on real Google and Apple devices.
+- [ ] Confirm the actual compiled Android manifest, Play policy forms and app-store listings accurately describe sensitive exported content.
+- [ ] Confirm localization quality and accessibility for the new legal/export text in each language.
+
 ## Official sources
 
 - Google: https://support.google.com/googleplay/android-developer/answer/11926878
