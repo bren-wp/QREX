@@ -25,14 +25,16 @@ struct ResultPayload: Identifiable {
 }
 
 enum QREXImage {
+    // CIContext is costly to initialize and safe to reuse for rendering.
+    private static let renderContext = CIContext()
+
     static func qr(_ raw: String) -> UIImage? {
         guard QRContent.isSupported(raw) else { return nil }
         let filter = CIFilter.qrCodeGenerator()
         filter.message = Data(raw.utf8)
         filter.correctionLevel = "M"
-        let context = CIContext()
         guard let image = filter.outputImage,
-              let cgImage = context.createCGImage(image.transformed(by: CGAffineTransform(scaleX: 10, y: 10)),
+              let cgImage = renderContext.createCGImage(image.transformed(by: CGAffineTransform(scaleX: 10, y: 10)),
                                                   from: image.extent.applying(CGAffineTransform(scaleX: 10, y: 10)))
         else { return nil }
         return UIImage(cgImage: cgImage)
