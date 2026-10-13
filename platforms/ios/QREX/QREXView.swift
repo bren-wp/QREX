@@ -181,13 +181,28 @@ struct CreateScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 13) {
-                    Text(tr("create_qr")).font(.system(size: 27, weight: .bold))
+                    Text(tr("create_qr")).font(.system(size: 25, weight: .bold))
                     Text(tr("enter_details")).font(.subheadline).foregroundStyle(.secondary)
-                    Picker(tr("create"), selection: $kind) {
-                        ForEach(0..<(showMore ? choices.count : 3), id: \.self) { i in
-                            Text(choices[i]).tag(i)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(0..<(showMore ? choices.count : 3), id: \.self) { i in
+                                Button {
+                                    kind = i
+                                    content = ""
+                                    password = ""
+                                } label: {
+                                    Text(choices[i]).font(.subheadline.weight(.semibold))
+                                        .padding(.horizontal, 16).padding(.vertical, 11)
+                                        .foregroundStyle(kind == i ? Color.white : QREXColors.cyan)
+                                        .background(kind == i ? Color(red: 22/255, green: 119/255, blue: 1)
+                                                    : QREXColors.card,
+                                                    in: RoundedRectangle(cornerRadius: 12))
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityAddTraits(kind == i ? [.isSelected] : [])
+                            }
                         }
-                    }.pickerStyle(.menu)
+                    }
                     Button(showMore ? tr("fewer_options") : tr("more_options")) {
                         showMore.toggle()
                         if !showMore && kind > 2 { kind = 0 }
