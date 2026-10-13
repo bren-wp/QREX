@@ -104,7 +104,6 @@ final class QREXStore: ObservableObject {
             defaults.set(true, forKey: "qrex.installation.vault")
         }
 
-        var stored: Data?
         var existing: [QRHistoryItem] = []
         switch QREXHistoryVault.load() {
         case .missing:
@@ -121,7 +120,6 @@ final class QREXStore: ObservableObject {
             }
             existing = loaded
             items = loaded
-            stored = data
         }
 
         if let legacy {
@@ -155,7 +153,6 @@ final class QREXStore: ObservableObject {
             }
             defaults.removeObject(forKey: "qrex.history")
             items = merged
-            stored = data
         }
 
         // Legacy Flutter data remains in place if parsing or a protected write
