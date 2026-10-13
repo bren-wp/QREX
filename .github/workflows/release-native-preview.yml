@@ -10,6 +10,9 @@ on:
       - "README.md"
       - "docs/releases/v0.2.0-rc.1.md"
       - ".github/workflows/release-native-preview.yml"
+      - ".github/workflows/native-platforms.yml"
+      - ".github/workflows/capture-screenshots.yml"
+      - ".github/workflows/generate-localizations.yml"
 
 permissions:
   contents: write
