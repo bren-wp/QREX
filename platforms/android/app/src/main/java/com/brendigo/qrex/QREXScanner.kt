@@ -220,7 +220,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
             }
         }
         Spacer(Modifier.height(8.dp))
-        Text(tr("point_camera"), color = Color.LightGray)
+        Text(tr("point_camera"), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
     if (message != null) AlertDialog(onDismissRequest = { message = null },
