@@ -165,9 +165,14 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val savedMessage = tr("saved")
     val exportFailedMessage = tr("png_save_failed")
     val operationFailed = tr("operation_failed")
-    val exportBitmap by produceState<Bitmap?>(initialValue = null, key1 = raw) {
-        value = withContext(Dispatchers.Default) { generateQR(raw) }
+    // Associate each bitmap with its exact payload: stale frames must never
+    // be exported after a user switches to a different QR result.
+    val exportFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = raw) {
+        value = null
+        val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
+        value = bitmap?.let { raw to it }
     }
+    val exportBitmap = exportFrame?.takeIf { it.first == raw }?.second
     val pngExport = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("image/png")
     ) { uri ->
@@ -321,10 +326,14 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             "BEGIN:VCARD\nVERSION:3.0\nFN:${input.replace("\n", " ")}\nEND:VCARD"
     }
     // Cancel obsolete renders when the user keeps typing; avoid blocking the UI thread.
-    val qr by produceState<Bitmap?>(initialValue = null, key1 = payload) {
+    // A previous preview cannot be used for another payload while typing.
+    val qrFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = payload) {
+        value = null
         delay(140)
-        value = withContext(Dispatchers.Default) { generateQR(payload) }
+        val image = withContext(Dispatchers.Default) { generateQR(payload) }
+        value = image?.let { payload to it }
     }
+    val qr = qrFrame?.takeIf { it.first == payload }?.second
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
