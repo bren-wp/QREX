@@ -61,10 +61,10 @@ object QRContent {
         }.getOrNull()
     }
 
-    fun label(raw: String): String = when {
-        isWifi(raw) -> wifiField(raw, "S") ?: "Wi-Fi"
-        safeUrl(raw) != null -> safeUrl(raw)?.host ?: raw
-        else -> raw.replace("\n", " ").take(56)
+    fun label(raw: String): String {
+        if (isWifi(raw)) return wifiField(raw, "S") ?: "Wi-Fi"
+        // Decode URLs once; history filtering can call this for every entry.
+        return safeUrl(raw)?.host ?: raw.replace("\n", " ").take(56)
     }
 
     fun canRender(raw: String): Boolean =
