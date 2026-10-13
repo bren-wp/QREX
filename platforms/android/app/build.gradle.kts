@@ -3,6 +3,18 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
+// The Play upload key is injected locally/through protected CI secrets.
+// Never commit a key, its password, or a keystore to this repository.
+val uploadEnv = listOf(
+    "QREX_UPLOAD_STORE_FILE", "QREX_UPLOAD_STORE_PASSWORD",
+    "QREX_UPLOAD_KEY_ALIAS", "QREX_UPLOAD_KEY_PASSWORD"
+)
+val suppliedUploadKeys = uploadEnv.count { !System.getenv(it).isNullOrBlank() }
+if (suppliedUploadKeys in 1..3) {
+    throw GradleException("Incomplete QREX upload signing configuration")
+}
+val uploadSigningReady = suppliedUploadKeys == uploadEnv.size
+
 android {
     namespace = "com.brendigo.qrex"
     compileSdk = 36
@@ -14,8 +26,19 @@ android {
         versionName = "0.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        if (uploadSigningReady) {
+            create("upload") {
+                storeFile = file(System.getenv("QREX_UPLOAD_STORE_FILE"))
+                storePassword = System.getenv("QREX_UPLOAD_STORE_PASSWORD")
+                keyAlias = System.getenv("QREX_UPLOAD_KEY_ALIAS")
+                keyPassword = System.getenv("QREX_UPLOAD_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
+            if (uploadSigningReady) signingConfig = signingConfigs.getByName("upload")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
