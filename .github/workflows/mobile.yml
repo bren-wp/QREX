@@ -9,9 +9,8 @@ on:
       - "test/**"
       - "pubspec.yaml"
       - "analysis_options.yaml"
-      - "tool/prepare_platforms.py"
-      - "tool/verify_platforms.py"
-      - ".github/workflows/mobile.yml"
+      - "tool/**"
+      - ".github/workflows/**"
   workflow_dispatch:
 
 concurrency:
