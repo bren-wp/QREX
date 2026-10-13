@@ -194,16 +194,19 @@ final class QREXStore: ObservableObject {
     }
 
     func record(_ raw: String) {
-        guard historyEnabled, !QRContent.isWifi(raw), !raw.isEmpty else { return }
+        guard historyEnabled, !QRContent.isWifi(raw), !raw.isEmpty,
+              raw.count <= 10000 else { return }
         update(raw, saved: items.first(where: { $0.raw == raw })?.saved ?? false)
     }
 
-    func save(_ raw: String) {
-        guard !raw.isEmpty else { return }
-        update(raw, saved: true)
+    @discardableResult
+    func save(_ raw: String) -> Bool {
+        guard !raw.isEmpty, raw.count <= 10000 else { return false }
+        return update(raw, saved: true)
     }
 
-    private func update(_ raw: String, saved: Bool) {
+    @discardableResult
+    private func update(_ raw: String, saved: Bool) -> Bool {
         var next = items.filter { $0.raw != raw }
         next.insert(QRHistoryItem(id: UUID(), raw: raw, timestamp: Date(), saved: saved), at: 0)
         if next.count > 250 {
@@ -213,17 +216,25 @@ final class QREXStore: ObservableObject {
                 next.removeLast()
             }
         }
-        if persist(next) { items = next }
+        guard persist(next) else { return false }
+        items = next
+        return true
     }
 
-    func delete(_ item: QRHistoryItem) {
+    @discardableResult
+    func delete(_ item: QRHistoryItem) -> Bool {
         let next = items.filter { $0.id != item.id }
-        if persist(next) { items = next }
+        guard persist(next) else { return false }
+        items = next
+        return true
     }
 
-    func clearHistory() {
+    @discardableResult
+    func clearHistory() -> Bool {
         let next = items.filter { $0.saved }
-        if persist(next) { items = next }
+        guard persist(next) else { return false }
+        items = next
+        return true
     }
 
     /** Remove both protected history and every known pre-migration QR record. */
