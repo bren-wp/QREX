@@ -188,4 +188,25 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(reopened.clearAll())
     }
 
+    @MainActor
+    func testFullSavedHistoryNeverEvictsFavorites() throws {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let favourites = (0..<250).map { index in
+            QRHistoryItem(id: UUID(), raw: "https://example.com/favorite/\(index)",
+                          timestamp: Date(timeIntervalSince1970: Double(index)), saved: true)
+        }
+        let protected = try JSONEncoder().encode(favourites)
+        XCTAssertTrue(QREXHistoryVault.write(protected))
+        let store = QREXStore()
+        XCTAssertEqual(store.items.count, 250)
+        XCTAssertFalse(store.save("https://example.org/251"))
+        store.record("https://example.org/auto-scan")
+        XCTAssertEqual(store.items.count, 250)
+        XCTAssertTrue(store.items.allSatisfy(\.saved))
+        XCTAssertTrue(store.items.contains(where: { $0.raw == favourites[249].raw }))
+        XCTAssertEqual(QREXHistoryVault.read(), protected)
+        XCTAssertTrue(store.clearAll())
+    }
+
 }
