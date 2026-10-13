@@ -74,6 +74,10 @@ object QRContent {
 class QREXStore(context: Context) {
     private val preferences: SharedPreferences =
         context.getSharedPreferences("qrex.user", Context.MODE_PRIVATE)
+    private val legacyPreferences: SharedPreferences =
+        context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+    // Corrupt or temporarily undecryptable history must never be overwritten.
+    private var historyReadable = true
     val items = mutableStateListOf<QRRecord>()
     var historyEnabled by mutableStateOf(preferences.getBoolean("historyEnabled", true))
         private set
@@ -83,41 +87,46 @@ class QREXStore(context: Context) {
         private set
 
     init {
-        // Upgrade old plaintext Wi-Fi records into Keystore-backed ciphertext.
-        // Undecryptable records are discarded rather than exposing credentials.
+        // Keep the original preference value intact when any entry is corrupt,
+        // incomplete or undecryptable. Otherwise a later save could destroy it.
         var upgradeNeeded = false
         runCatching {
             val stored = JSONArray(preferences.getString("history", "[]") ?: "[]")
+            require(stored.length() <= 250)
             val seen = mutableSetOf<String>()
-            for (i in 0 until minOf(stored.length(), 250)) {
-                val item = stored.optJSONObject(i) ?: continue
-                val value = item.optString("raw")
-                val raw = if (QREXSecretCipher.isEncrypted(value))
-                    QREXSecretCipher.decrypt(value) ?: continue
-                else value
-                if (QRContent.isWifi(raw) && !QREXSecretCipher.isEncrypted(value)) {
+            for (i in 0 until stored.length()) {
+                val item = stored.getJSONObject(i)
+                val value = item.getString("raw")
+                val encrypted = QREXSecretCipher.isEncrypted(value)
+                val raw = if (encrypted) {
+                    QREXSecretCipher.decrypt(value)
+                        ?: error("Saved history unavailable for decryption")
+                } else value
+                require(raw.isNotBlank() && raw.length <= 10000)
+                // Keep duplicate identities once; this is a no-loss canonicalization.
+                if (!seen.add(raw)) continue
+                if (QRContent.isWifi(raw) && !encrypted) {
                     upgradeNeeded = true
-                    if (!QREXSecretCipher.available()) continue
+                    require(QREXSecretCipher.available())
                 }
-                if (raw.isBlank() || raw.length > 10000 || !seen.add(raw)) continue
-                items += QRRecord(raw, item.optLong("timestamp"), item.optBoolean("saved"))
+                items += QRRecord(raw, item.getLong("timestamp"), item.optBoolean("saved"))
             }
+        }.onFailure {
+            historyReadable = false
+            items.clear()
         }
-        if (upgradeNeeded) {
-            // Previous versions may have stored Wi-Fi values in plaintext.
-            // A successful commit atomically replaces them with AES-GCM values.
-            // If Keystore is unavailable, preserve the original records for a
-            // later retry rather than silently destroying the user's history.
-            // persist() never writes plaintext Wi-Fi values.
-            persist()
+        if (upgradeNeeded && historyReadable) {
+            // Replace plaintext legacy Wi-Fi records only after encryption and
+            // a durable commit. On failure do not let later saves erase them.
+            if (!persist()) historyReadable = false
         }
-        migrateFlutterV1(context)
+        if (historyReadable) migrateFlutterV1(context)
     }
 
     /** One-time on-device migration of the published Flutter SharedPreferences format. */
     private fun migrateFlutterV1(context: Context) {
         if (preferences.getBoolean("flutterMigrationV1", false)) return
-        val old = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+        val old = legacyPreferences
         val oldEntries = old.getString("flutter.qrex_history_v1", null)
         if (oldEntries == null) {
             preferences.edit().putBoolean("flutterMigrationV1", true).apply()
@@ -200,12 +209,22 @@ class QREXStore(context: Context) {
         if (persist(next)) { items.clear(); items.addAll(next) }
     }
 
-    fun clearAll() {
+    /** Explicit erasure also removes untransferred Flutter records and settings. */
+    fun clearAll(): Boolean {
+        // Remove legacy values first: otherwise they could reappear on next start
+        // after qrex.user was cleared and the migration marker was lost.
+        val legacyCleared = legacyPreferences.edit()
+            .remove("flutter.qrex_history_v1")
+            .remove("flutter.qrex_light_v1")
+            .remove("flutter.qrex_record_v1")
+            .commit()
+        if (!legacyCleared || !preferences.edit().clear().commit()) return false
+        historyReadable = true
         items.clear()
-        preferences.edit().clear().commit()
         historyEnabled = true
         lightMode = false
         language = "en"
+        return true
     }
 
     fun updateLanguage(value: String) {
@@ -225,6 +244,7 @@ class QREXStore(context: Context) {
     }
 
     private fun persist(records: List<QRRecord> = items): Boolean {
+        if (!historyReadable) return false
         val array = JSONArray()
         for (item in records) {
             val protected = if (QRContent.isWifi(item.raw))
