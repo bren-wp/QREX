@@ -19,7 +19,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("prerelease=true", script)
         self.assertIn("check_current_head", script)
         for check in ("native-platforms.yml", "capture-screenshots.yml",
-                      "generate-localizations.yml"):
+                      "generate-localizations.yml", "mobile.yml"):
             self.assertIn(check, script)
         for text in ("v0.2.2-rc.1", "v0.2.1-rc.1", "v0.2.0-rc.1", "gh api -X PATCH",
                      "contents: write"):
