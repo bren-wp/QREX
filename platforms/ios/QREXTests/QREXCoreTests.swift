@@ -90,4 +90,21 @@ final class QREXCoreTests: XCTestCase {
         restored.clearAll()
     }
 
+    @MainActor
+    func testDeleteAllErasesPendingFlutterSecretsAndPreventsResurrection() {
+        let store = QREXStore()
+        XCTAssertTrue(store.clearAll())
+        let original = "[{\"raw\":\"WIFI:T:WPA;S:Office;P:private;;\",\"date\":\"invalid\",\"saved\":true}]"
+        UserDefaults.standard.set(original, forKey: "flutter.qrex_history_v1")
+        UserDefaults.standard.set(false, forKey: "flutter.qrex_record_v1")
+        UserDefaults.standard.set(true, forKey: "flutter.qrex_light_v1")
+        let pending = QREXStore()
+        XCTAssertTrue(pending.items.isEmpty)
+        XCTAssertTrue(pending.clearAll())
+        XCTAssertNil(UserDefaults.standard.string(forKey: "flutter.qrex_history_v1"))
+        XCTAssertNil(UserDefaults.standard.object(forKey: "flutter.qrex_record_v1"))
+        XCTAssertNil(UserDefaults.standard.object(forKey: "flutter.qrex_light_v1"))
+        XCTAssertTrue(QREXStore().items.isEmpty)
+    }
+
 }
