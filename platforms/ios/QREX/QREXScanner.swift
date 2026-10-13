@@ -107,6 +107,7 @@ struct ScanScreen: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var access: AVAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var photoTask: Task<Void, Never>?
     @State private var code: String?
     @State private var torch = false
     @State private var message: String?
@@ -160,7 +161,9 @@ struct ScanScreen: View {
         }
         .task { requestCamera() }
         .onChange(of: selectedPhoto) { item in
-            Task { await readPhoto(item) }
+            // A second image selection supersedes any in-flight Vision task.
+            photoTask?.cancel()
+            photoTask = Task { await readPhoto(item) }
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
@@ -171,6 +174,8 @@ struct ScanScreen: View {
         }
         .onDisappear {
             torch = false
+            photoTask?.cancel()
+            photoTask = nil
         }
         .sheet(item: Binding(
             get: { code.map { ResultPayload(raw: $0) } },
@@ -206,13 +211,17 @@ struct ScanScreen: View {
 
     private func readPhoto(_ item: PhotosPickerItem?) async {
         guard let item else { return }
-        // Reset even on a failed or oversized image, so the same photo can be selected again.
-        defer { selectedPhoto = nil }
+        // Do not clear a newer selection when an older, cancelled task exits.
+        // Reset the matching selection so users can choose the same image again.
+        defer {
+            if selectedPhoto == item { selectedPhoto = nil }
+        }
         do {
             guard let data = try await item.loadTransferable(type: Data.self) else {
                 message = tr("image_failed"); return
             }
-            // Limit oversized images to avoid avoidable memory pressure.
+            guard !Task.isCancelled else { return }
+            // Reject oversized images before allocating Vision's decoded frame.
             guard data.count < 20_000_000,
                   let source = CGImageSourceCreateWithData(data as CFData, nil),
                   let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any],
@@ -227,13 +236,14 @@ struct ScanScreen: View {
             try await Task.detached(priority: .userInitiated) {
                 try VNImageRequestHandler(data: data).perform([request])
             }.value
+            guard !Task.isCancelled else { return }
             if let raw = request.results?.compactMap(\.payloadStringValue).first {
                 receive(raw)
             } else {
                 message = tr("qr_not_found")
             }
         } catch {
-            message = tr("image_failed")
+            if !Task.isCancelled { message = tr("image_failed") }
         }
     }
 }
