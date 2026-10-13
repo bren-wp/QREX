@@ -196,8 +196,11 @@ class QREXStore(context: Context) {
         val next = items.filterNot { it.raw == raw }.toMutableList()
         next.add(0, QRRecord(raw, System.currentTimeMillis(), saved))
         if (next.size > 250) {
+            // An automatic scan or a new favorite must never evict a favorite.
+            // If every previous entry is saved, reject the new entry instead.
             val lastUnsaved = next.indexOfLast { !it.saved }
-            next.removeAt(if (lastUnsaved >= 0) lastUnsaved else next.lastIndex)
+            if (lastUnsaved <= 0) return false
+            next.removeAt(lastUnsaved)
         }
         if (!persist(next)) return false
         items.clear()
