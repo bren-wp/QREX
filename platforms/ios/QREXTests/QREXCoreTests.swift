@@ -78,7 +78,7 @@ final class QREXCoreTests: XCTestCase {
     func testIncompleteFlutterMigrationKeepsOriginalRecords() {
         let initial = QREXStore()
         initial.clearAll()
-        let invalidDate = "[{\\"raw\\":\\"WIFI:T:WPA;S:Home;P:secret;;\\",\\"date\\":\\"not-a-date\\",\\"saved\\":true}]"
+        let invalidDate = "[{\"raw\":\"WIFI:T:WPA;S:Home;P:secret;;\",\"date\":\"not-a-date\",\"saved\":true}]"
         UserDefaults.standard.set(invalidDate, forKey: "flutter.qrex_history_v1")
         let restored = QREXStore()
         XCTAssertTrue(restored.items.isEmpty)
