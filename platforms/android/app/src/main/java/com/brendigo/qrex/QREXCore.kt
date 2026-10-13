@@ -120,11 +120,11 @@ class QREXStore(context: Context) {
             // a durable commit. On failure do not let later saves erase them.
             if (!persist()) historyReadable = false
         }
-        if (historyReadable) migrateFlutterV1(context)
+        if (historyReadable) migrateFlutterV1()
     }
 
     /** One-time on-device migration of the published Flutter SharedPreferences format. */
-    private fun migrateFlutterV1(context: Context) {
+    private fun migrateFlutterV1() {
         if (preferences.getBoolean("flutterMigrationV1", false)) return
         val old = legacyPreferences
         val oldEntries = old.getString("flutter.qrex_history_v1", null)
