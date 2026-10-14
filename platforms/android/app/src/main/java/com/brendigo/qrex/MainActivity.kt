@@ -493,9 +493,11 @@ private fun MoreScreen(store: QREXStore) {
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
     var confirmExport by remember { mutableStateOf(false) }
+    var confirmPdfExport by remember { mutableStateOf(false) }
     val archiveScope = rememberCoroutineScope()
     val exportFailed = tr("archive_failed")
     val exportReady = tr("archive_ready")
+    val trSaved = tr("saved")
     val exportZip = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/zip")
     ) { destination ->
@@ -507,6 +509,20 @@ private fun MoreScreen(store: QREXStore) {
                     QREXDocuments.exportSavedPdfZip(context, records, destination)
                 }
                 Toast.makeText(context, if (exported) exportReady else exportFailed,
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    val exportPdf = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf")
+    ) { destination ->
+        if (destination != null) {
+            val records = store.items.filter { it.saved }.toList()
+            archiveScope.launch {
+                val exported = withContext(Dispatchers.IO) {
+                    QREXDocuments.exportSavedPdf(context, records, destination)
+                }
+                Toast.makeText(context, if (exported) trSaved else operationFailed,
                     Toast.LENGTH_SHORT).show()
             }
         }
@@ -530,11 +546,18 @@ private fun MoreScreen(store: QREXStore) {
         Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        OutlinedButton(
-            onClick = { confirmExport = true },
-            enabled = store.items.any { it.saved },
-            modifier = Modifier.fillMaxWidth()
-        ) { Text(tr("export_archive")) }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(
+                onClick = { confirmPdfExport = true },
+                enabled = store.items.any { it.saved },
+                modifier = Modifier.weight(1f)
+            ) { Text("PDF") }
+            OutlinedButton(
+                onClick = { confirmExport = true },
+                enabled = store.items.any { it.saved },
+                modifier = Modifier.weight(1f)
+            ) { Text("ZIP") }
+        }
         OutlinedButton(onClick = { showDelete = true }) { Text(tr("delete_all")) }
         Spacer(Modifier.height(20.dp))
         Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -563,6 +586,18 @@ private fun MoreScreen(store: QREXStore) {
         TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
         TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
     }
+    if (confirmPdfExport) AlertDialog(
+        onDismissRequest = { confirmPdfExport = false },
+        title = { Text("PDF") },
+        text = { Text(tr("wifi_warning")) },
+        confirmButton = { TextButton(onClick = {
+            confirmPdfExport = false
+            exportPdf.launch("QREX-Saved-Codes.pdf")
+        }) { Text("PDF") } },
+        dismissButton = { TextButton(onClick = { confirmPdfExport = false }) {
+            Text(tr("cancel"))
+        } }
+    )
     if (confirmExport) AlertDialog(onDismissRequest = { confirmExport = false },
         title = { Text(tr("export_archive")) },
         text = { Text(tr("export_archive_warning")) },

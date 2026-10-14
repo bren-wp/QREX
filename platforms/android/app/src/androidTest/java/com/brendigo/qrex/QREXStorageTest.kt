@@ -291,6 +291,25 @@ class QREXStorageTest {
     }
 
     @Test
+    fun savedQrExportCanProduceStandalonePrintablePdf() {
+        val document = java.io.File.createTempFile("qrex-document-", ".pdf", context.cacheDir)
+        try {
+            val saved = listOf(QRRecord("https://brendigo.com", 0L, true))
+            assertTrue(QREXDocuments.exportSavedPdf(
+                context, saved, android.net.Uri.fromFile(document)
+            ))
+            val bytes = document.readBytes()
+            assertTrue(bytes.size > 1000)
+            assertTrue(bytes.take(5).toByteArray().contentEquals("%PDF-".toByteArray()))
+            assertFalse(QREXDocuments.exportSavedPdf(
+                context, emptyList(), android.net.Uri.fromFile(document)
+            ))
+        } finally {
+            document.delete()
+        }
+    }
+
+    @Test
     fun literalCryptoPrefixQrTextDoesNotLockUserHistoryAfterRestart() {
         val store = QREXStore(context)
         assertTrue(store.clearAll())

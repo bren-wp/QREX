@@ -17,6 +17,18 @@ import java.util.zip.ZipOutputStream
  * Call on Dispatchers.IO, not on the Compose main thread.
  */
 object QREXDocuments {
+    fun exportSavedPdf(context: Context, records: List<QRRecord>, destination: Uri): Boolean {
+        if (records.isEmpty() || records.size > 250 || records.any { !it.saved }) return false
+        return runCatching {
+            val pdf = createSavedCodesPdf(records)
+            require(pdf.size <= 60_000_000)
+            val output = context.contentResolver.openOutputStream(destination, "w")
+                ?: error("Cannot open selected PDF destination")
+            output.use { it.write(pdf) }
+            true
+        }.getOrDefault(false)
+    }
+
     fun exportSavedPdfZip(context: Context, records: List<QRRecord>, destination: Uri): Boolean {
         if (records.isEmpty() || records.size > 250 || records.any { !it.saved }) return false
         return runCatching {
