@@ -310,6 +310,35 @@ class QREXStorageTest {
     }
 
     @Test
+    fun duplicatePlaintextWifiAfterEncryptedRecordCannotSurviveMigration() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val secret = QRContent.wifi("Office", "must-not-remain-plaintext")
+        assertTrue(initial.save(secret))
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val protected = org.json.JSONArray(prefs.getString("history", "[]"))
+            .getJSONObject(0)
+        assertTrue(protected.getBoolean("protected"))
+        val duplicate = org.json.JSONObject().put("raw", secret)
+            .put("timestamp", 42L).put("saved", false)
+        val old = org.json.JSONArray().put(protected).put(duplicate)
+        assertTrue(prefs.edit().putString("history", old.toString()).commit())
+        assertTrue(prefs.getString("history", "").orEmpty().contains("must-not-remain-plaintext"))
+
+        val restored = QREXStore(context)
+        assertEquals(1, restored.items.size)
+        assertEquals(secret, restored.items.single().raw)
+        assertTrue(restored.items.single().saved)
+        val migrated = prefs.getString("history", "").orEmpty()
+        assertFalse(migrated.contains("must-not-remain-plaintext"))
+        val rows = org.json.JSONArray(migrated)
+        assertEquals(1, rows.length())
+        assertTrue(rows.getJSONObject(0).getBoolean("protected"))
+        assertTrue(QREXStore(context).items.single().saved)
+        assertTrue(restored.clearAll())
+    }
+
+    @Test
     fun literalCryptoPrefixQrTextDoesNotLockUserHistoryAfterRestart() {
         val store = QREXStore(context)
         assertTrue(store.clearAll())

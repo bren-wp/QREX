@@ -59,7 +59,7 @@ object QRContent {
                 append(ch)
             }
         }
-        return "WIFI:T:${if (password.isBlank()) "nopass" else "WPA"};S:${escape(ssid)};P:${escape(password)};;"
+        return "WIFI:T:${if (password.isEmpty()) "nopass" else "WPA"};S:${escape(ssid)};P:${escape(password)};;"
     }
 
     fun safeUrl(raw: String): Uri? {
@@ -130,6 +130,14 @@ class QREXStore(context: Context) {
                 // Duplicate records may disagree on the saved flag: never
                 // downgrade a manually saved favorite during canonicalization.
                 if (!seen.add(raw)) {
+                    // A duplicate legacy plaintext Wi-Fi entry still exists in
+                    // the serialized preferences even though the in-memory
+                    // list keeps one record. Force a protected rewrite before
+                    // treating the migration as complete.
+                    if (QRContent.isWifi(raw) && !encrypted) {
+                        upgradeNeeded = true
+                        require(QREXSecretCipher.available())
+                    }
                     val previous = items.indexOfFirst { it.raw == raw }
                     if (previous >= 0 && item.optBoolean("saved") && !items[previous].saved) {
                         items[previous] = items[previous].copy(saved = true)

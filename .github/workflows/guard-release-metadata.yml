@@ -1,0 +1,39 @@
+name: Enforce QREX pre-release classification
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: qrex-release-metadata-guard
+  cancel-in-progress: false
+
+jobs:
+  classify:
+    name: Prevent unsigned RC previews being mistaken for stable releases
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Audit and correct all published QREX RC releases
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" |
+            jq -sr 'add | .[] | select(.tag_name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+-rc\\.[0-9]+$")) |
+              [.id, .tag_name, .prerelease, .name] | @tsv' |
+            while IFS=$'\t' read -r id tag pre name; do
+              version="${tag#v}"
+              target="QREX ${version} — Native QA preview (not store-signed)"
+              if [ "$pre" != "true" ] || [ "$name" != "$target" ]; then
+                gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+                  -F prerelease=true -f make_latest=false -f name="$target" >/dev/null
+              fi
+              test "$(gh api "repos/$GITHUB_REPOSITORY/releases/$id" --jq .prerelease)" = true
+              test "$(gh api "repos/$GITHUB_REPOSITORY/releases/$id" --jq .name)" = "$target"
+            done

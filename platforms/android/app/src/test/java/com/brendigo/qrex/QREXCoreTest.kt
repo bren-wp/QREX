@@ -38,6 +38,18 @@ class QREXCoreTest {
         assertFalse(QRContent.canRender("x".repeat(1501)))
         assertTrue(QRContent.canRender("hello"))
     }
+    @Test fun whitespaceWifiPasswordIsNotMistakenForAnOpenNetwork() {
+        val raw = QRContent.wifi("Private", "        ")
+        assertEquals("WPA", QRContent.wifiField(raw, "T"))
+        assertEquals("        ", QRContent.wifiField(raw, "P"))
+        assertEquals("nopass", QRContent.wifiField(QRContent.wifi("Public", ""), "T"))
+    }
+
+    @Test fun whitespaceOnlyQrCannotBeRendered() {
+        assertFalse(QRContent.canRender("   "))
+        assertFalse(QRContent.canRender("\n\t"))
+    }
+
     @Test fun wifiEscapesDoubleQuotesAcrossPlatforms() {
         val ssid = "Guest\"Room"
         val password = "a\\b\"c;d"

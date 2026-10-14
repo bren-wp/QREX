@@ -20,6 +20,21 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertEqual(QRContent.wifiField(raw, key: "P"), "a\\b:c")
     }
 
+    func testWhitespaceOnlyQrCannotBeGenerated() {
+        XCTAssertFalse(QRContent.isSupported("   "))
+        XCTAssertFalse(QRContent.isSupported("\n\t"))
+        XCTAssertFalse(QRContent.isSupported(String(repeating: "x", count: 1501)))
+        XCTAssertTrue(QRContent.isSupported("QR content"))
+    }
+
+    func testWhitespaceWifiPasswordMatchesAndroid() {
+        let secret = QRContent.wifi(ssid: "Private", password: "        ")
+        XCTAssertEqual(QRContent.wifiField(secret, key: "T"), "WPA")
+        XCTAssertEqual(QRContent.wifiField(secret, key: "P"), "        ")
+        XCTAssertEqual(QRContent.wifiField(
+            QRContent.wifi(ssid: "Public", password: ""), key: "T"), "nopass")
+    }
+
     func testUnsafeUrls() {
         XCTAssertNil(QRContent.safeURL("javascript:alert(1)"))
         XCTAssertNil(QRContent.safeURL("https://trusted.com@malicious.com"))
