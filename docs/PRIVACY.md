@@ -17,9 +17,9 @@ QREX is an Android and iOS application for scanning and generating QR codes loca
 
 ## Your PDF and ZIP exports
 
-In the newer standalone Android and iOS editions, Settings offers an optional **Export saved QR codes as PDF · ZIP** action. After you explicitly confirm it, QREX creates printable PDF pages containing only your **manually saved QR codes**, then packages them in a ZIP file you choose to save or share.
+In the newer standalone Android and iOS editions, Settings offers optional PDF and ZIP export actions. After you explicitly confirm either format, QREX creates printable PDF pages containing only your **manually saved QR codes**. You can save the standalone PDF or a ZIP containing that PDF using your device's system file picker.
 
-**The exported documents are not encrypted.** A manually saved Wi-Fi QR code can carry its password inside the QR artwork, and other saved codes may contain private data. Keep the ZIP secure, do not upload it to untrusted services, and share it only with authorized recipients. No QR archive is exported automatically. The ZIP is created on the device without QREX uploading its contents to a developer server. The chosen storage provider, Files app, cloud drive, or recipient may handle the exported document under its own privacy practices.
+**The exported documents are not encrypted.** A manually saved Wi-Fi QR code can carry its password inside the QR artwork, and other saved codes may contain private data. Keep the ZIP secure, do not upload it to untrusted services, and share it only with authorized recipients. No QR document or archive is exported automatically. The ZIP is created on the device without QREX uploading its contents to a developer server. The chosen storage provider, Files app, cloud drive, or recipient may handle the exported document under its own privacy practices.
 
 Deleting application data **does not delete previously exported PDF/ZIP documents**. Users should remove exported copies separately if they no longer need them.
 

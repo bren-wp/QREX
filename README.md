@@ -51,7 +51,7 @@ Whether you're scanning a code from the camera, sharing your Wi-Fi details, or m
 | **🔖 Keep the useful ones** | Save favorite codes, search local history and clear your information. |
 | **🎨 Make it yours** | Choose light or dark appearance and a language that feels familiar. |
 | **📱 Share anywhere** | Copy results, send a code or export its QR artwork with the system share options. |
-| **📄 Keep a beautiful record** | Save favorite QR codes as printable PDF documents in one ZIP archive, with export only when you ask. |
+| **📄 Keep a beautiful record** | Save your favorite QR codes as a printable PDF or a ZIP containing that PDF, only when you choose. |
 
 ## Designed for everyday moments
 

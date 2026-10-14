@@ -32,7 +32,7 @@ This is an engineering checklist, **not** a statement that either store has appr
 
 ## Settings, PDF and ZIP export validation
 
-- [x] New PDF/ZIP export implementation added on Kotlin Android and SwiftUI iOS, using user-selected system file destinations rather than broad device-storage permissions.
+- [x] Standalone PDF export and PDF-in-ZIP export implemented on Kotlin Android and SwiftUI iOS, using user-selected system file destinations rather than broad device-storage permissions.
 - [x] Warning before exporting saved codes, including those that may encode Wi-Fi passwords; exported PDF/ZIP files are **not encrypted**.
 - [x] Settings contain the Privacy Policy, Terms of Use, Brendigo attribution, and English as default plus Croatian and 21 other translations.
 - [x] Android adaptive and themed launcher resources added; Xcode icon packaging remains in simulator/device archive CI.

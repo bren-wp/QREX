@@ -8,7 +8,7 @@ The [QREX 0.2.1 RC1 release](https://github.com/bren-wp/QREX/releases/tag/v0.2.1
 
 ## Next candidate — v0.2.2 RC1
 
-QREX 0.2.2 RC1 is being validated in [PR #8](https://github.com/bren-wp/QREX/pull/8). Improvements include working QREX privacy/support links, preservation of saved QR codes across migration, iOS PNG file export, adaptive light/dark colors and safer history controls. The candidate must pass all mandatory GitHub Actions checks **before** a new preview is published.
+QREX 0.2.2 RC1 is being validated in [PR #8](https://github.com/bren-wp/QREX/pull/8). Improvements include working QREX privacy/support links, preservation of saved QR codes across migration, iOS PNG file export, standalone PDF and ZIP options on both platforms, adaptive light/dark colors and safer history controls. The candidate must pass all mandatory GitHub Actions checks **before** a new preview is published.
 
 ## Earlier Android edition — v0.1.3
 
