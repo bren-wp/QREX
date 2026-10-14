@@ -59,7 +59,7 @@ object QRContent {
                 append(ch)
             }
         }
-        return "WIFI:T:${if (password.isBlank()) "nopass" else "WPA"};S:${escape(ssid)};P:${escape(password)};;"
+        return "WIFI:T:${if (password.isEmpty()) "nopass" else "WPA"};S:${escape(ssid)};P:${escape(password)};;"
     }
 
     fun safeUrl(raw: String): Uri? {
