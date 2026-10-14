@@ -62,7 +62,7 @@ enum QRContent {
     }
 
     static func isSupported(_ raw: String) -> Bool {
-        !raw.isEmpty && raw.utf8.count <= 1500
+        !raw.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && raw.utf8.count <= 1500
     }
 }
 
