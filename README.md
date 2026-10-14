@@ -89,7 +89,7 @@ The Android and iPhone editions use protected storage for manually saved Wi-Fi Q
 
 **[Explore Android builds →](https://github.com/bren-wp/QREX/releases)**
 
-The earlier **v0.1.3** Flutter APK remains the last legacy edition. **Native QREX release candidates** are Android **testing previews**, not Google Play-signed releases. Its download page includes the APK, checksums and actual device-emulator screenshots.
+The earlier **v0.1.3** Flutter APK remains the last legacy edition. **Native QREX release candidates** are Android **testing previews**, not Google Play-signed releases. Each candidate's download page includes the available testing artifacts, checksums and actual emulator screenshots.
 
 ### iPhone & iPad
 

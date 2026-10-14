@@ -28,6 +28,17 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("test -s dist/android/aab/app-release.aab", script)
         self.assertIn("test -s dist/ios/archive/Products/Applications/QREX.app/QREX", script)
 
+    def test_public_release_docs_do_not_point_to_renamed_repository(self):
+        release_notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
+        readme = (ROOT / "README.md").read_text("utf-8")
+        checklist = (ROOT / "docs/STORE_CHECKLIST.md").read_text("utf-8")
+        for public_file in (release_notes, readme):
+            self.assertNotIn("github.com/bren-wp/Qivio", public_file)
+            self.assertIn("github.com/bren-wp/QREX/releases", public_file)
+        self.assertIn("v0.2.2 RC1", release_notes)
+        self.assertIn("version **0.2.2** / build number **7**", checklist)
+        self.assertIn("marketing version `0.2.2`, build `7`", checklist)
+
     def test_native_build_version_monotonicity_and_release_notes(self):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         ios = (ROOT / "platforms/ios/project.yml").read_text("utf-8")

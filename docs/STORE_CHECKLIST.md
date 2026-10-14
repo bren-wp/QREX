@@ -53,7 +53,7 @@ Recheck all requirements immediately before submitting a new version.
 
 ## Native Kotlin/Swift candidate — signing and publication procedure
 
-The public GitHub v0.1.3 APK is built with Flutter, while the next standalone Kotlin and Swift builds use version **0.2.1** / build number **6**. The previous native preview used **0.2.0** / build **5**. Do not publish both build paths under the same version or mistake successful simulator tests for signed release qualification.
+The public GitHub v0.1.3 APK is built with Flutter, while the in-review standalone Kotlin and Swift candidate uses version **0.2.2** / build number **7**. The previous native preview used **0.2.1** / build **6**. Do not publish both build paths under the same version or mistake successful simulator tests for signed release qualification.
 
 ### Android — existing Play upload key only
 
@@ -72,7 +72,7 @@ The Google Play submission must include Data safety declarations based on the ex
 
 Open `platforms/ios` after running `xcodegen generate --spec project.yml`. In Xcode, set the authorized development team and correct App Store provisioning, and archive using the **Any iOS Device** destination. Use Xcode Organizer to validate and distribute the signed archive to TestFlight before App Store submission.
 
-The Xcode project deliberately permits signing and uses the app's **default private Keychain access group**; no Keychain-sharing entitlement is necessary. The simulator CI passes `CODE_SIGNING_ALLOWED=NO` only for unsigned test builds. A simulator `.app` is never an App Store `.ipa`. The current native project uses bundle ID `com.brendigo.qrex`, marketing version `0.2.1`, build `6` and iOS deployment target 16.0.
+The Xcode project deliberately permits signing and uses the app's **default private Keychain access group**; no Keychain-sharing entitlement is necessary. The simulator CI passes `CODE_SIGNING_ALLOWED=NO` only for unsigned test builds. A simulator `.app` is never an App Store `.ipa`. The current in-review native project uses bundle ID `com.brendigo.qrex`, marketing version `0.2.2`, build `7` and iOS deployment target 16.0.
 
 ### Additional blocking gates
 
