@@ -402,10 +402,13 @@ struct MoreScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var confirmDelete = false
     @State private var confirmExport = false
+    @State private var confirmPdfExport = false
     @State private var operationFailed = false
     @State private var exporting = false
     @State private var archiveDocument: QREXZipDocument?
+    @State private var pdfDocument: QREXPDFDocument?
     @State private var showFileExporter = false
+    @State private var showPdfExporter = false
     private var displayLanguages: [String] { QREXStrings.supported }
 
     var body: some View {
@@ -425,10 +428,14 @@ struct MoreScreen: View {
                     }
                 }
                 Section(tr("data_tools")) {
-                    Button {
-                        confirmExport = true
-                    } label: {
-                        Label(tr("export_archive"), systemImage: "doc.zipper")
+                    HStack {
+                        Button { confirmPdfExport = true } label: {
+                            Label("PDF", systemImage: "doc.text")
+                        }
+                        Spacer()
+                        Button { confirmExport = true } label: {
+                            Label("ZIP", systemImage: "doc.zipper")
+                        }
                     }
                     .disabled(exporting || !store.items.contains(where: { $0.saved }))
                     Text(tr("export_archive_hint"))
@@ -475,10 +482,20 @@ struct MoreScreen: View {
                 }
                 Button(tr("cancel"), role: .cancel) {}
             }
+            .confirmationDialog(tr("wifi_warning"),
+                isPresented: $confirmPdfExport, titleVisibility: .visible) {
+                Button("PDF") { exportSavedCodes(asPDF: true) }
+                Button(tr("cancel"), role: .cancel) {}
+            }
             .confirmationDialog(tr("export_archive_warning"),
                 isPresented: $confirmExport, titleVisibility: .visible) {
                 Button(tr("export_archive")) { exportSavedCodes() }
                 Button(tr("cancel"), role: .cancel) {}
+            }
+            .fileExporter(isPresented: $showPdfExporter, document: pdfDocument,
+                          contentType: .pdf, defaultFilename: "QREX-Saved-Codes") { result in
+                if case .failure = result { operationFailed = true }
+                pdfDocument = nil
             }
             .fileExporter(isPresented: $showFileExporter, document: archiveDocument,
                           contentType: .zip, defaultFilename: "QREX-Saved-Codes") { result in
@@ -489,7 +506,7 @@ struct MoreScreen: View {
         }
     }
 
-    private func exportSavedCodes() {
+    private func exportSavedCodes(asPDF: Bool = false) {
         // User confirmed that manually saved QR records, including any Wi-Fi
         // credentials, will be embedded in a portable ZIP/PDF document.
         let selected = store.items.filter(\.saved)
@@ -497,11 +514,17 @@ struct MoreScreen: View {
         exporting = true
         Task {
             do {
-                let archive = try await Task.detached(priority: .userInitiated) {
-                    try QREXDocuments.exportSavedPdfZip(selected)
+                let data = try await Task.detached(priority: .userInitiated) {
+                    if asPDF { return try QREXDocuments.createSavedCodesPdf(selected) }
+                    return try QREXDocuments.exportSavedPdfZip(selected)
                 }.value
-                archiveDocument = QREXZipDocument(contents: archive)
-                showFileExporter = true
+                if asPDF {
+                    pdfDocument = QREXPDFDocument(contents: data)
+                    showPdfExporter = true
+                } else {
+                    archiveDocument = QREXZipDocument(contents: data)
+                    showFileExporter = true
+                }
             } catch {
                 operationFailed = true
             }

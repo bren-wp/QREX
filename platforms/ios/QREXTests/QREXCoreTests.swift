@@ -270,6 +270,18 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertEqual(Array(raw.suffix(22).prefix(4)), [0x50, 0x4B, 0x05, 0x06])
     }
 
+    func testStandalonePdfIsPrintableAndUsesPdfDocumentType() throws {
+        let record = QRHistoryItem(id: UUID(), raw: "https://brendigo.com",
+                                   timestamp: Date(), saved: true)
+        let data = try QREXDocuments.createSavedCodesPdf([record])
+        XCTAssertTrue(data.starts(with: Data("%PDF-".utf8)))
+        XCTAssertGreaterThan(data.count, 1000)
+        let document = QREXPDFDocument(contents: data)
+        XCTAssertEqual(QREXPDFDocument.readableContentTypes, [.pdf])
+        XCTAssertEqual(document.contents, data)
+        XCTAssertThrowsError(try QREXDocuments.createSavedCodesPdf([]))
+    }
+
     func testSavedQrPdfZipContainsPrintablePdf() throws {
         let record = QRHistoryItem(id: UUID(), raw: "https://brendigo.com",
                                    timestamp: Date(), saved: true)

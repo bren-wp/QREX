@@ -24,6 +24,31 @@ struct QREXZipDocument: FileDocument {
     }
 }
 
+/// A standalone printable PDF for the iOS Files document picker.
+struct QREXPDFDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.pdf] }
+    var contents: Data
+
+    init(contents: Data) {
+        self.contents = contents
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents,
+              data.starts(with: Data("%PDF-".utf8)) else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        contents = data
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        guard contents.starts(with: Data("%PDF-".utf8)) else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        return FileWrapper(regularFileWithContents: contents)
+    }
+}
+
 /// A real PNG file that users can save through the iOS Files picker.
 struct QREXPNGDocument: FileDocument {
     static var readableContentTypes: [UTType] { [.png] }
@@ -55,6 +80,11 @@ enum QREXDocuments {
     enum ExportError: Error { case invalidHistory, invalidCode, oversizedArchive }
 
     static func exportSavedPdfZip(_ records: [QRHistoryItem]) throws -> Data {
+        let pdf = try createSavedCodesPdf(records)
+        return try archive(file: "QREX-Saved-Codes.pdf", payload: pdf)
+    }
+
+    static func createSavedCodesPdf(_ records: [QRHistoryItem]) throws -> Data {
         guard !records.isEmpty, records.count <= 250,
               records.allSatisfy({ $0.saved && !$0.raw.isEmpty && $0.raw.count <= 10_000 }) else {
             throw ExportError.invalidHistory
@@ -91,7 +121,7 @@ enum QREXDocuments {
         }
         guard !failed else { throw ExportError.invalidCode }
         guard result.count <= 60_000_000 else { throw ExportError.oversizedArchive }
-        return try archive(file: "QREX-Saved-Codes.pdf", payload: result)
+        return result
     }
 
     /// ZIP stored-entry writer (PKZIP 2.0) to avoid a third-party SDK.
