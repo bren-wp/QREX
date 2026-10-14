@@ -4,7 +4,9 @@ This checklist defines release acceptance for the separate Kotlin/Android and Sw
 
 ## Visual reference, design and screenshot integrity
 
-- [x] Capture an actual iPhone screen with English UI.\n- [ ] Capture a genuine Android app screen; an earlier screenshot depicted an **Android System UI ANR**, despite passing PNG structural verification.\n- [x] Reject Android captures unless the UI hierarchy confirms QREX's creation controls and no system ANR.
+- [x] Capture genuine Android emulator and iPhone simulator Create screens, validated by the last release's QA gate.
+- [x] Reject Android ANR/system screens unless the QREX foreground UI hierarchy is confirmed.
+- [ ] Capture and compare every other main screen at representative display sizes.
 - [ ] Keep original PNGs committed to `docs/screenshots` without marketing retouching; validate PNG chunks, image dimensions and completeness automatically.
 - [ ] Compare Scan / Create / Result / History / More on both platforms against the supplied QREX design, at representative mobile screen sizes.
 - [ ] Confirm there are no large black letterboxing bands, clipped content, text overlapping the bottom navigation, or layout jumps after keyboard dismissal.
@@ -43,7 +45,7 @@ This checklist defines release acceptance for the separate Kotlin/Android and Sw
 ## Localization
 
 - [x] English is the source/default language; 22 further languages are catalogued.
-- [x] Automatically check all 23 catalogs for 67 message keys, missing labels and stale generated files.
+- [x] Automatically check all 23 catalogs for 80 message keys, missing labels and stale generated files.
 - [ ] Manually inspect every language in Settings plus Arabic- and CJK-like long-string stress cases (not currently supported locales), with dynamic text sizing.
 - [ ] Test persistent language changes across app restart, including follow-system fallback.
 - [ ] Check that system camera permissions, error dialogs and share labels use the correct default device language.
@@ -52,8 +54,8 @@ This checklist defines release acceptance for the separate Kotlin/Android and Sw
 
 - [x] Standalone Android Kotlin/Compose and iOS SwiftUI applications compile in GitHub Actions.
 - [x] Android Gradle unit tests execute in CI.
-- [ ] Swift XCTest actually executes on an available iPhone simulator.
-- [ ] Actual Android and iOS screenshot capture succeeds and publishes authentic screenshots.
+- [x] Swift XCTest executed on an available iPhone simulator in the verified 0.2.2 RC1 run.
+- [x] Actual Android and iPhone simulator Create screenshots passed the verified 0.2.2 RC1 pipeline.
 - [ ] Physical device smoke tests and App Store/Play Store signing completed.
 - [ ] Only promote the next GitHub release after all blocking items are resolved.
 
