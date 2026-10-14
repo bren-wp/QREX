@@ -11,7 +11,7 @@ class MorePage extends StatelessWidget {
 
   static final Uri _developerUrl = Uri.parse('https://brendigo.com');
   static final Uri _privacyUrl = Uri.parse(
-    'https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md',
+    'https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md',
   );
 
   void _message(BuildContext context, String message) {

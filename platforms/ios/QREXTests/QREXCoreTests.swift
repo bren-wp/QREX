@@ -1,4 +1,5 @@
 import XCTest
+import UniformTypeIdentifiers
 @testable import QREX
 
 final class QREXCoreTests: XCTestCase {
@@ -60,6 +61,46 @@ final class QREXCoreTests: XCTestCase {
             XCTFail("Missing migrated entry")
         }
         restored.clearAll()
+    }
+
+    @MainActor
+    func testFlutterFavoriteUpgradesExistingUnsavedQrWithoutChangingIdentity() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let shared = "https://example.com/shared"
+        initial.record(shared)
+        let original = try! XCTUnwrap(initial.items.first)
+        XCTAssertFalse(original.saved)
+
+        let old = """
+        [{"raw":"https://example.com/shared","date":"2026-10-09T10:12:13.123","saved":true}]
+        """
+        UserDefaults.standard.set(old, forKey: "flutter.qrex_history_v1")
+        let migrated = QREXStore()
+        XCTAssertEqual(migrated.items.count, 1)
+        XCTAssertEqual(migrated.items.first?.id, original.id)
+        XCTAssertTrue(migrated.items.first?.saved == true)
+        XCTAssertNil(UserDefaults.standard.string(forKey: "flutter.qrex_history_v1"))
+        XCTAssertTrue(QREXStore().items.first?.saved == true)
+        XCTAssertTrue(migrated.clearAll())
+    }
+
+    @MainActor
+    func testRepeatedFlutterQrKeepsSavedStatusAcrossDuplicateRows() {
+        let initial = QREXStore()
+        XCTAssertTrue(initial.clearAll())
+        let raw = "https://example.com/legacy-duplicate"
+        let old = """
+        [{"raw":"https://example.com/legacy-duplicate","date":"2026-10-09T10:12:13.123","saved":false},
+         {"raw":"https://example.com/legacy-duplicate","date":"2026-10-09T10:12:14.123","saved":true}]
+        """
+        UserDefaults.standard.set(old, forKey: "flutter.qrex_history_v1")
+        let migrated = QREXStore()
+        XCTAssertEqual(migrated.items.count, 1)
+        XCTAssertEqual(migrated.items.first?.raw, raw)
+        XCTAssertTrue(migrated.items.first?.saved == true)
+        XCTAssertTrue(QREXStore().items.first?.saved == true)
+        XCTAssertTrue(migrated.clearAll())
     }
 
     @MainActor
@@ -209,6 +250,14 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(store.clearAll())
     }
 
+    func testPngExportContainsRealPngDataAndUsesPngDocumentType() throws {
+        let png = try XCTUnwrap(QREXImage.qr("https://brendigo.com")?.pngData())
+        XCTAssertTrue(png.starts(with: Data([137, 80, 78, 71, 13, 10, 26, 10])))
+        let document = QREXPNGDocument(contents: png)
+        XCTAssertEqual(QREXPNGDocument.readableContentTypes, [.png])
+        XCTAssertEqual(document.contents, png)
+    }
+
     func testZipArchiveHasValidHeadersAndExpectedCRC() throws {
         let bytes = try QREXDocuments.archive(file: "test.txt",
                                               payload: Data("hello".utf8))
@@ -219,6 +268,18 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertTrue(bytes.range(of: Data("test.txt".utf8)) != nil)
         XCTAssertTrue(bytes.range(of: Data([0x50, 0x4B, 0x01, 0x02])) != nil)
         XCTAssertEqual(Array(raw.suffix(22).prefix(4)), [0x50, 0x4B, 0x05, 0x06])
+    }
+
+    func testStandalonePdfIsPrintableAndUsesPdfDocumentType() throws {
+        let record = QRHistoryItem(id: UUID(), raw: "https://brendigo.com",
+                                   timestamp: Date(), saved: true)
+        let data = try QREXDocuments.createSavedCodesPdf([record])
+        XCTAssertTrue(data.starts(with: Data("%PDF-".utf8)))
+        XCTAssertGreaterThan(data.count, 1000)
+        let document = QREXPDFDocument(contents: data)
+        XCTAssertEqual(QREXPDFDocument.readableContentTypes, [.pdf])
+        XCTAssertEqual(document.contents, data)
+        XCTAssertThrowsError(try QREXDocuments.createSavedCodesPdf([]))
     }
 
     func testSavedQrPdfZipContainsPrintablePdf() throws {

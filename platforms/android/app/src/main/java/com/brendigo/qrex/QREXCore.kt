@@ -15,6 +15,16 @@ import java.time.ZoneId
 
 data class QRRecord(val raw: String, val timestamp: Long, val saved: Boolean)
 
+/** Search saved QR information without exposing Wi-Fi secrets through keyword matches. */
+object QRHistory {
+    fun matches(record: QRRecord, query: String, savedOnly: Boolean): Boolean {
+        if (savedOnly && !record.saved) return false
+        if (query.isBlank()) return true
+        return QRContent.label(record.raw).contains(query, ignoreCase = true) ||
+            (!QRContent.isWifi(record.raw) && record.raw.contains(query, ignoreCase = true))
+    }
+}
+
 object QRContent {
     fun isWifi(raw: String): Boolean = raw.startsWith("WIFI:", ignoreCase = true)
 
@@ -117,8 +127,16 @@ class QREXStore(context: Context) {
                 } else value
                 require(!encrypted || QRContent.isWifi(raw))
                 require(raw.isNotBlank() && raw.length <= 10000)
-                // Keep duplicate identities once; this is a no-loss canonicalization.
-                if (!seen.add(raw)) continue
+                // Duplicate records may disagree on the saved flag: never
+                // downgrade a manually saved favorite during canonicalization.
+                if (!seen.add(raw)) {
+                    val previous = items.indexOfFirst { it.raw == raw }
+                    if (previous >= 0 && item.optBoolean("saved") && !items[previous].saved) {
+                        items[previous] = items[previous].copy(saved = true)
+                        upgradeNeeded = true
+                    }
+                    continue
+                }
                 if (encrypted && QRContent.isWifi(raw)) protectedWifi[raw] = value
                 if (QRContent.isWifi(raw) && !encrypted) {
                     upgradeNeeded = true
@@ -169,12 +187,21 @@ class QREXStore(context: Context) {
             parsed
         }.getOrNull() ?: return
 
-        val seen = items.map { it.raw }.toMutableSet()
+        val positions = items.mapIndexed { index, record -> record.raw to index }.toMap()
+            .toMutableMap()
         val merged = items.toMutableList()
         for (item in migrated) {
-            if (seen.add(item.raw)) {
+            val previous = positions[item.raw]
+            if (previous != null) {
+                // A legacy favorite must not turn into a plain scan when its
+                // QR content already exists in protected history.
+                if (item.saved && !merged[previous].saved) {
+                    merged[previous] = merged[previous].copy(saved = true)
+                }
+            } else {
                 // Preserve every distinct existing and legacy item, or abort.
                 if (merged.size >= 250) return
+                positions[item.raw] = merged.size
                 merged.add(item)
             }
         }

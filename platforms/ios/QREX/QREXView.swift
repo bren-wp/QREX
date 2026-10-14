@@ -1,22 +1,26 @@
 import SwiftUI
 import CoreImage.CIFilterBuiltins
 import UIKit
+import UniformTypeIdentifiers
 
 enum QREXColors {
-    static let background = Color(red: 3/255, green: 12/255, blue: 27/255)
-    static let card = Color(red: 16/255, green: 27/255, blue: 44/255)
-    static let cyan = Color(red: 16/255, green: 197/255, blue: 250/255)
+    // Dynamic surfaces respect the in-app appearance preference and system contrast.
+    static let background = Color(uiColor: UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(red: 3/255, green: 12/255, blue: 27/255, alpha: 1)
+            : UIColor(red: 243/255, green: 246/255, blue: 1, alpha: 1)
+    })
+    static let card = Color(uiColor: UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(red: 16/255, green: 27/255, blue: 44/255, alpha: 1)
+            : UIColor.white
+    })
+    static let cyan = Color(uiColor: UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(red: 16/255, green: 197/255, blue: 250/255, alpha: 1)
+            : UIColor(red: 19/255, green: 92/255, blue: 195/255, alpha: 1)
+    })
     static let purple = Color(red: 144/255, green: 71/255, blue: 248/255)
-}
-
-struct QRImageShareSheet: UIViewControllerRepresentable {
-    let image: UIImage
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: [image], applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
 
 struct ResultPayload: Identifiable {
@@ -104,7 +108,8 @@ struct ResultScreen: View {
     @State private var showPassword = false
     @State private var showQR = false
     @State private var confirmSaveWifi = false
-    @State private var showImageShare = false
+    @State private var showPNGExporter = false
+    @State private var pngDocument: QREXPNGDocument?
     @State private var operationFailed = false
 
     var body: some View {
@@ -144,8 +149,15 @@ struct ResultScreen: View {
                     }
                     Button(tr("show_qr")) { showQR = true }
                         .disabled(!QRContent.isSupported(raw))
-                    Button(tr("export_png")) { showImageShare = true }
-                        .disabled(!QRContent.isSupported(raw))
+                    Button(tr("export_png")) {
+                        guard let png = QREXImage.qr(raw)?.pngData() else {
+                            operationFailed = true
+                            return
+                        }
+                        pngDocument = QREXPNGDocument(contents: png)
+                        showPNGExporter = true
+                    }
+                    .disabled(!QRContent.isSupported(raw))
                     Button(store.items.contains(where: { $0.raw == raw && $0.saved }) ? tr("saved") : tr("save")) {
                         if QRContent.isWifi(raw) {
                             confirmSaveWifi = true
@@ -167,10 +179,10 @@ struct ResultScreen: View {
                     }.padding()
                 }
             }
-            .sheet(isPresented: $showImageShare) {
-                if let image = QREXImage.qr(raw) {
-                    QRImageShareSheet(image: image)
-                }
+            .fileExporter(isPresented: $showPNGExporter, document: pngDocument,
+                          contentType: .png, defaultFilename: "QREX-QR") { result in
+                if case .failure = result { operationFailed = true }
+                pngDocument = nil
             }
             .confirmationDialog(tr("wifi_save_warning"),
                 isPresented: $confirmSaveWifi) {
@@ -192,7 +204,7 @@ struct CreateScreen: View {
     @State private var password = ""
     @State private var revealPassword = false
     @State private var showMore = false
-    @State private var showResult = false
+    @State private var presentedResult: ResultPayload?
     @State private var renderedQR: (payload: String, image: UIImage)?
     @State private var operationFailed = false
     @State private var confirmWifiSave = false
@@ -271,7 +283,9 @@ struct CreateScreen: View {
                             if QRContent.isWifi(raw) { confirmWifiSave = true }
                             else if !store.save(raw) { operationFailed = true }
                         }.buttonStyle(.bordered)
-                        Button(tr("create_share")) { showResult = true }.buttonStyle(.borderedProminent)
+                        Button(tr("create_share")) {
+                            presentedResult = ResultPayload(raw: frame.payload)
+                        }.buttonStyle(.borderedProminent)
                     } else {
                         VStack(spacing: 12) {
                             Image(systemName: "qrcode").font(.system(size: 35))
@@ -295,7 +309,9 @@ struct CreateScreen: View {
                 guard !Task.isCancelled else { return }
                 renderedQR = image.map { (payload: input, image: $0) }
             }
-            .sheet(isPresented: $showResult) { ResultScreen(raw: raw) }
+            .sheet(item: $presentedResult) { result in
+                ResultScreen(raw: result.raw)
+            }
             .confirmationDialog(tr("wifi_save_warning"),
                 isPresented: $confirmWifiSave) {
                     Button(tr("save")) {
@@ -311,17 +327,24 @@ struct CreateScreen: View {
 struct HistoryScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var search = ""
+    @State private var savedOnly = false
+    @State private var confirmClearHistory = false
     @State private var selected: ResultPayload?
     @State private var operationFailed = false
 
     private var filtered: [QRHistoryItem] {
-        store.items.filter { search.isEmpty || QRContent.title($0.raw)
-            .localizedCaseInsensitiveContains(search) }
+        store.items.filter {
+            (!savedOnly || $0.saved) && (search.isEmpty ||
+                QRContent.title($0.raw).localizedCaseInsensitiveContains(search) ||
+                (!QRContent.isWifi($0.raw) &&
+                    $0.raw.localizedCaseInsensitiveContains(search)))
+        }
     }
 
     var body: some View {
         NavigationStack {
             List {
+                Toggle(tr("saved"), isOn: $savedOnly)
                 ForEach(filtered) { item in
                     Button {
                         selected = ResultPayload(raw: item.raw)
@@ -358,12 +381,18 @@ struct HistoryScreen: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(tr("clear")) {
-                        if !store.clearHistory() { operationFailed = true }
-                    }.disabled(store.items.isEmpty)
+                    Button(tr("clear")) { confirmClearHistory = true }
+                        .disabled(!store.items.contains(where: { !$0.saved }))
                 }
             }
             .sheet(item: $selected) { item in ResultScreen(raw: item.raw) }
+            .confirmationDialog(tr("clear"),
+                isPresented: $confirmClearHistory, titleVisibility: .visible) {
+                Button(tr("clear"), role: .destructive) {
+                    if !store.clearHistory() { operationFailed = true }
+                }
+                Button(tr("cancel"), role: .cancel) {}
+            }
             .storageFailureAlert($operationFailed)
         }
     }
@@ -373,10 +402,13 @@ struct MoreScreen: View {
     @EnvironmentObject private var store: QREXStore
     @State private var confirmDelete = false
     @State private var confirmExport = false
+    @State private var confirmPdfExport = false
     @State private var operationFailed = false
     @State private var exporting = false
     @State private var archiveDocument: QREXZipDocument?
+    @State private var pdfDocument: QREXPDFDocument?
     @State private var showFileExporter = false
+    @State private var showPdfExporter = false
     private var displayLanguages: [String] { QREXStrings.supported }
 
     var body: some View {
@@ -396,10 +428,14 @@ struct MoreScreen: View {
                     }
                 }
                 Section(tr("data_tools")) {
-                    Button {
-                        confirmExport = true
-                    } label: {
-                        Label(tr("export_archive"), systemImage: "doc.zipper")
+                    HStack {
+                        Button { confirmPdfExport = true } label: {
+                            Label("PDF", systemImage: "doc.text")
+                        }
+                        Spacer()
+                        Button { confirmExport = true } label: {
+                            Label("ZIP", systemImage: "doc.zipper")
+                        }
                     }
                     .disabled(exporting || !store.items.contains(where: { $0.saved }))
                     Text(tr("export_archive_hint"))
@@ -422,7 +458,7 @@ struct MoreScreen: View {
                                 Text(tr("privacy_summary"))
                                 Link(tr("read_full_policy"),
                                      destination: URL(string:
-                                        "https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md")!)
+                                        "https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md")!)
                             }.padding()
                         }.navigationTitle(tr("privacy_policy"))
                     }
@@ -432,7 +468,7 @@ struct MoreScreen: View {
                                 Text(tr("terms_summary"))
                                 Link(tr("terms_of_use"),
                                      destination: URL(string:
-                                        "https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md")!)
+                                        "https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md")!)
                             }.padding()
                         }.navigationTitle(tr("terms_of_use"))
                     }
@@ -446,10 +482,20 @@ struct MoreScreen: View {
                 }
                 Button(tr("cancel"), role: .cancel) {}
             }
+            .confirmationDialog(tr("wifi_warning"),
+                isPresented: $confirmPdfExport, titleVisibility: .visible) {
+                Button("PDF") { exportSavedCodes(asPDF: true) }
+                Button(tr("cancel"), role: .cancel) {}
+            }
             .confirmationDialog(tr("export_archive_warning"),
                 isPresented: $confirmExport, titleVisibility: .visible) {
                 Button(tr("export_archive")) { exportSavedCodes() }
                 Button(tr("cancel"), role: .cancel) {}
+            }
+            .fileExporter(isPresented: $showPdfExporter, document: pdfDocument,
+                          contentType: .pdf, defaultFilename: "QREX-Saved-Codes") { result in
+                if case .failure = result { operationFailed = true }
+                pdfDocument = nil
             }
             .fileExporter(isPresented: $showFileExporter, document: archiveDocument,
                           contentType: .zip, defaultFilename: "QREX-Saved-Codes") { result in
@@ -460,7 +506,7 @@ struct MoreScreen: View {
         }
     }
 
-    private func exportSavedCodes() {
+    private func exportSavedCodes(asPDF: Bool = false) {
         // User confirmed that manually saved QR records, including any Wi-Fi
         // credentials, will be embedded in a portable ZIP/PDF document.
         let selected = store.items.filter(\.saved)
@@ -468,11 +514,17 @@ struct MoreScreen: View {
         exporting = true
         Task {
             do {
-                let archive = try await Task.detached(priority: .userInitiated) {
-                    try QREXDocuments.exportSavedPdfZip(selected)
+                let data = try await Task.detached(priority: .userInitiated) {
+                    if asPDF { return try QREXDocuments.createSavedCodesPdf(selected) }
+                    return try QREXDocuments.exportSavedPdfZip(selected)
                 }.value
-                archiveDocument = QREXZipDocument(contents: archive)
-                showFileExporter = true
+                if asPDF {
+                    pdfDocument = QREXPDFDocument(contents: data)
+                    showPdfExporter = true
+                } else {
+                    archiveDocument = QREXZipDocument(contents: data)
+                    showFileExporter = true
+                }
             } catch {
                 operationFailed = true
             }

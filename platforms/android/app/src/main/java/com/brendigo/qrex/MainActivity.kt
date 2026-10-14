@@ -427,12 +427,20 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
-    val found = store.items.filter { QRContent.label(it.raw).contains(search, ignoreCase = true) }
+    var savedOnly by remember { mutableStateOf(false) }
+    var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
+    val found = store.items.filter { QRHistory.matches(it, search, savedOnly) }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
         AppHeader(tr("history"), tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
             label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
+        FilterChip(
+            selected = savedOnly,
+            onClick = { savedOnly = !savedOnly },
+            label = { Text(tr("saved")) }
+        )
+        Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
             Text(tr("no_saved"), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -447,17 +455,33 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                                     color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
-                        IconButton(onClick = {
-                            if (!store.remove(item)) {
-                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
-                            }
-                        }) {
+                        IconButton(onClick = { pendingDelete = item }) {
                             Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
             }
         }
+    }
+    val target = pendingDelete
+    if (target != null) {
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text(tr("delete")) },
+            text = { Text(tr("confirm_delete")) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val actual = store.items.firstOrNull { it.raw == target.raw }
+                    if (actual != null && !store.remove(actual)) {
+                        Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                    }
+                    pendingDelete = null
+                }) { Text(tr("delete")) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) { Text(tr("cancel")) }
+            }
+        )
     }
 }
 
@@ -469,9 +493,11 @@ private fun MoreScreen(store: QREXStore) {
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
     var confirmExport by remember { mutableStateOf(false) }
+    var confirmPdfExport by remember { mutableStateOf(false) }
     val archiveScope = rememberCoroutineScope()
     val exportFailed = tr("archive_failed")
     val exportReady = tr("archive_ready")
+    val trSaved = tr("saved")
     val exportZip = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/zip")
     ) { destination ->
@@ -483,6 +509,20 @@ private fun MoreScreen(store: QREXStore) {
                     QREXDocuments.exportSavedPdfZip(context, records, destination)
                 }
                 Toast.makeText(context, if (exported) exportReady else exportFailed,
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    val exportPdf = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf")
+    ) { destination ->
+        if (destination != null) {
+            val records = store.items.filter { it.saved }.toList()
+            archiveScope.launch {
+                val exported = withContext(Dispatchers.IO) {
+                    QREXDocuments.exportSavedPdf(context, records, destination)
+                }
+                Toast.makeText(context, if (exported) trSaved else operationFailed,
                     Toast.LENGTH_SHORT).show()
             }
         }
@@ -506,11 +546,18 @@ private fun MoreScreen(store: QREXStore) {
         Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        OutlinedButton(
-            onClick = { confirmExport = true },
-            enabled = store.items.any { it.saved },
-            modifier = Modifier.fillMaxWidth()
-        ) { Text(tr("export_archive")) }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(
+                onClick = { confirmPdfExport = true },
+                enabled = store.items.any { it.saved },
+                modifier = Modifier.weight(1f)
+            ) { Text("PDF") }
+            OutlinedButton(
+                onClick = { confirmExport = true },
+                enabled = store.items.any { it.saved },
+                modifier = Modifier.weight(1f)
+            ) { Text("ZIP") }
+        }
         OutlinedButton(onClick = { showDelete = true }) { Text(tr("delete_all")) }
         Spacer(Modifier.height(20.dp))
         Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -539,6 +586,18 @@ private fun MoreScreen(store: QREXStore) {
         TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
         TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
     }
+    if (confirmPdfExport) AlertDialog(
+        onDismissRequest = { confirmPdfExport = false },
+        title = { Text("PDF") },
+        text = { Text(tr("wifi_warning")) },
+        confirmButton = { TextButton(onClick = {
+            confirmPdfExport = false
+            exportPdf.launch("QREX-Saved-Codes.pdf")
+        }) { Text("PDF") } },
+        dismissButton = { TextButton(onClick = { confirmPdfExport = false }) {
+            Text(tr("cancel"))
+        } }
+    )
     if (confirmExport) AlertDialog(onDismissRequest = { confirmExport = false },
         title = { Text(tr("export_archive")) },
         text = { Text(tr("export_archive_warning")) },
@@ -565,7 +624,7 @@ private fun MoreScreen(store: QREXStore) {
         } },
         dismissButton = { TextButton(onClick = {
             showPrivacy = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/PRIVACY.md"))
+            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md"))
         }) { Text(tr("read_full_policy")) } })
     if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
         title = { Text(tr("terms_of_use")) },
@@ -575,6 +634,6 @@ private fun MoreScreen(store: QREXStore) {
         } },
         dismissButton = { TextButton(onClick = {
             showTerms = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/Qivio/blob/main/docs/TERMS.md"))
+            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"))
         }) { Text(tr("terms_of_use")) } })
 }

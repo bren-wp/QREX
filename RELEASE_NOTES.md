@@ -1,19 +1,23 @@
 # QREX — Scan. Create. Share.
 
-Explore QREX on Android and iPhone, with a cleaner experience for scanning, making, organizing and exporting QR codes.
+Scan, create, organize and export QR codes with a private and easy-to-use experience on Android and iPhone.
 
-## Native Android & iPhone preview — 0.2.0 RC1
+## Current native testing preview — v0.2.1 RC1
 
-The latest native testing preview includes protected locally saved Wi-Fi codes, QR image sharing, 23 interface languages including Croatian, light and dark appearance, printable PDF-in-ZIP export, and genuine Android/iPhone emulator screenshots.
+The [QREX 0.2.1 RC1 release](https://github.com/bren-wp/QREX/releases/tag/v0.2.1-rc.1) contains a debug-signed Android APK, an unsigned Android AAB, an unsigned iOS device archive, actual Android and iPhone simulator screenshots and SHA-256 checksums. It is a **testing pre-release**, not signed for Google Play or the App Store.
 
-**This is a tester build:** the Android APK uses a debug signing certificate; the Android AAB and Apple archive are not store-signed. [See verified preview downloads](https://github.com/bren-wp/Qivio/releases/tag/v0.2.0-rc.1).
+## Next candidate — v0.2.2 RC1
 
-## Earlier Android edition — 0.1.3
+QREX 0.2.2 RC1 is being validated in [PR #8](https://github.com/bren-wp/QREX/pull/8). Improvements include working QREX privacy/support links, preservation of saved QR codes across migration, iOS PNG file export, standalone PDF and ZIP options on both platforms, adaptive light/dark colors and safer history controls. The candidate must pass all mandatory GitHub Actions checks **before** a new preview is published.
 
-The previous Flutter-based edition remains available as a separate APK. [Explore 0.1.3](https://github.com/bren-wp/Qivio/releases/tag/v0.1.3).
+## Earlier Android edition — v0.1.3
 
-## Your privacy matters
+The earlier Flutter-based APK remains available for existing users. [View v0.1.3](https://github.com/bren-wp/QREX/releases/tag/v0.1.3).
 
-No account is needed, QR processing stays on the device, and external links never open automatically. PDF/ZIP exports can include manually saved Wi-Fi passwords; the archive is not encrypted. Check the [Privacy Policy](docs/PRIVACY.md) and [Terms of Use](docs/TERMS.md).
+## Designed for privacy
+
+QREX does not require an account and processes QR codes on the device. Scanning does not open an external link automatically. A user-exported PDF/ZIP archive can contain private QR content (including Wi-Fi passwords), and **is not encrypted**.
+
+[Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [All QREX releases](https://github.com/bren-wp/QREX/releases)
 
 Made by [Brendigo](https://brendigo.com).

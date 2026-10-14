@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Publish native QA artifacts only when all independent GitHub checks pass.
 set -euo pipefail
-BRANCH="${QREX_RC_BRANCH:-fix/qrex-release-integrity-20261014}"
-TAG="${QREX_RC_TAG:-v0.2.1-rc.1}"
+BRANCH="${QREX_RC_BRANCH:-fix/qrex-legal-release-0.2.2-20261014}"
+TAG="${QREX_RC_TAG:-v0.2.2-rc.1}"
 VERSION="${TAG#v}"
 NOTES="docs/releases/${TAG}.md"
 case "$TAG" in
@@ -29,7 +29,7 @@ screen_run=""
 for attempt in $(seq 1 100); do
   check_current_head
   ready=true
-  for workflow in native-platforms.yml capture-screenshots.yml generate-localizations.yml; do
+  for workflow in native-platforms.yml capture-screenshots.yml generate-localizations.yml mobile.yml; do
     entry="$(gh run list --repo "$GITHUB_REPOSITORY" \
       --workflow "$workflow" --branch "$BRANCH" --limit 50 \
       --json databaseId,headSha,status,conclusion |

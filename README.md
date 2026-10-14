@@ -10,7 +10,7 @@ Scan what matters, turn everyday information into a QR code, and keep the things
 
 <br>
 
-[**Get QREX for Android**](https://github.com/bren-wp/Qivio/releases) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
+[**Get QREX for Android**](https://github.com/bren-wp/QREX/releases) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
 
 <br>
 
@@ -51,7 +51,7 @@ Whether you're scanning a code from the camera, sharing your Wi-Fi details, or m
 | **🔖 Keep the useful ones** | Save favorite codes, search local history and clear your information. |
 | **🎨 Make it yours** | Choose light or dark appearance and a language that feels familiar. |
 | **📱 Share anywhere** | Copy results, send a code or export its QR artwork with the system share options. |
-| **📄 Keep a beautiful record** | Save favorite QR codes as printable PDF documents in one ZIP archive, with export only when you ask. |
+| **📄 Keep a beautiful record** | Save your favorite QR codes as a printable PDF or a ZIP containing that PDF, only when you choose. |
 
 ## Designed for everyday moments
 
@@ -87,9 +87,9 @@ The Android and iPhone editions use protected storage for manually saved Wi-Fi Q
 
 ### Android
 
-**[Explore Android builds →](https://github.com/bren-wp/Qivio/releases)**
+**[Explore Android builds →](https://github.com/bren-wp/QREX/releases)**
 
-The earlier **v0.1.3** Flutter APK remains the last legacy edition. **v0.2.0 RC1** is a dedicated Android **testing preview**, not a Google Play-signed release. Its download page includes the APK, checksums and actual device-emulator screenshots.
+The earlier **v0.1.3** Flutter APK remains the last legacy edition. **Native QREX release candidates** are Android **testing previews**, not Google Play-signed releases. Each candidate's download page includes the available testing artifacts, checksums and actual emulator screenshots.
 
 ### iPhone & iPad
 
@@ -97,7 +97,7 @@ The dedicated iPhone edition is in validation. A reviewable unsigned iOS archive
 
 <br>
 
-[All releases](https://github.com/bren-wp/Qivio/releases) · [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
+[All releases](https://github.com/bren-wp/QREX/releases) · [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
 
 </div>
 

@@ -17,6 +17,22 @@ class QREXCoreTest {
         assertEquals("a\\b:c", QRContent.wifiField(raw, "P"))
     }
 
+    @Test fun historyFilteringPreservesFavoritesAndMatchesPlainContent() {
+        val favorite = QRRecord("Important meeting", 1L, true)
+        val scan = QRRecord("Shopping list", 2L, false)
+        assertTrue(QRHistory.matches(favorite, "meeting", true))
+        assertTrue(QRHistory.matches(favorite, "IMPORTANT", true))
+        assertFalse(QRHistory.matches(scan, "shopping", true))
+        assertTrue(QRHistory.matches(scan, "shopping", false))
+        assertFalse(QRHistory.matches(favorite, "missing", false))
+    }
+
+    @Test fun wifiHistorySearchCannotMatchPasswords() {
+        val secret = QRRecord(QRContent.wifi("Guest WiFi", "verySecretPass"), 1L, true)
+        assertTrue(QRHistory.matches(secret, "guest", true))
+        assertFalse(QRHistory.matches(secret, "verySecretPass", false))
+    }
+
     @Test fun longQrIsRejected() {
         assertFalse(QRContent.canRender(""))
         assertFalse(QRContent.canRender("x".repeat(1501)))
