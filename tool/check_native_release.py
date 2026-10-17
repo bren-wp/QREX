@@ -16,8 +16,10 @@ import xml.etree.ElementTree as ET
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 APP_ID = "com.brendigo.qrex"
-# Last published native QA candidate: v0.2.3-rc.1 / build 8.
-LAST_PUBLISHED_NATIVE_BUILD_CODE = 8
+# Last published native candidate is v0.2.4-rc.1 / build 9.
+LAST_PUBLISHED_NATIVE_BUILD_CODE = 9
+PRODUCTION_VERSION = "1.0.0"
+PRODUCTION_BUILD_CODE = 100
 
 
 def field(source: str, name: str) -> str | None:
@@ -45,6 +47,8 @@ def check_configuration(
     version = field(android_gradle, "versionName")
     if not code or not code.isdecimal() or int(code) <= LAST_PUBLISHED_NATIVE_BUILD_CODE:
         issues.append(f"Android versionCode must advance beyond published native RC build {LAST_PUBLISHED_NATIVE_BUILD_CODE}")
+    if version != PRODUCTION_VERSION or code != str(PRODUCTION_BUILD_CODE):
+        issues.append("Production candidate must be QREX 1.0.0 / build 100")
     if not version or version != field(ios_project, "MARKETING_VERSION"):
         issues.append("Android/iOS marketing versions differ")
     if code != field(ios_project, "CURRENT_PROJECT_VERSION"):
