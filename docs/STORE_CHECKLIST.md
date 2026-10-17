@@ -127,3 +127,28 @@ a production artifact. The GitHub release is not proof of store acceptance.
 - [ ] Confirm Apple Distribution certificate, Team ID and provisioning profile belong to QREX.
 - [ ] Complete the device, migration, accessibility and store reviews before manual production authorization.
 - [ ] Verify production upload/install via Play internal testing and Apple TestFlight.
+
+### Retiring all previous GitHub Releases and Git tags
+
+After **both** authorized signed assets have passed the production workflow
+and GitHub has published `v1.0.0` with three verified files (signed AAB,
+signed IPA and SHA256SUMS), `tool/retire_legacy_releases.sh` deletes **all**
+older GitHub Releases and **all** other Git tags. It verifies the stable
+Release, exact Git commit, non-prerelease status and expected uploaded files
+before deleting anything. The script rechecks that the only remaining release
+and tag are both `v1.0.0`.
+
+The normal `production-release.yml` runs cleanup **after** stable publication.
+If that cleanup stops partway, the manual recovery workflow
+`.github/workflows/retire-legacy-releases.yml` is protected by the
+`production` environment and repeats the same checks.
+
+- [ ] Signed `v1.0.0` actually published and three expected files verified.
+- [ ] Previous 9 GitHub Releases removed successfully.
+- [ ] Previous 9 Git tags removed successfully.
+- [ ] Query GitHub again to confirm **only** `v1.0.0` exists in Releases/tags.
+
+Deleting historical releases removes direct downloads; it **does not** erase
+their source commits or migrate existing installations. Keep the source
+history and Flutter upgrade paths intact. Do not run cleanup before a
+replacement signed release is genuinely available.

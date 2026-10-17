@@ -8,13 +8,11 @@ Scan, create, organize and export QR codes with a private and easy-to-use experi
 
 [QREX 1.0.0 release notes](docs/releases/v1.0.0.md) · [Production readiness checklist](docs/STORE_CHECKLIST.md)
 
-## Last native testing preview — v0.2.4 RC1 (historical)
+## Historical versions and cleanup
 
-The [0.2.4 RC1 release](https://github.com/bren-wp/QREX/releases/tag/v0.2.4-rc.1) contains unsigned or debug-signed QA artifacts, screenshots and SHA-256 checksums. It remains a **pre-release**, not an installable Play/App Store production distribution. No further RC or beta GitHub releases are planned.
+Previous Android Flutter releases and native RC preview releases are being retired from public GitHub Releases. The production workflow will delete their **GitHub Releases and Git tags only after a verified, signed v1.0.0 release is available**. Until then, the existing legacy builds remain available; deleting them prematurely would leave users without an installable release.
 
-## Earlier Android edition — v0.1.3
-
-The earlier Flutter-based APK remains available for existing users. [View v0.1.3](https://github.com/bren-wp/QREX/releases/tag/v0.1.3).
+The original sources, user-data compatibility logic and repository history are retained.
 
 ## Designed for privacy
 

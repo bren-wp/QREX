@@ -89,7 +89,7 @@ The Android and iPhone editions use protected storage for manually saved Wi-Fi Q
 
 **[Explore Android builds →](https://github.com/bren-wp/QREX/releases)**
 
-The older **v0.1.3** Flutter APK and native **v0.2.x RC** artifacts remain historical. The next public Android release is **QREX 1.0.0**, and will appear only after authorized production signing and QA; no additional testing previews will be published.
+The previous **Flutter APK** and **native RC** releases will be removed from GitHub Releases along with their Git tags after the verified, signed **QREX 1.0.0** release is published. The old builds remain available until that point so that users are not left without an existing download. No more testing preview releases will be published.
 
 ### iPhone & iPad
 
