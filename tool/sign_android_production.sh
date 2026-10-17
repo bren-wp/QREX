@@ -64,9 +64,9 @@ if [ "$apk_cert" != "$expected" ]; then
   exit 1
 fi
 "$build_tools/aapt" dump badging "$apk" |
-  grep -F "name='com.brendigo.qrex' versionCode='100' versionName='1.0.0'" > /dev/null
+  grep -F "name='com.brendigo.qrex' versionCode='101' versionName='1.0.1'" > /dev/null
 
 mkdir -p production
-cp "$bundle" production/QREX-Android-1.0.0.aab
-cp "$apk" production/QREX-Android-1.0.0.apk
+cp "$bundle" production/QREX-Android-1.0.1.aab
+cp "$apk" production/QREX-Android-1.0.1.apk
 echo "Authorized Play upload AAB and Android APK signatures verified against the approved certificate."
