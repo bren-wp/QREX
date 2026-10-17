@@ -49,6 +49,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import java.util.Locale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -259,7 +260,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                     Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
                         fontWeight = FontWeight.Bold)
                     Text(if (showPassword)
-                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}" else "${tr("password")}: ••••••••")
+                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}" else "${tr("password")}: ••••••••",
+                        softWrap = true)
                     TextButton(onClick = { showPassword = !showPassword }) {
                         Text(if (showPassword) tr("hide") else tr("show"))
                     }
@@ -280,15 +282,17 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 copyQrToClipboard(context, raw)
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.ContentCopy, contentDescription = null)
-                Spacer(Modifier.width(6.dp)); Text(tr("copy"))
+                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(tr("copy"), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             OutlinedButton(onClick = {
                 if (wifi) confirmWifiShare = true
                 else shareQrText(context, raw, shareTitle, sharingFailed)
             }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.Share, contentDescription = null)
-                Spacer(Modifier.width(6.dp)); Text(tr("share"))
+                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(tr("share"), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
         Spacer(Modifier.height(12.dp))
