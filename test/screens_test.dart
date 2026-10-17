@@ -70,6 +70,29 @@ void main() {
     store.dispose();
   });
 
+  testWidgets('QR kreator ne preklapa sučelje na uskim ekranima', (tester) async {
+    final store = await makeStore();
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      store.dispose();
+    });
+    tester.view.devicePixelRatio = 1;
+    for (final width in [280.0, 320.0, 360.0, 430.0]) {
+      tester.view.physicalSize = Size(width, 640);
+      await tester.pumpWidget(MaterialApp(theme: qrexTheme(false),
+        home: Scaffold(body: CreatePage(key: ValueKey(width), store: store))));
+      await tester.enterText(find.byType(TextField).first, 'https://brendigo.com');
+      await tester.pump();
+      await tester.scrollUntilVisible(
+        find.text('Pregled koda'), 180,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull, reason: 'Screen width: $width');
+    }
+  });
+
   testWidgets('usko sučelje Više nema layout iznimki', (tester) async {
     tester.view.physicalSize = const Size(360, 700);
     tester.view.devicePixelRatio = 1;
