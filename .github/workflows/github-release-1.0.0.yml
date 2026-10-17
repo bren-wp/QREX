@@ -111,7 +111,12 @@ jobs:
           aab="platforms/android/app/build/outputs/bundle/release/app-release.aab"
           test -s "$apk"
           test -s "$aab"
-          jarsigner -verify -strict "$aab" >/dev/null
+          # A disposable self-signed GitHub certificate is not in a public
+          # PKI trust store. -strict rejects that expected condition (exit 4).
+          # Verify JAR signature integrity and then compare both exact certs.
+          jarsigner -verify "$aab" > "$RUNNER_TEMP/qrex-aab-verify.txt"
+          grep -F 'jar verified.' "$RUNNER_TEMP/qrex-aab-verify.txt" >/dev/null
+          rm -f "$RUNNER_TEMP/qrex-aab-verify.txt"
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --min-sdk-version 26 "$apk"
           "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -v 4 "$apk" >/dev/null
           cert_aab="$(keytool -printcert -jarfile "$aab" |
