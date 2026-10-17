@@ -162,7 +162,11 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     message = imageFailed
                 } else {
                     val (input, bitmap) = image
-                    val client = BarcodeScanning.getClient(options)
+                    val client = runCatching { BarcodeScanning.getClient(options) }.getOrElse {
+                        bitmap.recycle()
+                        message = imageFailed
+                        return@launch
+                    }
                     runCatching {
                         client.process(input).addOnSuccessListener { codes ->
                             if (!scope.coroutineContext.isActive) return@addOnSuccessListener
