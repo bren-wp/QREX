@@ -2,6 +2,7 @@
 """QREX 1.0.1 code-audit regression contracts, alongside device/JVM tests."""
 from pathlib import Path
 import unittest
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 JAVA = ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex"
@@ -49,11 +50,30 @@ class AndroidCodeAuditTests(unittest.TestCase):
         self.assertFalse((ROOT / ".github/workflows/github-release-1.0.0.yml").exists())
 
     def test_no_unnecessary_network_or_broad_storage_permissions(self):
-        manifest = (ROOT / "platforms/android/app/src/main/AndroidManifest.xml").read_text("utf-8")
-        for forbidden in ("android.permission.INTERNET", "READ_MEDIA_IMAGES",
-                          "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE",
-                          "MANAGE_EXTERNAL_STORAGE", "ACCESS_FINE_LOCATION"):
-            self.assertNotIn(forbidden, manifest)
+        manifest = ET.parse(ROOT / "platforms/android/app/src/main/AndroidManifest.xml")
+        android = "{http://schemas.android.com/apk/res/android}"
+        tools = "{http://schemas.android.com/tools}"
+        declared = {permission.get(android + "name")
+                    for permission in manifest.getroot().findall("uses-permission")
+                    if permission.get(tools + "node") != "remove"}
+        for forbidden in ("android.permission.INTERNET",
+                          "android.permission.ACCESS_NETWORK_STATE",
+                          "android.permission.READ_MEDIA_IMAGES",
+                          "android.permission.READ_EXTERNAL_STORAGE",
+                          "android.permission.WRITE_EXTERNAL_STORAGE",
+                          "android.permission.MANAGE_EXTERNAL_STORAGE",
+                          "android.permission.ACCESS_FINE_LOCATION"):
+            with self.subTest(permission=forbidden):
+                self.assertNotIn(forbidden, declared)
+
+    def test_transitive_network_permissions_are_explicitly_removed(self):
+        manifest = ET.parse(ROOT / "platforms/android/app/src/main/AndroidManifest.xml")
+        android = "{http://schemas.android.com/apk/res/android}"
+        tools = "{http://schemas.android.com/tools}"
+        removed = {p.get(android + "name") for p in manifest.getroot().findall("uses-permission")
+                   if p.get(tools + "node") == "remove"}
+        self.assertIn("android.permission.INTERNET", removed)
+        self.assertIn("android.permission.ACCESS_NETWORK_STATE", removed)
 
 
 if __name__ == "__main__":
