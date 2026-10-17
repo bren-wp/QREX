@@ -35,7 +35,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Verify all 23 Android and iOS language catalogs
+      - name: Verify all 23 Android language catalogs
         run: |
           python3 tool/generate_localizations.py --check
           python3 tool/check_translation_usage.py
