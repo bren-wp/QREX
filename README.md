@@ -1,72 +1,120 @@
 <div align="center">
 
-<img src="assets/brand/qrex-logo.svg" alt="QREX — Scan. Create. Share." width="420">
+<img src="assets/brand/qrex-logo.svg" alt="QREX — Scan. Create. Share." width="440">
 
 ### Scan. Create. Share.
 
-**Private, fast and simple QR scanning for Android.**
+**Your QR codes. Your device. Your choice.**
 
-[**Get QREX for Android**](https://github.com/bren-wp/QREX/releases) · [Features](#features) · [Privacy](#privacy-first)
+A clean, capable QR scanner and creator designed exclusively for **Android**.
 
-<img src="assets/brand/qrex-icon.svg" width="82" alt="Official QREX app icon">
+[Explore features](#features) · [See the app](#preview) · [Privacy](#privacy-by-design) · [Releases](https://github.com/bren-wp/QREX/releases)
 
-**No account · No ads · No tracking · Offline QR scanning and creation**
+<img src="assets/brand/qrex-icon.svg" alt="QREX Android icon" width="86">
+
+**Free to use · No accounts · No ads · No tracking**
 
 </div>
 
 ---
 
-## Android-only application
+## A simple way to do more with QR
 
-QREX is developed exclusively for **Android** with **Kotlin, Jetpack Compose, CameraX, on-device ML Kit and ZXing**. The discontinued iOS and Flutter application sources, tests and signing pipelines are no longer part of the active project. The natively implemented **Flutter-to-Android migration** stays in place to protect data belonging to users of the earlier Android release.
+Scan a code, create one of your own, or keep the information you actually need. QREX makes common tasks easy without moving your personal QR content to a QREX server.
 
-<img src="docs/screenshots/android-create.png" alt="Real Android emulator capture of QREX Create" width="300">
+<img src="assets/previews/qrex-hero.svg" alt="QREX Android visual identity — Scan. Create. Share.">
 
-This is an actual Android emulator capture, not a design mockup. Matching the approved design 1:1 on all phones still requires direct comparisons across several physical devices.
+## Preview
+
+<div align="center">
+
+<img src="docs/screenshots/android-create.png" alt="Actual Android emulator screenshot of the QREX Create screen" width="290">
+
+<sub>Actual Android emulator capture, verified by CI. Device appearance and layout can vary. Brand visuals below are design illustrations, not app screenshots.</sub>
+
+<img src="assets/previews/qrex-showcase.svg" alt="QREX design showcase with six conceptual app screens">
+
+</div>
 
 ## Features
 
-- **Scan:** QR codes from a live camera or selected photo using on-device detection.
-- **Create:** QR codes for URLs, text, Wi-Fi, email, phone, coordinates and contacts.
-- **Review:** URLs never open automatically. You choose when to copy, open or share a result.
-- **Save:** Favorites and local history, with search, removal and full data deletion.
-- **Secure:** Manually saved Wi-Fi QR data is protected by Android Keystore AES-GCM and is not recorded automatically. Copying marks sensitive clipboard data; sharing requests explicit confirmation.
-- **Export:** On-device PNG, printable PDF and ZIP exports, using system file picker. Files exported by you are **not encrypted**.
-- **Accessible:** Adaptive QR previews, compact phone layouts, light/dark modes, **23 interface languages** including Croatian and English.
+| | What QREX does |
+|:--|:--|
+| 📷 **Scan** | Read QR codes with the camera or choose a photo from your gallery. |
+| ✨ **Create** | Make QR codes for links, text, Wi-Fi access, contacts, email, phone numbers and locations. |
+| 🔗 **Review before opening** | Check the scanned destination before deciding whether to open it. |
+| 🔖 **History & favorites** | Keep, find and delete locally stored codes on your own terms. |
+| 🛡️ **Private Wi-Fi codes** | Encrypt manually saved Wi-Fi QR contents using Android Keystore; ask before sharing Wi-Fi QR credentials. |
+| 📄 **Export** | Export QR images as PNG and manually saved QR codes as PDF or ZIP using Android's file picker. |
+| 🌐 **23 languages** | Choose English, Croatian or another supported interface language. |
+| 🌗 **Comfortable UI** | Light/dark appearance and layouts designed to adapt to different Android display sizes. |
 
-## Privacy-first
+## Privacy by design
 
-QR scanning and code creation work locally. QREX requires no registration, backend, ads, analytics or tracking. Camera access is requested only when you tap to enable the camera; gallery picking remains available without CAMERA permission. Android backup is disabled, internet/contacts/location/storage permissions are not requested, and scanned links require an explicit user action to open.
+QREX scans and generates codes locally. **No account, advertising SDK, analytics SDK, or internet permission is required.** Camera permission is requested only when you choose to enable live camera scanning. Gallery selection uses Android's system photo picker instead of broad media access.
 
-Read the [Privacy Policy](docs/PRIVACY.md) and [Terms of Use](docs/TERMS.md).
+Wi-Fi QR codes are not added to history automatically. If you explicitly save one, its contents are protected using AES-GCM with Android Keystore. When copying a Wi-Fi QR code, Android receives a *sensitive clipboard* flag; sharing a Wi-Fi code asks for confirmation.
 
-## Android build and verification
+**Important:** exported PDF/ZIP files are *not encrypted*. Treat exports that contain private information or Wi-Fi credentials as sensitive. The destination app or file provider you select may keep copies.
 
-The source of truth is `platforms/android/`. Use JDK 17 and Android SDK API 36:
+[Read the Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md)
+
+## Languages
+
+QREX includes 23 offline interface languages:
+
+English · Hrvatski · Deutsch · Français · Español · Italiano · Português · Nederlands · Polski · Čeština · Slovenčina · Slovenščina · Magyar · Română · Български · Ελληνικά · Türkçe · Українська · Русский · Svenska · Dansk · Suomi · Norsk bokmål.
+
+No download or online translation service is needed to switch languages.
+
+## Built for Android
+
+| | |
+|:--|:--|
+| **Platform** | Android only |
+| **Application ID** | `com.brendigo.qrex` |
+| **UI** | Kotlin + Jetpack Compose |
+| **Scanning** | CameraX + on-device ML Kit |
+| **QR generation** | ZXing |
+| **Private storage** | Android Keystore / AES-GCM |
+| **Android SDK** | Compile/target API 36 |
+| **Current production candidate** | Version `1.0.0` · versionCode `100` |
+
+The former iOS and Flutter app source trees have been retired. The Android application **retains migration support** for users upgrading from the earlier Flutter-based Android version.
+
+### Build from source
+
+Requirements: JDK 17, Android SDK API 36 and Gradle 8.13.
 
 ```bash
 python3 tool/generate_localizations.py --check
+python3 tool/check_translation_usage.py
 python3 -m unittest discover -s tool -p 'test_*.py'
+
 cd platforms/android
-gradle :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
-An emulator run also executes instrumented tests and captures the real Create UI. Android CI additionally checks release R8/resource shrinking and bundle generation. Debug builds and unsigned QA artifacts are **not** production distributions.
+GitHub Actions also exercises Android instrumentation tests, minified release build/AAB generation and a genuine Android emulator screenshot.
 
-## Distribution
+## Downloads and release policy
 
-The next production version is **QREX 1.0.0 / build 100**, published only after explicit device QA, Play Console checks and verified signing with the existing Android upload identity. A future `v1.0.0` release contains the **signed Android AAB** and `SHA256SUMS.txt`. An AAB is a Play Console upload package, not a directly installable APK.
+**QREX 1.0.0 is the next intended stable Android release.** It will only be published after the original authorized Google Play upload certificate, successful exact-commit CI, verified upgrade continuity, physical-device QA and protected manual release approval are confirmed.
 
-Earlier Flutter Android and native preview releases stay available until that signed replacement has genuinely been published. The production workflow then retires old GitHub Releases and tag refs; it never publishes an unsigned build just to make the repository look finished.
+[**View GitHub releases →**](https://github.com/bren-wp/QREX/releases)
 
-[All releases](https://github.com/bren-wp/QREX/releases) · [Production checklist](docs/STORE_CHECKLIST.md) · [Release notes](docs/releases/v1.0.0.md) · [Support](https://brendigo.com)
+A production `v1.0.0` release is expected to contain an **authorized signed Android AAB** and a `SHA256SUMS.txt` checksum file. **An AAB is for Google Play Console; it cannot be installed like an APK.** Debug APKs and unsigned CI bundles are not described as production releases. Older QA releases are retained until a properly signed replacement is available.
+
+[Production checklist](docs/STORE_CHECKLIST.md) · [Version 1.0.0 notes](docs/releases/v1.0.0.md) · [Quality assurance](docs/QA_MATRIX.md)
 
 ---
 
 <div align="center">
 
-<img src="assets/brand/qrex-logo.svg" alt="QREX official wordmark" width="230">
+<img src="assets/brand/qrex-logo.svg" alt="QREX by Brendigo" width="245">
 
-Made by [Brendigo](https://brendigo.com) · [MIT License](LICENSE)
+**Scan. Create. Share.**
+
+Created by [Brendigo](https://brendigo.com) · [Support](https://brendigo.com) · [MIT License](LICENSE)
 
 </div>

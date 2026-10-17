@@ -3,6 +3,10 @@ name: Validate QREX localization resources
 on:
   pull_request:
     paths:
+      - "README.md"
+      - "RELEASE_NOTES.md"
+      - "docs/**"
+      - "assets/**"
       - "platforms/**"
       - ".github/workflows/**"
       - "l10n/**"
@@ -16,6 +20,10 @@ on:
   push:
     branches: [main]
     paths:
+      - "README.md"
+      - "RELEASE_NOTES.md"
+      - "docs/**"
+      - "assets/**"
       - "l10n/**"
       - "platforms/**"
       - "tool/**"

@@ -3,6 +3,10 @@ name: QREX Android native CI
 on:
   pull_request:
     paths:
+      - "README.md"
+      - "RELEASE_NOTES.md"
+      - "docs/**"
+      - "assets/**"
       - "platforms/**"
       - ".github/workflows/**"
       - ".github/workflows/native-platforms.yml"
@@ -19,6 +23,10 @@ on:
   push:
     branches: [main]
     paths:
+      - "README.md"
+      - "RELEASE_NOTES.md"
+      - "docs/**"
+      - "assets/**"
       - "platforms/**"
       - "tool/**"
       - "l10n/**"
