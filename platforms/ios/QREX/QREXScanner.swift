@@ -14,7 +14,7 @@ enum QREXGalleryPolicy {
     static func accepts(byteCount: Int, width: Int, height: Int) -> Bool {
         byteCount > 0 && byteCount < maxFileBytes &&
         width > 0 && height > 0 &&
-        Int64(width) * Int64(height) <= maxSourcePixels
+        Int64(width) <= maxSourcePixels / Int64(height)
     }
 }
 
