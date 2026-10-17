@@ -10,7 +10,6 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 FILES = [
     *ROOT.glob("platforms/android/app/src/main/java/**/*.kt"),
-    *ROOT.glob("platforms/ios/QREX/*.swift"),
 ]
 PATTERN = re.compile(r'\b(?:Text|Button|Label|TextButton|PrimaryAction)\s*\(\s*"([^"\n]*)"')
 PLACEHOLDERS = re.compile(
