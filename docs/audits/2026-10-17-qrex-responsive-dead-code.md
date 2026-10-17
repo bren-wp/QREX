@@ -75,3 +75,31 @@ Added Kotlin unit and Android instrumented assertions for sensitive clipboard me
 - [ ] Existing **production-only** `1.0.0` policy maintained: do not publish debug APK, unsigned AAB/IPA or claim App Store/Google Play acceptance before approved signing and store verification.
 
 This cycle implements concrete responsive fixes and a bounded, documented code review. It **does not certify literal 1:1 visual identity on every handset** without multi-size visual diff evidence or physical-device testing.
+
+## Follow-up: confirmation before sharing Wi-Fi credentials
+
+QREX protects saved Wi-Fi QR history at rest, but displaying a native text share
+sheet could previously distribute the underlying Wi-Fi password without a
+warning. Added a deliberate confirmation on the **Result** screen:
+
+- **Kotlin Android:** when QR payload starts with `WIFI:`, tap **Share**
+  opens a warning/Cancel/Share dialog. The actual `ACTION_SEND` is launched
+  only after Share is confirmed. Non-Wi-Fi QR codes use the original one-tap
+  sharing path.
+- **SwiftUI iOS:** ordinary codes retain `ShareLink`. Wi-Fi codes now require
+  an explicit confirmation before creating a `UIActivityViewController`
+  containing the original QR payload.
+- **Legacy Flutter:** added a Croatian warning dialog before `SharePlus`
+  receives a Wi-Fi QR payload; cancellation returns without invoking the
+  platform share plugin.
+
+These changes do not encrypt external messages: after confirmation, the
+external share destination is controlled by the user and may persist the Wi-Fi
+credential. The warning is a guard against unintentional disclosure, not a
+guarantee against copying or intentional sharing.
+
+**Regression coverage:** Flutter widget test asserts the warning appears and
+Cancel dismisses it; a source-level privacy contract ensures all three
+implementations guard the share action. CI screenshots and native compilers
+must pass at the final SHA, as must physical-device checks of the OS share
+sheet and user-visible sheet presentation.
