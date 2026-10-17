@@ -30,15 +30,25 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
     def test_published_version_code_is_rejected(self):
-        issues = self.check(android=self.android.replace("versionCode = 9", "versionCode = 8"))
-        self.assertTrue(any("published native RC build 8" in issue for issue in issues), issues)
+        issues = self.check(android=self.android.replace("versionCode = 100", "versionCode = 9"))
+        self.assertTrue(any("published native RC build 9" in issue for issue in issues), issues)
+
+    def test_prerelease_version_metadata_is_rejected(self):
+        issues = self.check(
+            android=self.android.replace('versionName = "1.0.0"', 'versionName = "0.2.4"')
+        )
+        self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
+
+    def test_reused_build_code_rejected_even_with_production_label(self):
+        issues = self.check(android=self.android.replace("versionCode = 100", "versionCode = 9"))
+        self.assertTrue(any("published native RC build 9" in issue for issue in issues), issues)
 
     def test_ios_signing_disabled_by_default_is_rejected(self):
         issues = self.check(ios=self.ios + '\n    CODE_SIGNING_ALLOWED: "NO"\n')
         self.assertTrue(any("signing" in issue.lower() for issue in issues), issues)
 
     def test_mismatched_versions_are_rejected(self):
-        issues = self.check(ios=self.ios.replace('MARKETING_VERSION: "0.2.4"', 'MARKETING_VERSION: "9.9.9"'))
+        issues = self.check(ios=self.ios.replace('MARKETING_VERSION: "1.0.0"', 'MARKETING_VERSION: "9.9.9"'))
         self.assertTrue(any("versions differ" in issue for issue in issues), issues)
 
     def test_privilege_creep_is_rejected(self):
