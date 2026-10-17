@@ -80,16 +80,20 @@ internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Fl
  */
 internal fun qrClipboardSensitive(raw: String): Boolean = QRContent.isWifi(raw)
 
-internal fun copyQrToClipboard(context: Context, raw: String) {
-    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
-        as android.content.ClipboardManager
+internal fun makeQrClipboardClip(raw: String): ClipData {
     val clip = ClipData.newPlainText("QR", raw)
     if (qrClipboardSensitive(raw)) {
         clip.description.extras = PersistableBundle().apply {
             putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
         }
     }
-    clipboard.setPrimaryClip(clip)
+    return clip
+}
+
+internal fun copyQrToClipboard(context: Context, raw: String) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
+        as android.content.ClipboardManager
+    clipboard.setPrimaryClip(makeQrClipboardClip(raw))
 }
 
 private val LocalLanguage = compositionLocalOf { "en" }
