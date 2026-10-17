@@ -47,6 +47,24 @@ The approved QREX palette, QR contents, navigation destinations, on-device priva
 
 **Limitations:** a source/CI audit cannot establish all dynamic calls, every dependency's unused transitive bytecode, physical-device memory/performance, or absolute absence of dead code. Gradle R8 already shrinks the Android release variant, `flutter analyze --fatal-infos` catches common Dart issues, and Swift compiler/Xcode build checks catch type-level problems. Do not delete migration or system callback code based on simple symbol counts.
 
+
+## Security, privacy, stability and usability hardening
+
+A second source review identified concrete consent and lifecycle weaknesses and added focused improvements **without an account, ads, telemetry, cloud uploads or unnecessary permissions**:
+
+| Platform | Previous behavior | Improvement |
+| --- | --- | --- |
+| Android camera consent | Opening the scanner automatically launched a CAMERA permission dialog, even if the user only wanted gallery scanning | Defer the OS permission prompt until the **Enable camera** button is tapped; keep gallery QR scanning available while denied |
+| Android permission recovery | Users who permanently denied CAMERA could tap Enable repeatedly without a new system prompt | Offer an explicit route to the application settings; re-check actual permission status on lifecycle resume |
+| iOS camera consent | Scanning view requested permission in a view-appearance task | Use the explicit Enable camera button; if already denied, open iOS application privacy settings; refresh authorization after returning |
+| Android Wi-Fi clipboard | Ordinary clipboard previews could expose a copied QR code's Wi-Fi password to nearby observers | Mark Wi-Fi QR ClipData with Android's sensitive clipboard metadata; regular QR text retains ordinary copy behavior |
+| iOS Wi-Fi clipboard | Password-bearing QR text could remain on the system pasteboard without expiry | Set a **120-second** clipboard expiry for copied Wi-Fi QR data; leave regular URL/text copies unchanged |
+| Android photo decoding | Sampled gallery bitmap was retained until garbage collection after asynchronous ML Kit processing | Recycle only **after** ML Kit Task completion; also recycle on decoding/initialization errors and scope cancellation, without invalidating the scanner's live buffer |
+
+Added Kotlin unit and Android instrumented assertions for sensitive clipboard metadata; iOS XCTest policy assertions; Python regressions for opt-in permission prompts, recovery, gallery bitmap cleanup and sensitive pasteboard expiry.
+
+**Tradeoffs and explicit limits:** Android's clipboard sensitive flag is intended to suppress system previews, not to make copied passwords inaccessible to clipboard readers. iOS pasteboard expiry limits duration but does not undo content already pasted or shared. Camera permissions remain subject to device/OS policy. ML Kit bitmap cleanup improves memory behavior but does not guarantee no OOM on all hardware. Physical-device tests and native CI on the final commit remain release blockers. The legacy Flutter implementation is intentionally retained for compatibility; no claim is made that every legacy clipboard interaction has the same native platform protection.
+
 ## Remaining acceptance and risk
 
 - [ ] All latest-commit CI checks are green and both Android/iOS screens are actually captured and checked against approved visual references.
