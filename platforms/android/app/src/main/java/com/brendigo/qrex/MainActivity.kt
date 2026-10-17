@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
@@ -130,6 +131,9 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         Icons.Default.History, Icons.Default.MoreHoriz)
     var selected by remember { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
     var currentCode by remember { mutableStateOf<String?>(null) }
+    // Android 16 predictive/back gesture returns from a QR result to its
+    // originating screen instead of abruptly exiting the entire app.
+    BackHandler(enabled = currentCode != null) { currentCode = null }
     val colors = if (store.lightMode) lightColorScheme(
         primary = Color(0xFF1677FF), secondary = purple,
         background = Color(0xFFF3F6FF), surface = Color.White,
