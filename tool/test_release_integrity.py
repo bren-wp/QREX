@@ -43,6 +43,20 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("QREX-Android-unsigned", workflow)
         self.assertNotIn("QREX-iOS-unsigned", workflow)
 
+    def test_docs_only_updates_trigger_every_production_required_workflow(self):
+        # Production signing checks completed success on the exact *main SHA*.
+        # A README-only change must not accidentally make the release gate
+        # permanently impossible to satisfy.
+        for name in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml"):
+            workflow = (WORKFLOWS / name).read_text("utf-8")
+            with self.subTest(name=name):
+                self.assertIn("  pull_request:", workflow)
+                self.assertIn("  push:", workflow)
+                self.assertGreaterEqual(workflow.count('- "README.md"'), 2)
+                self.assertGreaterEqual(workflow.count('- "docs/**"'), 2)
+                self.assertGreaterEqual(workflow.count('- "assets/**"'), 2)
+
     def test_old_tags_retire_only_after_verified_stable_release(self):
         publish = (WORKFLOWS / "production-release.yml").read_text("utf-8")
         retirement = (ROOT / "tool/retire_legacy_releases.sh").read_text("utf-8")
