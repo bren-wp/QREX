@@ -1,0 +1,43 @@
+name: QREX — retire legacy tags after verified production release
+
+# Manual recovery only. Never delete a release/tag until signed v1.0.0 exists.
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type RETIRE_AFTER_SIGNED_1_0_0'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qrex-retire-after-stable-v1-0-0
+  cancel-in-progress: false
+
+jobs:
+  retire:
+    name: Delete obsolete tags/releases only when stable 1.0.0 is verified
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      QREX_LEGACY_RETIRE_APPROVED: after-signed-v1.0.0
+      USER_CONFIRMATION: ${{ inputs.confirmation }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify explicit cleanup authorization
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$USER_CONFIRMATION" = "RETIRE_AFTER_SIGNED_1_0_0"
+      - name: Validate cleanup script syntax
+        run: bash -n tool/retire_legacy_releases.sh
+      - name: Delete all legacy releases and tags, preserve verified v1.0.0
+        run: bash tool/retire_legacy_releases.sh
