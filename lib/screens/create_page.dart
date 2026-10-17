@@ -267,23 +267,30 @@ class _CreatePageState extends State<CreatePage> {
         child: Column(children: [
           Text('Pregled koda', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
-          if (payload != null) RepaintBoundary(
-            key: _qrKey,
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(18),
-              child: QrImageView(
-                data: payload, version: QrVersions.auto, size: 214,
-                backgroundColor: Colors.white,
-                errorCorrectionLevel: QrErrorCorrectLevel.M,
+          LayoutBuilder(builder: (context, limits) {
+            final barcodeSide = responsiveQrSide(limits.maxWidth);
+            final placeholderSide = responsiveQrSide(
+              limits.maxWidth, preferredSide: 250, horizontalInset: 0);
+            return payload != null ? RepaintBoundary(
+              key: _qrKey,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(18),
+                child: QrImageView(
+                  data: payload, version: QrVersions.auto, size: barcodeSide,
+                  backgroundColor: Colors.white,
+                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                ),
               ),
-            ),
-          ) else Container(
-            width: 250, height: 250,
-            alignment: Alignment.center,
-            child: const Text('Unesi valjane podatke za prikaz QR koda.',
-              textAlign: TextAlign.center, style: TextStyle(color: QrexPalette.muted)),
-          ),
+            ) : SizedBox(
+              width: placeholderSide, height: placeholderSide,
+              child: const Center(
+                child: Text('Unesi valjane podatke za prikaz QR koda.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: QrexPalette.muted)),
+              ),
+            );
+          }),
         ]),
       )),
       const SizedBox(height: 15),
