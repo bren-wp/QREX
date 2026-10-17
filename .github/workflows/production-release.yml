@@ -177,3 +177,7 @@ jobs:
             --notes-file docs/releases/v1.0.0.md --latest
           test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.0" --jq .prerelease)" = false
           test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.0" --jq .draft)" = false
+      - name: Remove all previous GitHub Releases and Git tags
+        env:
+          QREX_LEGACY_RETIRE_APPROVED: after-signed-v1.0.0
+        run: bash tool/retire_legacy_releases.sh
