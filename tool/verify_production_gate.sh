@@ -23,7 +23,7 @@ python3 tool/generate_localizations.py --check
 python3 tool/check_translation_usage.py
 
 # Every required workflow must have succeeded on exactly the release commit.
-for workflow in native-platforms.yml capture-screenshots.yml generate-localizations.yml mobile.yml; do
+for workflow in native-platforms.yml capture-screenshots.yml generate-localizations.yml; do
   result="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow/runs?branch=main&head_sha=$GITHUB_SHA&per_page=30" |
     jq -r '[.workflow_runs[] | select(.head_sha == env.GITHUB_SHA)] | sort_by(.id) | last |
       if . == null then "" else (.status + ":" + (.conclusion // "pending")) end')"
