@@ -29,12 +29,11 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("commits/main", gate)
         self.assertIn('v1.0.0 already tagged', gate)
         for check in ("native-platforms.yml", "capture-screenshots.yml",
-                      "generate-localizations.yml", "mobile.yml"):
+                      "generate-localizations.yml"):
             self.assertIn(check, gate)
         self.assertIn("completed:success", gate)
-        self.assertIn("needs: [verify, android, ios]", workflow)
+        self.assertIn("needs: [verify, android]", workflow)
         self.assertIn("QREX-Android-1.0.0.aab", workflow)
-        self.assertIn("QREX-iOS-1.0.0.ipa", workflow)
         self.assertIn("SHA256SUMS.txt", workflow)
         self.assertIn("jarsigner -verify -strict", workflow)
         self.assertIn("gh release create v1.0.0", workflow)
@@ -53,7 +52,6 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("QREX_LEGACY_RETIRE_APPROVED: after-signed-v1.0.0", publish)
         self.assertIn("releases/tags/v1.0.0", retirement)
         self.assertIn('"QREX-Android-1.0.0.aab"', retirement)
-        self.assertIn('"QREX-iOS-1.0.0.ipa"', retirement)
         self.assertIn('"SHA256SUMS.txt"', retirement)
         self.assertIn('test "$tag" != "v1.0.0"', retirement)
         self.assertIn('if [ "$name" != "v1.0.0" ]; then', retirement)
@@ -66,16 +64,22 @@ class ReleaseIntegrityTests(unittest.TestCase):
 
     def test_production_signing_requires_authorized_identities(self):
         android = (ROOT / "tool/sign_android_production.sh").read_text("utf-8")
-        ios = (ROOT / "tool/sign_ios_production.sh").read_text("utf-8")
         self.assertIn("QREX_UPLOAD_CERT_SHA256", android)
         self.assertIn("QREX_UPLOAD_KEYSTORE_BASE64", android)
         self.assertIn("jarsigner -verify -strict", android)
         self.assertIn("keytool -printcert -jarfile", android)
-        self.assertIn("QREX_APPLE_CERT_SHA256", ios)
-        self.assertIn("QREX_APPLE_TEAM_ID", ios)
-        self.assertIn("QREX_IOS_PROVISION_PROFILE_NAME", ios)
-        self.assertIn("codesign --verify --strict", ios)
-        self.assertIn('test "$signed_team" = "$QREX_APPLE_TEAM_ID"', ios)
+
+    def test_android_only_no_obsolete_platform_or_flutter_runtime(self):
+        self.assertFalse((ROOT / "platforms/ios").exists())
+        self.assertFalse((ROOT / "lib").exists())
+        self.assertFalse((ROOT / "test").exists())
+        self.assertFalse((ROOT / "pubspec.yaml").exists())
+        self.assertFalse((WORKFLOWS / "mobile.yml").exists())
+        self.assertFalse((ROOT / "tool/sign_ios_production.sh").exists())
+        workflow = (WORKFLOWS / "production-release.yml").read_text("utf-8")
+        self.assertNotIn("QREX-iOS-", workflow)
+        self.assertNotIn("needs: [verify, android, ios]", workflow)
+        self.assertIn("QREX-Android-1.0.0.aab", workflow)
 
     def test_prior_rc_releases_stay_correctly_classified(self):
         guardian = (WORKFLOWS / "guard-release-metadata.yml").read_text("utf-8")
@@ -86,7 +90,6 @@ class ReleaseIntegrityTests(unittest.TestCase):
 
     def test_public_docs_and_production_metadata(self):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        ios = (ROOT / "platforms/ios/project.yml").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         release_notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
         checklist = (ROOT / "docs/STORE_CHECKLIST.md").read_text("utf-8")
@@ -98,8 +101,6 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("marketing version `1.0.0`, build `100`", checklist)
         self.assertIn('versionCode = 100', gradle)
         self.assertIn('versionName = "1.0.0"', gradle)
-        self.assertIn('CURRENT_PROJECT_VERSION: "100"', ios)
-        self.assertIn('MARKETING_VERSION: "1.0.0"', ios)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
 
 
