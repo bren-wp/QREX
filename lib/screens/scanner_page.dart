@@ -182,8 +182,7 @@ class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
         ),
       ),
       const IgnorePointer(child: _ScannerShade()),
-      SafeArea(child: LayoutBuilder(builder: (context, layout) {
-        return Column(children: [
+      SafeArea(child: Column(children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(18, 12, 18, 4),
             child: Row(children: [
@@ -266,8 +265,7 @@ class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
               style: TextButton.styleFrom(foregroundColor: Colors.white),
             ),
           ),
-        ]);
-      })),
+        ])),
     ]);
   }
 }

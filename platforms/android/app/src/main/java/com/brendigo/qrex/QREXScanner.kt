@@ -1,6 +1,11 @@
 package com.brendigo.qrex
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -133,29 +138,70 @@ fun ScanScreen(onRead: (String) -> Unit) {
                                     ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
                             } ?: ExifInterface.ORIENTATION_NORMAL
                         }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
-                        InputImage.fromBitmap(orientGalleryBitmap(bitmap, orientation), 0)
+                        val upright = try {
+                            orientGalleryBitmap(bitmap, orientation)
+                        } catch (failure: Throwable) {
+                            bitmap.recycle()
+                            throw failure
+                        }
+                        // ML Kit holds the pixel buffer during asynchronous
+                        // processing. Recycle only when its Task is complete.
+                        try {
+                            InputImage.fromBitmap(upright, 0) to upright
+                        } catch (failure: Throwable) {
+                            upright.recycle()
+                            throw failure
+                        }
                     }.getOrNull()
+                }
+                if (!scope.coroutineContext.isActive) {
+                    image?.second?.recycle()
+                    return@launch
                 }
                 if (image == null) {
                     message = imageFailed
                 } else {
-                    val client = BarcodeScanning.getClient(options)
-                    client.process(image).addOnSuccessListener { codes ->
-                        if (!scope.coroutineContext.isActive) return@addOnSuccessListener
-                        val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
-                        if (!raw.isNullOrEmpty()) {
-                            if (handled.compareAndSet(false, true)) onRead(raw)
-                        } else message = qrNotFound
-                    }.addOnFailureListener {
+                    val (input, bitmap) = image
+                    val client = runCatching { BarcodeScanning.getClient(options) }.getOrElse {
+                        bitmap.recycle()
+                        message = imageFailed
+                        return@launch
+                    }
+                    runCatching {
+                        client.process(input).addOnSuccessListener { codes ->
+                            if (!scope.coroutineContext.isActive) return@addOnSuccessListener
+                            val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
+                            if (!raw.isNullOrEmpty()) {
+                                if (handled.compareAndSet(false, true)) onRead(raw)
+                            } else message = qrNotFound
+                        }.addOnFailureListener {
+                            if (scope.coroutineContext.isActive) message = imageFailed
+                        }.addOnCompleteListener {
+                            bitmap.recycle()
+                            client.close()
+                        }
+                    }.onFailure {
+                        bitmap.recycle()
+                        client.close()
                         if (scope.coroutineContext.isActive) message = imageFailed
-                    }.addOnCompleteListener { client.close() }
+                    }
                 }
             }
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (!allowed) permission.launch(Manifest.permission.CAMERA)
+    // Gallery QR scanning works without CAMERA permission. Ask only after an
+    // explicit tap, and refresh permission after returning from system Settings.
+    DisposableEffect(owner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                allowed = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+        owner.lifecycle.addObserver(observer)
+        onDispose { owner.lifecycle.removeObserver(observer) }
     }
     Column(Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = Color(0xFF10C5FA),
@@ -249,6 +295,16 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     Text(tr("allow_camera"), modifier = Modifier.padding(20.dp))
                     OutlinedButton(onClick = { permission.launch(Manifest.permission.CAMERA) }) {
                         Text(tr("enable_camera"))
+                    }
+                    TextButton(onClick = {
+                        runCatching {
+                            context.startActivity(Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:${context.packageName}")
+                            ))
+                        }.onFailure { message = cameraFailed }
+                    }) {
+                        Text(tr("settings"))
                     }
                 }
             }

@@ -67,18 +67,25 @@ class _ResultPageState extends State<ResultPage> {
     }
     showModalBottomSheet<void>(context: context, showDragHandle: true,
       isScrollControlled: true,
-      builder: (dialogContext) => SafeArea(child: Padding(
+      builder: (dialogContext) {
+        final viewport = MediaQuery.sizeOf(dialogContext);
+        final preferredSide = (viewport.height * .35).clamp(0.0, 220.0).toDouble();
+        final qrSide = responsiveQrSide(
+          viewport.width, preferredSide: preferredSide, horizontalInset: 84);
+        return SafeArea(child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           const Text('QR kod', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
           const SizedBox(height: 20),
           Container(padding: const EdgeInsets.all(18), color: Colors.white,
-            child: QrImageView(data: widget.raw, size: 220,
+            child: QrImageView(data: widget.raw, size: qrSide,
               version: QrVersions.auto, errorCorrectionLevel: QrErrorCorrectLevel.M)),
           const SizedBox(height: 14),
           TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Zatvori')),
         ]),
-      )));
+      ));
+      },
+    );
   }
 
   Future<void> _save() async {

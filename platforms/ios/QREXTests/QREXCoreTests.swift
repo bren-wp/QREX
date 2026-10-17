@@ -3,6 +3,15 @@ import UniformTypeIdentifiers
 @testable import QREX
 
 final class QREXCoreTests: XCTestCase {
+    @MainActor
+    func testSensitiveWifiClipboardPolicy() {
+        XCTAssertTrue(QREXClipboard.isSensitive(
+            QRContent.wifi(ssid: "Guest", password: "private-password")))
+        XCTAssertFalse(QREXClipboard.isSensitive("https://brendigo.com"))
+        XCTAssertFalse(QREXClipboard.isSensitive("Plain text"))
+        XCTAssertEqual(QREXClipboard.sensitiveLifetime, 120)
+    }
+
     func testAllLanguagesAreAvailable() {
         XCTAssertEqual(QREXStrings.supported.count, 23)
         for language in QREXStrings.supported {

@@ -52,6 +52,21 @@ class QREXCoreTest {
         assertEquals(4, gallerySampleSize(6000, 6000))
     }
 
+    @Test fun responsivePreviewNeverOverflowsCompactAndroidViewport() {
+        assertEquals(238f, responsiveQrSideDp(420f, 238f), 0.01f)
+        assertEquals(238f, responsiveQrSideDp(238f, 238f), 0.01f)
+        assertEquals(176f, responsiveQrSideDp(176f, 238f), 0.01f)
+        assertEquals(0f, responsiveQrSideDp(-20f, 238f), 0.01f)
+        assertEquals(230f, responsiveQrSideDp(400f, 230f), 0.01f)
+    }
+
+    @Test fun wifiQrClipboardCopiesAreSensitiveButNormalQrTextIsNot() {
+        assertTrue(qrClipboardSensitive(QRContent.wifi("Office", "private-password")))
+        assertTrue(qrClipboardSensitive("wifi:T:WPA;S:Guest;P:secret;;"))
+        assertFalse(qrClipboardSensitive("https://brendigo.com"))
+        assertFalse(qrClipboardSensitive("Normal QR message"))
+    }
+
     @Test fun whitespaceOnlyQrCannotBeRendered() {
         assertFalse(QRContent.canRender("   "))
         assertFalse(QRContent.canRender("\n\t"))

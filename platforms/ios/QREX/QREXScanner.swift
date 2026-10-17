@@ -172,7 +172,8 @@ struct ScanScreen: View {
                     .font(.footnote).foregroundStyle(.gray)
             }.padding(.vertical, 18)
         }
-        .task { requestCamera() }
+        // Do not trigger a system CAMERA prompt just to browse gallery QR images.
+        // The visible Enable Camera button performs the explicit permission request.
         .onChange(of: selectedPhoto) { item in
             // A second image selection supersedes any in-flight Vision task.
             photoTask?.cancel()
@@ -180,6 +181,7 @@ struct ScanScreen: View {
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
+                access = AVCaptureDevice.authorizationStatus(for: .video)
                 cameraRevision += 1
             } else {
                 torch = false
@@ -205,14 +207,25 @@ struct ScanScreen: View {
     }
 
     private func requestCamera() {
-        if AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        switch status {
+        case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
                     access = granted ? .authorized : .denied
                 }
             }
-        } else {
-            access = AVCaptureDevice.authorizationStatus(for: .video)
+        case .denied:
+            // Repeated requestAccess() calls do not show another system prompt.
+            // Open the actual app privacy settings so the button remains useful.
+            guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
+                message = tr("camera_failed")
+                return
+            }
+            UIApplication.shared.open(settingsURL)
+            access = status
+        default:
+            access = status
         }
     }
 

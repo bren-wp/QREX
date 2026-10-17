@@ -45,6 +45,27 @@ private extension View {
     }
 }
 
+/**
+ * Password-bearing Wi-Fi QR payloads must not stay indefinitely in the
+ * system clipboard. Ordinary URL/text QR copies keep familiar paste behavior.
+ */
+@MainActor
+enum QREXClipboard {
+    static let sensitiveLifetime: TimeInterval = 120
+    static func isSensitive(_ raw: String) -> Bool { QRContent.isWifi(raw) }
+
+    static func copy(_ raw: String) {
+        if isSensitive(raw) {
+            UIPasteboard.general.setItems(
+                [[UTType.utf8PlainText.identifier: raw]],
+                options: [.expirationDate: Date().addingTimeInterval(sensitiveLifetime)]
+            )
+        } else {
+            UIPasteboard.general.string = raw
+        }
+    }
+}
+
 enum QREXImage {
     // CIContext is costly to initialize and safe to reuse for rendering.
     private static let renderContext = CIContext()
@@ -143,7 +164,7 @@ struct ResultScreen: View {
                             .buttonStyle(.borderedProminent)
                     }
                     HStack {
-                        Button(tr("copy")) { UIPasteboard.general.string = raw }.buttonStyle(.bordered)
+                        Button(tr("copy")) { QREXClipboard.copy(raw) }.buttonStyle(.bordered)
                         ShareLink(item: raw) { Label(tr("share"), systemImage: "square.and.arrow.up") }
                             .buttonStyle(.bordered)
                     }
@@ -174,7 +195,7 @@ struct ResultScreen: View {
                     VStack(spacing: 22) {
                         Text(tr("qr_preview")).font(.title2.bold())
                         Image(uiImage: image).interpolation(.none).resizable()
-                            .scaledToFit().frame(width: 240, height: 240)
+                            .scaledToFit().frame(maxWidth: 240, maxHeight: 240)
                         Button(tr("close")) { showQR = false }
                     }.padding()
                 }
@@ -277,7 +298,7 @@ struct CreateScreen: View {
                     }
                     if let frame = renderedQR, frame.payload == raw {
                         Image(uiImage: frame.image).interpolation(.none).resizable()
-                            .scaledToFit().frame(width: 210, height: 210)
+                            .scaledToFit().frame(maxWidth: 210, maxHeight: 210)
                             .padding(12).background(.white, in: RoundedRectangle(cornerRadius: 20))
                         Button(tr("save_qr")) {
                             if QRContent.isWifi(raw) { confirmWifiSave = true }

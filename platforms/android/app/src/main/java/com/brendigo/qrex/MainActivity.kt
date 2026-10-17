@@ -1,6 +1,9 @@
 package com.brendigo.qrex
 
 import android.content.Intent
+import android.content.ClipData
+import android.content.ClipDescription
+import android.os.PersistableBundle
 import android.content.pm.ApplicationInfo
 import android.graphics.Bitmap
 import android.graphics.Color as AndroidColor
@@ -63,6 +66,35 @@ private val card = Color(0xFF101B2C)
 private val cyan = Color(0xFF10C5FA)
 private val purple = Color(0xFF9047F8)
 private val white = Color.White
+
+/**
+ * Preserve the approved QR preview size on ordinary phones, but never allocate
+ * a fixed-width preview wider than its measured Compose content viewport.
+ */
+internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Float =
+    minOf(preferredDp, availableWidthDp.coerceAtLeast(0f))
+
+/**
+ * Android 13+ clipboard previews can display copied text to bystanders.
+ * Mark Wi-Fi QR payloads as sensitive (without changing copy/paste contents).
+ */
+internal fun qrClipboardSensitive(raw: String): Boolean = QRContent.isWifi(raw)
+
+internal fun makeQrClipboardClip(raw: String): ClipData {
+    val clip = ClipData.newPlainText("QR", raw)
+    if (qrClipboardSensitive(raw)) {
+        clip.description.extras = PersistableBundle().apply {
+            putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+        }
+    }
+    return clip
+}
+
+internal fun copyQrToClipboard(context: Context, raw: String) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
+        as android.content.ClipboardManager
+    clipboard.setPrimaryClip(makeQrClipboardClip(raw))
+}
 
 private val LocalLanguage = compositionLocalOf { "en" }
 
@@ -234,8 +266,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             OutlinedButton(onClick = {
-                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("QR", raw))
+                copyQrToClipboard(context, raw)
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }, modifier = Modifier.weight(1f)) {
                 Icon(Icons.Default.ContentCopy, contentDescription = null)
@@ -256,8 +287,11 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         val bitmap = exportBitmap
         if (bitmap != null) {
-            Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                modifier = Modifier.size(230.dp).background(white).padding(12.dp))
+            BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
+                    modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 230f).dp)
+                        .background(white).padding(12.dp))
+            }
             Spacer(Modifier.height(12.dp))
             OutlinedButton(
                 onClick = { pngExport.launch("QREX-QR.png") },
@@ -390,9 +424,15 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
                 val previewBitmap = qr
-                if (previewBitmap != null) Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                    modifier = Modifier.size(238.dp).background(white).padding(14.dp))
-                else Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    if (previewBitmap != null) {
+                        Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
+                            modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 238f).dp)
+                                .background(white).padding(14.dp))
+                    } else {
+                        Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
             }
         }
         Spacer(Modifier.height(12.dp))
