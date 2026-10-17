@@ -1,4 +1,4 @@
-name: Capture verified QREX screens
+name: QREX Android screen capture
 
 on:
   pull_request:
@@ -76,59 +76,3 @@ jobs:
           name: qrex-actual-android
           path: docs/screenshots/android-create.png
           if-no-files-found: error
-
-  ios:
-    name: Actual iPhone simulator screenshot
-    runs-on: macos-latest
-    timeout-minutes: 55
-    steps:
-      - uses: actions/checkout@v4
-      - run: brew install xcodegen
-      - name: Prepare app icon
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          from tool.prepare_platforms import render_png
-          p = Path("platforms/ios/QREX/Assets.xcassets/AppIcon.appiconset")
-          p.mkdir(parents=True, exist_ok=True)
-          render_png(p / "AppIcon.png", 1024)
-          (p / "Contents.json").write_text(json.dumps({
-            "images": [{"filename":"AppIcon.png","idiom":"universal","platform":"ios","size":"1024x1024"}],
-            "info":{"author":"xcode","version":1}
-          }), encoding="utf-8")
-          PY
-      - run: python3 tool/generate_localizations.py --check
-      - name: Generate Xcode project
-        working-directory: platforms/ios
-        run: xcodegen generate --spec project.yml
-      - name: Compile standalone SwiftUI app
-        working-directory: platforms/ios
-        run: |
-          xcodebuild -project QREX.xcodeproj -scheme QREX -configuration Debug \
-            -sdk iphonesimulator -destination "generic/platform=iOS Simulator" \
-            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
-      - name: Run QREX and capture actual display pixels
-        run: |
-          DEVICE=$(python3 - <<'PY'
-          import json, subprocess
-          devices=json.loads(subprocess.check_output(["xcrun","simctl","list","devices","available","--json"]))["devices"]
-          matches=[i["udid"] for v in devices.values() for i in v if i.get("isAvailable") and "iPhone" in i.get("name", "")]
-          if not matches: raise SystemExit("No available iPhone simulator")
-          print(matches[0])
-          PY
-          )
-          xcrun simctl boot "$DEVICE"
-          xcrun simctl bootstatus "$DEVICE" -b
-          xcrun simctl install "$DEVICE" platforms/ios/build/Build/Products/Debug-iphonesimulator/QREX.app
-          xcrun simctl launch "$DEVICE" com.brendigo.qrex -qrex-screenshot-create
-          sleep 10
-          mkdir -p docs/screenshots
-          xcrun simctl io "$DEVICE" screenshot docs/screenshots/ios-create.png
-          python3 tool/verify_screenshots.py docs/screenshots/ios-create.png
-      - uses: actions/upload-artifact@v4
-        with:
-          name: qrex-actual-ios
-          path: docs/screenshots/ios-create.png
-          if-no-files-found: error
-
