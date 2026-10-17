@@ -75,14 +75,11 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   Widget _field(String key, String label, {String? hint, TextInputType? keyboard,
-      int lines = 1, bool obscure = false}) =>
+      int lines = 1}) =>
     Padding(padding: const EdgeInsets.only(bottom: 12), child: TextField(
       controller: _fields[key],
       onChanged: (_) => setState(() {}),
       keyboardType: keyboard,
-      obscureText: obscure,
-      enableSuggestions: !obscure,
-      autocorrect: !obscure,
       minLines: lines,
       maxLines: lines,
       decoration: InputDecoration(labelText: label, hintText: hint),
