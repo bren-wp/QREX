@@ -50,6 +50,7 @@ import androidx.compose.runtime.compositionLocalOf
 import java.util.Locale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -142,8 +143,9 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
                 pages.forEachIndexed { index, label ->
                     NavigationBarItem(selected = selected == index,
                         onClick = { selected = index; currentCode = null },
-                        icon = { Icon(icons[index], contentDescription = label) },
-                        label = { Text(label) },
+                        icon = { Icon(icons[index], contentDescription = null) },
+                        label = { Text(label, maxLines = 1, softWrap = false,
+                            overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = cyan, selectedTextColor = cyan,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -652,7 +654,7 @@ private fun MoreScreen(store: QREXStore) {
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
         title = { Text("PDF") },
-        text = { Text(tr("wifi_warning")) },
+        text = { Text(tr("export_archive_warning")) },
         confirmButton = { TextButton(onClick = {
             confirmPdfExport = false
             exportPdf.launch("QREX-Saved-Codes.pdf")
