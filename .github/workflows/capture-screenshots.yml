@@ -74,7 +74,12 @@ jobs:
           emulator-boot-timeout: 600
           # software is supported; swiftshader_indirect is deprecated in newer emulators.
           emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
-          script: bash tool/capture_android_screen.sh
+          script: |
+            set -euo pipefail
+            # Execute on-device history/Keystore, permissions and real PDF/ZIP
+            # rendering regressions before trusting the screenshot for release.
+            gradle -p platforms/android --no-daemon :app:connectedDebugAndroidTest
+            bash tool/capture_android_screen.sh
       - name: Enforce fresh screenshot file
         run: |
           test -s docs/screenshots/android-create.png
