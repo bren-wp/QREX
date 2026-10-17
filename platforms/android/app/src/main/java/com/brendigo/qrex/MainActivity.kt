@@ -1,6 +1,9 @@
 package com.brendigo.qrex
 
 import android.content.Intent
+import android.content.ClipData
+import android.content.ClipDescription
+import android.os.PersistableBundle
 import android.content.pm.ApplicationInfo
 import android.graphics.Bitmap
 import android.graphics.Color as AndroidColor
@@ -70,6 +73,24 @@ private val white = Color.White
  */
 internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Float =
     minOf(preferredDp, availableWidthDp.coerceAtLeast(0f))
+
+/**
+ * Android 13+ clipboard previews can display copied text to bystanders.
+ * Mark Wi-Fi QR payloads as sensitive (without changing copy/paste contents).
+ */
+internal fun qrClipboardSensitive(raw: String): Boolean = QRContent.isWifi(raw)
+
+internal fun copyQrToClipboard(context: Context, raw: String) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
+        as android.content.ClipboardManager
+    val clip = ClipData.newPlainText("QR", raw)
+    if (qrClipboardSensitive(raw)) {
+        clip.description.extras = PersistableBundle().apply {
+            putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+        }
+    }
+    clipboard.setPrimaryClip(clip)
+}
 
 private val LocalLanguage = compositionLocalOf { "en" }
 
@@ -241,8 +262,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             OutlinedButton(onClick = {
-                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("QR", raw))
+                copyQrToClipboard(context, raw)
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }, modifier = Modifier.weight(1f)) {
                 Icon(Icons.Default.ContentCopy, contentDescription = null)
