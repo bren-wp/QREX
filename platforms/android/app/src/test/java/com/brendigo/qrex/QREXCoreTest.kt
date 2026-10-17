@@ -60,6 +60,13 @@ class QREXCoreTest {
         assertEquals(230f, responsiveQrSideDp(400f, 230f), 0.01f)
     }
 
+    @Test fun wifiQrClipboardCopiesAreSensitiveButNormalQrTextIsNot() {
+        assertTrue(qrClipboardSensitive(QRContent.wifi("Office", "private-password")))
+        assertTrue(qrClipboardSensitive("wifi:T:WPA;S:Guest;P:secret;;"))
+        assertFalse(qrClipboardSensitive("https://brendigo.com"))
+        assertFalse(qrClipboardSensitive("Normal QR message"))
+    }
+
     @Test fun whitespaceOnlyQrCannotBeRendered() {
         assertFalse(QRContent.canRender("   "))
         assertFalse(QRContent.canRender("\n\t"))
