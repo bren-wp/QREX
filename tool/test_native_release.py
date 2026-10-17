@@ -34,7 +34,7 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("signing" in issue.lower() for issue in issues), issues)
 
     def test_mismatched_versions_are_rejected(self):
-        issues = self.check(ios=self.ios.replace('MARKETING_VERSION: "0.2.3"', 'MARKETING_VERSION: "9.9.9"'))
+        issues = self.check(ios=self.ios.replace('MARKETING_VERSION: "0.2.4"', 'MARKETING_VERSION: "9.9.9"'))
         self.assertTrue(any("versions differ" in issue for issue in issues), issues)
 
     def test_privilege_creep_is_rejected(self):
