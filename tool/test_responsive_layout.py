@@ -33,6 +33,16 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
         self.assertIn("SafeArea(child: Column(children: [", flutter)
         self.assertNotIn("LayoutBuilder(builder: (context, layout)", flutter)
 
+    def test_native_camera_permissions_require_an_explicit_user_action(self):
+        android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXScanner.kt").read_text("utf-8")
+        ios = (ROOT / "platforms/ios/QREX/QREXScanner.swift").read_text("utf-8")
+        self.assertNotIn("LaunchedEffect(Unit) {\\n        if (!allowed) permission.launch", android)
+        self.assertIn("LifecycleEventObserver", android)
+        self.assertIn("Settings.ACTION_APPLICATION_DETAILS_SETTINGS", android)
+        self.assertNotIn(".task { requestCamera() }", ios)
+        self.assertIn("UIApplication.openSettingsURLString", ios)
+        self.assertIn("access = AVCaptureDevice.authorizationStatus(for: .video)", ios)
+
     def test_flutter_create_and_result_use_bounded_qr_previews(self):
         create = (ROOT / "lib/screens/create_page.dart").read_text("utf-8")
         result = (ROOT / "lib/screens/result_page.dart").read_text("utf-8")
