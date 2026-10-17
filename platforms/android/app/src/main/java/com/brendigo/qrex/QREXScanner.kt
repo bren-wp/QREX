@@ -138,22 +138,49 @@ fun ScanScreen(onRead: (String) -> Unit) {
                                     ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
                             } ?: ExifInterface.ORIENTATION_NORMAL
                         }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
-                        InputImage.fromBitmap(orientGalleryBitmap(bitmap, orientation), 0)
+                        val upright = try {
+                            orientGalleryBitmap(bitmap, orientation)
+                        } catch (failure: Throwable) {
+                            bitmap.recycle()
+                            throw failure
+                        }
+                        // ML Kit holds the pixel buffer during asynchronous
+                        // processing. Recycle only when its Task is complete.
+                        try {
+                            InputImage.fromBitmap(upright, 0) to upright
+                        } catch (failure: Throwable) {
+                            upright.recycle()
+                            throw failure
+                        }
                     }.getOrNull()
+                }
+                if (!scope.coroutineContext.isActive) {
+                    image?.second?.recycle()
+                    return@launch
                 }
                 if (image == null) {
                     message = imageFailed
                 } else {
+                    val (input, bitmap) = image
                     val client = BarcodeScanning.getClient(options)
-                    client.process(image).addOnSuccessListener { codes ->
-                        if (!scope.coroutineContext.isActive) return@addOnSuccessListener
-                        val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
-                        if (!raw.isNullOrEmpty()) {
-                            if (handled.compareAndSet(false, true)) onRead(raw)
-                        } else message = qrNotFound
-                    }.addOnFailureListener {
+                    runCatching {
+                        client.process(input).addOnSuccessListener { codes ->
+                            if (!scope.coroutineContext.isActive) return@addOnSuccessListener
+                            val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
+                            if (!raw.isNullOrEmpty()) {
+                                if (handled.compareAndSet(false, true)) onRead(raw)
+                            } else message = qrNotFound
+                        }.addOnFailureListener {
+                            if (scope.coroutineContext.isActive) message = imageFailed
+                        }.addOnCompleteListener {
+                            bitmap.recycle()
+                            client.close()
+                        }
+                    }.onFailure {
+                        bitmap.recycle()
+                        client.close()
                         if (scope.coroutineContext.isActive) message = imageFailed
-                    }.addOnCompleteListener { client.close() }
+                    }
                 }
             }
         }
