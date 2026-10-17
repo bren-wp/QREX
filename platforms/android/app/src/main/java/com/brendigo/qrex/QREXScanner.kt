@@ -1,6 +1,11 @@
 package com.brendigo.qrex
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -154,8 +159,18 @@ fun ScanScreen(onRead: (String) -> Unit) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (!allowed) permission.launch(Manifest.permission.CAMERA)
+    // Gallery QR scanning works without CAMERA permission. Ask only after an
+    // explicit tap, and refresh permission after returning from system Settings.
+    DisposableEffect(owner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                allowed = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+        owner.lifecycle.addObserver(observer)
+        onDispose { owner.lifecycle.removeObserver(observer) }
     }
     Column(Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = Color(0xFF10C5FA),
@@ -249,6 +264,16 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     Text(tr("allow_camera"), modifier = Modifier.padding(20.dp))
                     OutlinedButton(onClick = { permission.launch(Manifest.permission.CAMERA) }) {
                         Text(tr("enable_camera"))
+                    }
+                    TextButton(onClick = {
+                        runCatching {
+                            context.startActivity(Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:${context.packageName}")
+                            ))
+                        }.onFailure { message = cameraFailed }
+                    }) {
+                        Text(tr("settings"))
                     }
                 }
             }
