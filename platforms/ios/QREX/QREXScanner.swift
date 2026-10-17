@@ -267,7 +267,7 @@ struct ScanScreen: View {
                 return request.results?.compactMap(\.payloadStringValue).first
             }.value
             guard !Task.isCancelled else { return }
-            if let raw = request.results?.compactMap(\.payloadStringValue).first {
+            if let raw {
                 receive(raw)
             } else {
                 message = tr("qr_not_found")
