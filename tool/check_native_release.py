@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
+TOOLS_NS = "http://schemas.android.com/tools"
 APP_ID = "com.brendigo.qrex"
 LAST_PUBLISHED_NATIVE_BUILD_CODE = 100
 PRODUCTION_VERSION = "1.0.1"
@@ -48,7 +49,15 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
             for prop in ("allowBackup", "usesCleartextTraffic"):
                 if app.get(f"{{{ANDROID_NS}}}{prop}") != "false":
                     issues.append(f"Android {prop} must be disabled")
-        permissions = {e.get(f"{{{ANDROID_NS}}}name") for e in root.findall("uses-permission")}
+        # A tools:node="remove" element is a build-time rule, not an app
+        # permission request. Actual merged manifests are separately audited
+        # by check_merged_manifest.py for transitive SDK permissions.
+        permissions = {
+            e.get(f"{{{ANDROID_NS}}}name")
+            for e in root
+            if e.tag in ("uses-permission", "uses-permission-sdk-23")
+            and e.get(f"{{{TOOLS_NS}}}node") != "remove"
+        }
         if "android.permission.CAMERA" not in permissions:
             issues.append("Camera permission is missing")
         forbidden = {
