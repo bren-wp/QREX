@@ -64,6 +64,13 @@ private val cyan = Color(0xFF10C5FA)
 private val purple = Color(0xFF9047F8)
 private val white = Color.White
 
+/**
+ * Preserve the approved QR preview size on ordinary phones, but never allocate
+ * a fixed-width preview wider than its measured Compose content viewport.
+ */
+internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Float =
+    minOf(preferredDp, availableWidthDp.coerceAtLeast(0f))
+
 private val LocalLanguage = compositionLocalOf { "en" }
 
 @Composable
@@ -256,8 +263,11 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         val bitmap = exportBitmap
         if (bitmap != null) {
-            Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                modifier = Modifier.size(230.dp).background(white).padding(12.dp))
+            BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
+                    modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 230f).dp)
+                        .background(white).padding(12.dp))
+            }
             Spacer(Modifier.height(12.dp))
             OutlinedButton(
                 onClick = { pngExport.launch("QREX-QR.png") },
@@ -390,9 +400,15 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
                 val previewBitmap = qr
-                if (previewBitmap != null) Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                    modifier = Modifier.size(238.dp).background(white).padding(14.dp))
-                else Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    if (previewBitmap != null) {
+                        Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
+                            modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 238f).dp)
+                                .background(white).padding(14.dp))
+                    } else {
+                        Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
             }
         }
         Spacer(Modifier.height(12.dp))
