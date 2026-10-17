@@ -41,7 +41,8 @@ class AndroidOnlyArchitectureTests(unittest.TestCase):
         self.assertIn("needs: verify", publish)
         self.assertIn("QREX-Android-1.0.1.aab", publish)
         self.assertIn("production/SHA256SUMS-PLAY.txt", publish)
-        self.assertIn("jarsigner -verify -strict", publish)
+        self.assertIn("jarsigner -verify -strict",
+                      (ROOT / "tool/sign_android_production.sh").read_text("utf-8"))
         self.assertIn("environment: production", publish)
         self.assertIn("completed:success", gate)
 
