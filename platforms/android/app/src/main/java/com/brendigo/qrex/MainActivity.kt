@@ -189,12 +189,23 @@ private fun PrimaryAction(text: String, enabled: Boolean = true, onClick: () -> 
     }
 }
 
+private fun shareQrText(context: Context, raw: String, title: String, failureMessage: String) {
+    runCatching {
+        context.startActivity(Intent.createChooser(
+            Intent(Intent.ACTION_SEND).setType("text/plain")
+                .putExtra(Intent.EXTRA_TEXT, raw), title))
+    }.onFailure {
+        Toast.makeText(context, failureMessage, Toast.LENGTH_SHORT).show()
+    }
+}
+
 @Composable
 private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val context = LocalContext.current
     val url = QRContent.safeUrl(raw)
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
+    var confirmWifiShare by remember(raw) { mutableStateOf(false) }
     val wifi = QRContent.isWifi(raw)
     val alreadySaved = store.items.any { it.raw == raw && it.saved }
     val copied = tr("copied")
@@ -273,12 +284,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 Spacer(Modifier.width(6.dp)); Text(tr("copy"))
             }
             OutlinedButton(onClick = {
-                runCatching {
-                    context.startActivity(Intent.createChooser(
-                        Intent(Intent.ACTION_SEND).setType("text/plain")
-                            .putExtra(Intent.EXTRA_TEXT, raw), shareTitle))
-                }.onFailure { Toast.makeText(context,
-                    sharingFailed, Toast.LENGTH_SHORT).show() }
+                if (wifi) confirmWifiShare = true
+                else shareQrText(context, raw, shareTitle, sharingFailed)
             }, modifier = Modifier.weight(1f)) {
                 Icon(Icons.Default.Share, contentDescription = null)
                 Spacer(Modifier.width(6.dp)); Text(tr("share"))
@@ -307,6 +314,18 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         }
         Spacer(Modifier.height(10.dp))
         TextButton(onClick = onClose) { Text(tr("close")) }
+    }
+    if (confirmWifiShare) {
+        AlertDialog(onDismissRequest = { confirmWifiShare = false },
+            title = { Text(tr("share")) },
+            text = { Text(tr("wifi_warning")) },
+            confirmButton = { TextButton(onClick = {
+                confirmWifiShare = false
+                shareQrText(context, raw, shareTitle, sharingFailed)
+            }) { Text(tr("share")) } },
+            dismissButton = { TextButton(onClick = { confirmWifiShare = false }) {
+                Text(tr("cancel"))
+            } })
     }
     if (confirmWifiSave) {
         AlertDialog(onDismissRequest = { confirmWifiSave = false },
