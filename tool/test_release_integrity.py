@@ -44,6 +44,26 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("QREX-Android-unsigned", workflow)
         self.assertNotIn("QREX-iOS-unsigned", workflow)
 
+    def test_old_tags_retire_only_after_verified_stable_release(self):
+        publish = (WORKFLOWS / "production-release.yml").read_text("utf-8")
+        retirement = (ROOT / "tool/retire_legacy_releases.sh").read_text("utf-8")
+        recovery = (WORKFLOWS / "retire-legacy-releases.yml").read_text("utf-8")
+        self.assertIn("gh release create v1.0.0", publish)
+        self.assertIn("run: bash tool/retire_legacy_releases.sh", publish)
+        self.assertIn("QREX_LEGACY_RETIRE_APPROVED: after-signed-v1.0.0", publish)
+        self.assertIn("releases/tags/v1.0.0", retirement)
+        self.assertIn('"QREX-Android-1.0.0.aab"', retirement)
+        self.assertIn('"QREX-iOS-1.0.0.ipa"', retirement)
+        self.assertIn('"SHA256SUMS.txt"', retirement)
+        self.assertIn('test "$tag" != "v1.0.0"', retirement)
+        self.assertIn('if [ "$name" != "v1.0.0" ]; then', retirement)
+        self.assertIn('jq -e \'. == ["v1.0.0"]\'', retirement)
+        self.assertIn("gh api --method DELETE", retirement)
+        self.assertIn("workflow_dispatch:", recovery)
+        self.assertNotIn("  push:", recovery)
+        self.assertIn("environment: production", recovery)
+        self.assertIn("RETIRE_AFTER_SIGNED_1_0_0", recovery)
+
     def test_production_signing_requires_authorized_identities(self):
         android = (ROOT / "tool/sign_android_production.sh").read_text("utf-8")
         ios = (ROOT / "tool/sign_ios_production.sh").read_text("utf-8")
