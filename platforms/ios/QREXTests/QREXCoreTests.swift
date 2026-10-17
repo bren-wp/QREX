@@ -35,6 +35,15 @@ final class QREXCoreTests: XCTestCase {
             QRContent.wifi(ssid: "Public", password: ""), key: "T"), "nopass")
     }
 
+    func testGalleryPolicyBoundsHighResolutionFrames() {
+        XCTAssertTrue(QREXGalleryPolicy.accepts(byteCount: 3_000_000, width: 4000, height: 3000))
+        XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 3_000_000, width: 6000, height: 5000))
+        XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 20_000_001, width: 100, height: 100))
+        XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 0, width: 100, height: 100))
+        XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 1000, width: 0, height: 100))
+        XCTAssertLessThanOrEqual(QREXGalleryPolicy.maxThumbnailSide, 3072)
+    }
+
     func testUnsafeUrls() {
         XCTAssertNil(QRContent.safeURL("javascript:alert(1)"))
         XCTAssertNil(QRContent.safeURL("https://trusted.com@malicious.com"))
