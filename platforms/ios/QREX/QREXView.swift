@@ -121,6 +121,18 @@ struct QREXRoot: View {
     }
 }
 
+// Only instantiated after explicit confirmation for a password-bearing QR.
+// Plain QR text still uses the native SwiftUI ShareLink directly.
+private struct QREXConfirmedWifiShareSheet: UIViewControllerRepresentable {
+    let text: String
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [text], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+
 struct ResultScreen: View {
     @EnvironmentObject private var store: QREXStore
     @Environment(\.openURL) private var openURL
@@ -129,6 +141,8 @@ struct ResultScreen: View {
     @State private var showPassword = false
     @State private var showQR = false
     @State private var confirmSaveWifi = false
+    @State private var confirmWifiShare = false
+    @State private var presentWifiShare = false
     @State private var showPNGExporter = false
     @State private var pngDocument: QREXPNGDocument?
     @State private var operationFailed = false
@@ -165,8 +179,19 @@ struct ResultScreen: View {
                     }
                     HStack {
                         Button(tr("copy")) { QREXClipboard.copy(raw) }.buttonStyle(.bordered)
-                        ShareLink(item: raw) { Label(tr("share"), systemImage: "square.and.arrow.up") }
+                        if QRContent.isWifi(raw) {
+                            Button {
+                                confirmWifiShare = true
+                            } label: {
+                                Label(tr("share"), systemImage: "square.and.arrow.up")
+                            }
                             .buttonStyle(.bordered)
+                        } else {
+                            ShareLink(item: raw) {
+                                Label(tr("share"), systemImage: "square.and.arrow.up")
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
                     Button(tr("show_qr")) { showQR = true }
                         .disabled(!QRContent.isSupported(raw))
@@ -204,6 +229,14 @@ struct ResultScreen: View {
                           contentType: .png, defaultFilename: "QREX-QR") { result in
                 if case .failure = result { operationFailed = true }
                 pngDocument = nil
+            }
+            .confirmationDialog(tr("wifi_warning"),
+                isPresented: $confirmWifiShare) {
+                    Button(tr("share")) { presentWifiShare = true }
+                    Button(tr("cancel"), role: .cancel) {}
+                }
+            .sheet(isPresented: $presentWifiShare) {
+                QREXConfirmedWifiShareSheet(text: raw)
             }
             .confirmationDialog(tr("wifi_save_warning"),
                 isPresented: $confirmSaveWifi) {

@@ -28,6 +28,20 @@ class QREXPrivacyStabilityTests(unittest.TestCase):
         self.assertIn(".expirationDate: Date().addingTimeInterval(sensitiveLifetime)", view)
         self.assertIn("UIPasteboard.general.string = raw", view)
 
+    def test_wifi_qr_share_requires_confirmation_on_all_three_platforms(self):
+        android = (ANDROID / "MainActivity.kt").read_text("utf-8")
+        ios = (IOS / "QREXView.swift").read_text("utf-8")
+        flutter = (ROOT / "lib/screens/result_page.dart").read_text("utf-8")
+        self.assertIn("if (wifi) confirmWifiShare = true", android)
+        self.assertIn("if (confirmWifiShare) {", android)
+        self.assertIn("shareQrText(context, raw, shareTitle, sharingFailed)", android)
+        self.assertIn("isPresented: $confirmWifiShare", ios)
+        self.assertIn("QREXConfirmedWifiShareSheet(text: raw)", ios)
+        self.assertIn("if QRContent.isWifi(raw) {", ios)
+        self.assertIn("ShareLink(item: raw)", ios)
+        self.assertIn("final approved = await showDialog<bool>", flutter)
+        self.assertIn("if (approved != true || !mounted) return;", flutter)
+
     def test_android_gallery_bitmap_cleanup_on_all_completion_paths(self):
         scanner = (ANDROID / "QREXScanner.kt").read_text("utf-8")
         self.assertIn("InputImage.fromBitmap(upright, 0) to upright", scanner)

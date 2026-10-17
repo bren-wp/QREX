@@ -32,6 +32,21 @@ void main() {
     store.dispose();
   });
 
+  testWidgets('Wi-Fi QR cannot enter the share sheet without user confirmation', (tester) async {
+    final store = await makeStore();
+    final wifi = qrWifi(ssid: 'Guest', password: 'do-not-share-this');
+    await tester.pumpWidget(MaterialApp(theme: qrexTheme(false),
+      home: ResultPage(store: store, raw: wifi)));
+    await tester.tap(find.text('Podijeli'));
+    await tester.pumpAndSettle();
+    expect(find.text('Dijeljenje Wi-Fi koda'), findsOneWidget);
+    expect(find.textContaining('Wi-Fi lozinku'), findsOneWidget);
+    await tester.tap(find.text('Odustani'));
+    await tester.pumpAndSettle();
+    expect(find.text('Dijeljenje Wi-Fi koda'), findsNothing);
+    store.dispose();
+  });
+
   testWidgets('kreator ima jednostavne vrste i dodatne opcije', (tester) async {
     final store = await makeStore();
     await tester.pumpWidget(MaterialApp(theme: qrexTheme(false),
