@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+/// Keep approved QR dimensions on regular phones without overflowing compact,
+/// landscape or split-screen viewports. The reserved inset includes white
+/// container padding around the square barcode.
+double responsiveQrSide(double availableWidth,
+    {double preferredSide = 214, double horizontalInset = 36}) {
+  if (!availableWidth.isFinite || availableWidth <= 0) return 0;
+  return (availableWidth - horizontalInset).clamp(0.0, preferredSide).toDouble();
+}
+
 class QrexPalette {
   static const base = Color(0xFF030C1B);
   static const surface = Color(0xFF101B2C);
