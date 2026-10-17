@@ -11,13 +11,15 @@ on:
       - "tool/generate_localizations.py"
       - "tool/check_translation_usage.py"
       - ".github/workflows/generate-localizations.yml"
-      - "tool/publish_native_rc.sh"
-      - ".github/workflows/release-native-preview.yml"
+      - "tool/verify_production_gate.sh"
+      - ".github/workflows/production-release.yml"
   push:
     branches: [main]
     paths:
       - "l10n/**"
-      - "tool/generate_localizations.py"
+      - "platforms/**"
+      - "tool/**"
+      - ".github/workflows/**"
   workflow_dispatch:
 
 permissions:
