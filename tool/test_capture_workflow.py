@@ -5,6 +5,7 @@ The runner executes newline-separated commands in separate /bin/sh sessions,
 so shell control flow must be called from one standalone script.
 """
 from pathlib import Path
+import re
 import subprocess
 import unittest
 
@@ -40,6 +41,34 @@ class ScreenshotWorkflowTests(unittest.TestCase):
 
     def test_capture_shell_syntax(self):
         subprocess.run(["bash", "-n", str(SCRIPT)], check=True)
+
+    def test_all_blocking_adb_capture_calls_have_deadlines(self):
+        body = SCRIPT.read_text(encoding="utf-8")
+        for invocation in (
+            "adb wait-for-device",
+            "adb install -r",
+            "adb shell am start -W",
+            "adb shell uiautomator dump",
+            "adb exec-out cat",
+            "adb exec-out screencap -p",
+        ):
+            with self.subTest(invocation=invocation):
+                self.assertRegex(
+                    body,
+                    r"(?m)^\s*.*timeout -k [0-9]+s [0-9]+s " +
+                    re.escape(invocation),
+                )
+        self.assertIn('rm -f "$screenshot" "$hierarchy"', body)
+        self.assertIn("trap on_exit EXIT", body)
+        self.assertIn("No validated QREX screen; fail closed", body)
+
+    def test_emulator_uses_supported_software_gpu_and_kvm_when_available(self):
+        body = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("emulator-options: -no-window -gpu software ", body)
+        self.assertNotIn("-gpu swiftshader_indirect", body)
+        self.assertIn("Enable available KVM acceleration", body)
+        self.assertIn("if-no-files-found: error", body)
+        self.assertIn("test -s docs/screenshots/android-create.png", body)
 
     def test_screenshot_is_gated_by_foreground_and_png_checks(self):
         body = SCRIPT.read_text(encoding="utf-8")

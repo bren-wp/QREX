@@ -10,8 +10,8 @@ on:
       - "tool/check_android_screen.py"
       - "tool/capture_android_screen.sh"
       - "tool/test_capture_workflow.py"
-      - "tool/publish_native_rc.sh"
-      - ".github/workflows/release-native-preview.yml"
+      - "tool/verify_production_gate.sh"
+      - ".github/workflows/production-release.yml"
       - ".github/workflows/capture-screenshots.yml"
   push:
     branches: [main]
@@ -43,6 +43,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+      - name: Enable available KVM acceleration
+        run: |
+          if [ -e /dev/kvm ]; then
+            sudo chmod 666 /dev/kvm
+            echo "KVM available for Android emulator"
+          else
+            echo "No KVM device; using software emulator rendering"
+          fi
       - run: python3 tool/generate_localizations.py --check
       - name: Build Android Kotlin APK
         working-directory: platforms/android
@@ -55,8 +63,14 @@ jobs:
           target: default
           profile: pixel_6
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
+          emulator-boot-timeout: 600
+          # software is supported; swiftshader_indirect is deprecated in newer emulators.
+          emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
           script: bash tool/capture_android_screen.sh
+      - name: Enforce fresh screenshot file
+        run: |
+          test -s docs/screenshots/android-create.png
+          python3 tool/verify_screenshots.py docs/screenshots/android-create.png
       - uses: actions/upload-artifact@v4
         with:
           name: qrex-actual-android
