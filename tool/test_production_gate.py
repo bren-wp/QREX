@@ -10,6 +10,7 @@ SCRIPTS = [
     ROOT / "tool/verify_production_gate.sh",
     ROOT / "tool/sign_android_production.sh",
     ROOT / "tool/sign_ios_production.sh",
+    ROOT / "tool/retire_legacy_releases.sh",
 ]
 
 
@@ -51,6 +52,28 @@ class ProductionGateSafetyTests(unittest.TestCase):
     def test_rejects_unapproved_store_review_without_network_access(self):
         result = self.run_gate(STORE_REVIEW_CONFIRMED="false")
         self.assertNotEqual(result.returncode, 0)
+
+    def test_legacy_retirement_rejects_wrong_ref_or_repository(self):
+        env = dict(os.environ)
+        env.update({
+            "GH_TOKEN": "fake-unused-before-ref-check",
+            "GITHUB_REPOSITORY": "bren-wp/QREX",
+            "GITHUB_SHA": "0" * 40,
+            "GITHUB_REF": "refs/heads/main",
+            "QREX_LEGACY_RETIRE_APPROVED": "after-signed-v1.0.0",
+        })
+        for changes in (
+            {"GITHUB_REF": "refs/heads/other"},
+            {"GITHUB_REPOSITORY": "other/repository"},
+            {"QREX_LEGACY_RETIRE_APPROVED": "not-approved"},
+        ):
+            with self.subTest(changes=changes):
+                result = subprocess.run(
+                    ["bash", str(SCRIPTS[-1])], cwd=ROOT,
+                    env={**env, **changes}, text=True,
+                    capture_output=True, timeout=10,
+                )
+                self.assertNotEqual(result.returncode, 0)
 
     def test_android_signing_fails_without_real_key_material(self):
         env = dict(os.environ)
