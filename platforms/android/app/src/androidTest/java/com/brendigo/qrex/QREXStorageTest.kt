@@ -12,6 +12,31 @@ class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
+    fun galleryExifOrientationPreservesRotatedAndMirroredPixelData() {
+        val original = android.graphics.Bitmap.createBitmap(
+            2, 3, android.graphics.Bitmap.Config.ARGB_8888
+        )
+        original.setPixel(0, 0, android.graphics.Color.RED)
+        original.setPixel(1, 0, android.graphics.Color.BLUE)
+        val rotated = orientGalleryBitmap(
+            original.copy(original.config!!, true),
+            android.media.ExifInterface.ORIENTATION_ROTATE_90
+        )
+        assertEquals(3, rotated.width)
+        assertEquals(2, rotated.height)
+
+        val mirrored = orientGalleryBitmap(
+            original.copy(original.config!!, true),
+            android.media.ExifInterface.ORIENTATION_FLIP_HORIZONTAL
+        )
+        assertEquals(android.graphics.Color.BLUE, mirrored.getPixel(0, 0))
+        assertEquals(android.graphics.Color.RED, mirrored.getPixel(1, 0))
+        rotated.recycle()
+        mirrored.recycle()
+        original.recycle()
+    }
+
+    @Test
     fun savedWifiPasswordIsEncryptedAndCanBeRestored() {
         val store = QREXStore(context)
         store.clearAll()

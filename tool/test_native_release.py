@@ -29,12 +29,16 @@ class NativeReleaseGateTests(unittest.TestCase):
         issues = self.check(android=self.android.replace("targetSdk = 36", "targetSdk = 35"))
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
+    def test_published_version_code_is_rejected(self):
+        issues = self.check(android=self.android.replace("versionCode = 9", "versionCode = 8"))
+        self.assertTrue(any("published native RC build 8" in issue for issue in issues), issues)
+
     def test_ios_signing_disabled_by_default_is_rejected(self):
         issues = self.check(ios=self.ios + '\n    CODE_SIGNING_ALLOWED: "NO"\n')
         self.assertTrue(any("signing" in issue.lower() for issue in issues), issues)
 
     def test_mismatched_versions_are_rejected(self):
-        issues = self.check(ios=self.ios.replace('MARKETING_VERSION: "0.2.3"', 'MARKETING_VERSION: "9.9.9"'))
+        issues = self.check(ios=self.ios.replace('MARKETING_VERSION: "0.2.4"', 'MARKETING_VERSION: "9.9.9"'))
         self.assertTrue(any("versions differ" in issue for issue in issues), issues)
 
     def test_privilege_creep_is_rejected(self):

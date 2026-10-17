@@ -45,6 +45,13 @@ class QREXCoreTest {
         assertEquals("nopass", QRContent.wifiField(QRContent.wifi("Public", ""), "T"))
     }
 
+    @Test fun galleryImagesAreSampledBeforeMlKitDecoding() {
+        assertEquals(1, gallerySampleSize(1600, 1200))
+        assertEquals(2, gallerySampleSize(4000, 3000))
+        assertEquals(2, gallerySampleSize(6000, 4000))
+        assertEquals(4, gallerySampleSize(6000, 6000))
+    }
+
     @Test fun whitespaceOnlyQrCannotBeRendered() {
         assertFalse(QRContent.canRender("   "))
         assertFalse(QRContent.canRender("\n\t"))

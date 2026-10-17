@@ -1,7 +1,10 @@
 package com.brendigo.qrex
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -36,6 +39,43 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+
+/**
+ * Use a power-of-two decoder sample to keep accepted camera-roll images below
+ * about 6 MP in RAM. The original encoded image is still dimension-checked.
+ */
+internal fun gallerySampleSize(width: Int, height: Int): Int {
+    require(width > 0 && height > 0)
+    var sample = 1
+    while ((width.toLong() / sample) * (height.toLong() / sample) > 6_000_000L) {
+        sample *= 2
+    }
+    return sample
+}
+
+/** Apply all eight EXIF orientations, including mirrored JPEGs, after sampling. */
+internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
+    val transform = Matrix()
+    when (orientation) {
+        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> transform.setScale(-1f, 1f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> transform.setRotate(180f)
+        ExifInterface.ORIENTATION_FLIP_VERTICAL -> transform.setScale(1f, -1f)
+        ExifInterface.ORIENTATION_TRANSPOSE -> {
+            transform.setRotate(90f)
+            transform.postScale(-1f, 1f)
+        }
+        ExifInterface.ORIENTATION_ROTATE_90 -> transform.setRotate(90f)
+        ExifInterface.ORIENTATION_TRANSVERSE -> {
+            transform.setRotate(-90f)
+            transform.postScale(-1f, 1f)
+        }
+        ExifInterface.ORIENTATION_ROTATE_270 -> transform.setRotate(-90f)
+        else -> return bitmap
+    }
+    val result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, transform, false)
+    if (result !== bitmap) bitmap.recycle()
+    return result
+}
 
 @Composable
 fun ScanScreen(onRead: (String) -> Unit) {
@@ -78,7 +118,22 @@ fun ScanScreen(onRead: (String) -> Unit) {
                         if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
                             return@runCatching null
                         }
-                        InputImage.fromFilePath(context, uri)
+                        // fromFilePath decodes the entire original image (up to
+                        // 24 million pixels). Decode a sampled bitmap instead to
+                        // avoid 96 MB+ transient allocations on smaller devices.
+                        val options = BitmapFactory.Options().apply {
+                            inSampleSize = gallerySampleSize(bounds.outWidth, bounds.outHeight)
+                        }
+                        val bitmap = resolver.openInputStream(uri)?.use {
+                            BitmapFactory.decodeStream(it, null, options)
+                        } ?: return@runCatching null
+                        val orientation = runCatching {
+                            resolver.openInputStream(uri)?.use {
+                                ExifInterface(it).getAttributeInt(
+                                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+                            } ?: ExifInterface.ORIENTATION_NORMAL
+                        }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
+                        InputImage.fromBitmap(orientGalleryBitmap(bitmap, orientation), 0)
                     }.getOrNull()
                 }
                 if (image == null) {

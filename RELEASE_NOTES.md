@@ -2,13 +2,13 @@
 
 Scan, create, organize and export QR codes with a private and easy-to-use experience on Android and iPhone.
 
-## Current native testing preview — v0.2.2 RC1
+## Latest published native QA preview — v0.2.3 RC1
 
-The [QREX 0.2.2 RC1 release](https://github.com/bren-wp/QREX/releases/tag/v0.2.2-rc.1) contains a debug-signed Android APK, an unsigned Android AAB, an unsigned iOS device archive, actual Android and iPhone simulator screenshots and SHA-256 checksums. It is a **testing pre-release**, not signed for Google Play or the App Store.
+The [QREX 0.2.3 RC1 release](https://github.com/bren-wp/QREX/releases/tag/v0.2.3-rc.1) contains a debug-signed Android APK, an unsigned Android AAB, an unsigned iOS device archive, actual Android and iPhone simulator screenshots and SHA-256 checksums. It is a **testing pre-release**; it is not signed for Google Play or the App Store.
 
-## Next candidate — v0.2.3 RC1
+## Next testing candidate — v0.2.4 RC1 (not yet published)
 
-The in-review QREX 0.2.3 RC1 candidate improves Android/iPhone QR validation, preserves whitespace-only Wi-Fi passwords and guards against accidentally marking unsigned preview builds as stable. The previous release includes PDF, ZIP and PNG export improvements. Candidate binaries remain testing artifacts until all exact-commit CI checks succeed.
+Android and iPhone gallery scanners now decode sampled images instead of allocating full-resolution photos in memory. Both platforms have regression checks for image-size limits. Version **0.2.4 / build 9** is reserved for this candidate because build 8 was already used by v0.2.3 RC1. No preview or production release is considered approved until exact-SHA CI, screenshot checks and required device testing are reviewed.
 
 ## Earlier Android edition — v0.1.3
 

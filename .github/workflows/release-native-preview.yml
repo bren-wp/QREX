@@ -2,7 +2,7 @@ name: Publish verified native QREX QA preview
 
 on:
   push:
-    branches: [fix/qrex-rc-integrity-and-scanner-0.2.3-20261014]
+    branches: [fix/qrex-gallery-memory-and-scanner-stability-20261017]
     paths:
       - "platforms/**"
       - "tool/**"
@@ -19,7 +19,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: qrex-native-v023-rc-publish
+  group: qrex-native-v024-rc-publish
   cancel-in-progress: true
 
 jobs:
@@ -30,14 +30,14 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       CI_SHA: ${{ github.sha }}
-      QREX_RC_BRANCH: fix/qrex-rc-integrity-and-scanner-0.2.3-20261014
-      QREX_RC_TAG: v0.2.3-rc.1
+      QREX_RC_BRANCH: fix/qrex-gallery-memory-and-scanner-stability-20261017
+      QREX_RC_TAG: v0.2.4-rc.1
     steps:
       - uses: actions/checkout@v4
       - name: Correct previously misclassified unsigned release candidates
         run: |
           set -euo pipefail
-          for tag in v0.2.0-rc.1 v0.2.1-rc.1 v0.2.2-rc.1; do
+          for tag in v0.2.0-rc.1 v0.2.1-rc.1 v0.2.2-rc.1 v0.2.3-rc.1; do
             id="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq .id)"
             version="${tag#v}"
             gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \

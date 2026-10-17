@@ -5,6 +5,19 @@ import Vision
 import UIKit
 import ImageIO
 
+/** Bounds decoding cost without refusing ordinary high-resolution photos. */
+enum QREXGalleryPolicy {
+    static let maxFileBytes = 20_000_000
+    static let maxSourcePixels: Int64 = 24_000_000
+    static let maxThumbnailSide = 3072
+
+    static func accepts(byteCount: Int, width: Int, height: Int) -> Bool {
+        byteCount > 0 && byteCount < maxFileBytes &&
+        width > 0 && height > 0 &&
+        Int64(width) <= maxSourcePixels / Int64(height)
+    }
+}
+
 struct CameraScanner: UIViewRepresentable {
     let onRead: (String) -> Void
     @Binding var torchOn: Bool
@@ -222,22 +235,39 @@ struct ScanScreen: View {
             }
             guard !Task.isCancelled else { return }
             // Reject oversized images before allocating Vision's decoded frame.
-            guard data.count < 20_000_000,
-                  let source = CGImageSourceCreateWithData(data as CFData, nil),
-                  let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any],
-                  let width = properties[kCGImagePropertyPixelWidth as String] as? Int,
-                  let height = properties[kCGImagePropertyPixelHeight as String] as? Int,
-                  width > 0, height > 0,
-                  Int64(width) * Int64(height) <= 24_000_000 else {
+            guard data.count < QREXGalleryPolicy.maxFileBytes else {
                 message = tr("image_failed"); return
             }
-            let request = VNDetectBarcodesRequest()
-            request.symbologies = [.qr]
-            try await Task.detached(priority: .userInitiated) {
-                try VNImageRequestHandler(data: data).perform([request])
+            // Parse and downsample on a worker thread. Vision previously
+            // decoded the full (up to 24 MP) source frame, causing avoidable
+            // peak-memory spikes when scanning gallery photos.
+            let raw = try await Task.detached(priority: .userInitiated) { () throws -> String? in
+                let sourceOptions: [CFString: Any] = [kCGImageSourceShouldCache: false]
+                guard let source = CGImageSourceCreateWithData(data as CFData,
+                                                              sourceOptions as CFDictionary),
+                      let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
+                        as? [String: Any],
+                      let width = properties[kCGImagePropertyPixelWidth as String] as? Int,
+                      let height = properties[kCGImagePropertyPixelHeight as String] as? Int,
+                      QREXGalleryPolicy.accepts(byteCount: data.count, width: width, height: height)
+                else { throw CocoaError(.fileReadCorruptFile) }
+
+                let thumbnailOptions: [CFString: Any] = [
+                    kCGImageSourceCreateThumbnailFromImageAlways: true,
+                    kCGImageSourceCreateThumbnailWithTransform: true,
+                    kCGImageSourceThumbnailMaxPixelSize: QREXGalleryPolicy.maxThumbnailSide
+                ]
+                guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0,
+                                               thumbnailOptions as CFDictionary) else {
+                    throw CocoaError(.fileReadCorruptFile)
+                }
+                let request = VNDetectBarcodesRequest()
+                request.symbologies = [.qr]
+                try VNImageRequestHandler(cgImage: thumbnail, options: [:]).perform([request])
+                return request.results?.compactMap(\.payloadStringValue).first
             }.value
             guard !Task.isCancelled else { return }
-            if let raw = request.results?.compactMap(\.payloadStringValue).first {
+            if let raw {
                 receive(raw)
             } else {
                 message = tr("qr_not_found")
