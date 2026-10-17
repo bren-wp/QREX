@@ -1,0 +1,177 @@
+name: QREX 1.0.0 — signed production release
+
+# Manual-only. No push/tag/PR may publish a release.
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type RELEASE_1_0_0 after reviewing the exact main commit'
+        required: true
+        type: string
+      device_qa_confirmed:
+        description: 'Physical Android and iOS smoke/migration/accessibility QA completed'
+        required: true
+        type: boolean
+        default: false
+      store_review_confirmed:
+        description: 'Approved signing identities, store metadata and disclosures verified'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qrex-production-v1-0-0
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PRODUCTION_APPROVED: ${{ inputs.confirmation }}
+      DEVICE_QA_CONFIRMED: ${{ inputs.device_qa_confirmed }}
+      STORE_REVIEW_CONFIRMED: ${{ inputs.store_review_confirmed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Require main, version 1.0.0 and all exact-commit CI
+        run: bash tool/verify_production_gate.sh
+      - name: Confirm shell syntax
+        run: |
+          bash -n tool/verify_production_gate.sh
+          bash -n tool/sign_android_production.sh
+          bash -n tool/sign_ios_production.sh
+
+  android:
+    name: Authorized Play upload signing
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 45
+    env:
+      QREX_UPLOAD_KEYSTORE_BASE64: ${{ secrets.QREX_UPLOAD_KEYSTORE_BASE64 }}
+      QREX_UPLOAD_STORE_PASSWORD: ${{ secrets.QREX_UPLOAD_STORE_PASSWORD }}
+      QREX_UPLOAD_KEY_ALIAS: ${{ secrets.QREX_UPLOAD_KEY_ALIAS }}
+      QREX_UPLOAD_KEY_PASSWORD: ${{ secrets.QREX_UPLOAD_KEY_PASSWORD }}
+      QREX_UPLOAD_CERT_SHA256: ${{ secrets.QREX_UPLOAD_CERT_SHA256 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Confirm Android SDK
+        run: |
+          test -d "$ANDROID_HOME/platforms/android-36" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36"
+          test -d "$ANDROID_HOME/build-tools/36.0.0" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
+      - name: Create and verify authorized Android release
+        run: bash tool/sign_android_production.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qrex-production-android-aab
+          path: production/QREX-Android-1.0.0.aab
+          if-no-files-found: error
+          retention-days: 7
+
+  ios:
+    name: Authorized App Store distribution signing
+    needs: verify
+    runs-on: macos-latest
+    environment: production
+    timeout-minutes: 70
+    env:
+      QREX_APPLE_CERT_P12_BASE64: ${{ secrets.QREX_APPLE_CERT_P12_BASE64 }}
+      QREX_APPLE_CERT_PASSWORD: ${{ secrets.QREX_APPLE_CERT_PASSWORD }}
+      QREX_APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.QREX_APPLE_PROVISION_PROFILE_BASE64 }}
+      QREX_APPLE_TEAM_ID: ${{ secrets.QREX_APPLE_TEAM_ID }}
+      QREX_IOS_PROVISION_PROFILE_NAME: ${{ secrets.QREX_IOS_PROVISION_PROFILE_NAME }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check iOS SDK and prepare XcodeGen
+        run: |
+          test "$(xcrun --sdk iphoneos --show-sdk-version | cut -d. -f1)" -ge 26
+          brew install xcodegen
+      - name: Generate app icon using approved QREX assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          from tool.prepare_platforms import render_png
+          dest = Path("platforms/ios/QREX/Assets.xcassets/AppIcon.appiconset")
+          dest.mkdir(parents=True, exist_ok=True)
+          render_png(dest / "AppIcon.png", 1024)
+          (dest / "Contents.json").write_text(json.dumps({
+              "images": [{"filename":"AppIcon.png","idiom":"universal","platform":"ios","size":"1024x1024"}],
+              "info": {"author":"xcode","version":1}
+          }), encoding="utf-8")
+          PY
+      - name: Build and verify authorized App Store IPA
+        run: bash tool/sign_ios_production.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qrex-production-ios-ipa
+          path: production/QREX-iOS-1.0.0.ipa
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish only signed production binaries
+    needs: [verify, android, ios]
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: write
+      actions: read
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: qrex-production-android-aab
+          path: production
+      - uses: actions/download-artifact@v4
+        with:
+          name: qrex-production-ios-ipa
+          path: production
+      - name: Verify release payloads and commit still current
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/main
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$GITHUB_SHA"
+          test -s production/QREX-Android-1.0.0.aab
+          test -s production/QREX-iOS-1.0.0.ipa
+          test -s docs/releases/v1.0.0.md
+          unzip -t production/QREX-Android-1.0.0.aab
+          unzip -t production/QREX-iOS-1.0.0.ipa
+          ! gh release view v1.0.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
+          ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.0" >/dev/null 2>&1
+          (cd production && sha256sum QREX-* > SHA256SUMS.txt)
+      - name: Publish stable v1.0.0 only
+        run: |
+          set -euo pipefail
+          gh release create v1.0.0 production/QREX-Android-1.0.0.aab \
+            production/QREX-iOS-1.0.0.ipa production/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "QREX 1.0.0 — Android & iOS production" \
+            --notes-file docs/releases/v1.0.0.md --latest
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.0" --jq .prerelease)" = false
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.0" --jq .draft)" = false
