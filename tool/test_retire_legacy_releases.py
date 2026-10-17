@@ -23,6 +23,7 @@ STABLE = {
     "draft": False,
     "assets": [
         {"name": "QREX-Android-1.0.0.aab", "size": 100},
+        {"name": "QREX-Android-1.0.0.apk", "size": 100},
         {"name": "SHA256SUMS.txt", "size": 100},
     ],
 }
