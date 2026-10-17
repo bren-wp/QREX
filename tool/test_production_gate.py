@@ -9,7 +9,6 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = [
     ROOT / "tool/verify_production_gate.sh",
     ROOT / "tool/sign_android_production.sh",
-    ROOT / "tool/sign_ios_production.sh",
     ROOT / "tool/retire_legacy_releases.sh",
 ]
 
@@ -88,18 +87,6 @@ class ProductionGateSafetyTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Missing approved Android", result.stderr)
 
-    def test_ios_signing_fails_without_authorized_certificate(self):
-        env = dict(os.environ)
-        for key in (
-            "QREX_APPLE_CERT_P12_BASE64", "QREX_APPLE_CERT_PASSWORD",
-            "QREX_APPLE_CERT_SHA256", "QREX_APPLE_PROVISION_PROFILE_BASE64",
-            "QREX_APPLE_TEAM_ID", "QREX_IOS_PROVISION_PROFILE_NAME",
-        ):
-            env.pop(key, None)
-        result = subprocess.run(["bash", str(SCRIPTS[2])], cwd=ROOT,
-                                env=env, text=True, capture_output=True, timeout=10)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Missing approved Apple", result.stderr)
 
 
 if __name__ == "__main__":

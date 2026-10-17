@@ -4,15 +4,9 @@
 
 ### Scan. Create. Share.
 
-**All the QR essentials. Beautifully simple.**
+**Private, fast and simple QR scanning for Android.**
 
-Scan what matters, turn everyday information into a QR code, and keep the things you choose — in one clear, private, multilingual experience.
-
-<br>
-
-[**Get QREX for Android**](https://github.com/bren-wp/QREX/releases) · [Explore features](#everything-you-need-nothing-you-dont) · [Privacy promise](#made-for-your-privacy)
-
-<br>
+[**Get QREX for Android**](https://github.com/bren-wp/QREX/releases) · [Features](#features) · [Privacy](#privacy-first)
 
 <img src="assets/brand/qrex-icon.svg" width="82" alt="Official QREX app icon">
 
@@ -22,84 +16,50 @@ Scan what matters, turn everyday information into a QR code, and keep the things
 
 ---
 
-## A clearer way to QR
+## Android-only application
 
-Whether you're scanning a code from the camera, sharing your Wi-Fi details, or making a new code for a link, QREX keeps each action straightforward.
+QREX is developed exclusively for **Android** with **Kotlin, Jetpack Compose, CameraX, on-device ML Kit and ZXing**. The discontinued iOS and Flutter application sources, tests and signing pipelines are no longer part of the active project. The natively implemented **Flutter-to-Android migration** stays in place to protect data belonging to users of the earlier Android release.
 
-<table>
-<tr>
-<td align="center" width="50%">
-<img src="docs/screenshots/android-create.png" alt="Genuine QREX Android application screenshot showing the QR creation screen" width="285">
-<p><strong>QREX on Android</strong></p>
-</td>
-<td align="center" width="50%">
-<img src="docs/screenshots/ios-create.png" alt="Genuine QREX iPhone simulator screenshot showing the QR creation screen" width="285">
-<p><strong>QREX on iPhone</strong></p>
-</td>
-</tr>
-</table>
+<img src="docs/screenshots/android-create.png" alt="Real Android emulator capture of QREX Create" width="300">
 
-<p align="center"><sub>Actual application screens captured during Android emulator and iPhone simulator sessions. Appearance may vary with device, display size and software version. These are not generated concept images.</sub></p>
+This is an actual Android emulator capture, not a design mockup. Matching the approved design 1:1 on all phones still requires direct comparisons across several physical devices.
 
-## Everything you need. Nothing you don't.
+## Features
 
-| | |
-|---|---|
-| **📷 Scan with ease** | Read QR codes with your camera or select a picture from your gallery. |
-| **✨ Make your own** | Create QR codes for websites, text, Wi-Fi, email, phone numbers, locations and contacts. |
-| **🛡️ Stay in control** | Preview a destination before opening it. Sharing and export happen only when you choose. |
-| **🔖 Keep the useful ones** | Save favorite codes, search local history and clear your information. |
-| **🎨 Make it yours** | Choose light or dark appearance and a language that feels familiar. |
-| **📱 Share anywhere** | Copy results, send a code or export its QR artwork with the system share options. |
-| **📄 Keep a beautiful record** | Save your favorite QR codes as a printable PDF or a ZIP containing that PDF, only when you choose. |
+- **Scan:** QR codes from a live camera or selected photo using on-device detection.
+- **Create:** QR codes for URLs, text, Wi-Fi, email, phone, coordinates and contacts.
+- **Review:** URLs never open automatically. You choose when to copy, open or share a result.
+- **Save:** Favorites and local history, with search, removal and full data deletion.
+- **Secure:** Manually saved Wi-Fi QR data is protected by Android Keystore AES-GCM and is not recorded automatically. Copying marks sensitive clipboard data; sharing requests explicit confirmation.
+- **Export:** On-device PNG, printable PDF and ZIP exports, using system file picker. Files exported by you are **not encrypted**.
+- **Accessible:** Adaptive QR previews, compact phone layouts, light/dark modes, **23 interface languages** including Croatian and English.
 
-## Designed for everyday moments
+## Privacy-first
 
-**At home.** Share a network with a guest without reading out a complicated Wi-Fi password.
+QR scanning and code creation work locally. QREX requires no registration, backend, ads, analytics or tracking. Camera access is requested only when you tap to enable the camera; gallery picking remains available without CAMERA permission. Android backup is disabled, internet/contacts/location/storage permissions are not requested, and scanned links require an explicit user action to open.
 
-**At work.** Turn a website, telephone number or contact into a code that's easy to share.
+Read the [Privacy Policy](docs/PRIVACY.md) and [Terms of Use](docs/TERMS.md).
 
-**On the move.** Scan a printed code, check its destination and save what you need for later.
+## Android build and verification
 
-## Speak your language
+The source of truth is `platforms/android/`. Use JDK 17 and Android SDK API 36:
 
-QREX includes **23 interface languages**, with English as the default:
+```bash
+python3 tool/generate_localizations.py --check
+python3 -m unittest discover -s tool -p 'test_*.py'
+cd platforms/android
+gradle :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+```
 
-English · Hrvatski · Deutsch · Français · Español · Italiano · Português · Nederlands · Polski · Čeština · Slovenčina · Slovenščina · Magyar · Română · Български · Ελληνικά · Türkçe · Українська · Русский · Svenska · Dansk · Suomi · Norsk bokmål.
+An emulator run also executes instrumented tests and captures the real Create UI. Android CI additionally checks release R8/resource shrinking and bundle generation. Debug builds and unsigned QA artifacts are **not** production distributions.
 
-Switch languages directly in **Settings**. English is the first-launch default, and Croatian is fully available alongside 21 more languages. No account or connection required.
+## Distribution
 
-## Made for your privacy
+The next production version is **QREX 1.0.0 / build 100**, published only after explicit device QA, Play Console checks and verified signing with the existing Android upload identity. A future `v1.0.0` release contains the **signed Android AAB** and `SHA256SUMS.txt`. An AAB is a Play Console upload package, not a directly installable APK.
 
-Your everyday QR experience shouldn't require handing over personal information.
+Earlier Flutter Android and native preview releases stay available until that signed replacement has genuinely been published. The production workflow then retires old GitHub Releases and tag refs; it never publishes an unsigned build just to make the repository look finished.
 
-- **No registration** — open QREX and start using it.
-- **No ad interruptions or analytics trackers** — your attention stays on what you're doing.
-- **On-device QR reading and generation** — you don't need a QREX cloud account.
-- **You choose what to keep** — saved QR codes and history are under your control.
-- **You decide what to open or share** — scanning a link never automatically opens it.
-
-The Android and iPhone editions use protected storage for manually saved Wi-Fi QR credentials: Android Keystore and iOS Keychain. The earlier Flutter Android edition has a different storage design. Exported PDF/ZIP files are **not encrypted**, so choose a destination you trust. Read the [privacy policy](docs/PRIVACY.md).
-
-## Get QREX
-
-<div align="center">
-
-### Android
-
-**[Explore Android builds →](https://github.com/bren-wp/QREX/releases)**
-
-The previous **Flutter APK** and **native RC** releases will be removed from GitHub Releases along with their Git tags after the verified, signed **QREX 1.0.0** release is published. The old builds remain available until that point so that users are not left without an existing download. No more testing preview releases will be published.
-
-### iPhone & iPad
-
-The dedicated iPhone edition is being prepared for **QREX 1.0.0**. Historical unsigned test archives are not App Store-installable; only authorized signed production IPA files are eligible for a future stable release.
-
-<br>
-
-[All releases](https://github.com/bren-wp/QREX/releases) · [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
-
-</div>
+[All releases](https://github.com/bren-wp/QREX/releases) · [Production checklist](docs/STORE_CHECKLIST.md) · [Release notes](docs/releases/v1.0.0.md) · [Support](https://brendigo.com)
 
 ---
 
@@ -107,8 +67,6 @@ The dedicated iPhone edition is being prepared for **QREX 1.0.0**. Historical un
 
 <img src="assets/brand/qrex-logo.svg" alt="QREX official wordmark" width="230">
 
-**Scan. Create. Share.**
-
-Made by [Brendigo](https://brendigo.com) · © QREX contributors · [MIT License](LICENSE)
+Made by [Brendigo](https://brendigo.com) · [MIT License](LICENSE)
 
 </div>

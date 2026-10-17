@@ -12,7 +12,7 @@ test "${QREX_LEGACY_RETIRE_APPROVED:-}" = "after-signed-v1.0.0"
 [[ "$GITHUB_SHA" =~ ^[a-f0-9]{40}$ ]]
 
 stable="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.0")"
-# Never delete historic downloads before all three correct files are published
+# Never delete historic downloads before both expected files are published
 # on a non-draft, non-prerelease tag pointing at THIS audited commit.
 jq -e --arg sha "$GITHUB_SHA" '
     .tag_name == "v1.0.0"
@@ -20,7 +20,7 @@ jq -e --arg sha "$GITHUB_SHA" '
     and .prerelease == false
     and .draft == false
     and ([.assets[].name] | sort) ==
-        (["QREX-Android-1.0.0.aab", "QREX-iOS-1.0.0.ipa", "SHA256SUMS.txt"] | sort)
+        (["QREX-Android-1.0.0.aab", "SHA256SUMS.txt"] | sort)
     and all(.assets[]; .size > 0)
 ' <<<"$stable" >/dev/null
 test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.0" --jq .object.sha)" = "$GITHUB_SHA"

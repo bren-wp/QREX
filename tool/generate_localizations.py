@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate identical localization resources for Android and iOS.
+"""Generate Android localization resources from the canonical 23-language catalog.
 
 Run: python3 tool/generate_localizations.py
 Check: python3 tool/generate_localizations.py --check
@@ -14,11 +14,6 @@ import xml.sax.saxutils as xml
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "l10n/catalog.json"
 ANDROID = ROOT / "platforms/android/app/src/main/res"
-IOS = ROOT / "platforms/ios/QREX"
-
-
-def swift_escaped(value: str) -> str:
-    return value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
 
 
 def android_escaped(value: str) -> str:
@@ -44,10 +39,6 @@ def make_files() -> dict[pathlib.Path, str]:
             lines.append(f'    <string name="{key}">{android_escaped(val)}</string>')
         lines.append("</resources>")
         outputs[values] = "\n".join(lines) + "\n"
-        ios_file = IOS / f"{code}.lproj" / "Localizable.strings"
-        outputs[ios_file] = "".join(
-            f'"{key}" = "{swift_escaped(val)}";\n' for key, val in translations.items()
-        )
 
     language_cases = "\n".join(f'        "{key}" -> R.string.{key}' for key in keys)
     language_codes = ", ".join(f'"{code}"' for code in languages)
@@ -57,7 +48,7 @@ import android.content.Context
 import android.content.res.Configuration
 import java.util.Locale
 
-/** User-selected language shared with the iOS catalog; never uses network translation. */
+/** Offline user-selected language, no network translation. */
 object QREXStrings {
     val languages: List<String> = listOf(%s)
     fun get(context: Context, code: String, key: String): String {
@@ -73,26 +64,6 @@ object QREXStrings {
     }
 }
 """ % (language_codes, language_cases)
-    outputs[IOS / "QREXStrings.swift"] = """import Foundation
-
-enum QREXStrings {
-    static let supported: [String] = [%s]
-    static func text(_ key: String, language: String) -> String {
-        let code = language == "system" ? (Locale.preferredLanguages.first ?? "en")
-            .components(separatedBy: "-").first ?? "en" : language
-        let selected = Bundle.main.path(forResource: code, ofType: "lproj")
-            .flatMap(Bundle.init(path:))
-        let english = Bundle.main.path(forResource: "en", ofType: "lproj")
-            .flatMap(Bundle.init(path:))
-        return selected?.localizedString(forKey: key, value: nil, table: nil)
-            ?? english?.localizedString(forKey: key, value: nil, table: nil) ?? key
-    }
-}
-
-func tr(_ key: String) -> String {
-    QREXStrings.text(key, language: UserDefaults.standard.string(forKey: "qrex.language") ?? "en")
-}
-""" % (", ".join(f'"{code}"' for code in languages))
     return outputs
 
 

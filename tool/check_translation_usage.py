@@ -11,7 +11,6 @@ catalog = json.loads((ROOT / "l10n/catalog.json").read_text(encoding="utf-8"))
 keys = set(catalog["languages"]["en"]["strings"])
 files = [
     *ROOT.glob("platforms/android/app/src/main/java/**/*.kt"),
-    *ROOT.glob("platforms/ios/QREX/*.swift"),
 ]
 issues = []
 for path in files:
@@ -25,4 +24,4 @@ for path in files:
 if issues:
     print("\n".join(issues))
     sys.exit(1)
-print(f"Translation usage verified: {len(files)} Android/iOS source files.")
+print(f"Translation usage verified: {len(files)} Android source files.")

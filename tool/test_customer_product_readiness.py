@@ -7,7 +7,6 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / "platforms/android/app/src/main/res"
-IOS = ROOT / "platforms/ios/QREX"
 
 
 class CustomerProductReadinessTests(unittest.TestCase):
@@ -24,7 +23,6 @@ class CustomerProductReadinessTests(unittest.TestCase):
                 for key in ("export_archive", "terms_of_use", "privacy_policy",
                             "export_archive_warning", "read_full_policy"):
                     self.assertTrue(entry["strings"][key].strip())
-                self.assertTrue((IOS / f"{locale}.lproj/Localizable.strings").exists())
                 values = RES / ("values" if locale == "en" else f"values-{locale}") / "strings.xml"
                 self.assertTrue(values.exists())
 
@@ -43,50 +41,31 @@ class CustomerProductReadinessTests(unittest.TestCase):
             self.assertIsNotNone(root.find("foreground"))
         self.assertTrue((RES / "drawable/qrex_icon_monochrome.xml").exists())
 
-    def test_document_export_and_legal_actions_are_real_on_both_platforms(self):
+    def test_document_export_and_legal_actions_are_real_on_android(self):
         android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
-        ios = (IOS / "QREXView.swift").read_text("utf-8")
         for key in ("export_archive", "privacy_policy", "terms_of_use", "developed_by"):
             self.assertIn(key, android)
-            self.assertIn(key, ios)
         self.assertIn("QREXDocuments.exportSavedPdfZip(", android)
-        self.assertIn("QREXDocuments.exportSavedPdfZip(", ios)
         self.assertIn("QREXDocuments.exportSavedPdf(", android)
-        self.assertIn("QREXDocuments.createSavedCodesPdf(", ios)
-        self.assertIn("CreateDocument(\"application/pdf\")", android)
-        self.assertIn("CreateDocument(\"application/zip\")", android)
-        self.assertIn("QREXPDFDocument", ios)
-        self.assertIn("QREXPNGDocument", ios)
-        self.assertIn(".fileExporter(", ios)
+        self.assertIn('CreateDocument("application/pdf")', android)
+        self.assertIn('CreateDocument("application/zip")', android)
         self.assertTrue((ROOT / "docs/PRIVACY.md").exists())
         self.assertTrue((ROOT / "docs/TERMS.md").exists())
 
-    def test_customer_links_target_the_current_qrex_repository(self):
-        public_sources = (
-            ROOT / "README.md",
-            ROOT / "lib/screens/more_page.dart",
-            ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt",
-            IOS / "QREXView.swift",
-        )
-        for path in public_sources:
-            content = path.read_text("utf-8")
-            with self.subTest(path=str(path.relative_to(ROOT))):
-                self.assertNotIn("github.com/bren-wp/Qivio", content)
-        for path in public_sources[1:]:
-            content = path.read_text("utf-8")
-            self.assertIn("https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md", content)
-        for path in public_sources[2:]:
-            content = path.read_text("utf-8")
-            self.assertIn("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md", content)
+    def test_current_android_links_and_privacy_summary(self):
+        readme = (ROOT / "README.md").read_text("utf-8")
+        android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
+        for source in (readme, android):
+            self.assertNotIn("github.com/bren-wp/Qivio", source)
+        self.assertIn("https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md", android)
+        self.assertIn("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md", android)
 
-    def test_screenshot_test_fixtures_are_debug_only(self):
-        kotlin = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
-        swift = (IOS / "QREXView.swift").read_text("utf-8")
+    def test_android_screenshot_fixture_only_works_in_debug(self):
+        android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         screenshots = (ROOT / ".github/workflows/capture-screenshots.yml").read_text("utf-8")
-        self.assertIn("ApplicationInfo.FLAG_DEBUGGABLE", kotlin)
-        self.assertIn("#if DEBUG", swift)
-        self.assertIn("ScreenshotFixture.enabled", swift)
-        self.assertIn("Debug-iphonesimulator", screenshots)
+        self.assertIn("ApplicationInfo.FLAG_DEBUGGABLE", android)
+        self.assertIn("Actual Android emulator screenshot", screenshots)
+        self.assertNotIn("Actual iPhone simulator screenshot", screenshots)
 
     def test_pdf_zip_exports_dont_require_third_party_storage_permissions(self):
         text = (ROOT / "platforms/android/app/src/main/AndroidManifest.xml").read_text("utf-8")

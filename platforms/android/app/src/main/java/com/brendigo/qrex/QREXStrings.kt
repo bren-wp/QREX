@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import java.util.Locale
 
-/** User-selected language shared with the iOS catalog; never uses network translation. */
+/** Offline user-selected language, no network translation. */
 object QREXStrings {
     val languages: List<String> = listOf("en", "hr", "de", "fr", "es", "it", "pt", "nl", "pl", "cs", "sk", "sl", "hu", "ro", "bg", "el", "tr", "uk", "ru", "sv", "da", "fi", "nb")
     fun get(context: Context, code: String, key: String): String {

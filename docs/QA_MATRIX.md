@@ -1,62 +1,39 @@
-# QREX — Mobile Quality Assurance Matrix
+# QREX — Android Quality Assurance Matrix
 
-This checklist defines release acceptance for the separate Kotlin/Android and SwiftUI/iOS apps. A green CI build does **not** prove visual 1:1 parity, accessibility or crash-free behavior on every device.
+This release checklist covers the **single Kotlin/Jetpack Compose Android application**. A green CI build or emulator screenshot is **not proof** of literal 1:1 reference-image parity or error-free behavior on every phone.
 
-## Visual reference, design and screenshot integrity
+## UI, design and accessibility
+- [x] Actual Android emulator Create screen captured and PNG integrity validated in CI.
+- [x] Reject system UI/ANR screenshots without QREX foreground accessibility hierarchy.
+- [ ] Compare Scan, Create, Result, History and More to approved references on multiple Android sizes.
+- [ ] Verify compact 280–360 dp, common 393–430 dp, foldables, tablets, landscape and split screen.
+- [ ] Check keyboard/IME, display cutouts, gesture navigation insets, font scale up to 200%, large controls and TalkBack.
+- [ ] Check all 23 locales in both light and dark modes.
 
-- [x] Capture genuine Android emulator and iPhone simulator Create screens, validated by the last release's QA gate.
-- [x] Reject Android ANR/system screens unless the QREX foreground UI hierarchy is confirmed.
-- [ ] Capture and compare every other main screen at representative display sizes.
-- [ ] Keep original PNGs committed to `docs/screenshots` without marketing retouching; validate PNG chunks, image dimensions and completeness automatically.
-- [ ] Compare Scan / Create / Result / History / More on both platforms against the supplied QREX design, at representative mobile screen sizes.
-- [ ] Confirm there are no large black letterboxing bands, clipped content, text overlapping the bottom navigation, or layout jumps after keyboard dismissal.
-- [ ] Confirm blue/cyan/purple accents, icons, bottom navigation, typography, scan-frame dimensions and dark surfaces remain consistent.
-- [ ] Verify at least one smaller display, one larger display and a tablet layout; do not rely on a single emulator screenshot.
-- [ ] Review both light and dark themes and large accessibility text sizes.
+## Functionality and lifecycle
+- [ ] Fresh install and upgrade from the earlier Flutter Android APK preserve history and saved flags.
+- [ ] Explicit camera consent; gallery QR scanning works without CAMERA permission.
+- [ ] Live camera scan, denied/granted permission, Settings recovery, background/resume, torch and camera interruptions.
+- [ ] QR from gallery image, malformed/oversized photos, EXIF rotated/mirrored photos, repeated selections and memory pressure.
+- [ ] URL/text/Wi-Fi/contact/email/phone/location QR creation and visual scanning of generated codes.
+- [ ] Safe URL behavior, malformed QR, 1500-byte rendering bound and clipboard/share flows.
+- [ ] Confirmation before sharing Wi-Fi QR credentials; cancellation does not open chooser.
+- [ ] Local history search, saved favorites, remove/delete all, Keystore unavailable/corrupt data recovery.
+- [ ] PNG, PDF and ZIP exports, cancellation, revoked picker permission and contents of exported records.
 
-## QR functionality
+## Security and privacy
+- [x] Check manifest for disabled backup and cleartext and reject INTERNET, unrestricted storage, location and contacts.
+- [x] Verify Wi-Fi QR saved payload uses Android Keystore AES-GCM, never silently writes plaintext on failure (instrumented tests).
+- [x] Source-level regression checks for opt-in camera, clipboard sensitive metadata and sampled image lifecycle.
+- [ ] Recheck transitive SDK behavior, Play Data Safety, dependency advisories and 16-KiB native page compatibility.
+- [ ] Verify no analytics/advertising SDK and no network permission in final merged manifest.
+- [ ] Confirm no QR secrets in logs, exceptions, crash reports or Android auto-backup.
 
-| Workflow | Android | iOS |
-|---|---|---|
-| Fresh launch, no account required | Pending device QA | Pending device QA |
-| Allow camera and deny/re-enable permission | Pending | Pending |
-| Scan QR via rear camera | Pending | Pending |
-| Background/foreground camera lifecycle | Pending | Pending |
-| Torch on/off and graceful unsupported flash | Pending | Pending |
-| Read QR from selected gallery image | Pending | Pending |
-| Reject malformed/oversized photos safely | Pending | Pending |
-| Create URL/text/Wi-Fi/contact/email/phone/location | Pending | Pending |
-| Display QR and scan it with another device | Pending | Pending |
-| Confirm malicious URL does not open automatically | Pending | Pending |
-| Copy/share result through system UI | Pending | Pending |
-| Save/search/delete history | Pending | Pending |
-| Clear all persisted local data | Pending | Pending |
-| Preserve existing user data when upgrading | Pending | Pending |
+## Production
+- [x] CI covers Kotlin compile, JVM unit tests, Android instrumentation, lint, R8 bundle and emulator Create capture.
+- [ ] Test real devices, including small and large Android phone models and varied OEM implementations.
+- [ ] Verify Android Play App Signing upload certificate lineage and manual production approvals.
+- [ ] Run the exact-commit production workflow to publish **only signed AAB and checksums**.
+- [ ] Check old releases/tags retired **after** verified signed v1.0.0 publication.
 
-## Security and privacy release gates
-
-- [ ] Wi-Fi passwords and other sensitive QR contents must not be written into unencrypted general-purpose preference stores. Use Android Keystore / iOS Keychain or prevent such storage with clear disclosure.
-- [ ] Test new installs, legacy-storage migration and Keychain/Keystore failure paths without unexpected data loss.
-- [ ] Test offline behavior, consent boundaries, denial of permissions and external URL schemes.
-- [ ] Audit permissions, manifest, Apple's privacy report and transitive SDKs before app store submission.
-- [ ] No login, forced signup, analytics, ad SDK or unrequested tracking.
-- [ ] Test camera interruption, system low-memory pressure and a user leaving during photo processing.
-
-## Localization
-
-- [x] English is the source/default language; 22 further languages are catalogued.
-- [x] Automatically check all 23 catalogs for 80 message keys, missing labels and stale generated files.
-- [ ] Manually inspect every language in Settings plus Arabic- and CJK-like long-string stress cases (not currently supported locales), with dynamic text sizing.
-- [ ] Test persistent language changes across app restart, including follow-system fallback.
-- [ ] Check that system camera permissions, error dialogs and share labels use the correct default device language.
-
-## CI and packaging
-
-- [x] Standalone Android Kotlin/Compose and iOS SwiftUI applications compile in GitHub Actions.
-- [x] Android Gradle unit tests execute in CI.
-- [x] Swift XCTest executed on an available iPhone simulator in the verified 0.2.2 RC1 run.
-- [x] Actual Android and iPhone simulator Create screenshots passed the verified 0.2.2 RC1 pipeline.
-- [ ] Physical device smoke tests and App Store/Play Store signing completed.
-- [ ] Only promote the next GitHub release after all blocking items are resolved.
-
-**Status:** Open QA checklist; do not present these unchecked items as completed.
+**Status:** Open acceptance checklist; nothing unchecked is reported as complete. No iOS or Flutter runtime is built.
