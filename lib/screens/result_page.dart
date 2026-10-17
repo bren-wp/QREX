@@ -49,7 +49,32 @@ class _ResultPageState extends State<ResultPage> {
   }
 
   Future<void> _share() async {
+    // The old Flutter build is still installed on some devices. Match native
+    // behavior: a tap must not expose Wi-Fi credentials to another app until
+    // the user explicitly confirms the security implications.
+    if (detectKind(widget.raw) == QrKind.wifi) {
+      final approved = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Dijeljenje Wi-Fi koda'),
+          content: const Text('Ovaj QR kod može sadržavati Wi-Fi lozinku. '
+            'Dijeljenjem će drugi moći pristupiti mreži.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Odustani'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Podijeli'),
+            ),
+          ],
+        ),
+      );
+      if (approved != true || !mounted) return;
+    }
     try {
+      if (!mounted) return;
       final renderBox = context.findRenderObject() as RenderBox?;
       await SharePlus.instance.share(ShareParams(
         text: widget.raw,
