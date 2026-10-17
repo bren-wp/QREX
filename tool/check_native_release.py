@@ -16,6 +16,8 @@ import xml.etree.ElementTree as ET
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 APP_ID = "com.brendigo.qrex"
+# Last published native QA candidate: v0.2.3-rc.1 / build 8.
+LAST_PUBLISHED_NATIVE_BUILD_CODE = 8
 
 
 def field(source: str, name: str) -> str | None:
@@ -41,8 +43,8 @@ def check_configuration(
         issues.append("iOS bundle ID unexpectedly changed")
     code = field(android_gradle, "versionCode")
     version = field(android_gradle, "versionName")
-    if not code or not code.isdecimal() or int(code) <= 5:
-        issues.append("Android versionCode must advance beyond published native RC build 5")
+    if not code or not code.isdecimal() or int(code) <= LAST_PUBLISHED_NATIVE_BUILD_CODE:
+        issues.append(f"Android versionCode must advance beyond published native RC build {LAST_PUBLISHED_NATIVE_BUILD_CODE}")
     if not version or version != field(ios_project, "MARKETING_VERSION"):
         issues.append("Android/iOS marketing versions differ")
     if code != field(ios_project, "CURRENT_PROJECT_VERSION"):
