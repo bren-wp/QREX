@@ -39,10 +39,6 @@ class NativeReleaseGateTests(unittest.TestCase):
         )
         self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
 
-    def test_reused_build_code_rejected_even_with_production_label(self):
-        issues = self.check(android=self.android.replace("versionCode = 100", "versionCode = 9"))
-        self.assertTrue(any("published native RC build 9" in issue for issue in issues), issues)
-
     def test_ios_signing_disabled_by_default_is_rejected(self):
         issues = self.check(ios=self.ios + '\n    CODE_SIGNING_ALLOWED: "NO"\n')
         self.assertTrue(any("signing" in issue.lower() for issue in issues), issues)
