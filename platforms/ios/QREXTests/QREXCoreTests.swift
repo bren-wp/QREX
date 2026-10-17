@@ -41,6 +41,7 @@ final class QREXCoreTests: XCTestCase {
         XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 20_000_001, width: 100, height: 100))
         XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 0, width: 100, height: 100))
         XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 1000, width: 0, height: 100))
+        XCTAssertFalse(QREXGalleryPolicy.accepts(byteCount: 1000, width: Int.max, height: Int.max))
         XCTAssertLessThanOrEqual(QREXGalleryPolicy.maxThumbnailSide, 3072)
     }
 
