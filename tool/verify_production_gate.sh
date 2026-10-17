@@ -5,18 +5,13 @@ set -euo pipefail
 : "${GITHUB_REPOSITORY:?GitHub repository required}"
 : "${GITHUB_SHA:?Exact commit required}"
 test "$GITHUB_REF" = "refs/heads/main"
-test "${PRODUCTION_APPROVED:-}" = "RELEASE_1_0_0"
+test "${PRODUCTION_APPROVED:-}" = "PLAY_UPLOAD_1_0_1"
 test "${DEVICE_QA_CONFIRMED:-}" = "true"
 test "${STORE_REVIEW_CONFIRMED:-}" = "true"
 test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$GITHUB_SHA"
-if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.0" >/dev/null 2>&1; then
-  echo "v1.0.0 already tagged; refusing to overwrite production history." >&2
-  exit 1
-fi
-if gh release view v1.0.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-  echo "v1.0.0 already released; refusing duplicate publication." >&2
-  exit 1
-fi
+# The previous GitHub-only v1.0.0 tag is immutable; it is NOT a Play upload
+# credential. Play's 1.0.1 bundle is prepared independently with the existing
+# authorized upload key and is not auto-published to GitHub or Google Play.
 python3 tool/check_native_release.py
 python3 -m unittest discover -s tool -p 'test_*.py'
 python3 tool/generate_localizations.py --check

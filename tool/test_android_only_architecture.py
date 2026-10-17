@@ -38,10 +38,11 @@ class AndroidOnlyArchitectureTests(unittest.TestCase):
                 self.assertNotIn("QREX-iOS-1.0.0.ipa", source)
                 self.assertNotIn("tool/sign_ios_production.sh", source)
                 self.assertNotIn("mobile.yml", source)
-        self.assertIn("needs: [verify, android]", publish)
-        self.assertIn("QREX-Android-1.0.0.aab", publish)
-        self.assertIn("production/SHA256SUMS.txt", publish)
-        self.assertIn("jarsigner -verify -strict", publish)
+        self.assertIn("needs: verify", publish)
+        self.assertIn("QREX-Android-1.0.1.aab", publish)
+        self.assertIn("production/SHA256SUMS-PLAY.txt", publish)
+        self.assertIn("jarsigner -verify -strict",
+                      (ROOT / "tool/sign_android_production.sh").read_text("utf-8"))
         self.assertIn("environment: production", publish)
         self.assertIn("completed:success", gate)
 

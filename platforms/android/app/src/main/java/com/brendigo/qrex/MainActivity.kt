@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
@@ -49,6 +50,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import java.util.Locale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -128,6 +131,9 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         Icons.Default.History, Icons.Default.MoreHoriz)
     var selected by remember { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
     var currentCode by remember { mutableStateOf<String?>(null) }
+    // Android 16 predictive/back gesture returns from a QR result to its
+    // originating screen instead of abruptly exiting the entire app.
+    BackHandler(enabled = currentCode != null) { currentCode = null }
     val colors = if (store.lightMode) lightColorScheme(
         primary = Color(0xFF1677FF), secondary = purple,
         background = Color(0xFFF3F6FF), surface = Color.White,
@@ -141,8 +147,9 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
                 pages.forEachIndexed { index, label ->
                     NavigationBarItem(selected = selected == index,
                         onClick = { selected = index; currentCode = null },
-                        icon = { Icon(icons[index], contentDescription = label) },
-                        label = { Text(label) },
+                        icon = { Icon(icons[index], contentDescription = null) },
+                        label = { Text(label, maxLines = 1, softWrap = false,
+                            overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = cyan, selectedTextColor = cyan,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -259,7 +266,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                     Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
                         fontWeight = FontWeight.Bold)
                     Text(if (showPassword)
-                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}" else "${tr("password")}: ••••••••")
+                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}" else "${tr("password")}: ••••••••",
+                        softWrap = true)
                     TextButton(onClick = { showPassword = !showPassword }) {
                         Text(if (showPassword) tr("hide") else tr("show"))
                     }
@@ -280,15 +288,17 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 copyQrToClipboard(context, raw)
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.ContentCopy, contentDescription = null)
-                Spacer(Modifier.width(6.dp)); Text(tr("copy"))
+                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(tr("copy"), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             OutlinedButton(onClick = {
                 if (wifi) confirmWifiShare = true
                 else shareQrText(context, raw, shareTitle, sharingFailed)
             }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.Share, contentDescription = null)
-                Spacer(Modifier.width(6.dp)); Text(tr("share"))
+                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(tr("share"), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -648,7 +658,7 @@ private fun MoreScreen(store: QREXStore) {
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
         title = { Text("PDF") },
-        text = { Text(tr("wifi_warning")) },
+        text = { Text(tr("export_archive_warning")) },
         confirmButton = { TextButton(onClick = {
             confirmPdfExport = false
             exportPdf.launch("QREX-Saved-Codes.pdf")

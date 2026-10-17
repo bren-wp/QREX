@@ -74,6 +74,8 @@ jobs:
           emulator-boot-timeout: 600
           # software is supported; swiftshader_indirect is deprecated in newer emulators.
           emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
+          # capture_android_screen.sh already runs connectedDebugAndroidTest
+          # with hard deadlines; keep ONE shell to avoid duplicate runs.
           script: bash tool/capture_android_screen.sh
       - name: Enforce fresh screenshot file
         run: |

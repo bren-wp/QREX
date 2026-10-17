@@ -262,14 +262,6 @@ class QREXStore(context: Context) {
         return true
     }
 
-    fun clearHistory(): Boolean {
-        val next = items.filter { it.saved }
-        if (!persist(next)) return false
-        items.clear()
-        items.addAll(next)
-        return true
-    }
-
     /** Explicit erasure also removes untransferred Flutter records and settings. */
     fun clearAll(): Boolean {
         // Remove legacy values first: otherwise they could reappear on next start

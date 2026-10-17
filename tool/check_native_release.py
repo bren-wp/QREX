@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail closed on Android QREX 1.0.0 release metadata and privacy regressions.
+"""Fail closed on Android QREX 1.0.1 release metadata and privacy regressions.
 
 Checks committed source only; does not verify upload key, app bundle signatures,
 Google Play approval, end-to-end migration or physical-device behavior.
@@ -12,10 +12,11 @@ import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
+TOOLS_NS = "http://schemas.android.com/tools"
 APP_ID = "com.brendigo.qrex"
-LAST_PUBLISHED_NATIVE_BUILD_CODE = 9
-PRODUCTION_VERSION = "1.0.0"
-PRODUCTION_BUILD_CODE = 100
+LAST_PUBLISHED_NATIVE_BUILD_CODE = 100
+PRODUCTION_VERSION = "1.0.1"
+PRODUCTION_BUILD_CODE = 101
 
 
 def field(source: str, name: str) -> str | None:
@@ -35,10 +36,10 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
     version = field(android_gradle, "versionName")
     if not code or not code.isdecimal() or int(code) <= LAST_PUBLISHED_NATIVE_BUILD_CODE:
         issues.append(
-            f"Android versionCode must advance beyond published native RC build "
+            f"Android versionCode must advance beyond published QREX build "
             f"{LAST_PUBLISHED_NATIVE_BUILD_CODE}")
     if version != PRODUCTION_VERSION or code != str(PRODUCTION_BUILD_CODE):
-        issues.append("Production candidate must be QREX 1.0.0 / build 100")
+        issues.append("Production candidate must be QREX 1.0.1 / build 101")
     try:
         root = ET.fromstring(android_manifest)
         app = root.find("application")
@@ -48,7 +49,15 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
             for prop in ("allowBackup", "usesCleartextTraffic"):
                 if app.get(f"{{{ANDROID_NS}}}{prop}") != "false":
                     issues.append(f"Android {prop} must be disabled")
-        permissions = {e.get(f"{{{ANDROID_NS}}}name") for e in root.findall("uses-permission")}
+        # A tools:node="remove" element is a build-time rule, not an app
+        # permission request. Actual merged manifests are separately audited
+        # by check_merged_manifest.py for transitive SDK permissions.
+        permissions = {
+            e.get(f"{{{ANDROID_NS}}}name")
+            for e in root
+            if e.tag in ("uses-permission", "uses-permission-sdk-23")
+            and e.get(f"{{{TOOLS_NS}}}node") != "remove"
+        }
         if "android.permission.CAMERA" not in permissions:
             issues.append("Camera permission is missing")
         forbidden = {

@@ -340,6 +340,28 @@ class QREXStorageTest {
             val bytes = document.readBytes()
             assertTrue(bytes.size > 1000)
             assertTrue(bytes.take(5).toByteArray().contentEquals("%PDF-".toByteArray()))
+            // Actually render the saved QR page, not just a syntactically
+            // valid PDF header. Catches premature bitmap recycling.
+            android.os.ParcelFileDescriptor.open(document,
+                android.os.ParcelFileDescriptor.MODE_READ_ONLY).use { fd ->
+                android.graphics.pdf.PdfRenderer(fd).use { renderer ->
+                    assertEquals(1, renderer.pageCount)
+                    renderer.openPage(0).use { page ->
+                        val rendered = android.graphics.Bitmap.createBitmap(
+                            595, 842, android.graphics.Bitmap.Config.ARGB_8888)
+                        try {
+                            page.render(rendered, null, null,
+                                android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                            val probe = IntArray(439 * 439)
+                            rendered.getPixels(probe, 0, 439, 78, 188, 439, 439)
+                            // The QR illustration cannot be blank or all white.
+                            assertTrue(probe.any { it != android.graphics.Color.WHITE })
+                        } finally {
+                            rendered.recycle()
+                        }
+                    }
+                }
+            }
             assertFalse(QREXDocuments.exportSavedPdf(
                 context, emptyList(), android.net.Uri.fromFile(document)
             ))

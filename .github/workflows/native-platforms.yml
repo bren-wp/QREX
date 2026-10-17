@@ -75,6 +75,10 @@ jobs:
       - name: Validate Android lint and R8 release variants
         working-directory: platforms/android
         run: gradle --no-daemon --stacktrace :app:lintDebug :app:assembleRelease :app:bundleRelease
+      - name: Audit final merged SDK permissions
+        run: python3 tool/check_merged_manifest.py
+      - name: Check bundled 64-bit native libraries for 16-KiB ELF alignment
+        run: python3 tool/check_16kb_bundle.py
       - name: Confirm Android package
         run: |
           test -s platforms/android/app/build/outputs/apk/debug/app-debug.apk

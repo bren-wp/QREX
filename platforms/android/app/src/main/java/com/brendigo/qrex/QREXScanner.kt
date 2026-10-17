@@ -22,6 +22,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -291,7 +293,8 @@ fun ScanScreen(onRead: (String) -> Unit) {
             Box(Modifier.fillMaxWidth().weight(1f)
                 .background(Color(0xFF101B2C), shape = RoundedCornerShape(28.dp)),
                 contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
+                    .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(tr("allow_camera"), modifier = Modifier.padding(20.dp))
                     OutlinedButton(onClick = { permission.launch(Manifest.permission.CAMERA) }) {
                         Text(tr("enable_camera"))
@@ -310,7 +313,9 @@ fun ScanScreen(onRead: (String) -> Unit) {
             }
         }
         Spacer(Modifier.height(16.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        FlowRow(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 onClick = {
                     val next = !torchOn
