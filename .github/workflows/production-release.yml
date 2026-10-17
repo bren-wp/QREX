@@ -163,6 +163,7 @@ jobs:
           test -s docs/releases/v1.0.0.md
           unzip -t production/QREX-Android-1.0.0.aab
           unzip -t production/QREX-iOS-1.0.0.ipa
+          jarsigner -verify -strict production/QREX-Android-1.0.0.aab >/dev/null
           ! gh release view v1.0.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
           ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.0" >/dev/null 2>&1
           (cd production && sha256sum QREX-* > SHA256SUMS.txt)
