@@ -97,15 +97,21 @@ gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 
 GitHub Actions also exercises Android instrumentation tests, minified release build/AAB generation and a genuine Android emulator screenshot.
 
-## Downloads and release policy
+## Download QREX 1.0.0 for Android
 
-**QREX 1.0.0 is the next intended stable Android release.** It will only be published after the original authorized Google Play upload certificate, successful exact-commit CI, verified upgrade continuity, physical-device QA and protected manual release approval are confirmed.
+[**GitHub Releases — APK, AAB and checksums →**](https://github.com/bren-wp/QREX/releases)
 
-[**View GitHub releases →**](https://github.com/bren-wp/QREX/releases)
+| File | Purpose |
+| --- | --- |
+| **`QREX-Android-1.0.0.apk`** | Installable Android APK built in release mode |
+| **`QREX-Android-1.0.0.aab`** | Android App Bundle; not directly installable |
+| **`SHA256SUMS.txt`** | Checksums for validating the downloaded packages |
 
-A production `v1.0.0` release is expected to contain an **authorized signed Android AAB** and a `SHA256SUMS.txt` checksum file. **An AAB is for Google Play Console; it cannot be installed like an APK.** Debug APKs and unsigned CI bundles are not described as production releases. Older QA releases are retained until a properly signed replacement is available.
+The v1.0.0 GitHub build does **not require your Google Play signing credentials**. Android requires APK signing for installation, so this build uses a temporary GitHub-generated certificate instead of your production Play identity. **It is not Google Play ready**, and its APK cannot update any existing QREX installation signed with another certificate. Uninstalling the previous version may delete saved QR codes. Preserve your data before switching installations.
 
-[Production checklist](docs/STORE_CHECKLIST.md) · [Version 1.0.0 notes](docs/releases/v1.0.0.md) · [Quality assurance](docs/QA_MATRIX.md)
+Automated publication is permitted only after the exact Android commit has passed Kotlin tests/build, emulator capture and language validation. See the [full version 1.0.0 release notes](docs/releases/v1.0.0.md), including signing and migration limitations.
+
+[All releases](https://github.com/bren-wp/QREX/releases) · [Android QA checklist](docs/STORE_CHECKLIST.md) · [Support](https://brendigo.com)
 
 ---
 

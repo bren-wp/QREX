@@ -1,21 +1,19 @@
 # QREX — Scan. Create. Share.
 
-**Android only.** Native Kotlin / Jetpack Compose QR scanner and creator.
+## Android v1.0.0 · versionCode 100
 
-## Next signed production release: v1.0.0
+A GitHub Android 1.0.0 release with both an **installable APK** and an **AAB**, plus SHA-256 checksums. The APK and AAB are built in release mode from the exact tested commit, signed with a disposable, generated certificate—not with the original Google Play upload key. **This is a GitHub distribution, not a Play-approved release.**
 
-**QREX 1.0.0 / build 100** is the Android candidate. Only an authorized Play-upload-signed Android App Bundle (AAB), accompanied by `SHA256SUMS.txt`, may be attached to a GitHub stable release. A successful CI build alone does not prove Play acceptance or proper signing. Before publishing, physical-device QA, upgrade testing from the older Flutter Android version and release approval remain mandatory.
+**Upgrade limitation:** an APK signed using this one-time GitHub key cannot update existing QREX installations signed using a different key. Do not uninstall an earlier QREX app without exporting or backing up important local data; uninstalling may erase saved QR information.
 
-[QREX 1.0.0 release notes](docs/releases/v1.0.0.md) · [Production readiness checklist](docs/STORE_CHECKLIST.md)
+[Read complete release notes](docs/releases/v1.0.0.md) · [Download from GitHub Releases](https://github.com/bren-wp/QREX/releases) · [Privacy policy](docs/PRIVACY.md)
 
-## Previous versions
+### Features
 
-Earlier Flutter Android and native RC builds remain available until signed `v1.0.0` genuinely replaces them. The signed production workflow then deletes the old GitHub Releases and Git tags. The Android migration code remains to preserve historical QR data; iOS and Flutter app sources are no longer maintained.
+On-device camera/photo QR scanning, creation, favorites/history, protected Wi-Fi history, consent before sharing Wi-Fi credentials, PNG/PDF/ZIP export, adaptive Kotlin/Compose UI and 23 offline languages.
 
-## Privacy and safety
+### Historical releases
 
-QR scanning and creation run on the Android device. QREX does not require an account, ad SDK, analytics, or internet permission. Wi-Fi QR history requires explicit saving and uses Android Keystore encryption, with a confirmation before sharing sensitive network credentials. QR links are not opened automatically. User-exported PDFs/ZIPs are not encrypted; store them safely.
-
-[Privacy](docs/PRIVACY.md) · [Terms](docs/TERMS.md) · [Releases](https://github.com/bren-wp/QREX/releases)
+Older previews were QA artifacts, not certified Play releases. Android-only development retains the Flutter-to-native migration implementation but successful in-place upgrades still require matching signing identities.
 
 Made by [Brendigo](https://brendigo.com).
