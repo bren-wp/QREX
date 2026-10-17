@@ -5,6 +5,7 @@ The runner executes newline-separated commands in separate /bin/sh sessions,
 so shell control flow must be called from one standalone script.
 """
 from pathlib import Path
+import re
 import subprocess
 import unittest
 
@@ -54,12 +55,13 @@ class ScreenshotWorkflowTests(unittest.TestCase):
             with self.subTest(invocation=invocation):
                 self.assertRegex(
                     body,
-                    r"(?m)^\\s*.*timeout -k [0-9]+s [0-9]+s " +
-                    __import__("re").escape(invocation),
+                    r"(?m)^\s*.*timeout -k [0-9]+s [0-9]+s " +
+                    re.escape(invocation),
                 )
         self.assertIn('rm -f "$screenshot" "$hierarchy"', body)
         self.assertIn("trap on_exit EXIT", body)
         self.assertIn("No validated QREX screen; fail closed", body)
+
     def test_emulator_uses_supported_software_gpu_and_kvm_when_available(self):
         body = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("emulator-options: -no-window -gpu software ", body)
