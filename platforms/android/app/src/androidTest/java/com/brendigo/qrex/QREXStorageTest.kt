@@ -12,6 +12,20 @@ class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
+    fun wifiClipboardSuppressesAndroidSystemPreview() {
+        val secret = QRContent.wifi("Guest", "super-private-pass")
+        val clip = makeQrClipboardClip(secret)
+        assertEquals(secret, clip.getItemAt(0).text.toString())
+        assertTrue(clip.description.extras?.getBoolean(
+            android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
+
+        val ordinary = makeQrClipboardClip("https://brendigo.com")
+        assertEquals("https://brendigo.com", ordinary.getItemAt(0).text.toString())
+        assertFalse(ordinary.description.extras?.getBoolean(
+            android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
+    }
+
+    @Test
     fun galleryExifOrientationPreservesRotatedAndMirroredPixelData() {
         val original = android.graphics.Bitmap.createBitmap(
             2, 3, android.graphics.Bitmap.Config.ARGB_8888
