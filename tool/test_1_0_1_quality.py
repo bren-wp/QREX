@@ -25,6 +25,7 @@ class AndroidCodeAuditTests(unittest.TestCase):
         view = (JAVA / "MainActivity.kt").read_text("utf-8")
         scanner = (JAVA / "QREXScanner.kt").read_text("utf-8")
         self.assertIn("TextOverflow.Ellipsis", view)
+        self.assertIn("BackHandler(enabled = currentCode != null)", view)
         self.assertIn("FlowRow(modifier = Modifier.fillMaxWidth()", scanner)
         self.assertIn("verticalScroll(rememberScrollState())", scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", scanner)
