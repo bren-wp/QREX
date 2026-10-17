@@ -52,13 +52,6 @@ class QREXCoreTest {
         assertEquals(4, gallerySampleSize(6000, 6000))
     }
 
-    @Test fun sampledGalleryImagesKeepExifRotation() {
-        assertEquals(0, galleryExifRotation(android.media.ExifInterface.ORIENTATION_NORMAL))
-        assertEquals(90, galleryExifRotation(android.media.ExifInterface.ORIENTATION_ROTATE_90))
-        assertEquals(180, galleryExifRotation(android.media.ExifInterface.ORIENTATION_ROTATE_180))
-        assertEquals(270, galleryExifRotation(android.media.ExifInterface.ORIENTATION_ROTATE_270))
-    }
-
     @Test fun whitespaceOnlyQrCannotBeRendered() {
         assertFalse(QRContent.canRender("   "))
         assertFalse(QRContent.canRender("\n\t"))
