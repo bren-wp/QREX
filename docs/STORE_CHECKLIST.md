@@ -1,45 +1,32 @@
-# QREX — Android 1.0.0 production readiness
+# QREX — Google Play 1.0.1 readiness checklist
 
-**Android application ID:** `com.brendigo.qrex`  
-**Current production candidate:** version **1.0.0** / build number **100**  
-**Build metadata:** marketing version `1.0.0`, build `100`  
-**Distribution:** Google Play Android App Bundle (AAB), **existing, approved upload key only**
+**Package:** `com.brendigo.qrex` · **versionName:** `1.0.1` · **versionCode:** `101` · **target/compile SDK:** 36 · **minSdk:** 26.
 
-The discontinued iOS and Flutter application runtimes, Apple provisioning/signing and dual-platform CI were deleted. **Flutter Android-to-Kotlin migration logic remains**, to preserve user data during upgrades. Do not remove it in dead-code cleanups.
+## Repository and automated checks
 
-## Source and CI checks
+- [x] Only native Kotlin / Jetpack Compose Android runtime; iOS and obsolete Flutter runtime removed.
+- [x] Kept local upgrade migration from the earlier Flutter Android app; never treat as dead code.
+- [x] Offline 23-language catalogs, source manifest minimum permissions, API 36.
+- [ ] Android JUnit, instrumentation, lint, R8, bundle and screenshot CI all pass at the **exact final main commit**.
+- [ ] Actual merged manifest and dependencies have been audited for accidental permissions, remote SDK traffic and third-party data sharing.
+- [ ] Review and validate edge-to-edge, compact phones, tablets, foldables, TalkBack and 200% display fonts.
+- [ ] Test gallery/permission/camera lifecycle, password storage, PDF/ZIP export and app data migration on physical Android devices.
 
-- [x] One native Kotlin/Jetpack Compose Android runtime at `platforms/android`.
-- [x] Android SDK compile/target API 36 and JDK 17.
-- [x] 23 offline languages sourced from `l10n/catalog.json`; Android resource parity checks.
-- [ ] Exact final commit: `native-platforms.yml`, `capture-screenshots.yml` and `generate-localizations.yml` all completed successfully.
-- [ ] Gradle Kotlin compile, JVM tests, device instrumentation, lintDebug, R8 assembleRelease and bundleRelease.
-- [ ] Real Android screen captures and physical visual comparison to reference UI across sizes.
-- [ ] Tests for critical QR paths, denied permissions, migration, sensitive clipboard, Wi-Fi confirmation and low-memory conditions.
+## Google Play authorization
 
-## Privacy and Play requirements
+- [ ] Enable reviewer approval for the protected GitHub Actions `production` environment.
+- [ ] Supply the **existing approved** Play upload keystore/alias/passwords securely as GitHub Secrets; never paste secrets into chat, documentation or source control.
+- [ ] Compare `QREX_UPLOAD_CERT_SHA256` against Play Console's registered **upload** certificate.
+- [ ] From `.github/workflows/production-release.yml`, authorize `PLAY_UPLOAD_1_0_1` only after real QA and required Play declarations.
+- [ ] Download the **separate, correctly signed** `QREX-1.0.1-Google-Play-Upload-Signed-AAB` workflow artifact and verify `SHA256SUMS-PLAY.txt`.
+- [ ] Confirm `versionCode 101` is unused in the existing Play application; if already used, raise it before submission.
+- [ ] Complete Play Console privacy policy URL, Data safety, app access, ads, audience, content rating, listing and store screenshots.
+- [ ] Verify 16-KiB page compatibility of native SDK libraries using actual final Play bundle and supported devices.
+- [ ] Complete any applicable new-personal-account closed testing requirements.
+- [ ] Upload, review pre-launch report, resolve policy warnings and receive Google Play approval.
 
-- [x] No developer backend, account, advertising, analytics or internet permission in the app source.
-- [x] Android Keystore AES-GCM for manually saved Wi-Fi QR payloads and nonautomatic Wi-Fi history.
-- [x] Camera permission only when requested by user, Android system photo picker without broad storage permissions.
-- [ ] Validate actual merged manifest, transitive SDK privacy behavior and Play Data Safety declarations.
-- [ ] Accessibility, TalkBack, dynamic font sizing, short/long localized strings and OEM testing.
-- [ ] Validate 16-KiB native page compatibility and target Play SDK policy at actual submission date.
-- [ ] Confirm retention/data deletion and exported unencrypted PDF/ZIP warning.
+## Historical signing caution
 
-## Protected, production-only release
+The [GitHub v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0) APK/AAB were signed with a disposable certificate. GitHub 1.0.1 packages likewise use an ephemeral key, **different from 1.0.0 and from the Play upload key**. Neither GitHub bundle is suitable as an update to an existing Play application, and direct APK replacement cannot maintain installation identity. Uninstalling may erase saved QR information.
 
-1. Protect the GitHub Actions `production` environment with required reviewers.
-2. Configure the **previously approved** signing identity and secrets: `QREX_UPLOAD_KEYSTORE_BASE64`, `QREX_UPLOAD_STORE_PASSWORD`, `QREX_UPLOAD_KEY_ALIAS`, `QREX_UPLOAD_KEY_PASSWORD`, and `QREX_UPLOAD_CERT_SHA256`.
-3. Match the expected SHA-256 fingerprint of the authorized Play Console upload certificate; never invent or rotate identities casually.
-4. On the exact `main` commit, require every mandatory CI workflow to have succeeded.
-5. Complete physical Android device QA, in-place Flutter-to-Kotlin migration testing and store disclosures. Explicitly authorize the manual `.github/workflows/production-release.yml` only after those are complete.
-6. Verify the workflow generated `QREX-Android-1.0.0.aab`, signed with the correct certificate, and `SHA256SUMS.txt`. An unsigned AAB or debug APK is **not** stable. An AAB is not an installable APK.
-7. Only **after** signed stable v1.0.0 publication, `tool/retire_legacy_releases.sh` deletes all older Releases and Git tags, retaining the approved `v1.0.0` pair. Manual recovery workflow is also production-protected.
-
-- [ ] Approved signed AAB actually published.
-- [ ] SHA256 file matches actual binary and release metadata.
-- [ ] Only the `v1.0.0` Release and tag remain after cleanup.
-- [ ] Internal Google Play testing, signing continuity, migration and Play acceptance validated.
-
-**Important:** CI success is not store approval. Never publish a signed distribution without the required authorized signing key, real-device QA and consent.
+For exact steps and official links, use [PLAY_STORE_SUBMISSION.md](PLAY_STORE_SUBMISSION.md). A successful source build is **not** evidence that Google has approved an app.
