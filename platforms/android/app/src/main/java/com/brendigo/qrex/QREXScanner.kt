@@ -1,7 +1,9 @@
 package com.brendigo.qrex
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.media.ExifInterface
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -51,12 +53,28 @@ internal fun gallerySampleSize(width: Int, height: Int): Int {
     return sample
 }
 
-/** Preserve JPEG EXIF rotation when decoding a sampled gallery bitmap. */
-internal fun galleryExifRotation(orientation: Int): Int = when (orientation) {
-    ExifInterface.ORIENTATION_ROTATE_90, ExifInterface.ORIENTATION_TRANSPOSE -> 90
-    ExifInterface.ORIENTATION_ROTATE_180, ExifInterface.ORIENTATION_FLIP_VERTICAL -> 180
-    ExifInterface.ORIENTATION_ROTATE_270, ExifInterface.ORIENTATION_TRANSVERSE -> 270
-    else -> 0
+/** Apply all eight EXIF orientations, including mirrored JPEGs, after sampling. */
+internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
+    val transform = Matrix()
+    when (orientation) {
+        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> transform.setScale(-1f, 1f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> transform.setRotate(180f)
+        ExifInterface.ORIENTATION_FLIP_VERTICAL -> transform.setScale(1f, -1f)
+        ExifInterface.ORIENTATION_TRANSPOSE -> {
+            transform.setRotate(90f)
+            transform.postScale(-1f, 1f)
+        }
+        ExifInterface.ORIENTATION_ROTATE_90 -> transform.setRotate(90f)
+        ExifInterface.ORIENTATION_TRANSVERSE -> {
+            transform.setRotate(-90f)
+            transform.postScale(-1f, 1f)
+        }
+        ExifInterface.ORIENTATION_ROTATE_270 -> transform.setRotate(-90f)
+        else -> return bitmap
+    }
+    val result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, transform, false)
+    if (result !== bitmap) bitmap.recycle()
+    return result
 }
 
 @Composable
@@ -115,7 +133,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
                                     ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
                             } ?: ExifInterface.ORIENTATION_NORMAL
                         }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
-                        InputImage.fromBitmap(bitmap, galleryExifRotation(orientation))
+                        InputImage.fromBitmap(orientGalleryBitmap(bitmap, orientation), 0)
                     }.getOrNull()
                 }
                 if (image == null) {
