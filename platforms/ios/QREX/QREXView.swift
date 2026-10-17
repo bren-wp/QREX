@@ -45,6 +45,27 @@ private extension View {
     }
 }
 
+/**
+ * Password-bearing Wi-Fi QR payloads must not stay indefinitely in the
+ * system clipboard. Ordinary URL/text QR copies keep familiar paste behavior.
+ */
+@MainActor
+enum QREXClipboard {
+    static let sensitiveLifetime: TimeInterval = 120
+    static func isSensitive(_ raw: String) -> Bool { QRContent.isWifi(raw) }
+
+    static func copy(_ raw: String) {
+        if isSensitive(raw) {
+            UIPasteboard.general.setItems(
+                [[UTType.utf8PlainText.identifier: raw]],
+                options: [.expirationDate: Date().addingTimeInterval(sensitiveLifetime)]
+            )
+        } else {
+            UIPasteboard.general.string = raw
+        }
+    }
+}
+
 enum QREXImage {
     // CIContext is costly to initialize and safe to reuse for rendering.
     private static let renderContext = CIContext()
@@ -143,7 +164,7 @@ struct ResultScreen: View {
                             .buttonStyle(.borderedProminent)
                     }
                     HStack {
-                        Button(tr("copy")) { UIPasteboard.general.string = raw }.buttonStyle(.bordered)
+                        Button(tr("copy")) { QREXClipboard.copy(raw) }.buttonStyle(.bordered)
                         ShareLink(item: raw) { Label(tr("share"), systemImage: "square.and.arrow.up") }
                             .buttonStyle(.bordered)
                     }
