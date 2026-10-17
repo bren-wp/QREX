@@ -70,7 +70,7 @@ if endpoint.endswith("/releases/tags/v1.0.0"):
 elif endpoint.endswith("/git/ref/tags/v1.0.0"):
     if "refs/tags/v1.0.0" not in state["tags"]:
         sys.exit(1)
-    print(SHA if False else state["main_sha"])
+    print(state["main_sha"])
 elif endpoint.endswith("/commits/main"):
     print(state["main_sha"])
 elif "/releases?per_page" in endpoint:
