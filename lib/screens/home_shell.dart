@@ -68,6 +68,10 @@ class _HomeShellState extends State<HomeShell> {
                         (light ? const Color(0xFF56677B) : QrexPalette.muted), size: 25),
                     const SizedBox(height: 5),
                     Text(destinations[i].label,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 11,
                         fontWeight: _page == i ? FontWeight.w700 : FontWeight.w500,
                         color: _page == i ? QrexPalette.cyan :
