@@ -1,154 +1,45 @@
-# QREX — Google Play and Apple App Store Checklist
+# QREX — Android 1.0.0 production readiness
 
-This is an engineering checklist, **not** a statement that either store has approved the app.
+**Android application ID:** `com.brendigo.qrex`  
+**Current production candidate:** version **1.0.0** / build number **100**  
+**Build metadata:** marketing version `1.0.0`, build `100`  
+**Distribution:** Google Play Android App Bundle (AAB), **existing, approved upload key only**
 
-## Google Play / Android
+The discontinued iOS and Flutter application runtimes, Apple provisioning/signing and dual-platform CI were deleted. **Flutter Android-to-Kotlin migration logic remains**, to preserve user data during upgrades. Do not remove it in dead-code cleanups.
 
-- [x] Standalone Kotlin/Jetpack Compose Android project without login or ads.
-- [x] Target and compile Android API 36.
-- [x] Camera permission requested for scanning; system image picker instead of broad media permission.
-- [x] Android backup and unencrypted cleartext traffic disabled in the manifest.
-- [x] Privacy policy published in English, with an offline localized summary in app Settings.
-- [x] GitHub Actions builds an Android debug APK and executes unit tests.
-- [ ] Validate each locale's UI and screenshots on multiple display sizes and Android versions.
-- [ ] Confirm all transitive library privacy and permission requirements.
-- [x] Protected storage for manually saved Wi-Fi QR credentials is implemented (Android Keystore / iOS Keychain); real-device verification is still required.
-- [ ] Sign the Kotlin release AAB with the **existing Play upload key**, and verify the signature and Play App Signing certificate lineage. The CI QA AAB is unsigned and must not be uploaded as a final signed artifact.
-- [ ] Fill in the Google Play Data safety, age rating and store listing forms with real screenshots.
-- [ ] Complete internal/closed testing on physical devices.
+## Source and CI checks
 
-## Apple App Store / iOS
+- [x] One native Kotlin/Jetpack Compose Android runtime at `platforms/android`.
+- [x] Android SDK compile/target API 36 and JDK 17.
+- [x] 23 offline languages sourced from `l10n/catalog.json`; Android resource parity checks.
+- [ ] Exact final commit: `native-platforms.yml`, `capture-screenshots.yml` and `generate-localizations.yml` all completed successfully.
+- [ ] Gradle Kotlin compile, JVM tests, device instrumentation, lintDebug, R8 assembleRelease and bundleRelease.
+- [ ] Real Android screen captures and physical visual comparison to reference UI across sizes.
+- [ ] Tests for critical QR paths, denied permissions, migration, sensitive clipboard, Wi-Fi confirmation and low-memory conditions.
 
-- [x] Standalone SwiftUI application using AVFoundation, Vision, PhotosPicker and Core Image.
-- [x] Privacy manifest supplied and bundled by XcodeGen.
-- [x] Camera and photo picker purpose strings declared in English.
-- [x] GitHub Actions builds an unsigned iOS simulator application.
-- [ ] Verify packaged language resources and execute all XCTest tests on an available simulator.
-- [ ] Confirm required-reason API declarations and privacy manifests for any SDK dependencies.
-- [x] Protected storage for manually saved Wi-Fi QR credentials is implemented (Android Keystore / iOS Keychain); real-device verification is still required.
-- [ ] Complete App Store Connect metadata, privacy disclosure, ratings, contact and support information.
-- [ ] Sign an **iOS device archive** with the correct Apple Developer Team ID, App Store distribution certificate and provisioning profile; verify bundle ID, version, build number, exported IPA and TestFlight install.
-- [ ] Use authentic runtime screenshots for App Store Connect; mockups are not substitutes.
+## Privacy and Play requirements
 
-## Settings, PDF and ZIP export validation
+- [x] No developer backend, account, advertising, analytics or internet permission in the app source.
+- [x] Android Keystore AES-GCM for manually saved Wi-Fi QR payloads and nonautomatic Wi-Fi history.
+- [x] Camera permission only when requested by user, Android system photo picker without broad storage permissions.
+- [ ] Validate actual merged manifest, transitive SDK privacy behavior and Play Data Safety declarations.
+- [ ] Accessibility, TalkBack, dynamic font sizing, short/long localized strings and OEM testing.
+- [ ] Validate 16-KiB native page compatibility and target Play SDK policy at actual submission date.
+- [ ] Confirm retention/data deletion and exported unencrypted PDF/ZIP warning.
 
-- [x] Standalone PDF export and PDF-in-ZIP export implemented on Kotlin Android and SwiftUI iOS, using user-selected system file destinations rather than broad device-storage permissions.
-- [x] Warning before exporting saved codes, including those that may encode Wi-Fi passwords; exported PDF/ZIP files are **not encrypted**.
-- [x] Settings contain the Privacy Policy, Terms of Use, Brendigo attribution, and English as default plus Croatian and 21 other translations.
-- [x] Android adaptive and themed launcher resources added; Xcode icon packaging remains in simulator/device archive CI.
-- [ ] Verify PDF readability, ZIP extraction, sharing and cancellation on real Google and Apple devices.
-- [ ] Confirm the actual compiled Android manifest, Play policy forms and app-store listings accurately describe sensitive exported content.
-- [ ] Confirm localization quality and accessibility for the new legal/export text in each language.
+## Protected, production-only release
 
-## Official sources
+1. Protect the GitHub Actions `production` environment with required reviewers.
+2. Configure the **previously approved** signing identity and secrets: `QREX_UPLOAD_KEYSTORE_BASE64`, `QREX_UPLOAD_STORE_PASSWORD`, `QREX_UPLOAD_KEY_ALIAS`, `QREX_UPLOAD_KEY_PASSWORD`, and `QREX_UPLOAD_CERT_SHA256`.
+3. Match the expected SHA-256 fingerprint of the authorized Play Console upload certificate; never invent or rotate identities casually.
+4. On the exact `main` commit, require every mandatory CI workflow to have succeeded.
+5. Complete physical Android device QA, in-place Flutter-to-Kotlin migration testing and store disclosures. Explicitly authorize the manual `.github/workflows/production-release.yml` only after those are complete.
+6. Verify the workflow generated `QREX-Android-1.0.0.aab`, signed with the correct certificate, and `SHA256SUMS.txt`. An unsigned AAB or debug APK is **not** stable. An AAB is not an installable APK.
+7. Only **after** signed stable v1.0.0 publication, `tool/retire_legacy_releases.sh` deletes all older Releases and Git tags, retaining the approved `v1.0.0` pair. Manual recovery workflow is also production-protected.
 
-- Google: https://support.google.com/googleplay/android-developer/answer/11926878
-- Google privacy: https://support.google.com/googleplay/android-developer/answer/10144311
-- Apple review guidelines: https://developer.apple.com/app-store/review/guidelines/
-- Apple requirements: https://developer.apple.com/news/upcoming-requirements/
-- Apple privacy manifest: https://developer.apple.com/documentation/bundleresources/privacy-manifest-files
+- [ ] Approved signed AAB actually published.
+- [ ] SHA256 file matches actual binary and release metadata.
+- [ ] Only the `v1.0.0` Release and tag remain after cleanup.
+- [ ] Internal Google Play testing, signing continuity, migration and Play acceptance validated.
 
-Recheck all requirements immediately before submitting a new version.
-
-
-## Native Kotlin/Swift 1.0.0 — production signing and publication
-
-The earlier v0.1.3 APK uses Flutter. The first production-only standalone Kotlin/Swift candidate uses version **1.0.0** / build number **100**. The last historical native QA preview is **0.2.4 RC1** / build **9**. No new RC, beta, debug or unsigned GitHub releases may be published. Do not publish both build paths under the same version or mistake successful simulator tests for signed release qualification.
-
-### Android — existing Play upload key only
-
-On a trusted build machine, set these **environment variables** using a secret manager (never paste their values into GitHub issues, logs or commits):
-
-- `QREX_UPLOAD_STORE_FILE` — absolute path to the existing upload keystore
-- `QREX_UPLOAD_STORE_PASSWORD` — keystore password
-- `QREX_UPLOAD_KEY_ALIAS` — established upload alias
-- `QREX_UPLOAD_KEY_PASSWORD` — upload key password
-
-Run `cd platforms/android && gradle --no-daemon :app:lintRelease :app:testReleaseUnitTest :app:bundleRelease`. The build fails if only some signing variables are present. Without them, CI may build an **unsigned QA bundle only**. Inspect the resulting `app/build/outputs/bundle/release/app-release.aab` with `jarsigner -verify -verbose -certs`, confirm the signing certificate fingerprint belongs to the correct Play upload identity, and test an internal Google Play track with a monotonically increasing version code. Do not generate a new upload key unless an account-approved key reset/replacement procedure requires it. Handle the keystore only on trusted machines or dedicated protected GitHub environments.
-
-The Google Play submission must include Data safety declarations based on the exact compiled dependencies, target API compliance, device screenshots, store listing, contact/support/privacy URLs, age and content disclosures, and required testing. Confirm the final signed package ID is `com.brendigo.qrex`.
-
-### iOS — signed device archive
-
-Open `platforms/ios` after running `xcodegen generate --spec project.yml`. In Xcode, set the authorized development team and correct App Store provisioning, and archive using the **Any iOS Device** destination. Use Xcode Organizer to validate and distribute the signed archive to TestFlight before App Store submission.
-
-The Xcode project deliberately permits signing and uses the app's **default private Keychain access group**; no Keychain-sharing entitlement is necessary. The simulator CI passes `CODE_SIGNING_ALLOWED=NO` only for unsigned test builds. A simulator `.app` is never an App Store `.ipa`. The current production candidate uses bundle ID `com.brendigo.qrex`, marketing version `1.0.0`, build `100` and iOS deployment target 16.0.
-
-### Additional blocking gates
-
-- [ ] Verify the *actual compiled* permissions, Android merged manifest, dependency/native-library 16 KiB page-size compatibility and current SDK privacy manifests. 
-- [ ] Run real-device camera, flashlight, photo picker, sharing/export, dynamic-type, small/large display, background/foreground and storage-migration smoke tests.
-- [ ] Capture genuine screens for all primary tabs and compare manually against the approved design. QR screenshot CI proving that the app launched is not a 1:1 visual comparison.
-- [ ] Complete localized App Store metadata, privacy nutrition labels, age/content rating, support and contact URLs, TestFlight and Google Play release testing.
-- [ ] Confirm the existing Flutter install can update **without data loss** on Android, and that the iOS bundle/provisioning matches any previous production distribution.
-- [ ] Do not tag or publish native builds until every mandatory acceptance gate above is confirmed.
-
-### Current platform references
-
-- Google Play target API: https://support.google.com/googleplay/android-developer/answer/11926878
-- Play App Signing: https://support.google.com/googleplay/android-developer/answer/9842756
-- Apple upload builds: https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/
-- Apple app signing: https://developer.apple.com/documentation/xcode/distributing-your-app-for-beta-testing-and-releases
-- Apple private Keychain groups: https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps
-
-### Production-only release automation
-
-The former automatic RC publisher has been removed. The new
-`.github/workflows/production-release.yml` has **only**
-`workflow_dispatch`. It must be invoked from `main` with the exact commit
-and both human QA/store-readiness confirmations. Four exact-commit CI workflows
-must pass, including physical-device-backed Android instrumentation and
-Swift XCTest on a simulator. Manual physical device verification is separately
-required and not falsely reported as CI success.
-
-For protected GitHub Actions `production` environment, configure required
-reviewers and store the **existing approved** signing materials as environment
-secrets. Never copy, invent or commit replacement identities.
-
-Android secrets:
-`QREX_UPLOAD_KEYSTORE_BASE64`, `QREX_UPLOAD_STORE_PASSWORD`,
-`QREX_UPLOAD_KEY_ALIAS`, `QREX_UPLOAD_KEY_PASSWORD`,
-`QREX_UPLOAD_CERT_SHA256` (fingerprint of the existing Play upload certificate).
-
-iOS secrets:
-`QREX_APPLE_CERT_P12_BASE64`, `QREX_APPLE_CERT_PASSWORD`,
-`QREX_APPLE_CERT_SHA256`, `QREX_APPLE_PROVISION_PROFILE_BASE64`,
-`QREX_APPLE_TEAM_ID`, `QREX_IOS_PROVISION_PROFILE_NAME`.
-
-The workflow must fail without these credentials or on mismatched signer,
-bundle ID, version, build, CI SHA or missing QA approval. After verification,
-the only permitted GitHub stable release assets are a **signed Android AAB**,
-a **signed iOS App Store IPA** and `SHA256SUMS.txt`.
-Do not publish an unsigned iOS archive, debug APK or an unverified binary as
-a production artifact. The GitHub release is not proof of store acceptance.
-
-- [ ] Configure and independently audit the protected `production` GitHub environment.
-- [ ] Confirm Android upload certificate SHA-256 matches Play Console records.
-- [ ] Confirm Apple Distribution certificate, Team ID and provisioning profile belong to QREX.
-- [ ] Complete the device, migration, accessibility and store reviews before manual production authorization.
-- [ ] Verify production upload/install via Play internal testing and Apple TestFlight.
-
-### Retiring all previous GitHub Releases and Git tags
-
-After **both** authorized signed assets have passed the production workflow
-and GitHub has published `v1.0.0` with three verified files (signed AAB,
-signed IPA and SHA256SUMS), `tool/retire_legacy_releases.sh` deletes **all**
-older GitHub Releases and **all** other Git tags. It verifies the stable
-Release, exact Git commit, non-prerelease status and expected uploaded files
-before deleting anything. The script rechecks that the only remaining release
-and tag are both `v1.0.0`.
-
-The normal `production-release.yml` runs cleanup **after** stable publication.
-If that cleanup stops partway, the manual recovery workflow
-`.github/workflows/retire-legacy-releases.yml` is protected by the
-`production` environment and repeats the same checks.
-
-- [ ] Signed `v1.0.0` actually published and three expected files verified.
-- [ ] Previous 9 GitHub Releases removed successfully.
-- [ ] Previous 9 Git tags removed successfully.
-- [ ] Query GitHub again to confirm **only** `v1.0.0` exists in Releases/tags.
-
-Deleting historical releases removes direct downloads; it **does not** erase
-their source commits or migrate existing installations. Keep the source
-history and Flutter upgrade paths intact. Do not run cleanup before a
-replacement signed release is genuinely available.
+**Important:** CI success is not store approval. Never publish a signed distribution without the required authorized signing key, real-device QA and consent.
