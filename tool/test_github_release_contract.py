@@ -43,7 +43,7 @@ class GithubReleaseContractTests(unittest.TestCase):
         self.assertNotIn("secrets.QREX_UPLOAD_CERT_SHA256", self.workflow)
 
     def test_explicit_upgrade_and_play_disclosure(self):
-        for expected in ("disposable", "DIFFERENT certificate", "not approved for Google Play",
+        for expected in ("disposable", "DIFFERENT certificate", "NOT a Google Play upload",
                          "versionCode 101", "SHA256SUMS.txt"):
             self.assertIn(expected, self.notes)
         self.assertIn("QREX-Android-1.0.1.aab", self.notes)
