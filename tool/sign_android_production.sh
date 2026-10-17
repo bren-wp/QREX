@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Produce a Google Play upload-signed AAB using ONLY the existing authorized key.
-# No unsigned/debug asset is eligible for a GitHub stable release.
+# Produce BOTH Android AAB (Play upload) and standalone APK with the existing key.
+# Both binaries must verify against the approved upload certificate; no debug builds.
 set -euo pipefail
 umask 077
 for name in QREX_UPLOAD_KEYSTORE_BASE64 QREX_UPLOAD_STORE_PASSWORD \
@@ -35,9 +35,14 @@ fi
 
 python3 tool/check_native_release.py
 gradle -p platforms/android --no-daemon --stacktrace \
-  :app:testReleaseUnitTest :app:lintRelease :app:bundleRelease
+  :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
 bundle="platforms/android/app/build/outputs/bundle/release/app-release.aab"
+apk="platforms/android/app/build/outputs/apk/release/app-release.apk"
 test -s "$bundle"
+test -s "$apk"
+
+# AAB uses the JAR signature format; APK uses Android v2/v3 signing.
+# Verifying both prevents an unsigned package slipping into GitHub Releases.
 jarsigner -verify -strict "$bundle" > /dev/null
 binary_cert="$(keytool -printcert -jarfile "$bundle" |
   sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 | normalize_fingerprint)"
@@ -45,6 +50,23 @@ if [ "$binary_cert" != "$expected" ]; then
   echo "AAB certificate fingerprint differs from approved upload certificate." >&2
   exit 1
 fi
+
+build_tools="${ANDROID_HOME:?Android SDK required}/build-tools/36.0.0"
+test -x "$build_tools/apksigner"
+test -x "$build_tools/zipalign"
+test -x "$build_tools/aapt"
+"$build_tools/zipalign" -c -v 4 "$apk" > /dev/null
+"$build_tools/apksigner" verify --verbose --print-certs --min-sdk-version 26 "$apk" > "$RUNNER_TEMP/qrex-apk-signature.txt"
+apk_cert="$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p'   "$RUNNER_TEMP/qrex-apk-signature.txt" | head -n 1 | normalize_fingerprint)"
+rm -f "$RUNNER_TEMP/qrex-apk-signature.txt"
+if [ "$apk_cert" != "$expected" ]; then
+  echo "APK certificate fingerprint differs from approved upload certificate." >&2
+  exit 1
+fi
+"$build_tools/aapt" dump badging "$apk" |
+  grep -F "name='com.brendigo.qrex' versionCode='100' versionName='1.0.0'" > /dev/null
+
 mkdir -p production
 cp "$bundle" production/QREX-Android-1.0.0.aab
-echo "Authorized Android AAB certificate verified against known fingerprint."
+cp "$apk" production/QREX-Android-1.0.0.apk
+echo "Authorized Play upload AAB and Android APK signatures verified against the approved certificate."
