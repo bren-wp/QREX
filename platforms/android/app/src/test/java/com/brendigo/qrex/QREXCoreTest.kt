@@ -52,6 +52,14 @@ class QREXCoreTest {
         assertEquals(4, gallerySampleSize(6000, 6000))
     }
 
+    @Test fun responsivePreviewNeverOverflowsCompactAndroidViewport() {
+        assertEquals(238f, responsiveQrSideDp(420f, 238f), 0.01f)
+        assertEquals(238f, responsiveQrSideDp(238f, 238f), 0.01f)
+        assertEquals(176f, responsiveQrSideDp(176f, 238f), 0.01f)
+        assertEquals(0f, responsiveQrSideDp(-20f, 238f), 0.01f)
+        assertEquals(230f, responsiveQrSideDp(400f, 230f), 0.01f)
+    }
+
     @Test fun whitespaceOnlyQrCannotBeRendered() {
         assertFalse(QRContent.canRender("   "))
         assertFalse(QRContent.canRender("\n\t"))
