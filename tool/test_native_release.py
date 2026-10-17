@@ -29,6 +29,10 @@ class NativeReleaseGateTests(unittest.TestCase):
         issues = self.check(android=self.android.replace("targetSdk = 36", "targetSdk = 35"))
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
+    def test_published_version_code_is_rejected(self):
+        issues = self.check(android=self.android.replace("versionCode = 9", "versionCode = 8"))
+        self.assertTrue(any("published native RC build 8" in issue for issue in issues), issues)
+
     def test_ios_signing_disabled_by_default_is_rejected(self):
         issues = self.check(ios=self.ios + '\n    CODE_SIGNING_ALLOWED: "NO"\n')
         self.assertTrue(any("signing" in issue.lower() for issue in issues), issues)
