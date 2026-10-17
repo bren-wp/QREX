@@ -51,9 +51,9 @@ This is an engineering checklist, **not** a statement that either store has appr
 Recheck all requirements immediately before submitting a new version.
 
 
-## Native Kotlin/Swift candidate — signing and publication procedure
+## Native Kotlin/Swift 1.0.0 — production signing and publication
 
-The public GitHub v0.1.3 APK is built with Flutter, while the next standalone Kotlin and Swift QA candidate uses version **0.2.4** / build number **9**. The published native QA preview used **0.2.3** / build **8**. Do not publish both build paths under the same version or mistake successful simulator tests for signed release qualification.
+The earlier v0.1.3 APK uses Flutter. The first production-only standalone Kotlin/Swift candidate uses version **1.0.0** / build number **100**. The last historical native QA preview is **0.2.4 RC1** / build **9**. No new RC, beta, debug or unsigned GitHub releases may be published. Do not publish both build paths under the same version or mistake successful simulator tests for signed release qualification.
 
 ### Android — existing Play upload key only
 
@@ -72,7 +72,7 @@ The Google Play submission must include Data safety declarations based on the ex
 
 Open `platforms/ios` after running `xcodegen generate --spec project.yml`. In Xcode, set the authorized development team and correct App Store provisioning, and archive using the **Any iOS Device** destination. Use Xcode Organizer to validate and distribute the signed archive to TestFlight before App Store submission.
 
-The Xcode project deliberately permits signing and uses the app's **default private Keychain access group**; no Keychain-sharing entitlement is necessary. The simulator CI passes `CODE_SIGNING_ALLOWED=NO` only for unsigned test builds. A simulator `.app` is never an App Store `.ipa`. The current QA native project uses bundle ID `com.brendigo.qrex`, marketing version `0.2.4`, build `9` and iOS deployment target 16.0.
+The Xcode project deliberately permits signing and uses the app's **default private Keychain access group**; no Keychain-sharing entitlement is necessary. The simulator CI passes `CODE_SIGNING_ALLOWED=NO` only for unsigned test builds. A simulator `.app` is never an App Store `.ipa`. The current production candidate uses bundle ID `com.brendigo.qrex`, marketing version `1.0.0`, build `100` and iOS deployment target 16.0.
 
 ### Additional blocking gates
 
@@ -90,3 +90,40 @@ The Xcode project deliberately permits signing and uses the app's **default priv
 - Apple upload builds: https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/
 - Apple app signing: https://developer.apple.com/documentation/xcode/distributing-your-app-for-beta-testing-and-releases
 - Apple private Keychain groups: https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps
+
+### Production-only release automation
+
+The former automatic RC publisher has been removed. The new
+`.github/workflows/production-release.yml` has **only**
+`workflow_dispatch`. It must be invoked from `main` with the exact commit
+and both human QA/store-readiness confirmations. Four exact-commit CI workflows
+must pass, including physical-device-backed Android instrumentation and
+Swift XCTest on a simulator. Manual physical device verification is separately
+required and not falsely reported as CI success.
+
+For protected GitHub Actions `production` environment, configure required
+reviewers and store the **existing approved** signing materials as environment
+secrets. Never copy, invent or commit replacement identities.
+
+Android secrets:
+`QREX_UPLOAD_KEYSTORE_BASE64`, `QREX_UPLOAD_STORE_PASSWORD`,
+`QREX_UPLOAD_KEY_ALIAS`, `QREX_UPLOAD_KEY_PASSWORD`,
+`QREX_UPLOAD_CERT_SHA256` (fingerprint of the existing Play upload certificate).
+
+iOS secrets:
+`QREX_APPLE_CERT_P12_BASE64`, `QREX_APPLE_CERT_PASSWORD`,
+`QREX_APPLE_CERT_SHA256`, `QREX_APPLE_PROVISION_PROFILE_BASE64`,
+`QREX_APPLE_TEAM_ID`, `QREX_IOS_PROVISION_PROFILE_NAME`.
+
+The workflow must fail without these credentials or on mismatched signer,
+bundle ID, version, build, CI SHA or missing QA approval. After verification,
+the only permitted GitHub stable release assets are a **signed Android AAB**,
+a **signed iOS App Store IPA** and `SHA256SUMS.txt`.
+Do not publish an unsigned iOS archive, debug APK or an unverified binary as
+a production artifact. The GitHub release is not proof of store acceptance.
+
+- [ ] Configure and independently audit the protected `production` GitHub environment.
+- [ ] Confirm Android upload certificate SHA-256 matches Play Console records.
+- [ ] Confirm Apple Distribution certificate, Team ID and provisioning profile belong to QREX.
+- [ ] Complete the device, migration, accessibility and store reviews before manual production authorization.
+- [ ] Verify production upload/install via Play internal testing and Apple TestFlight.
