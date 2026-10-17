@@ -1,22 +1,23 @@
-# Flutter / Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
+# Android / Gradle / IDE generated state
+.gradle/
 build/
-coverage/
-*.iml
+**/build/
 .idea/
 .vscode/
-# Generated native projects are created by flutter create / CI
+*.iml
+local.properties
+# Retain old Flutter-generated directories as ignored if they exist on a developer workstation;
+# these hosts are no longer part of the repository.
 android/
 ios/
-!assets/
-# Local signing material
+.dart_tool/
+.flutter-plugins*
+.pub-cache/
+.pub/
+# Local signing secrets; never commit these
 *.jks
 *.keystore
 *.p12
 *.mobileprovision
 .env
+production/
