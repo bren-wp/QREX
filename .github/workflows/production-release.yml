@@ -1,4 +1,4 @@
-name: QREX 1.0.0 — signed production release
+name: QREX 1.0.0 — signed APK + AAB production release
 
 # Manual-only. No push/tag/PR may publish a release.
 on:
@@ -50,7 +50,7 @@ jobs:
           bash -n tool/sign_android_production.sh
 
   android:
-    name: Authorized Play upload signing
+    name: Authorized Play AAB + standalone APK signing
     needs: verify
     runs-on: ubuntu-latest
     environment: production
@@ -80,8 +80,10 @@ jobs:
         run: bash tool/sign_android_production.sh
       - uses: actions/upload-artifact@v4
         with:
-          name: qrex-production-android-aab
-          path: production/QREX-Android-1.0.0.aab
+          name: qrex-production-android-signed
+          path: |
+            production/QREX-Android-1.0.0.aab
+            production/QREX-Android-1.0.0.apk
           if-no-files-found: error
           retention-days: 7
 
@@ -102,17 +104,37 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
-          name: qrex-production-android-aab
+          name: qrex-production-android-signed
           path: production
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Confirm Android SDK tools for signed APK validation
+        run: |
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
       - name: Verify release payloads and commit still current
         run: |
           set -euo pipefail
           test "$GITHUB_REF" = refs/heads/main
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$GITHUB_SHA"
           test -s production/QREX-Android-1.0.0.aab
+          test -s production/QREX-Android-1.0.0.apk
           test -s docs/releases/v1.0.0.md
           unzip -t production/QREX-Android-1.0.0.aab
+          unzip -t production/QREX-Android-1.0.0.apk
           jarsigner -verify -strict production/QREX-Android-1.0.0.aab >/dev/null
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --min-sdk-version 26 production/QREX-Android-1.0.0.apk
+          # Both formats must carry the same authorized certificate, already
+          # checked against Play's expected fingerprint in the signing job.
+          aab_cert="$(keytool -printcert -jarfile production/QREX-Android-1.0.0.aab |
+            sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 | tr -d '[:space:]:' | tr '[:lower:]' '[:upper:]')"
+          apk_cert="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs --min-sdk-version 26 production/QREX-Android-1.0.0.apk |
+            sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr -d '[:space:]:' | tr '[:lower:]' '[:upper:]')"
+          [[ "$aab_cert" =~ ^[A-F0-9]{64}$ ]]
+          test "$apk_cert" = "$aab_cert"
           ! gh release view v1.0.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
           ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.0" >/dev/null 2>&1
           (cd production && sha256sum QREX-* > SHA256SUMS.txt)
@@ -120,7 +142,7 @@ jobs:
         run: |
           set -euo pipefail
           gh release create v1.0.0 production/QREX-Android-1.0.0.aab \
-            production/SHA256SUMS.txt \
+            production/QREX-Android-1.0.0.apk production/SHA256SUMS.txt \
             --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --title "QREX 1.0.0 — Android production" \
             --notes-file docs/releases/v1.0.0.md --latest
