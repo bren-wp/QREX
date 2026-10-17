@@ -37,7 +37,7 @@ The approved QREX palette, QR contents, navigation destinations, on-device priva
 
 ## Dead-code audit findings
 
-**Removed safely:** unused outer Flutter scanner `LayoutBuilder` and its unused callback parameter. This removes needless layout work without touching camera/preview controls.
+**Removed safely:** unused outer Flutter scanner `LayoutBuilder` and its unused callback parameter, plus the unreachable `obscure` option in the Flutter generic Create text-field helper. No caller supplied the `obscure` argument; Wi-Fi passwords already use a separate dedicated password field. Removing the generic option and its redundant `enableSuggestions`/`autocorrect` defaults preserves the existing behavior.
 
 **Native candidate review:** `MainActivity` appeared unreferenced in a text-only search, but is the Android manifest launch activity, and must be kept. `makeCoordinator`, `makeUIView`, `updateUIView` and `metadataOutput` are SwiftUI/UIKit/AVFoundation protocol hooks, invoked by the system and must be kept. No verified unused explicit Kotlin import remained after excluding delegated-property compiler operators such as `getValue`/`setValue`.
 
