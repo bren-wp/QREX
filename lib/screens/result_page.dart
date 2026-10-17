@@ -83,7 +83,7 @@ class _ResultPageState extends State<ResultPage> {
           const SizedBox(height: 14),
           TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Zatvori')),
         ]),
-      )));
+      ));
       },
     );
   }
