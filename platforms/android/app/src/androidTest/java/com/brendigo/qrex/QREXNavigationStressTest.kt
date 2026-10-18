@@ -18,30 +18,42 @@ import org.junit.Test
 class QREXNavigationStressTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
+    /**
+     * Wait for a semantic tag without retaining or logging any QR contents.
+     * A failed iteration reports its phase, not user data.
+     */
+    private fun requireScreenTag(tag: String, cycle: Int, phase: String) {
+        try {
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                rule.onAllNodesWithTag(tag, useUnmergedTree = true)
+                    .fetchSemanticsNodes().isNotEmpty()
+            }
+        } catch (error: AssertionError) {
+            throw AssertionError("P03 UI cycle $cycle: $phase (missing tag $tag)", error)
+        }
+    }
+
     @Test
     fun thirtyCreateResultBackCyclesKeepAppResponsive() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
         repeat(30) { cycle ->
-            // The OutlinedTextField tag is present in the unmerged semantics tree.
-            // A real missing Create screen still fails the test after the deadline.
-            rule.waitUntil(timeoutMillis = 20_000L) {
-                rule.onAllNodesWithTag("qrex-create-content", useUnmergedTree = true)
-                    .fetchSemanticsNodes().isNotEmpty()
-            }
+            requireScreenTag("qrex-create-content", cycle, "await Create input")
             rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
-                .performTextReplacement("https://example.org/qrex/p03/${cycle}")
-            rule.waitUntil(timeoutMillis = 20_000L) {
-                runCatching {
-                    rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
-                }.isSuccess
+                .performTextReplacement("https://example.org/qrex/p03/$cycle")
+            try {
+                rule.waitUntil(timeoutMillis = 20_000L) {
+                    runCatching {
+                        rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+                    }.isSuccess
+                }
+            } catch (error: AssertionError) {
+                throw AssertionError("P03 UI cycle $cycle: QR generation not ready", error)
             }
-            rule.onNodeWithTag("qrex-create-show")
-                .performScrollTo().performClick()
-            rule.onNodeWithTag("qrex-result-close")
-                .performScrollTo().performClick()
-            // The next loop verifies that Create has returned before typing.
-            rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+            rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+            requireScreenTag("qrex-result-close", cycle, "await Result")
+            rule.onNodeWithTag("qrex-result-close").performScrollTo().performClick()
+            requireScreenTag("qrex-create-content", cycle, "await return to Create")
         }
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
     }
