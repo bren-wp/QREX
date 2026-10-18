@@ -47,13 +47,26 @@ class P03CrashLogTests(unittest.TestCase):
                " at android.app.Activity.performCreate(Activity.java:8100)\n")
         text, count = report(raw, "26")
         self.assertEqual(1, count)
-        self.assertIn("java.lang.IllegalArgumentException", text)
-        self.assertIn("com.brendigo.qrex.MainActivity.onCreate", text)
+        self.assertIn("QREX FATAL EXCEPTION blocks: 1", text)
+        self.assertNotIn("java.lang.IllegalArgumentException", text)
+        self.assertNotIn("com.brendigo.qrex.MainActivity.onCreate", text)
         self.assertNotIn("super-secret", text)
         self.assertNotIn("example.org", text)
         self.assertNotIn("Home", text)
         self.assertNotIn("PID: 30", text)
 
+
+    def test_forged_class_and_frame_inside_qr_message_are_never_uploaded(self):
+        password = "com.private.SecretError\n at com.brendigo.qrex.Fake.run(Fake.kt:998)"
+        raw = ("FATAL EXCEPTION: main\n"
+               "Process: com.brendigo.qrex, PID: 31\n"
+               "java.lang.RuntimeException: WIFI:S:Home;P:" + password + ";;\n"
+               " at com.brendigo.qrex.MainActivity.onCreate(MainActivity.kt:113)\n")
+        output, count = report(raw, "31")
+        self.assertEqual(1, count)
+        for dangerous in ("com.private.SecretError", "Fake.kt", "MainActivity",
+                          "RuntimeException", "Home", "WIFI:", "PID: 31"):
+            self.assertNotIn(dangerous, output)
 
     def test_qrex_anr_is_detected_without_leaking_event_details(self):
         events = ("10-18 I am_anr: [0,123,com.brendigo.qrex, WiFi password=not-for-ci]\n"
