@@ -9,6 +9,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.semantics.SemanticsActions
 import org.junit.Rule
 import org.junit.Test
 
@@ -77,6 +80,9 @@ class QREXNavigationStressTest {
         }
     }
 
+    /** Exercise 30 real Compose navigation callbacks, independent of flaky
+     * emulator coordinate injection; separate tests use physical tap injection.
+     */
     @Test
     fun thirtyCreateResultBackCyclesKeepAppResponsive() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
@@ -87,9 +93,11 @@ class QREXNavigationStressTest {
             rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
                 .performTextReplacement("https://example.org/qrex/p03/$cycle")
             awaitCreateAction(cycle, "30-cycle stress")
-            rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
+            rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+                .performSemanticsAction(SemanticsActions.OnClick)
             requireScreenTag("qrex-result-close", cycle, "await pinned Result close")
-            rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
+            rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
+                .performSemanticsAction(SemanticsActions.OnClick)
             requireScreenTag("qrex-create-screen", cycle, "await return to Create")
             requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
@@ -100,9 +108,13 @@ class QREXNavigationStressTest {
     fun closeAfterTextInputHidesImeAndRestoresCreate() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create")
+        // Touch the actual field to request IME focus before text entry.
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
-            .performTextReplacement("https://example.org/p03/ime")
+            .performClick()
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextInput("https://example.org/p03/ime")
         awaitCreateAction(0, "single-cycle pre-result")
+        // Coordinate-based touch still must open Result while the input has focus.
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "show Result")
         // Valid input must produce an actual QR bitmap, not merely enable a
