@@ -20,6 +20,16 @@ class P03CrashLogTests(unittest.TestCase):
                          "timeout -k 15s 1200s"):
             self.assertIn(expected, source)
 
+    def test_compose_qr_previews_are_not_force_recycled(self):
+        # RenderThread may still reference a frame after composable disposal.
+        from pathlib import Path
+        source = (Path(__file__).resolve().parents[1] /
+                  "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt"
+                  ).read_text("utf-8")
+        self.assertNotIn("awaitDispose { bitmap?.recycle() }", source)
+        self.assertNotIn("awaitDispose { image?.recycle() }", source)
+        self.assertIn("bitmap.recycle()", source)  # independent SAF PNG bitmap
+
     def test_non_app_crashes_are_not_attributed_to_qrex(self):
         raw = ("FATAL EXCEPTION: main\n"
                "Process: com.android.systemui, PID: 20\n"
