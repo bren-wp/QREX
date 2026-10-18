@@ -94,6 +94,24 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun bottomCloseStillReturnsToCreateAfterScrolling() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/p03/bottom-close")
+        rule.waitUntil(timeoutMillis = 20_000L) {
+            runCatching {
+                rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            }.isSuccess
+        }
+        rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+        requireScreenTag("qrex-result-screen", 0, "open Result")
+        rule.onNodeWithTag("qrex-result-close-bottom")
+            .performScrollTo().performClick()
+        requireScreenTag("qrex-create-screen", 0, "bottom Close returns to Create")
+    }
+
+    @Test
     fun activityRecreationKeepsNonSensitiveTabSelection() {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
