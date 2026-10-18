@@ -222,15 +222,15 @@ class QREXStore(context: Context) {
             old.getBoolean("flutter.qrex_light_v1", false) to
                 old.getBoolean("flutter.qrex_record_v1", true)
         }.getOrNull() ?: return
-        val protected = mutableMapOf<String, String>()
+        val ciphertexts = mutableMapOf<String, String>()
         val serialized = JSONArray()
         for (record in merged) {
             val wifi = QRContent.isWifi(record.raw)
             val encoded = if (wifi) {
-                protectedWifi[record.raw] ?: protected[record.raw]
+                protectedWifi[record.raw] ?: ciphertexts[record.raw]
                 ?: QREXSecretCipher.encrypt(record.raw) ?: return
             } else record.raw
-            if (wifi) protected[record.raw] = encoded
+            if (wifi) ciphertexts[record.raw] = encoded
             serialized.put(JSONObject().put("raw", encoded)
                 .put("protected", wifi).put("timestamp", record.timestamp)
                 .put("saved", record.saved))
@@ -246,7 +246,7 @@ class QREXStore(context: Context) {
         if (importHistory) editor.putBoolean("historyEnabled", legacySettings.second)
         if (!editor.commit()) return
         protectedWifi.clear()
-        protectedWifi.putAll(protected)
+        protectedWifi.putAll(ciphertexts)
         items.clear()
         items.addAll(merged)
         if (importLight) lightMode = legacySettings.first
