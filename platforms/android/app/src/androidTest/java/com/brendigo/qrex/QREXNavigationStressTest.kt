@@ -1,5 +1,6 @@
 package com.brendigo.qrex
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -109,6 +110,25 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-result-close-bottom")
             .performScrollTo().performClick()
         requireScreenTag("qrex-create-screen", 0, "bottom Close returns to Create")
+    }
+
+    @Test
+    fun pinnedCloseRemainsAvailableAfterScrollingResultToBottom() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/p03/pinned-close")
+        rule.waitUntil(timeoutMillis = 20_000L) {
+            runCatching {
+                rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            }.isSuccess
+        }
+        rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+        requireScreenTag("qrex-result-close", 0, "pinned close before scrolling")
+        rule.onNodeWithTag("qrex-result-close-bottom").performScrollTo()
+        rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-create-screen", 0, "return after Result scroll")
     }
 
     @Test
