@@ -518,4 +518,56 @@ class QREXStorageTest {
     }
 
 
+    @Test
+    fun flutterSettingsMigrateWithoutHistoryAndSurviveRestart() {
+        val native = context.getSharedPreferences("qrex.user", 0)
+        val legacy = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(native.edit().clear().commit())
+        assertTrue(legacy.edit().clear().commit())
+        assertTrue(legacy.edit().putBoolean("flutter.qrex_light_v1", true)
+            .putBoolean("flutter.qrex_record_v1", false).commit())
+        val first = QREXStore(context)
+        assertTrue(first.items.isEmpty())
+        assertTrue(first.lightMode)
+        assertFalse(first.historyEnabled)
+        assertTrue(native.getBoolean("flutterMigrationV1", false))
+        val restarted = QREXStore(context)
+        assertTrue(restarted.lightMode)
+        assertFalse(restarted.historyEnabled)
+        assertTrue(restarted.clearAll())
+    }
+
+    @Test
+    fun settingsOnlyMigrationDoesNotOverrideNativeUserPreferences() {
+        val native = context.getSharedPreferences("qrex.user", 0)
+        val legacy = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(native.edit().clear().commit())
+        assertTrue(legacy.edit().clear().commit())
+        assertTrue(native.edit().putBoolean("lightMode", false)
+            .putBoolean("historyEnabled", true)
+            .putString("language", "hr").commit())
+        assertTrue(legacy.edit().putBoolean("flutter.qrex_light_v1", true)
+            .putBoolean("flutter.qrex_record_v1", false).commit())
+        val migrated = QREXStore(context)
+        assertFalse(migrated.lightMode)
+        assertTrue(migrated.historyEnabled)
+        assertEquals("hr", migrated.language)
+        assertTrue(migrated.clearAll())
+    }
+
+    @Test
+    fun corruptSettingsWithoutHistoryDoNotMarkMigrationComplete() {
+        val native = context.getSharedPreferences("qrex.user", 0)
+        val legacy = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(native.edit().clear().commit())
+        assertTrue(legacy.edit().clear().commit())
+        assertTrue(legacy.edit().putString("flutter.qrex_record_v1", "corrupt").commit())
+        val store = QREXStore(context)
+        assertTrue(store.items.isEmpty())
+        assertFalse(native.getBoolean("flutterMigrationV1", false))
+        assertEquals("corrupt", legacy.getString("flutter.qrex_record_v1", null))
+        assertTrue(store.clearAll())
+    }
+
+
 }
