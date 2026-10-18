@@ -431,7 +431,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        .padding(20.dp).testTag("qrex-create-screen")) {
         AppHeader(tr("create_qr"), tr("enter_details"))
         val visibleKinds = if (more) listOf(0, 1, 2, 6, 3, 4, 5)
             else listOf(0, 1, 2, 6)
