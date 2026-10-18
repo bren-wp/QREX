@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Summarize QREX Java crash blocks without publishing QR payloads or raw logcat.
+"""Count QREX fatal exceptions and ANR events without exposing private QR content.
 
-Reads Android's *crash* ring buffer, not the ANR traces. The output intentionally
-drops exception messages, intent extras, Wi-Fi strings, URLs and non-app logs.
-A missing QREX crash block is NOT proof of zero ANRs or device crashes.
+CI artifacts contain only aggregate counts. Exception messages can contain
+untrusted QR/Wi-Fi strings, including forged stack traces and class-like names,
+so not even variable frame fields are exported by this tool.
 """
 from __future__ import annotations
 
@@ -13,44 +13,35 @@ import sys
 
 PROCESS = re.compile(r"\bProcess:\s*com\.brendigo\.qrex(?:,|\s|$)")
 START = re.compile(r"FATAL EXCEPTION:")
-EXCEPTION_CLASS = re.compile(
-    r"\b(?:java|kotlin|android|com)\.[\w.$]*(?:Exception|Error)\b"
-)
-APP_FRAME = re.compile(
-    r"\bat\s+(com\.brendigo\.qrex\.[\w.$]+)\("
-    r"([\w.$]+)(?::(\d+))?\)"
+ANR = re.compile(
+    r"\bam_anr:\s*\[[^,\]\n]{1,32},[^,\]\n]{1,32},"
+    r"com\.brendigo\.qrex(?:,|\])"
 )
 
 
 def report(raw: str, api: str = "unknown", events: str = "") -> tuple[str, int]:
-    # Fail closed: exception *messages* may contain arbitrary QR contents,
-    # including forged Java-looking classes, source paths and fake stack frames.
-    # No variable class, method, file, line, exception message, or event payload
-    # from logcat may enter a public CI artifact. Keep only aggregate counts.
     blocks = re.split(r"(?=FATAL EXCEPTION:)", raw)
     crashes = sum(
         1 for block in blocks
         if START.search(block) and PROCESS.search(block)
     )
-    anr_count = sum(
-        1 for line in events.splitlines()
-        if re.search(r"\\bam_anr:\\s*\\[[^,\\]\\n]{1,32},[^,\\]\\n]{1,32},"
-                     r"com\\.brendigo\\.qrex(?:,|\\])", line)
-    )
-    api = api if re.fullmatch(r"\\d{2}", api) else "unknown"
-    summary = [
-        "# QREX P03 — sanitized crash-buffer summary",
+    anr_count = sum(bool(ANR.search(line)) for line in events.splitlines())
+    safe_api = api if re.fullmatch(r"\d{2}", api) else "unknown"
+    lines = [
+        "# QREX P03 — redacted crash/ANR summary",
         "",
-        f"- Android API under test: {api}",
-        "- Source: adb logcat -b crash -v threadtime -d",
+        f"- Android API under test: {safe_api}",
         f"- QREX FATAL EXCEPTION blocks: {crashes}",
         f"- QREX am_anr events: {anr_count}",
-        "- Exception class, message, frames, file paths and raw events omitted.",
-        "- Empty crash buffer does not prove absence of ANR/process death.",
+        "- Raw logcat, exception messages, stack frames and event details omitted.",
+        "- An empty log buffer is not evidence of crash/ANR-free physical devices.",
         "",
+        (
+            "QREX fatal crash captured: inspect the private, non-uploaded log."
+            if crashes else "No QREX fatal crash captured in this buffer."
+        ),
     ]
-    summary.append("QREX FATAL EXCEPTION captured: inspect PRIVATE log locally."\n                   if crashes else "No QREX FATAL EXCEPTION block captured.")
-    return "\n".join(summary) + "\n", crashes + anr_count
+    return "\n".join(lines) + "\n", crashes + anr_count
 
 
 def main() -> int:
@@ -66,7 +57,7 @@ def main() -> int:
         print(f"Sanitized QREX crash/ANR events: {count}; raw logs not uploaded.")
         return 2 if count else 0
     except OSError as exc:
-        print(f"Crash-buffer report unavailable: {type(exc).__name__}", file=sys.stderr)
+        print(f"Crash/ANR report unavailable: {type(exc).__name__}", file=sys.stderr)
         return 3
 
 
