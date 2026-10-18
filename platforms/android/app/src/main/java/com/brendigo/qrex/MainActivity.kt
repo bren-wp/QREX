@@ -523,7 +523,9 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
         }, enabled = qr != null,
-            modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
+            modifier = Modifier.fillMaxWidth().testTag("qrex-create-save")) {
+            Text(tr("save_qr"))
+        }
         Spacer(Modifier.height(16.dp))
         }
         PrimaryAction(tr("show_qr"), enabled = canOpenQr,
