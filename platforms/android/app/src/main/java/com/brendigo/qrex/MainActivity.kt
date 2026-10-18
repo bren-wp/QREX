@@ -273,6 +273,13 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(20.dp).testTag("qrex-result-screen"),
         horizontalAlignment = Alignment.CenterHorizontally) {
+        // A top-of-result close action is reachable without scrolling the QR
+        // preview or the on-screen keyboard over the bottom action.
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
+                Text(tr("close"))
+            }
+        }
         Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
         Spacer(Modifier.height(22.dp))
         Icon(Icons.Default.QrCode, contentDescription = null,
@@ -344,7 +351,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(10.dp))
-        TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
+        TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close-bottom")) {
             Text(tr("close"))
         }
     }
