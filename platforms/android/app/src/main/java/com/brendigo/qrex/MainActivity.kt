@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -420,7 +419,6 @@ fun generateQR(raw: String): Bitmap? {
 private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, onResult: (String) -> Unit) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
@@ -531,8 +529,11 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         PrimaryAction(tr("show_qr"), enabled = canOpenQr,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                 .testTag("qrex-create-show")) {
+            // Clear focus, but do not programmatically issue an IME hide/back
+            // transition before opening Result. On older Android versions a
+            // delayed keyboard back callback could immediately pop Result.
+            // Unmounting the input field releases its IME focus naturally.
             focusManager.clearFocus(force = true)
-            keyboardController?.hide()
             onResult(payload)
         }
     }
