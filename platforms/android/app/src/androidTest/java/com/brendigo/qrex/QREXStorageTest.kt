@@ -434,4 +434,88 @@ class QREXStorageTest {
         assertTrue(reloaded.clearAll())
     }
 
+    @Test
+    fun flutterMigrationAtomicallyPreservesExistingChoicesAnd250Favorites() {
+        val native = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(native.edit().clear().commit())
+        assertTrue(flutter.edit().clear().commit())
+        assertTrue(native.edit().putString("language", "hr")
+            .putBoolean("lightMode", false).putBoolean("historyEnabled", true).commit())
+        val history = org.json.JSONArray()
+        val wifi = QRContent.wifi("Legacy office", "migration-secret-250")
+        for (i in 0 until 250) {
+            history.put(org.json.JSONObject()
+                .put("raw", if (i == 249) wifi else "https://example.org/legacy/$i")
+                .put("date", "2026-10-09T10:12:13.123Z")
+                .put("saved", true))
+        }
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", history.toString())
+            .putBoolean("flutter.qrex_light_v1", true)
+            .putBoolean("flutter.qrex_record_v1", false).commit())
+        val migrated = QREXStore(context)
+        assertEquals(250, migrated.items.size)
+        assertTrue(migrated.items.all { it.saved })
+        assertEquals("hr", migrated.language)
+        assertFalse(migrated.lightMode)
+        assertTrue(migrated.historyEnabled)
+        assertTrue(native.getBoolean("flutterMigrationV1", false))
+        val stored = native.getString("history", "")!!
+        assertFalse(stored.contains("migration-secret-250"))
+        val rows = org.json.JSONArray(stored)
+        assertEquals(250, rows.length())
+        val encrypted = rows.getJSONObject(249)
+        assertTrue(encrypted.getBoolean("protected"))
+        assertTrue(encrypted.getString("raw").startsWith("qrex-gcm:v1:"))
+        assertEquals(wifi, QREXStore(context).items.last().raw)
+        assertFalse(flutter.contains("flutter.qrex_history_v1"))
+        assertTrue(migrated.clearAll())
+    }
+
+    @Test
+    fun migrationAfterInterruptedLegacyCleanupDoesNotDuplicateOrEraseData() {
+        val native = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(native.edit().clear().commit())
+        assertTrue(flutter.edit().clear().commit())
+        val raw = QRContent.wifi("Restart", "restart-secret")
+        val source = org.json.JSONArray().put(org.json.JSONObject()
+            .put("raw", raw).put("date", "2026-10-09T10:12:13.123Z")
+            .put("saved", true)).toString()
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", source).commit())
+        val first = QREXStore(context)
+        assertEquals(1, first.items.size)
+        val encryptedBefore = native.getString("history", null)
+        assertNotNull(encryptedBefore)
+        // Simulate power loss after the native atomic commit but before legacy cleanup.
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", source).commit())
+        val restarted = QREXStore(context)
+        assertEquals(1, restarted.items.size)
+        assertEquals(raw, restarted.items.single().raw)
+        assertEquals(encryptedBefore, native.getString("history", null))
+        assertFalse(flutter.contains("flutter.qrex_history_v1"))
+        assertTrue(restarted.clearAll())
+    }
+
+    @Test
+    fun malformedLegacySettingsLeaveOriginalSourceAndNoCompletionMarker() {
+        val native = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(native.edit().clear().commit())
+        assertTrue(flutter.edit().clear().commit())
+        val source = org.json.JSONArray().put(org.json.JSONObject()
+            .put("raw", "https://example.org/important")
+            .put("date", "2026-10-09T10:12:13.123Z")
+            .put("saved", true)).toString()
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", source)
+            .putString("flutter.qrex_light_v1", "not-a-boolean").commit())
+        val store = QREXStore(context)
+        assertTrue(store.items.isEmpty())
+        assertFalse(native.contains("history"))
+        assertFalse(native.getBoolean("flutterMigrationV1", false))
+        assertEquals(source, flutter.getString("flutter.qrex_history_v1", null))
+        assertTrue(store.clearAll())
+    }
+
+
 }
