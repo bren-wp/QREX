@@ -29,10 +29,22 @@ class QREXNavigationStressTest {
                     .fetchSemanticsNodes().isNotEmpty()
             }
         } catch (error: Throwable) {
-            // ComposeTimeoutException is not necessarily an AssertionError.
-            // Keep a phase-specific failure instead of losing the location
-            // of the first failing UI transition.
-            throw AssertionError("P03 UI cycle ${cycle + 1}/30: $phase (missing tag $tag)", error)
+            // Report only stable screen flags; never dump the semantics tree
+            // because it may contain a Wi-Fi QR password or scanned content.
+            fun visible(name: String): Boolean = runCatching {
+                rule.onAllNodesWithTag(name, useUnmergedTree = true)
+                    .fetchSemanticsNodes().isNotEmpty()
+            }.getOrDefault(false)
+            val create = visible("qrex-create-screen")
+            val result = visible("qrex-result-screen")
+            val tab = runCatching {
+                rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+            }.isSuccess
+            throw AssertionError(
+                "P03 UI cycle ${cycle + 1}/30: $phase " +
+                    "(tag=$tag, createVisible=$create, resultVisible=$result, " +
+                    "createTabSelected=$tab)", error
+            )
         }
     }
 
@@ -60,6 +72,24 @@ class QREXNavigationStressTest {
             requireScreenTag("qrex-create-screen", cycle, "await return to Create")
             requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+    }
+
+    @Test
+    fun closeAfterTextInputHidesImeAndRestoresCreate() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/p03/ime")
+        rule.waitUntil(timeoutMillis = 20_000L) {
+            runCatching {
+                rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            }.isSuccess
+        }
+        rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+        requireScreenTag("qrex-result-screen", 0, "show Result")
+        rule.onNodeWithTag("qrex-result-close").performScrollTo().performClick()
+        requireScreenTag("qrex-create-screen", 0, "close Result")
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
     }
 
