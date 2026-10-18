@@ -25,6 +25,17 @@ class GithubReleaseContractTests(unittest.TestCase):
                      "generate-localizations.yml"):
             self.assertIn(name, self.workflow)
 
+    def test_published_101_cannot_republish_on_later_main_merges(self):
+        # This exact main SHA produced the existing v1.0.1 GitHub release.
+        # Never trigger the immutable-version publisher on a later code merge.
+        self.assertIn(
+            "github.event.workflow_run.head_sha == "
+            "'84234819cf5b10fd18892d6392838f5cf9c4b714'",
+            self.workflow,
+        )
+        self.assertIn("no previous v1.0.1 release", self.workflow)
+        self.assertIn("gh release create v1.0.1", self.workflow)
+
     def test_github_build_is_installable_but_not_play_signed(self):
         self.assertIn("keytool -genkeypair", self.workflow)
         self.assertIn("openssl rand -hex 24", self.workflow)
