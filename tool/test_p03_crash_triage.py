@@ -29,5 +29,16 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertNotIn("PID: 30", text)
 
 
+    def test_qrex_anr_is_detected_without_leaking_event_details(self):
+        events = ("10-18 I am_anr: [0,123,com.brendigo.qrex, WiFi password=not-for-ci]\n"
+                  "10-18 I am_anr: [0,45,com.android.systemui, other details]\n")
+        text, count = report("", "36", events)
+        self.assertEqual(1, count)
+        self.assertIn("QREX am_anr events: 1", text)
+        self.assertNotIn("not-for-ci", text)
+        self.assertNotIn("systemui", text)
+
+
+
 if __name__ == "__main__":
     unittest.main()
