@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,13 +23,14 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
         repeat(30) { cycle ->
-            // Wait for the navigation transition before using the input.
+            // The OutlinedTextField tag is present in the unmerged semantics tree.
+            // A real missing Create screen still fails the test after the deadline.
             rule.waitUntil(timeoutMillis = 20_000L) {
-                rule.onAllNodesWithTag("qrex-create-content")
+                rule.onAllNodesWithTag("qrex-create-content", useUnmergedTree = true)
                     .fetchSemanticsNodes().isNotEmpty()
             }
-            rule.onNodeWithTag("qrex-create-content")
-                .performTextInput("https://example.org/qrex/p03/${cycle}")
+            rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+                .performTextReplacement("https://example.org/qrex/p03/${cycle}")
             rule.waitUntil(timeoutMillis = 20_000L) {
                 runCatching {
                     rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
