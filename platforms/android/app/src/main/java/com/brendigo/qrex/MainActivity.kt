@@ -336,7 +336,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         if (bitmap != null) {
             BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                    modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 230f).dp)
+                    modifier = Modifier.testTag("qrex-result-qr-ready")
+                        .size(responsiveQrSideDp(maxWidth.value, 230f).dp)
                         .background(white).padding(12.dp))
             }
             Spacer(Modifier.height(12.dp))
@@ -445,6 +446,9 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         // The old preview becomes GC-eligible after its composition is removed.
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
+    // A valid QR must be actionable even while the preview bitmap renders.
+    // Result independently renders its image off the main thread.
+    val canOpenQr = QRContent.canRender(payload)
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(20.dp).testTag("qrex-create-screen")) {
@@ -495,7 +499,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (previewBitmap != null) {
                         Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                            modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 238f).dp)
+                            modifier = Modifier.testTag("qrex-create-preview-ready")
+                                .size(responsiveQrSideDp(maxWidth.value, 238f).dp)
                                 .background(white).padding(14.dp))
                     } else {
                         Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -504,7 +509,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(tr("show_qr"), enabled = qr != null,
+        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
             modifier = Modifier.testTag("qrex-create-show")) {
             // A still-focused IME can intercept taps after the Result screen
             // replaces Create, especially across many repeated transitions.
@@ -519,7 +524,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             else if (!store.save(payload)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
-        }, enabled = qr != null,
+        }, enabled = canOpenQr,
             modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
     }
     if (confirmWifiSave) {
