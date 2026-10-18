@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -130,7 +131,9 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
         Icons.Default.History, Icons.Default.MoreHoriz)
-    var selected by remember { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
+    // Only persist a non-sensitive page index across Activity recreation.
+    // Do not persist currentCode: it can include private Wi-Fi credentials.
+    var selected by rememberSaveable { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
     var currentCode by remember { mutableStateOf<String?>(null) }
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
