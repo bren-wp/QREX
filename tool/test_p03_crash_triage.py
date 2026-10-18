@@ -4,6 +4,22 @@ from p03_crash_triage import report
 
 
 class P03CrashLogTests(unittest.TestCase):
+    def test_emulator_workflow_runs_a_single_bash_process(self):
+        from pathlib import Path
+        import subprocess
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github/workflows/p03-stability.yml").read_text("utf-8")
+        runner_script = root / "tool/run_p03_emulator.sh"
+        self.assertIn("script: bash tool/run_p03_emulator.sh ${{ matrix.api }}", workflow)
+        self.assertNotIn("script: |", workflow)
+        self.assertIn("max-parallel: 2", workflow)
+        subprocess.run(["bash", "-n", str(runner_script)], check=True)
+        source = runner_script.read_text("utf-8")
+        for expected in (":app:connectedDebugAndroidTest", "adb logcat -b crash",
+                         "adb logcat -b events", "p03_crash_triage.py",
+                         "timeout -k 15s 1200s"):
+            self.assertIn(expected, source)
+
     def test_non_app_crashes_are_not_attributed_to_qrex(self):
         raw = ("FATAL EXCEPTION: main\n"
                "Process: com.android.systemui, PID: 20\n"
