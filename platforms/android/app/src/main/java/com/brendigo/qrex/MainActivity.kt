@@ -270,16 +270,18 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
     }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(20.dp).testTag("qrex-result-screen"),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        // A top-of-result close action is reachable without scrolling the QR
-        // preview or the on-screen keyboard over the bottom action.
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+    Column(Modifier.fillMaxSize().testTag("qrex-result-screen")) {
+        // Keep the primary Close action outside the scrolling Result content.
+        // Scroll restoration and keyboard resizing must not hide navigation.
+        Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.End) {
             TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
                 Text(tr("close"))
             }
         }
+        Column(Modifier.weight(1f).fillMaxWidth()
+            .verticalScroll(rememberScrollState()).padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
         Spacer(Modifier.height(22.dp))
         Icon(Icons.Default.QrCode, contentDescription = null,
@@ -353,6 +355,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Spacer(Modifier.height(10.dp))
         TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close-bottom")) {
             Text(tr("close"))
+        }
         }
     }
     if (confirmWifiShare) {
