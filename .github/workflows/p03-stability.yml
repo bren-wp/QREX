@@ -1,0 +1,89 @@
+name: QREX P03 Android API lifecycle matrix
+
+on:
+  pull_request:
+    paths:
+      - "platforms/android/**"
+      - "tool/p03_crash_triage.py"
+      - "tool/test_p03_crash_triage.py"
+      - ".github/workflows/p03-stability.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p03-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  emulator-stress:
+    name: "P03 API ${{ matrix.api }} / ${{ matrix.memory }}MB emulator"
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { api: 26, memory: 2048 }
+          - { api: 31, memory: 3072 }
+          - { api: 34, memory: 3072 }
+          - { api: 35, memory: 3072 }
+          - { api: 36, memory: 1536 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+      - name: Build debug app and test APK
+        working-directory: platforms/android
+        run: gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Execute bounded 30-cycle Compose stress and sanitized crash triage
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          arch: x86_64
+          target: default
+          profile: pixel_6
+          disable-animations: true
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
+          script: |
+            set -Eeuo pipefail
+            mkdir -p p03-results
+            timeout -k 10s 120s adb wait-for-device
+            timeout -k 2s 10s adb logcat -c || true
+            set +e
+            timeout -k 15s 1200s gradle -p platforms/android --no-daemon --stacktrace \
+              :app:connectedDebugAndroidTest \
+              -Pandroid.testInstrumentationRunnerArguments.class=com.brendigo.qrex.QREXNavigationStressTest
+            test_status=$?
+            timeout -k 3s 20s adb logcat -b crash -d -v threadtime > /tmp/qrex-p03-crash-buffer.txt
+            log_status=$?
+            set -e
+            if [ "$log_status" -ne 0 ]; then
+              echo "Crash buffer retrieval failed; do not claim zero crashes." >&2
+              exit 1
+            fi
+            set +e
+            python3 tool/p03_crash_triage.py /tmp/qrex-p03-crash-buffer.txt \
+              p03-results/crash-summary-api-${{ matrix.api }}.md ${{ matrix.api }}
+            crash_status=$?
+            set -e
+            rm -f /tmp/qrex-p03-crash-buffer.txt
+            cat p03-results/crash-summary-api-${{ matrix.api }}.md
+            if [ "$test_status" -ne 0 ] || [ "$crash_status" -ne 0 ]; then
+              echo "P03 failed: instrumentation=${test_status} crash-triage=${crash_status}" >&2
+              exit 1
+            fi
+      - name: Upload redacted crash-only summary, never raw logcat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p03-sanitized-api-${{ matrix.api }}
+          path: p03-results/crash-summary-api-${{ matrix.api }}.md
+          if-no-files-found: warn
