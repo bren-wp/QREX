@@ -87,7 +87,7 @@ class QREXNavigationStressTest {
             rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
                 .performTextReplacement("https://example.org/qrex/p03/$cycle")
             awaitCreateAction(cycle, "30-cycle stress")
-            rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+            rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
             requireScreenTag("qrex-result-close", cycle, "await pinned Result close")
             rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
             requireScreenTag("qrex-create-screen", cycle, "await return to Create")
@@ -103,7 +103,7 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/ime")
         awaitCreateAction(0, "single-cycle pre-result")
-        rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+        rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "show Result")
         // Valid input must produce an actual QR bitmap, not merely enable a
         // navigation button. Use an independent bounded render assertion.
@@ -129,7 +129,7 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/bottom-close")
         awaitCreateAction(0, "single-cycle pre-result")
-        rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+        rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result")
         rule.onNodeWithTag("qrex-result-close-bottom")
             .performScrollTo().performClick()
@@ -143,12 +143,24 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/pinned-close")
         awaitCreateAction(0, "single-cycle pre-result")
-        rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
+        rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-close", 0, "pinned close before scrolling")
         rule.onNodeWithTag("qrex-result-close-bottom").performScrollTo()
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-screen", 0, "return after Result scroll")
+    }
+
+    @Test
+    fun createActionRemainsVisibleAfterScrollingFormToBottom() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/p03/sticky-create")
+        awaitCreateAction(0, "primary action")
+        rule.onNodeWithTag("qrex-create-save").performScrollTo()
+        rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
+        requireScreenTag("qrex-result-screen", 0, "sticky Create result transition")
     }
 
     @Test
