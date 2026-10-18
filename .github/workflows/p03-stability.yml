@@ -23,6 +23,9 @@ jobs:
     timeout-minutes: 50
     strategy:
       fail-fast: false
+      # Avoid simultaneously hammering upstream Maven repositories with
+      # five independent Android dependency resolutions.
+      max-parallel: 2
       matrix:
         include:
           - { api: 26, memory: 2048 }
@@ -41,7 +44,25 @@ jobs:
           gradle-version: "8.13"
       - name: Build debug app and test APK
         working-directory: platforms/android
-        run: gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Retry only upstream dependency-transport errors; real compile/test
+          # failures must not be hidden as flaky CI infrastructure.
+          for attempt in 1 2 3; do
+            if gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest > "$RUNNER_TEMP/p03-build.log" 2>&1; then
+              tail -n 25 "$RUNNER_TEMP/p03-build.log"
+              rm -f "$RUNNER_TEMP/p03-build.log"
+              exit 0
+            fi
+            cat "$RUNNER_TEMP/p03-build.log"
+            if [ "$attempt" -ge 3 ] || ! grep -Eq 'Received status code (403|429|5[0-9][0-9])|Read timed out|Connection reset' "$RUNNER_TEMP/p03-build.log"; then
+              rm -f "$RUNNER_TEMP/p03-build.log"
+              exit 1
+            fi
+            echo "Transient dependency repository failure; retry $attempt/3" >&2
+            sleep "$((attempt * 15))"
+          done
       - name: Execute bounded 30-cycle Compose stress and sanitized crash triage
         uses: reactivecircus/android-emulator-runner@v2
         with:
