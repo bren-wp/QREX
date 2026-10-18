@@ -33,6 +33,15 @@ class QREXCoreTest {
         assertFalse(QRHistory.matches(secret, "verySecretPass", false))
     }
 
+    @Test fun validResultNavigationDoesNotRequireAnAllocatedPreviewBitmap() {
+        // This is intentionally pure: a cold emulator's render performance
+        // must not gate navigation for a valid, bounded QR payload.
+        assertTrue(canOpenQrResult("https://brendigo.com"))
+        assertTrue(canOpenQrResult(QRContent.wifi("Office", "private")))
+        assertFalse(canOpenQrResult(""))
+        assertFalse(canOpenQrResult("x".repeat(1501)))
+    }
+
     @Test fun longQrIsRejected() {
         assertFalse(QRContent.canRender(""))
         assertFalse(QRContent.canRender("x".repeat(1501)))
