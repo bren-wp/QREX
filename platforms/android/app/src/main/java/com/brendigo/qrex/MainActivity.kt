@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import java.util.Locale
@@ -145,7 +146,8 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         Scaffold(containerColor = colors.background, bottomBar = {
             NavigationBar(containerColor = if (store.lightMode) Color.White else Color(0xFF071225)) {
                 pages.forEachIndexed { index, label ->
-                    NavigationBarItem(selected = selected == index,
+                    NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
+                        selected = selected == index,
                         onClick = { selected = index; currentCode = null },
                         icon = { Icon(icons[index], contentDescription = null) },
                         label = { Text(label, maxLines = 1, softWrap = false,
@@ -188,9 +190,14 @@ private fun AppHeader(title: String, subtitle: String) {
 }
 
 @Composable
-private fun PrimaryAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+private fun PrimaryAction(
+    text: String,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(onClick = onClick, enabled = enabled,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 51.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 51.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1677FF))) {
         Text(text, fontWeight = FontWeight.Bold)
     }
@@ -228,6 +235,9 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         value = null
         val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
         value = bitmap?.let { raw to it }
+        // The image owns a native pixel buffer: release it when result is
+        // closed, replaced, or the Activity is recreated.
+        awaitDispose { bitmap?.recycle() }
     }
     val exportBitmap = exportFrame?.takeIf { it.first == raw }?.second
     val pngExport = rememberLauncherForActivityResult(
@@ -235,14 +245,19 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     ) { uri ->
         if (uri != null) {
             // Content providers may block. Never compress or write on the UI thread.
-            val image = exportBitmap
             exportScope.launch {
                 val saved = withContext(Dispatchers.IO) {
                     runCatching {
-                        val bitmap = image ?: error("Missing QR bitmap")
-                        context.contentResolver.openOutputStream(uri)?.use { stream ->
-                            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
-                        } ?: error("Cannot open document")
+                        // Use a separate bitmap: the preview can be disposed
+                        // while Android's document picker is in the foreground.
+                        val bitmap = generateQR(raw) ?: error("Cannot render QR")
+                        try {
+                            context.contentResolver.openOutputStream(uri)?.use { stream ->
+                                check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
+                            } ?: error("Cannot open document")
+                        } finally {
+                            bitmap.recycle()
+                        }
                     }.isSuccess
                 }
                 Toast.makeText(context, if (saved) savedMessage else exportFailedMessage,
@@ -323,7 +338,9 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(10.dp))
-        TextButton(onClick = onClose) { Text(tr("close")) }
+        TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
+            Text(tr("close"))
+        }
     }
     if (confirmWifiShare) {
         AlertDialog(onDismissRequest = { confirmWifiShare = false },
@@ -406,6 +423,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         delay(140)
         val image = withContext(Dispatchers.Default) { generateQR(payload) }
         value = image?.let { payload to it }
+        // Every new payload / navigation disposes the old native pixel buffer.
+        awaitDispose { image?.recycle() }
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
 
@@ -430,7 +449,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         }
         Spacer(Modifier.height(10.dp))
         OutlinedTextField(value = content, onValueChange = { content = it.take(2000) },
-            modifier = Modifier.fillMaxWidth(), label = { Text(types[kind]) },
+            modifier = Modifier.fillMaxWidth().testTag("qrex-create-content"),
+            label = { Text(types[kind]) },
             keyboardOptions = KeyboardOptions(keyboardType =
                 if (kind == 0) KeyboardType.Uri else KeyboardType.Text))
         if (kind == 2) {
@@ -465,7 +485,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(tr("show_qr"), enabled = qr != null) { onResult(payload) }
+        PrimaryAction(tr("show_qr"), enabled = qr != null,
+            modifier = Modifier.testTag("qrex-create-show")) { onResult(payload) }
         Spacer(Modifier.height(10.dp))
         OutlinedButton(onClick = {
             if (QRContent.isWifi(payload)) confirmWifiSave = true
