@@ -180,7 +180,22 @@ class QREXStore(context: Context) {
         val old = legacyPreferences
         val oldEntries = old.getString("flutter.qrex_history_v1", null)
         if (oldEntries == null) {
-            preferences.edit().putBoolean("flutterMigrationV1", true).commit()
+            // A Flutter install can contain preferences without any saved QR.
+            // Import them in the same durable commit as the migration marker.
+            val legacySettings = runCatching {
+                old.getBoolean("flutter.qrex_light_v1", false) to
+                    old.getBoolean("flutter.qrex_record_v1", true)
+            }.getOrNull() ?: return
+            val importLight = !preferences.contains("lightMode") &&
+                old.contains("flutter.qrex_light_v1")
+            val importHistory = !preferences.contains("historyEnabled") &&
+                old.contains("flutter.qrex_record_v1")
+            val editor = preferences.edit().putBoolean("flutterMigrationV1", true)
+            if (importLight) editor.putBoolean("lightMode", legacySettings.first)
+            if (importHistory) editor.putBoolean("historyEnabled", legacySettings.second)
+            if (!editor.commit()) return
+            if (importLight) lightMode = legacySettings.first
+            if (importHistory) historyEnabled = legacySettings.second
             return
         }
         val migrated = runCatching {
