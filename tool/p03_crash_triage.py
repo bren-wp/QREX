@@ -23,36 +23,34 @@ APP_FRAME = re.compile(
 
 
 def report(raw: str, api: str = "unknown", events: str = "") -> tuple[str, int]:
+    # Fail closed: exception *messages* may contain arbitrary QR contents,
+    # including forged Java-looking classes, source paths and fake stack frames.
+    # No variable class, method, file, line, exception message, or event payload
+    # from logcat may enter a public CI artifact. Keep only aggregate counts.
     blocks = re.split(r"(?=FATAL EXCEPTION:)", raw)
-    crashes = []
-    for block in blocks:
-        if not START.search(block) or not PROCESS.search(block):
-            continue
-        classes = list(dict.fromkeys(EXCEPTION_CLASS.findall(block)))[:4]
-        frames = APP_FRAME.findall(block)[:16]
-        details = ["- Exception classes: " + (", ".join(classes) if classes else "unknown")]
-        details += [
-            f"  - {method} ({filename}:{line or '?'})"
-            for method, filename, line in frames
-        ]
-        crashes.append("\n".join(details))
+    crashes = sum(
+        1 for block in blocks
+        if START.search(block) and PROCESS.search(block)
+    )
     anr_count = sum(
         1 for line in events.splitlines()
-        if "am_anr" in line and "com.brendigo.qrex" in line
+        if re.search(r"\\bam_anr:\\s*\\[[^,\\]\\n]{1,32},[^,\\]\\n]{1,32},"
+                     r"com\\.brendigo\\.qrex(?:,|\\])", line)
     )
+    api = api if re.fullmatch(r"\\d{2}", api) else "unknown"
     summary = [
         "# QREX P03 — sanitized crash-buffer summary",
         "",
         f"- Android API under test: {api}",
         "- Source: adb logcat -b crash -v threadtime -d",
-        f"- QREX FATAL EXCEPTION blocks: {len(crashes)}",
+        f"- QREX FATAL EXCEPTION blocks: {crashes}",
         f"- QREX am_anr events: {anr_count}",
-        "- Exception messages and all raw log content intentionally omitted.",
+        "- Exception class, message, frames, file paths and raw events omitted.",
         "- Empty crash buffer does not prove absence of ANR/process death.",
         "",
     ]
-    summary.extend(crashes if crashes else ["No QREX FATAL EXCEPTION block captured."])
-    return "\n".join(summary) + "\n", len(crashes) + anr_count
+    summary.append("QREX FATAL EXCEPTION captured: inspect PRIVATE log locally."\n                   if crashes else "No QREX FATAL EXCEPTION block captured.")
+    return "\n".join(summary) + "\n", crashes + anr_count
 
 
 def main() -> int:
