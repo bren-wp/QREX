@@ -165,17 +165,24 @@ class QREXStore(context: Context) {
         if (historyReadable) migrateFlutterV1()
     }
 
-    /** One-time on-device migration of the published Flutter SharedPreferences format. */
+    /**
+     * Legacy Flutter history and native settings become visible in one durable
+     * SharedPreferences commit. The original Flutter values are left intact
+     * until that commit succeeds, so a killed process can safely retry.
+     */
     private fun migrateFlutterV1() {
-        if (preferences.getBoolean("flutterMigrationV1", false)) return
+        if (preferences.getBoolean("flutterMigrationV1", false)) {
+            // A process may have died after the native commit and before cleanup.
+            // Only the exact migrated legacy history key is eligible for cleanup.
+            legacyPreferences.edit().remove("flutter.qrex_history_v1").commit()
+            return
+        }
         val old = legacyPreferences
         val oldEntries = old.getString("flutter.qrex_history_v1", null)
         if (oldEntries == null) {
-            preferences.edit().putBoolean("flutterMigrationV1", true).apply()
+            preferences.edit().putBoolean("flutterMigrationV1", true).commit()
             return
         }
-        // Invalid or oversized legacy payloads must remain available for a
-        // future retry. Never mark migration complete after a partial parse.
         val migrated = runCatching {
             val data = JSONArray(oldEntries)
             require(data.length() <= 250) { "Legacy history exceeds supported capacity" }
@@ -201,30 +208,51 @@ class QREXStore(context: Context) {
         for (item in migrated) {
             val previous = positions[item.raw]
             if (previous != null) {
-                // A legacy favorite must not turn into a plain scan when its
-                // QR content already exists in protected history.
                 if (item.saved && !merged[previous].saved) {
                     merged[previous] = merged[previous].copy(saved = true)
                 }
             } else {
-                // Preserve every distinct existing and legacy item, or abort.
                 if (merged.size >= 250) return
                 positions[item.raw] = merged.size
                 merged.add(item)
             }
         }
-        // Do not delete the old Flutter values or silently drop Wi-Fi secrets
-        // if encryption or the durable preferences write is unavailable.
-        if (!persist(merged)) return
+        // Malformed preference types must not trigger a partial migration.
+        val legacySettings = runCatching {
+            old.getBoolean("flutter.qrex_light_v1", false) to
+                old.getBoolean("flutter.qrex_record_v1", true)
+        }.getOrNull() ?: return
+        val protected = mutableMapOf<String, String>()
+        val serialized = JSONArray()
+        for (record in merged) {
+            val wifi = QRContent.isWifi(record.raw)
+            val encoded = if (wifi) {
+                protectedWifi[record.raw] ?: protected[record.raw]
+                ?: QREXSecretCipher.encrypt(record.raw) ?: return
+            } else record.raw
+            if (wifi) protected[record.raw] = encoded
+            serialized.put(JSONObject().put("raw", encoded)
+                .put("protected", wifi).put("timestamp", record.timestamp)
+                .put("saved", record.saved))
+        }
+        // History, migration marker and imported settings share a single
+        // atomic preferences file. Existing user choices take precedence.
+        val editor = preferences.edit()
+            .putString("history", serialized.toString())
+            .putBoolean("flutterMigrationV1", true)
+        val importLight = !preferences.contains("lightMode")
+        val importHistory = !preferences.contains("historyEnabled")
+        if (importLight) editor.putBoolean("lightMode", legacySettings.first)
+        if (importHistory) editor.putBoolean("historyEnabled", legacySettings.second)
+        if (!editor.commit()) return
+        protectedWifi.clear()
+        protectedWifi.putAll(protected)
         items.clear()
         items.addAll(merged)
-        val light = old.getBoolean("flutter.qrex_light_v1", false)
-        val history = old.getBoolean("flutter.qrex_record_v1", true)
-        if (!preferences.contains("lightMode")) updateLightMode(light)
-        if (!preferences.contains("historyEnabled")) updateHistoryEnabled(history)
-        if (preferences.edit().putBoolean("flutterMigrationV1", true).commit()) {
-            old.edit().remove("flutter.qrex_history_v1").commit()
-        }
+        if (importLight) lightMode = legacySettings.first
+        if (importHistory) historyEnabled = legacySettings.second
+        // A crash here is harmless: the next launch sees the committed marker.
+        old.edit().remove("flutter.qrex_history_v1").commit()
     }
 
     fun record(raw: String) {
