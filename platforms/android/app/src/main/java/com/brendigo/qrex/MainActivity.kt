@@ -356,9 +356,12 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(10.dp))
-        TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close-bottom")) {
-            Text(tr("close"))
-        }
+        OutlinedButton(
+            onClick = onClose,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                .testTag("qrex-result-close-bottom")
+        ) { Text(tr("close")) }
+        Spacer(Modifier.height(28.dp))
         }
     }
     if (confirmWifiShare) {
@@ -452,8 +455,11 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
     // Result independently renders its image off the main thread.
     val canOpenQr = canOpenQrResult(payload)
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(20.dp).testTag("qrex-create-screen")) {
+    Column(Modifier.fillMaxSize().testTag("qrex-create-screen")) {
+        // Keep the primary Show QR action outside the scroller: a changing
+        // preview/IME/scroll offset must not move its touch target.
+        Column(Modifier.weight(1f).fillMaxWidth()
+            .verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
         val visibleKinds = if (more) listOf(0, 1, 2, 6, 3, 4, 5)
             else listOf(0, 1, 2, 6)
@@ -511,16 +517,6 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
-            modifier = Modifier.testTag("qrex-create-show")) {
-            // A still-focused IME can intercept taps after the Result screen
-            // replaces Create, especially across many repeated transitions.
-            // Explicitly leave text entry before changing destinations.
-            focusManager.clearFocus(force = true)
-            keyboardController?.hide()
-            onResult(payload)
-        }
-        Spacer(Modifier.height(10.dp))
         OutlinedButton(onClick = {
             if (QRContent.isWifi(payload)) confirmWifiSave = true
             else if (!store.save(payload)) {
@@ -528,6 +524,15 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             }
         }, enabled = qr != null,
             modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
+        Spacer(Modifier.height(16.dp))
+        }
+        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                .testTag("qrex-create-show")) {
+            focusManager.clearFocus(force = true)
+            keyboardController?.hide()
+            onResult(payload)
+        }
     }
     if (confirmWifiSave) {
         AlertDialog(onDismissRequest = { confirmWifiSave = false },
