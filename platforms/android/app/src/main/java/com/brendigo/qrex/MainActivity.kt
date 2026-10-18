@@ -78,6 +78,8 @@ private val white = Color.White
  * Preserve the approved QR preview size on ordinary phones, but never allocate
  * a fixed-width preview wider than its measured Compose content viewport.
  */
+internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
+
 internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Float =
     minOf(preferredDp, availableWidthDp.coerceAtLeast(0f))
 
@@ -448,7 +450,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
     val qr = qrFrame?.takeIf { it.first == payload }?.second
     // A valid QR must be actionable even while the preview bitmap renders.
     // Result independently renders its image off the main thread.
-    val canOpenQr = QRContent.canRender(payload)
+    val canOpenQr = canOpenQrResult(payload)
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(20.dp).testTag("qrex-create-screen")) {
