@@ -53,7 +53,7 @@ jobs:
           emulator-boot-timeout: 600
           emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
           script: |
-            set -Eeuo pipefail
+            set -eu  # android-emulator-runner invokes /bin/sh; pipefail is Bash-only
             mkdir -p p03-results
             timeout -k 10s 120s adb wait-for-device
             timeout -k 2s 10s adb logcat -c || true
