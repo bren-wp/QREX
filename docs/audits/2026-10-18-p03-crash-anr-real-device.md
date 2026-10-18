@@ -26,6 +26,13 @@ The existing `capture-screenshots.yml` runs full Android instrumentation and a g
 
 On each stress emulator the workflow captures Android's **crash and event ring buffers** after running the tests. `tool/p03_crash_triage.py` outputs only exception *class* and QREX stack method/file/line for QREX `FATAL EXCEPTION` blocks; full exception messages, Wi-Fi strings, URLs, intent extras, other processes and the raw logcat are excluded. The tool also counts QREX `am_anr` event records, without publishing raw ANR event details or stack traces. Sanitized summaries are uploaded as CI artifacts. An empty buffer does not prove the app never crashed or blocked on a physical device.
 
+## P03 repeated navigation regression evidence (2026-10-18)
+
+- [API 26 matrix run #39169410761](https://github.com/bren-wp/QREX/actions/runs/39169410761), head `67869c3c07f2550dc6615ada00102960880115cc`: instrumented **Create → Result → Close** cycle **3/30** failed: `createVisible=false, resultVisible=true, createTabSelected=true` after tapping the old close action at the bottom of a scrollable Result screen. Sanitized crash ring: **zero captured QREX FATAL EXCEPTION** and **zero captured QREX am_anr**; absence from these buffers does not prove crash/ANR freedom.
+- On that same head, [native unit/lint/R8 CI](https://github.com/bren-wp/QREX/actions/runs/39169410771), [23 locales](https://github.com/bren-wp/QREX/actions/runs/39169410773) and [API 34 screenshot/full instrumentation](https://github.com/bren-wp/QREX/actions/runs/39169410792) were green. Thus this is API/interaction dependent and a single successful emulator is insufficient.
+- Follow-up: add an immediately reachable top-of-result **Close** action that does not require scrolling the entire QR result, keep the original bottom Close button, and instrument both actions separately (30-cycle top path plus a distinct bottom-close regression). This is a **candidate** usability/navigation fix; it is **not** accepted until all P03 API matrix jobs pass on the final SHA.
+- No test reads or logs raw QR payloads or Wi-Fi credentials. Real hardware, permission/picker/SAF, OS process death and Play Console remain **NIJE POTVRĐENO**.
+
 ## Physical acceptance still required — NIJE POTVRĐENO
 
 Use owned, authorized devices with preserved user data. A minimum representative run must include a Pixel, a Samsung Galaxy and a real low-RAM phone, together spanning Android 8, 12, 14, 15 and 16. Track make/model, OS/build, memory, application package/cert fingerprint, permissions, test operator and start/end timestamps. An emulator profile or memory option does not prove Galaxy/low-RAM OEM stability.
