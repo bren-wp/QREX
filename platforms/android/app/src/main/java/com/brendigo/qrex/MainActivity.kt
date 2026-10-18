@@ -238,9 +238,9 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         value = null
         val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
         value = bitmap?.let { raw to it }
-        // The image owns a native pixel buffer: release it when result is
-        // closed, replaced, or the Activity is recreated.
-        awaitDispose { bitmap?.recycle() }
+        // Compose/RenderThread may still draw the last frame after navigation.
+        // Do not recycle preview bitmaps manually; release them via GC once
+        // the producer state and UI no longer reference the pixel buffer.
     }
     val exportBitmap = exportFrame?.takeIf { it.first == raw }?.second
     val pngExport = rememberLauncherForActivityResult(
@@ -251,8 +251,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             exportScope.launch {
                 val saved = withContext(Dispatchers.IO) {
                     runCatching {
-                        // Use a separate bitmap: the preview can be disposed
-                        // while Android's document picker is in the foreground.
+                        // Never compress the Compose-rendered preview bitmap:
+                        // it may be replaced while SAF's picker is foregrounded.
                         val bitmap = generateQR(raw) ?: error("Cannot render QR")
                         try {
                             context.contentResolver.openOutputStream(uri)?.use { stream ->
@@ -426,8 +426,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         delay(140)
         val image = withContext(Dispatchers.Default) { generateQR(payload) }
         value = image?.let { payload to it }
-        // Every new payload / navigation disposes the old native pixel buffer.
-        awaitDispose { image?.recycle() }
+        // Never recycle this UI bitmap while a queued draw may reference it.
+        // The old preview becomes GC-eligible after its composition is removed.
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
 
