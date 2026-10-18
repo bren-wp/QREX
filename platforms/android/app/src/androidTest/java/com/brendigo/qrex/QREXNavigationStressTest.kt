@@ -67,8 +67,8 @@ class QREXNavigationStressTest {
                 throw AssertionError("P03 UI cycle ${cycle + 1}/30: QR generation not ready", error)
             }
             rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
-            requireScreenTag("qrex-result-close", cycle, "await Result")
-            rule.onNodeWithTag("qrex-result-close").performScrollTo().performClick()
+            requireScreenTag("qrex-result-close", cycle, "await pinned Result close")
+            rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
             requireScreenTag("qrex-create-screen", cycle, "await return to Create")
             requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
@@ -88,7 +88,7 @@ class QREXNavigationStressTest {
         }
         rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
         requireScreenTag("qrex-result-screen", 0, "show Result")
-        rule.onNodeWithTag("qrex-result-close").performScrollTo().performClick()
+        rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
         requireScreenTag("qrex-create-screen", 0, "close Result")
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
     }
