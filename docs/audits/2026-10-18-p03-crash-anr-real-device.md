@@ -24,7 +24,7 @@
 
 The existing `capture-screenshots.yml` runs full Android instrumentation and a genuine Create-screen emulator screenshot on API 34. `native-platforms.yml` separately checks unit tests, lint, R8 release APK/AAB, final merged manifest permissions, 16-KiB libraries and release metadata. Localization workflow checks all 23 languages. Evaluate results only for the final PR head commit; queued/cancelled/failed checks are never passes.
 
-On each stress emulator the workflow captures Android's **crash ring buffer** after running the tests. `tool/p03_crash_triage.py` outputs only exception *class* and QREX stack method/file/line for QREX `FATAL EXCEPTION` blocks; full exception messages, Wi-Fi strings, URLs, intent extras, other processes and the raw logcat are excluded. Sanitized summaries are uploaded as CI artifacts. This does **not** collect ANR traces and an empty crash buffer does not prove the app never crashed.
+On each stress emulator the workflow captures Android's **crash and event ring buffers** after running the tests. `tool/p03_crash_triage.py` outputs only exception *class* and QREX stack method/file/line for QREX `FATAL EXCEPTION` blocks; full exception messages, Wi-Fi strings, URLs, intent extras, other processes and the raw logcat are excluded. The tool also counts QREX `am_anr` event records, without publishing raw ANR event details or stack traces. Sanitized summaries are uploaded as CI artifacts. An empty buffer does not prove the app never crashed or blocked on a physical device.
 
 ## Physical acceptance still required — NIJE POTVRĐENO
 
@@ -47,8 +47,9 @@ adb shell pidof com.brendigo.qrex
 adb logcat -c
 # Perform reproduction; then:
 adb logcat -b crash -v threadtime -d > qrex-crash-PRIVATE.log
-python3 tool/p03_crash_triage.py qrex-crash-PRIVATE.log qrex-crash-REDACTED.md 34
-rm -f qrex-crash-PRIVATE.log
+adb logcat -b events -v threadtime -d > qrex-events-PRIVATE.log
+python3 tool/p03_crash_triage.py qrex-crash-PRIVATE.log qrex-crash-REDACTED.md 34 qrex-events-PRIVATE.log
+rm -f qrex-crash-PRIVATE.log qrex-events-PRIVATE.log
 adb shell dumpsys meminfo com.brendigo.qrex
 adb shell dumpsys activity exit-info com.brendigo.qrex  # Android 11+
 adb bugreport qrex-device-PRIVATE.zip
