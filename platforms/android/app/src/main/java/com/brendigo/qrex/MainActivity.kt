@@ -524,7 +524,7 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             else if (!store.save(payload)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
-        }, enabled = canOpenQr,
+        }, enabled = qr != null,
             modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
     }
     if (confirmWifiSave) {
