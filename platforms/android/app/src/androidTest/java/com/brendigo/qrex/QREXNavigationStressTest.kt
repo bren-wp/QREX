@@ -50,11 +50,11 @@ class QREXNavigationStressTest {
     }
 
     /**
-     * Cold-booted software-GPU emulators can need longer to finish the
-     * asynchronous QR bitmap producer. Distinguish a generation stall from a
-     * missing screen/failed navigation without logging any QR contents.
+     * A valid QR can now navigate immediately, even while its preview bitmap
+     * is being rendered. This verifies action responsiveness independently
+     * of rendering and logs no QR contents.
      */
-    private fun awaitQrReady(cycle: Int, phase: String) {
+    private fun awaitCreateAction(cycle: Int, phase: String) {
         val startedAt = android.os.SystemClock.elapsedRealtime()
         rule.waitForIdle()
         try {
@@ -70,7 +70,7 @@ class QREXNavigationStressTest {
                 "qrex-create-screen", useUnmergedTree = true
             ).fetchSemanticsNodes().isNotEmpty()
             throw AssertionError(
-                "P03 cycle ${cycle + 1}/30: $phase QR button not enabled " +
+                "P03 cycle ${cycle + 1}/30: $phase valid QR action still disabled " +
                     "(elapsedMs=$elapsed, createVisible=$createVisible)",
                 error
             )
@@ -86,7 +86,7 @@ class QREXNavigationStressTest {
             requireScreenTag("qrex-create-content", cycle, "await Create input")
             rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
                 .performTextReplacement("https://example.org/qrex/p03/$cycle")
-            awaitQrReady(cycle, "30-cycle stress")
+            awaitCreateAction(cycle, "30-cycle stress")
             rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
             requireScreenTag("qrex-result-close", cycle, "await pinned Result close")
             rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
@@ -102,9 +102,21 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-create-screen", 0, "open Create")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/ime")
-        awaitQrReady(0, "single-cycle pre-result")
+        awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
         requireScreenTag("qrex-result-screen", 0, "show Result")
+        // Valid input must produce an actual QR bitmap, not merely enable a
+        // navigation button. Use an independent bounded render assertion.
+        try {
+            rule.waitUntil(timeoutMillis = 45_000L) {
+                rule.onAllNodesWithTag("qrex-result-qr-ready", useUnmergedTree = true)
+                    .fetchSemanticsNodes().isNotEmpty()
+            }
+        } catch (error: Throwable) {
+            throw AssertionError(
+                "P03 actual QR bitmap not rendered after opening Result", error
+            )
+        }
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
         requireScreenTag("qrex-create-screen", 0, "close Result")
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
@@ -116,7 +128,7 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-create-screen", 0, "open Create")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/bottom-close")
-        awaitQrReady(0, "single-cycle pre-result")
+        awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result")
         rule.onNodeWithTag("qrex-result-close-bottom")
@@ -130,7 +142,7 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-create-screen", 0, "open Create")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/pinned-close")
-        awaitQrReady(0, "single-cycle pre-result")
+        awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
         requireScreenTag("qrex-result-close", 0, "pinned close before scrolling")
         rule.onNodeWithTag("qrex-result-close-bottom").performScrollTo()
