@@ -28,8 +28,11 @@ class QREXNavigationStressTest {
                 rule.onAllNodesWithTag(tag, useUnmergedTree = true)
                     .fetchSemanticsNodes().isNotEmpty()
             }
-        } catch (error: AssertionError) {
-            throw AssertionError("P03 UI cycle $cycle: $phase (missing tag $tag)", error)
+        } catch (error: Throwable) {
+            // ComposeTimeoutException is not necessarily an AssertionError.
+            // Keep a phase-specific failure instead of losing the location
+            // of the first failing UI transition.
+            throw AssertionError("P03 UI cycle ${cycle + 1}/30: $phase (missing tag $tag)", error)
         }
     }
 
@@ -38,6 +41,7 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
         repeat(30) { cycle ->
+            requireScreenTag("qrex-create-screen", cycle, "await Create screen")
             requireScreenTag("qrex-create-content", cycle, "await Create input")
             rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
                 .performTextReplacement("https://example.org/qrex/p03/$cycle")
@@ -47,13 +51,14 @@ class QREXNavigationStressTest {
                         rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
                     }.isSuccess
                 }
-            } catch (error: AssertionError) {
-                throw AssertionError("P03 UI cycle $cycle: QR generation not ready", error)
+            } catch (error: Throwable) {
+                throw AssertionError("P03 UI cycle ${cycle + 1}/30: QR generation not ready", error)
             }
             rule.onNodeWithTag("qrex-create-show").performScrollTo().performClick()
             requireScreenTag("qrex-result-close", cycle, "await Result")
             rule.onNodeWithTag("qrex-result-close").performScrollTo().performClick()
-            requireScreenTag("qrex-create-content", cycle, "await return to Create")
+            requireScreenTag("qrex-create-screen", cycle, "await return to Create")
+            requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
     }
