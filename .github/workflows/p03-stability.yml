@@ -64,17 +64,21 @@ jobs:
             test_status=$?
             timeout -k 3s 20s adb logcat -b crash -d -v threadtime > /tmp/qrex-p03-crash-buffer.txt
             log_status=$?
+            timeout -k 3s 20s adb logcat -b events -d -v threadtime > /tmp/qrex-p03-events.txt
+            event_status=$?
             set -e
-            if [ "$log_status" -ne 0 ]; then
-              echo "Crash buffer retrieval failed; do not claim zero crashes." >&2
+            if [ "$log_status" -ne 0 ] || [ "$event_status" -ne 0 ]; then
+              rm -f /tmp/qrex-p03-crash-buffer.txt /tmp/qrex-p03-events.txt
+              echo "Crash/ANR buffer retrieval failed; do not claim zero crashes." >&2
               exit 1
             fi
             set +e
             python3 tool/p03_crash_triage.py /tmp/qrex-p03-crash-buffer.txt \
-              p03-results/crash-summary-api-${{ matrix.api }}.md ${{ matrix.api }}
+              p03-results/crash-summary-api-${{ matrix.api }}.md ${{ matrix.api }} \
+              /tmp/qrex-p03-events.txt
             crash_status=$?
             set -e
-            rm -f /tmp/qrex-p03-crash-buffer.txt
+            rm -f /tmp/qrex-p03-crash-buffer.txt /tmp/qrex-p03-events.txt
             cat p03-results/crash-summary-api-${{ matrix.api }}.md
             if [ "$test_status" -ne 0 ] || [ "$crash_status" -ne 0 ]; then
               echo "P03 failed: instrumentation=${test_status} crash-triage=${crash_status}" >&2
