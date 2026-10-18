@@ -19,7 +19,11 @@ concurrency:
 
 jobs:
   release:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    # v1.0.1 was already published from this exact immutable source commit.
+    # A subsequent main merge must never attempt to republish v1.0.1:
+    # the job is skipped, rather than reporting a release error after green CI.
+    # A future version needs a new version-scoped publisher with new approvals.
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_sha == '84234819cf5b10fd18892d6392838f5cf9c4b714' }}
     runs-on: ubuntu-latest
     timeout-minutes: 65
     env:
