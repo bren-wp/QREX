@@ -47,6 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -268,7 +270,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
     }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        .padding(20.dp).testTag("qrex-result-screen"),
         horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
         Spacer(Modifier.height(22.dp))
@@ -400,6 +403,8 @@ fun generateQR(raw: String): Bitmap? {
 @Composable
 private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, onResult: (String) -> Unit) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
@@ -490,7 +495,14 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(tr("show_qr"), enabled = qr != null,
-            modifier = Modifier.testTag("qrex-create-show")) { onResult(payload) }
+            modifier = Modifier.testTag("qrex-create-show")) {
+            // A still-focused IME can intercept taps after the Result screen
+            // replaces Create, especially across many repeated transitions.
+            // Explicitly leave text entry before changing destinations.
+            focusManager.clearFocus(force = true)
+            keyboardController?.hide()
+            onResult(payload)
+        }
         Spacer(Modifier.height(10.dp))
         OutlinedButton(onClick = {
             if (QRContent.isWifi(payload)) confirmWifiSave = true
