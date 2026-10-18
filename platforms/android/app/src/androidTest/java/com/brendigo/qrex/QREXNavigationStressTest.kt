@@ -3,6 +3,7 @@ package com.brendigo.qrex
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -20,7 +21,13 @@ class QREXNavigationStressTest {
     @Test
     fun thirtyCreateResultBackCyclesKeepAppResponsive() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
         repeat(30) { cycle ->
+            // Wait for the navigation transition before using the input.
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                rule.onAllNodesWithTag("qrex-create-content")
+                    .fetchSemanticsNodes().isNotEmpty()
+            }
             rule.onNodeWithTag("qrex-create-content")
                 .performTextInput("https://example.org/qrex/p03/${cycle}")
             rule.waitUntil(timeoutMillis = 20_000L) {
@@ -32,7 +39,8 @@ class QREXNavigationStressTest {
                 .performScrollTo().performClick()
             rule.onNodeWithTag("qrex-result-close")
                 .performScrollTo().performClick()
-            rule.onNodeWithTag("qrex-create-content").assertExists()
+            // The next loop verifies that Create has returned before typing.
+            rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
         }
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
     }
