@@ -13,9 +13,12 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
     def test_android_qr_images_fit_measured_compose_width(self):
         main = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         self.assertIn("internal fun responsiveQrSideDp", main)
-        self.assertGreaterEqual(main.count("BoxWithConstraints(Modifier.fillMaxWidth()"), 2)
-        self.assertIn("responsiveQrSideDp(maxWidth.value, 230f)", main)
-        self.assertIn("responsiveQrSideDp(maxWidth.value, 238f)", main)
+        # Fixed aspect-ratio, capped-width QR images fit narrow devices
+        # without SubcomposeLayout, whose repeated disposal crashed API 26.
+        self.assertNotIn("BoxWithConstraints(", main)
+        self.assertGreaterEqual(main.count("Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)"), 2)
+        self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", main)
+        self.assertIn(".widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)", main)
         self.assertNotIn("Modifier.size(230.dp).background(white)", main)
         self.assertNotIn("Modifier.size(238.dp).background(white)", main)
 
