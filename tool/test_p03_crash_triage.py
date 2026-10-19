@@ -20,6 +20,16 @@ class P03CrashLogTests(unittest.TestCase):
                          "timeout -k 15s 1200s"):
             self.assertIn(expected, source)
 
+    def test_emulator_uses_kvm_when_available_and_software_gpu_fallback(self):
+        from pathlib import Path
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github/workflows/p03-stability.yml").read_text("utf-8")
+        self.assertIn("test -r /dev/kvm && test -w /dev/kvm", workflow)
+        self.assertIn("sudo udevadm trigger --name-match=kvm", workflow)
+        self.assertIn("-gpu swiftshader_indirect", workflow)
+        self.assertIn("disable-spellchecker: true", workflow)
+        self.assertNotIn("-gpu software", workflow)
+
     def test_compose_qr_previews_are_not_force_recycled(self):
         # RenderThread may still reference a frame after composable disposal.
         from pathlib import Path
