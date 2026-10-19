@@ -45,6 +45,20 @@ jobs:
           gradle-version: "8.13"
       - name: Verify crash/ANR privacy redaction and runner syntax
         run: python3 -m unittest discover -s tool -p test_p03_crash_triage.py -v
+      - name: Enable KVM acceleration when the runner exposes /dev/kvm
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -e /dev/kvm ]; then
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' |
+              sudo tee /etc/udev/rules.d/99-kvm4all.rules >/dev/null
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+            test -r /dev/kvm && test -w /dev/kvm
+            echo 'KVM accessible: hardware-accelerated guest startup enabled'
+          else
+            echo 'No /dev/kvm on hosted runner; Android guest runs without VM acceleration'
+          fi
       - name: Build debug app and test APK
         working-directory: platforms/android
         shell: bash
@@ -74,8 +88,11 @@ jobs:
           target: default
           profile: pixel_6
           disable-animations: true
+          disable-spellchecker: true
           emulator-boot-timeout: 600
-          emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
+          # Explicit SwiftShader backend avoids intermittent GLES context
+          # restore failures on unaccelerated Android 12 emulator guests.
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
           script: bash tool/run_p03_emulator.sh ${{ matrix.api }}
       - name: Upload redacted crash-only summary, never raw logcat
         if: always()
