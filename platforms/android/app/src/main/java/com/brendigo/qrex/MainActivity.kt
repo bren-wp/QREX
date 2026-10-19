@@ -335,10 +335,13 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         val bitmap = exportBitmap
         if (bitmap != null) {
-            BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            // Regular Box avoids SubcomposeLayout churn when a Result is
+            // repeatedly mounted/unmounted. widthIn + aspectRatio naturally
+            // cap the preview at 230dp without overflowing narrow displays.
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                     modifier = Modifier.testTag("qrex-result-qr-ready")
-                        .size(responsiveQrSideDp(maxWidth.value, 230f).dp)
+                        .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
                         .background(white).padding(12.dp))
             }
             Spacer(Modifier.height(12.dp))
@@ -502,11 +505,13 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
                 val previewBitmap = qr
-                BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                // Avoid a nested subcomposition per rapidly changing QR
+                // preview. The parent Box stays stable across payload edits.
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (previewBitmap != null) {
                         Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                             modifier = Modifier.testTag("qrex-create-preview-ready")
-                                .size(responsiveQrSideDp(maxWidth.value, 238f).dp)
+                                .widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)
                                 .background(white).padding(14.dp))
                     } else {
                         Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
