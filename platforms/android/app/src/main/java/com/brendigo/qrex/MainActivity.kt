@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,6 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import java.util.Locale
@@ -74,6 +77,8 @@ private val white = Color.White
  * Preserve the approved QR preview size on ordinary phones, but never allocate
  * a fixed-width preview wider than its measured Compose content viewport.
  */
+internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
+
 internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Float =
     minOf(preferredDp, availableWidthDp.coerceAtLeast(0f))
 
@@ -129,7 +134,9 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
         Icons.Default.History, Icons.Default.MoreHoriz)
-    var selected by remember { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
+    // Only persist a non-sensitive page index across Activity recreation.
+    // Do not persist currentCode: it can include private Wi-Fi credentials.
+    var selected by rememberSaveable { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
     var currentCode by remember { mutableStateOf<String?>(null) }
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
@@ -145,7 +152,8 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         Scaffold(containerColor = colors.background, bottomBar = {
             NavigationBar(containerColor = if (store.lightMode) Color.White else Color(0xFF071225)) {
                 pages.forEachIndexed { index, label ->
-                    NavigationBarItem(selected = selected == index,
+                    NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
+                        selected = selected == index,
                         onClick = { selected = index; currentCode = null },
                         icon = { Icon(icons[index], contentDescription = null) },
                         label = { Text(label, maxLines = 1, softWrap = false,
@@ -188,9 +196,14 @@ private fun AppHeader(title: String, subtitle: String) {
 }
 
 @Composable
-private fun PrimaryAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+private fun PrimaryAction(
+    text: String,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(onClick = onClick, enabled = enabled,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 51.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 51.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1677FF))) {
         Text(text, fontWeight = FontWeight.Bold)
     }
@@ -228,6 +241,9 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         value = null
         val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
         value = bitmap?.let { raw to it }
+        // Compose/RenderThread may still draw the last frame after navigation.
+        // Do not recycle preview bitmaps manually; release them via GC once
+        // the producer state and UI no longer reference the pixel buffer.
     }
     val exportBitmap = exportFrame?.takeIf { it.first == raw }?.second
     val pngExport = rememberLauncherForActivityResult(
@@ -235,14 +251,19 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     ) { uri ->
         if (uri != null) {
             // Content providers may block. Never compress or write on the UI thread.
-            val image = exportBitmap
             exportScope.launch {
                 val saved = withContext(Dispatchers.IO) {
                     runCatching {
-                        val bitmap = image ?: error("Missing QR bitmap")
-                        context.contentResolver.openOutputStream(uri)?.use { stream ->
-                            check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
-                        } ?: error("Cannot open document")
+                        // Never compress the Compose-rendered preview bitmap:
+                        // it may be replaced while SAF's picker is foregrounded.
+                        val bitmap = generateQR(raw) ?: error("Cannot render QR")
+                        try {
+                            context.contentResolver.openOutputStream(uri)?.use { stream ->
+                                check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
+                            } ?: error("Cannot open document")
+                        } finally {
+                            bitmap.recycle()
+                        }
                     }.isSuccess
                 }
                 Toast.makeText(context, if (saved) savedMessage else exportFailedMessage,
@@ -250,8 +271,18 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
     }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(Modifier.fillMaxSize().testTag("qrex-result-screen")) {
+        // Keep the primary Close action outside the scrolling Result content.
+        // Scroll restoration and keyboard resizing must not hide navigation.
+        Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.End) {
+            TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
+                Text(tr("close"))
+            }
+        }
+        Column(Modifier.weight(1f).fillMaxWidth()
+            .verticalScroll(rememberScrollState()).padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
         Spacer(Modifier.height(22.dp))
         Icon(Icons.Default.QrCode, contentDescription = null,
@@ -304,9 +335,13 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         val bitmap = exportBitmap
         if (bitmap != null) {
-            BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            // Regular Box avoids SubcomposeLayout churn when a Result is
+            // repeatedly mounted/unmounted. widthIn + aspectRatio naturally
+            // cap the preview at 230dp without overflowing narrow displays.
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                    modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 230f).dp)
+                    modifier = Modifier.testTag("qrex-result-qr-ready")
+                        .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
                         .background(white).padding(12.dp))
             }
             Spacer(Modifier.height(12.dp))
@@ -323,7 +358,13 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(10.dp))
-        TextButton(onClick = onClose) { Text(tr("close")) }
+        OutlinedButton(
+            onClick = onClose,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                .testTag("qrex-result-close-bottom")
+        ) { Text(tr("close")) }
+        Spacer(Modifier.height(28.dp))
+        }
     }
     if (confirmWifiShare) {
         AlertDialog(onDismissRequest = { confirmWifiShare = false },
@@ -380,6 +421,7 @@ fun generateQR(raw: String): Bitmap? {
 @Composable
 private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, onResult: (String) -> Unit) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
@@ -406,10 +448,19 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         delay(140)
         val image = withContext(Dispatchers.Default) { generateQR(payload) }
         value = image?.let { payload to it }
+        // Never recycle this UI bitmap while a queued draw may reference it.
+        // The old preview becomes GC-eligible after its composition is removed.
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
+    // A valid QR must be actionable even while the preview bitmap renders.
+    // Result independently renders its image off the main thread.
+    val canOpenQr = canOpenQrResult(payload)
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
+    Column(Modifier.fillMaxSize().testTag("qrex-create-screen")) {
+        // Keep the primary Show QR action outside the scroller: a changing
+        // preview/IME/scroll offset must not move its touch target.
+        Column(Modifier.weight(1f).fillMaxWidth()
+            .verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
         val visibleKinds = if (more) listOf(0, 1, 2, 6, 3, 4, 5)
             else listOf(0, 1, 2, 6)
@@ -430,7 +481,8 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
         }
         Spacer(Modifier.height(10.dp))
         OutlinedTextField(value = content, onValueChange = { content = it.take(2000) },
-            modifier = Modifier.fillMaxWidth(), label = { Text(types[kind]) },
+            modifier = Modifier.fillMaxWidth().testTag("qrex-create-content"),
+            label = { Text(types[kind]) },
             keyboardOptions = KeyboardOptions(keyboardType =
                 if (kind == 0) KeyboardType.Uri else KeyboardType.Text))
         if (kind == 2) {
@@ -453,10 +505,13 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
                 val previewBitmap = qr
-                BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                // Avoid a nested subcomposition per rapidly changing QR
+                // preview. The parent Box stays stable across payload edits.
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (previewBitmap != null) {
                         Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                            modifier = Modifier.size(responsiveQrSideDp(maxWidth.value, 238f).dp)
+                            modifier = Modifier.testTag("qrex-create-preview-ready")
+                                .widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)
                                 .background(white).padding(14.dp))
                     } else {
                         Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -465,15 +520,27 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
             }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(tr("show_qr"), enabled = qr != null) { onResult(payload) }
-        Spacer(Modifier.height(10.dp))
         OutlinedButton(onClick = {
             if (QRContent.isWifi(payload)) confirmWifiSave = true
             else if (!store.save(payload)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
         }, enabled = qr != null,
-            modifier = Modifier.fillMaxWidth()) { Text(tr("save_qr")) }
+            modifier = Modifier.fillMaxWidth().testTag("qrex-create-save")) {
+            Text(tr("save_qr"))
+        }
+        Spacer(Modifier.height(16.dp))
+        }
+        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                .testTag("qrex-create-show")) {
+            // Clear focus, but do not programmatically issue an IME hide/back
+            // transition before opening Result. On older Android versions a
+            // delayed keyboard back callback could immediately pop Result.
+            // Unmounting the input field releases its IME focus naturally.
+            focusManager.clearFocus(force = true)
+            onResult(payload)
+        }
     }
     if (confirmWifiSave) {
         AlertDialog(onDismissRequest = { confirmWifiSave = false },

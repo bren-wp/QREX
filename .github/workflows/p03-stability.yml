@@ -1,0 +1,103 @@
+name: QREX P03 Android API lifecycle matrix
+
+on:
+  pull_request:
+    paths:
+      - "platforms/android/**"
+      - "tool/p03_crash_triage.py"
+      - "tool/test_p03_crash_triage.py"
+      - "tool/run_p03_emulator.sh"
+      - ".github/workflows/p03-stability.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p03-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  emulator-stress:
+    name: "P03 API ${{ matrix.api }} / ${{ matrix.memory }}MB emulator"
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      # Avoid simultaneously hammering upstream Maven repositories with
+      # five independent Android dependency resolutions.
+      max-parallel: 2
+      matrix:
+        include:
+          - { api: 26, memory: 2048 }
+          - { api: 31, memory: 3072 }
+          - { api: 34, memory: 3072 }
+          - { api: 35, memory: 3072 }
+          - { api: 36, memory: 1536 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+      - name: Verify crash/ANR privacy redaction and runner syntax
+        run: python3 -m unittest discover -s tool -p test_p03_crash_triage.py -v
+      - name: Enable KVM acceleration when the runner exposes /dev/kvm
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -e /dev/kvm ]; then
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' |
+              sudo tee /etc/udev/rules.d/99-kvm4all.rules >/dev/null
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+            test -r /dev/kvm && test -w /dev/kvm
+            echo 'KVM accessible: hardware-accelerated guest startup enabled'
+          else
+            echo 'No /dev/kvm on hosted runner; Android guest runs without VM acceleration'
+          fi
+      - name: Build debug app and test APK
+        working-directory: platforms/android
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Retry only upstream dependency-transport errors; real compile/test
+          # failures must not be hidden as flaky CI infrastructure.
+          for attempt in 1 2 3; do
+            if gradle --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest > "$RUNNER_TEMP/p03-build.log" 2>&1; then
+              tail -n 25 "$RUNNER_TEMP/p03-build.log"
+              rm -f "$RUNNER_TEMP/p03-build.log"
+              exit 0
+            fi
+            cat "$RUNNER_TEMP/p03-build.log"
+            if [ "$attempt" -ge 3 ] || ! grep -Eq 'Received status code (403|429|5[0-9][0-9])|Read timed out|Connection reset' "$RUNNER_TEMP/p03-build.log"; then
+              rm -f "$RUNNER_TEMP/p03-build.log"
+              exit 1
+            fi
+            echo "Transient dependency repository failure; retry $attempt/3" >&2
+            sleep "$((attempt * 15))"
+          done
+      - name: Execute bounded 30-cycle Compose stress and sanitized crash triage
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          arch: x86_64
+          target: default
+          profile: pixel_6
+          disable-animations: true
+          disable-spellchecker: true
+          emulator-boot-timeout: 600
+          # Explicit SwiftShader backend avoids intermittent GLES context
+          # restore failures on unaccelerated Android 12 emulator guests.
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
+          script: bash tool/run_p03_emulator.sh ${{ matrix.api }}
+      - name: Upload redacted crash-only summary, never raw logcat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p03-sanitized-api-${{ matrix.api }}
+          path: p03-results/crash-summary-api-${{ matrix.api }}.md
+          if-no-files-found: warn
