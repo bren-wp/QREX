@@ -78,7 +78,7 @@ No download or online translation service is needed to switch languages.
 | **QR generation** | ZXing |
 | **Private storage** | Android Keystore / AES-GCM |
 | **Android SDK** | Compile/target API 36 |
-| **Current production candidate** | Version `1.0.1` · versionCode `101` |
+| **Latest GitHub release** | Version `1.0.2` · versionCode `102` (not a Play release) |
 
 The former iOS and Flutter app source trees have been retired. The Android application **retains migration support** for users upgrading from the earlier Flutter-based Android version.
 
@@ -97,19 +97,23 @@ gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 
 GitHub Actions also exercises Android instrumentation tests, minified release build/AAB generation and a genuine Android emulator screenshot.
 
-## Download QREX 1.0.1 for Android
+## Download QREX 1.0.2 for Android
 
 [**GitHub Releases — APK, AAB and checksums →**](https://github.com/bren-wp/QREX/releases)
 
 | File | Purpose |
 | --- | --- |
-| **`QREX-Android-1.0.1.apk`** | Installable Android APK built in release mode |
-| **`QREX-Android-1.0.1.aab`** | Android App Bundle; not directly installable |
+| **`QREX-Android-1.0.2.apk`** | Installable Android APK built in release mode |
+| **`QREX-Android-1.0.2.aab`** | Android App Bundle; not directly installable |
 | **`SHA256SUMS.txt`** | Checksums for validating the downloaded packages |
 
-The v1.0.1 GitHub build does **not require your Google Play signing credentials**. Android requires APK signing for installation, so this build uses a temporary GitHub-generated certificate instead of your production Play identity. **It is not Google Play ready**, and its APK cannot update any existing QREX installation signed with another certificate. Uninstalling the previous version may delete saved QR codes. Preserve your data before switching installations.
+The v1.0.2 GitHub build does **not require your Google Play signing credentials**. Android requires APK signing for installation, so this build uses a temporary GitHub-generated certificate instead of your production Play identity. **It is not Google Play ready**, and its APK cannot update any existing QREX installation signed with another certificate. Uninstalling the previous version may delete saved QR codes. Preserve your data before switching installations.
 
-The historical [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0) files are preserved, and the new GitHub v1.0.1 APK uses a **different temporary certificate**. It cannot be installed over v1.0.0 or over a Play-signed installation. Never uninstall an older app before safely exporting or backing up its data. To upload to Google Play, use the **separate approved-key 1.0.1 AAB workflow**, not the public GitHub AAB. [Google Play guide](docs/PLAY_STORE_SUBMISSION.md).\n\nAutomated publication is permitted only after the exact Android commit has passed Kotlin tests/build, emulator capture and language validation. See the [full version 1.0.1 release notes](docs/releases/v1.0.1.md), including signing and migration limitations.
+The earlier [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0) and [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1) downloads are preserved. **Every published GitHub APK uses a separate disposable certificate**: v1.0.2 cannot be installed in place over those versions or an existing Play-signed installation. Do not uninstall a previous app before safely exporting its local records. Saved data and Android Keystore keys may be irreversibly lost on uninstall.
+
+The existing manual Google Play 1.0.1 upload workflow is **separate**; a future Play v1.0.2 must use the approved upload identity and verified available versionCode. This GitHub AAB is **not** an eligible Play update. See the [Google Play guide](docs/PLAY_STORE_SUBMISSION.md).
+
+Automated GitHub publication is permitted only after the exact Android commit passes Kotlin tests/build, emulator screenshot and language validation. [QREX 1.0.2 release notes](docs/releases/v1.0.2.md) · [Official v1.0.2 download](https://github.com/bren-wp/QREX/releases/tag/v1.0.2).
 
 [All releases](https://github.com/bren-wp/QREX/releases) · [Android QA checklist](docs/STORE_CHECKLIST.md) · [Support](https://brendigo.com)
 
