@@ -11,6 +11,8 @@ on:
       - ".github/workflows/**"
       - ".github/workflows/native-platforms.yml"
       - ".github/workflows/capture-screenshots.yml"
+      - "tool/p03_crash_triage.py"
+      - "tool/test_p03_crash_triage.py"
       - "tool/check_native_release.py"
       - "tool/test_native_release.py"
       - "tool/verify_production_gate.sh"

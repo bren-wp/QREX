@@ -271,7 +271,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
     }
-    Column(Modifier.fillMaxSize().testTag("qrex-result-screen")) {
+    // Android 16 may keep the IME visible briefly after leaving Create. Keep
+    // the scrollable Result and its bottom Close target above the keyboard;
+    // relying only on adjustResize is not sufficient in edge-to-edge windows.
+    Column(Modifier.fillMaxSize().imePadding().testTag("qrex-result-screen")) {
         // Keep the primary Close action outside the scrolling Result content.
         // Scroll restoration and keyboard resizing must not hide navigation.
         Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp),
