@@ -61,12 +61,14 @@ class QREXCoreTest {
         assertEquals(4, gallerySampleSize(6000, 6000))
     }
 
-    @Test fun responsivePreviewNeverOverflowsCompactAndroidViewport() {
-        assertEquals(238f, responsiveQrSideDp(420f, 238f), 0.01f)
-        assertEquals(238f, responsiveQrSideDp(238f, 238f), 0.01f)
-        assertEquals(176f, responsiveQrSideDp(176f, 238f), 0.01f)
-        assertEquals(0f, responsiveQrSideDp(-20f, 238f), 0.01f)
-        assertEquals(230f, responsiveQrSideDp(400f, 230f), 0.01f)
+    @Test fun historyLabelDisplaysWifiNameWithoutExposingPassword() {
+        val ssid = "Guest Network ".repeat(12)
+        val secret = "sensitive-wifi-password"
+        val record = QRContent.wifi(ssid, secret)
+        assertEquals(ssid, QRContent.label(record))
+        assertFalse(QRContent.label(record).contains(secret))
+        assertTrue(QRHistory.matches(QRRecord(record, 1L, true), "Guest", false))
+        assertFalse(QRHistory.matches(QRRecord(record, 1L, true), secret, false))
     }
 
     @Test fun wifiQrClipboardCopiesAreSensitiveButNormalQrTextIsNot() {

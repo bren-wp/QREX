@@ -73,14 +73,8 @@ private val cyan = Color(0xFF10C5FA)
 private val purple = Color(0xFF9047F8)
 private val white = Color.White
 
-/**
- * Preserve the approved QR preview size on ordinary phones, but never allocate
- * a fixed-width preview wider than its measured Compose content viewport.
- */
+/** QR navigation remains available while the preview bitmap is rendering. */
 internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
-
-internal fun responsiveQrSideDp(availableWidthDp: Float, preferredDp: Float): Float =
-    minOf(preferredDp, availableWidthDp.coerceAtLeast(0f))
 
 /**
  * Android 13+ clipboard previews can display copied text to bystanders.
@@ -147,6 +141,8 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         onSurface = midnight, onBackground = midnight
     ) else darkColorScheme(primary = cyan, secondary = purple,
         background = midnight, surface = card, onSurface = white, onBackground = white)
+    // White/light navigation surfaces need darker selected labels for contrast.
+    val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else cyan
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
         Scaffold(containerColor = colors.background, bottomBar = {
@@ -159,7 +155,8 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
                         label = { Text(label, maxLines = 1, softWrap = false,
                             overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = cyan, selectedTextColor = cyan,
+                            selectedIconColor = selectedNavigationColor,
+                            selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
                 }
@@ -286,7 +283,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
+        Text("QREX", color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Black, fontSize = 29.sp)
         Spacer(Modifier.height(22.dp))
         Icon(Icons.Default.QrCode, contentDescription = null,
             tint = cyan, modifier = Modifier.size(68.dp))
@@ -586,7 +584,18 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
         )
         Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
-            Text(tr("no_saved"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Surface(shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier.fillMaxWidth()) {
+                Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Icon(Icons.Default.History, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary)
+                    Text(tr("no_saved"),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(found, key = { it.raw }) { item ->
@@ -594,8 +603,14 @@ private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
                     Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
                         TextButton(onClick = { onOpen(item.raw) }, modifier = Modifier.weight(1f)) {
                             Column(horizontalAlignment = Alignment.Start) {
-                                Text(QRContent.label(item.raw), color = MaterialTheme.colorScheme.onSurface)
+                                // SSIDs may be arbitrarily long; constrain the row
+                                // instead of letting them crowd out Delete.
+                                Text(QRContent.label(item.raw), maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.SemiBold)
                                 Text(DateFormat.getDateTimeInstance().format(Date(item.timestamp)),
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
@@ -678,11 +693,13 @@ private fun MoreScreen(store: QREXStore) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("more"), tr("history_local"))
         Text(tr("settings"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
+            verticalAlignment = Alignment.CenterVertically) {
             Text(tr("save_history"), Modifier.weight(1f))
             Switch(checked = store.historyEnabled, onCheckedChange = store::updateHistoryEnabled)
         }
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
+            verticalAlignment = Alignment.CenterVertically) {
             Text(tr("light_theme"), Modifier.weight(1f))
             Switch(checked = store.lightMode, onCheckedChange = store::updateLightMode)
         }
@@ -694,19 +711,27 @@ private fun MoreScreen(store: QREXStore) {
             OutlinedButton(
                 onClick = { confirmPdfExport = true },
                 enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
             ) { Text("PDF") }
             OutlinedButton(
                 onClick = { confirmExport = true },
                 enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
             ) { Text("ZIP") }
         }
-        OutlinedButton(onClick = { showDelete = true }) { Text(tr("delete_all")) }
+        OutlinedButton(onClick = { showDelete = true },
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error)) {
+            Text(tr("delete_all"))
+        }
         Spacer(Modifier.height(20.dp))
         Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Box {
-            OutlinedButton(onClick = { languageMenu = true }) { Text(languageName) }
+        Box(Modifier.fillMaxWidth()) {
+            OutlinedButton(onClick = { languageMenu = true },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+                Text(languageName, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
             DropdownMenu(expanded = languageMenu, onDismissRequest = { languageMenu = false }) {
                 DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
                     store.updateLanguage("system"); languageMenu = false
@@ -727,8 +752,17 @@ private fun MoreScreen(store: QREXStore) {
         Spacer(Modifier.height(20.dp))
         Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        TextButton(onClick = { showPrivacy = true }) { Text(tr("privacy_policy")) }
-        TextButton(onClick = { showTerms = true }) { Text(tr("terms_of_use")) }
+        Row(Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TextButton(onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)) {
+                Text(tr("privacy_policy"), maxLines = 2,
+                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+            }
+            TextButton(onClick = { showTerms = true }, modifier = Modifier.weight(1f)) {
+                Text(tr("terms_of_use"), maxLines = 2,
+                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+            }
+        }
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },

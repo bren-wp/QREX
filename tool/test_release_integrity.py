@@ -67,6 +67,13 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", published)
         self.assertIn("com.brendigo.qrex 102 1.0.2", published)
         self.assertIn("gh release create v1.0.2", published)
+        # The existing tag/assets are immutable: future main commits must not
+        # start a publication job that can only fail as already-released.
+        self.assertIn(
+            "github.event.workflow_run.head_sha == "
+            "'b15a95a18820cbe8588b4d098a0719a3a5ce7b4a'",
+            published,
+        )
         self.assertIn("QREX-Android-1.0.2.apk", published)
         self.assertIn("QREX-Android-1.0.2.aab", published)
         self.assertIn("SHA256SUMS.txt", published)

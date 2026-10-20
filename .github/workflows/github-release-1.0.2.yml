@@ -19,9 +19,10 @@ concurrency:
 
 jobs:
   release:
-    # Publish once after all exact-commit main checks. The final version and
-    # tag assertions also prevent accidental publication from an old commit.
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    # v1.0.2 was published from this immutable source commit. Later main
+    # merges must skip this publisher rather than start a job destined to
+    # fail against the already published GitHub release and tag.
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_sha == 'b15a95a18820cbe8588b4d098a0719a3a5ce7b4a' }}
     runs-on: ubuntu-latest
     timeout-minutes: 65
     env:

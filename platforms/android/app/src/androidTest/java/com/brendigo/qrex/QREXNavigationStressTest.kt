@@ -104,6 +104,15 @@ class QREXNavigationStressTest {
             requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+        // The API 31 emulator once crashed inside Compose Modifier.Node
+        // detach during Activity destruction after these rapid transitions.
+        // Do not merely assert navigation semantics and let JUnit tear down:
+        // explicitly recreate the Activity after the churn, so lifecycle
+        // detachment is a tested operation rather than a silent teardown.
+        rule.waitForIdle()
+        rule.activityRule.scenario.recreate()
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+        requireScreenTag("qrex-create-screen", 29, "after stress Activity recreation")
     }
 
     @Test
