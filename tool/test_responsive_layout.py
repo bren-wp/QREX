@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class ResponsiveLayoutRegressionTests(unittest.TestCase):
     def test_android_qr_images_fit_measured_compose_width(self):
         main = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
-        self.assertIn("internal fun responsiveQrSideDp", main)
+        # Old viewport arithmetic helper was only referenced by tests.
+        # Current Compose image modifiers perform the sizing directly.
+        self.assertNotIn("responsiveQrSideDp", main)
         # Fixed aspect-ratio, capped-width QR images fit narrow devices
         # without SubcomposeLayout, whose repeated disposal crashed API 26.
         self.assertNotIn("BoxWithConstraints(", main)
