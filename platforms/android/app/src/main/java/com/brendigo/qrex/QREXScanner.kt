@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -103,6 +104,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
     val handled = remember { AtomicBoolean(false) }
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
+    var torchBusy by remember { mutableStateOf(false) }
     val options = remember {
         BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()
@@ -206,7 +208,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
         onDispose { owner.lifecycle.removeObserver(observer) }
     }
     Column(Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("QREX", color = Color(0xFF10C5FA),
+        Text("QREX", color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(12.dp))
         Text(tr("scan_qr"), style = MaterialTheme.typography.titleLarge)
@@ -280,6 +282,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     runCatching { camera?.cameraControl?.enableTorch(false) }
                     camera = null
                     torchOn = false
+                    torchBusy = false
                     analyzer?.clearAnalyzer()
                     if (cameraFuture.isDone) runCatching { cameraFuture.get().unbindAll() }
                     scanner.close()
@@ -288,7 +291,8 @@ fun ScanScreen(onRead: (String) -> Unit) {
             }
             AndroidView(factory = { preview }, modifier = Modifier
                 .fillMaxWidth().weight(1f)
-                .background(Color(0xFF101B2C), shape = RoundedCornerShape(28.dp)))
+                .clip(RoundedCornerShape(28.dp))
+                .background(Color(0xFF101B2C)))
         } else {
             Box(Modifier.fillMaxWidth().weight(1f)
                 .background(Color(0xFF101B2C), shape = RoundedCornerShape(28.dp)),
@@ -318,12 +322,35 @@ fun ScanScreen(onRead: (String) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 onClick = {
-                    val next = !torchOn
-                    if (runCatching { camera?.cameraControl?.enableTorch(next) }.isSuccess) {
-                        torchOn = next
+                    val activeCamera = camera
+                    if (activeCamera == null) {
+                        message = cameraFailed
+                    } else {
+                        val next = !torchOn
+                        val request = runCatching {
+                            activeCamera.cameraControl.enableTorch(next)
+                        }.getOrNull()
+                        if (request == null) {
+                            message = cameraFailed
+                        } else {
+                            // CameraX reports success asynchronously. Do not
+                            // claim the torch changed until the request succeeds.
+                            torchBusy = true
+                            request.addListener({
+                                if (camera === activeCamera) {
+                                    if (runCatching { request.get() }.isSuccess) {
+                                        torchOn = next
+                                    } else {
+                                        message = cameraFailed
+                                    }
+                                    torchBusy = false
+                                }
+                            }, ContextCompat.getMainExecutor(context))
+                        }
                     }
                 },
-                enabled = allowed && camera?.cameraInfo?.hasFlashUnit() == true
+                enabled = allowed && !torchBusy &&
+                    camera?.cameraInfo?.hasFlashUnit() == true
             ) {
                 Text(tr("flashlight"))
             }
