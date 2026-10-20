@@ -21,6 +21,7 @@
 | `ImageAnalysis.Analyzer.analyze`, `MainActivity.onCreate` | Framework callbacks are invoked externally, not from other Kotlin source lines. | **Retained**. |
 | Flutter history migration and AES-GCM helpers | Legacy `FlutterSharedPreferences` and encrypted `history` data must survive upgrades; `QREXSecretCipher` is used by storage paths. | **Retained** all migration, safety guard and keystore code. |
 | `github-release-1.0.1.yml`, 1.0.1 tests and old release notes | Preserve historical release evidence and independently authorized Play-upload process; prior GitHub publisher is source-SHA guarded. | **Retained**, not silently deleted as “dead”. |
+| `github-release-1.0.2.yml` source guard | Published v1.0.2 job originally checked the existing tag only *inside* the job and would fail after every future successful main native CI merge. | **Fixed:** add exact published SHA `b15a95a18820cbe8588b4d098a0719a3a5ce7b4a` to workflow job `if`; future runs become intentional SKIPPED, with a new integrity regression test. |
 | PDF/ZIP writer and APK/Play checks | Used from More-screen exports, CI and manually gated release paths. | **Retained**. No duplicated unused export pipeline established. |
 
 No other production Kotlin declaration was proven unreachable with sufficient confidence to remove safely.
@@ -32,7 +33,7 @@ No other production Kotlin declaration was proven unreachable with sufficient co
 3. **More/settings:** Align save-history/theme controls, document-export actions and language control to comfortable minimum heights. Make destructive Delete All a full-width, error-colored action; keep it available to recover after unreadable local history. Display the Privacy and Terms actions as compact, balanced bottom links.
 4. **Scanner:** Round camera preview bounds while retaining gallery access without camera permission. Treat CameraX torch enable/disable as an asynchronous future: disable repeat taps until completion, update UI only on confirmed success, show the existing localized camera-error message on failure, and reset transient torch state on camera disposal.
 5. **Documentation:** Correct README's old 1.0.1 “current” release text to the actually published GitHub 1.0.2. Preserve explicit disclosure that GitHub disposable signing cannot perform in-place upgrades of existing GitHub/Play installations.
-6. **Regressions:** Add `tool/test_ux_dead_code.py` covering relevant source contracts; retain all existing Kotlin, Python, screenshot and emulator gates.
+6. **Regressions:** Add `tool/test_ux_dead_code.py` covering relevant source contracts; add the immutable v1.0.2 workflow test to `tool/test_release_integrity.py`. Retain all existing Kotlin, Python, screenshot and emulator gates.
 
 ## Residual risks / checks before another Android release
 
