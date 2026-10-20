@@ -138,13 +138,19 @@ class QREXNavigationStressTest {
     fun bottomCloseStillReturnsToCreateAfterScrolling() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create")
+        // Retain text-field focus / IME during navigation. On Android 16
+        // this previously left the scrolled bottom Close tap obstructed.
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performClick()
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/bottom-close")
         awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result")
+        // Physically injected click must work: a semantic OnClick fallback
+        // would conceal a real touch target / keyboard occlusion regression.
         rule.onNodeWithTag("qrex-result-close-bottom")
-            .performScrollTo().performClick()
+            .performScrollTo().assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-screen", 0, "bottom Close returns to Create")
     }
 
