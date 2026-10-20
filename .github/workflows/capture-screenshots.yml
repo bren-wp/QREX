@@ -10,6 +10,8 @@ on:
       - "platforms/**"
       - ".github/workflows/**"
       - "l10n/**"
+      - "tool/p03_crash_triage.py"
+      - "tool/test_p03_crash_triage.py"
       - "tool/verify_screenshots.py"
       - "tool/check_android_screen.py"
       - "tool/capture_android_screen.sh"
