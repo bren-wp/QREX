@@ -14,7 +14,7 @@ import sys
 PROCESS = re.compile(r"\bProcess:\s*com\.brendigo\.qrex(?:,|\s|$)")
 START = re.compile(r"FATAL EXCEPTION:")
 ANR = re.compile(
-    r"\bam_anr:\s*\[[^,\]\n]{1,32},[^,\]\n]{1,32},"
+    r"\bam_anr\s*:\s*\[[^,\]\n]{1,32},[^,\]\n]{1,32},"
     r"com\.brendigo\.qrex(?:,|\])"
 )
 
