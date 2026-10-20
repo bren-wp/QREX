@@ -284,7 +284,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Column(Modifier.weight(1f).fillMaxWidth()
-            .verticalScroll(rememberScrollState()).padding(20.dp),
+            .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
         Text("QREX", color = cyan, fontWeight = FontWeight.Black, fontSize = 29.sp)
         Spacer(Modifier.height(22.dp))
@@ -360,14 +360,19 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(16.dp))
+        }
+        // This secondary Close remains reachable even if Android's IME
+        // resizes the viewport after entering Result. Keeping it outside
+        // the scrolling container prevents a stale scroll offset from
+        // hiding or clipping its real touch target on API 35/36.
         OutlinedButton(
             onClick = onClose,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .heightIn(min = 52.dp)
                 .testTag("qrex-result-close-bottom")
         ) { Text(tr("close")) }
-        Spacer(Modifier.height(28.dp))
-        }
     }
     if (confirmWifiShare) {
         AlertDialog(onDismissRequest = { confirmWifiShare = false },
