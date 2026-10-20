@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression gates for separate GitHub and authorized Google Play 1.0.1 paths.
+"""Regression gates for separate GitHub 1.0.2 and authorized Google Play 1.0.1 paths.
 
 No public GitHub release signed with a disposable key is a Play upload artifact.
 """
@@ -56,6 +56,22 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("QREX-Android-1.0.1.aab", public)
         self.assertIn("SHA256SUMS.txt", public)
 
+    def test_new_github_1_0_2_release_is_separate_and_signature_labeled(self):
+        published = (WORKFLOWS / "github-release-1.0.2.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.2.md").read_text("utf-8")
+        self.assertIn("workflow_run:", published)
+        self.assertIn("types: [completed]", published)
+        self.assertIn("branches: [main]", published)
+        self.assertIn("github.event.workflow_run.head_sha", published)
+        self.assertIn("keytool -genkeypair", published)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", published)
+        self.assertIn("com.brendigo.qrex 102 1.0.2", published)
+        self.assertIn("gh release create v1.0.2", published)
+        self.assertIn("QREX-Android-1.0.2.apk", published)
+        self.assertIn("QREX-Android-1.0.2.aab", published)
+        self.assertIn("SHA256SUMS.txt", published)
+        self.assertIn("cannot be installed in place", notes)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
@@ -72,12 +88,13 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 101", gradle)
-        self.assertIn('versionName = "1.0.1"', gradle)
+        self.assertIn("versionCode = 102", gradle)
+        self.assertIn('versionName = "1.0.2"', gradle)
         self.assertIn("1.0.1", readme)
         self.assertIn("1.0.1", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.1.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.2.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
