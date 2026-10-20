@@ -8,6 +8,8 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performSemanticsAction
@@ -147,10 +149,13 @@ class QREXNavigationStressTest {
         awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result")
-        // Physically injected click must work: a semantic OnClick fallback
-        // would conceal a real touch target / keyboard occlusion regression.
+        // Scroll real Result content, then tap its permanently visible
+        // bottom Close target with physical injection. An OnClick semantics
+        // fallback could mask a keyboard-occluded touch target.
+        rule.onNodeWithTag("qrex-result-scroll")
+            .performTouchInput { swipeUp() }
         rule.onNodeWithTag("qrex-result-close-bottom")
-            .performScrollTo().assertIsDisplayed().performClick()
+            .assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-screen", 0, "bottom Close returns to Create")
     }
 
@@ -163,7 +168,7 @@ class QREXNavigationStressTest {
         awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-close", 0, "pinned close before scrolling")
-        rule.onNodeWithTag("qrex-result-close-bottom").performScrollTo()
+        rule.onNodeWithTag("qrex-result-scroll").performTouchInput { swipeUp() }
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-screen", 0, "return after Result scroll")
