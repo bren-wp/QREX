@@ -88,6 +88,22 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertNotIn("systemui", text)
 
 
+    def test_threadtime_padded_anr_tag_is_counted_and_sanitized(self):
+        # adb logcat -b events -v threadtime pads the short event tag before ':'.
+        events = (
+            "10-20 21:33:00.123  1000  1001 I am_anr : [0,123,com.brendigo.qrex, WIFI:P:secret-one;;]\\n"
+            "10-20 21:33:01.123  1000  1001 I am_anr   : [0,124,com.brendigo.qrex, secret-two]\\n"
+            "10-20 21:33:02.123  1000  1001 I am_anr: [0,125,com.brendigo.qrex, secret-three]\\n"
+            "10-20 21:33:03.123  1000  1001 I am_anr : [0,126,com.android.systemui, other]\\n"
+            "10-20 21:33:04.123  1000  1001 I am_anr : [0,127,com.brendigo.qrex.evil, other]\\n"
+        )
+        summary, count = report("", "31", events)
+        self.assertEqual(3, count)
+        self.assertIn("QREX am_anr events: 3", summary)
+        for secret in ("secret-one", "secret-two", "secret-three", "WIFI:", "systemui", "qrex.evil"):
+            self.assertNotIn(secret, summary)
+
+
 
 if __name__ == "__main__":
     unittest.main()
