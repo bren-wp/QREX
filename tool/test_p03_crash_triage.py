@@ -30,6 +30,14 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertIn("disable-spellchecker: true", workflow)
         self.assertNotIn("-gpu software", workflow)
 
+    def test_p03_changes_run_full_android_release_quality_workflows(self):
+        from pathlib import Path
+        workflows = Path(__file__).resolve().parents[1] / ".github/workflows"
+        for name in ("native-platforms.yml", "capture-screenshots.yml"):
+            source = (workflows / name).read_text("utf-8")
+            for path in ("tool/p03_crash_triage.py", "tool/test_p03_crash_triage.py"):
+                self.assertIn('      - "' + path + '"', source)
+
     def test_compose_qr_previews_are_not_force_recycled(self):
         # RenderThread may still reference a frame after composable disposal.
         from pathlib import Path
