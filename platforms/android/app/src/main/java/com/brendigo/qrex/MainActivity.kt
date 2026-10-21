@@ -894,7 +894,7 @@ private fun MoreScreen(store: QREXStore) {
             QrexSettingsTile(
                 label = tr("about"), icon = Icons.Default.Info,
                 onClick = { openLink(context, Uri.parse("https://brendigo.com")) },
-                subtitle = "QREX", modifier = Modifier.weight(1f)
+                subtitle = tr("developed_by"), modifier = Modifier.weight(1f)
             )
             QrexSettingsTile(
                 label = tr("delete_all"), icon = Icons.Default.DeleteForever,
