@@ -29,6 +29,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -258,10 +261,34 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     analysisExecutor.shutdown()
                 }
             }
-            AndroidView(factory = { preview }, modifier = Modifier
-                .fillMaxWidth().weight(1f)
+            Box(Modifier.fillMaxWidth().weight(1f)
                 .clip(RoundedCornerShape(28.dp))
-                .background(Color(0xFF101B2C)))
+                .background(Color(0xFF101B2C))) {
+                AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
+                // Draw four scan-corner brackets over the *real* camera feed,
+                // matching the supplied design without raster mockups or an
+                // extra decoding pass. Canvas does not consume camera taps.
+                Canvas(Modifier.fillMaxSize()) {
+                    val edge = size.minDimension * 0.60f
+                    val x = (size.width - edge) / 2f
+                    val y = (size.height - edge) / 2f
+                    val arm = edge * 0.19f
+                    val endX = x + edge
+                    val endY = y + edge
+                    val tint = Color(0xFF77C8FF)
+                    val thick = 5.dp.toPx()
+                    fun segment(a: Offset, b: Offset) =
+                        drawLine(tint, a, b, strokeWidth = thick, cap = StrokeCap.Round)
+                    segment(Offset(x, y + arm), Offset(x, y))
+                    segment(Offset(x, y), Offset(x + arm, y))
+                    segment(Offset(endX - arm, y), Offset(endX, y))
+                    segment(Offset(endX, y), Offset(endX, y + arm))
+                    segment(Offset(x, endY - arm), Offset(x, endY))
+                    segment(Offset(x, endY), Offset(x + arm, endY))
+                    segment(Offset(endX - arm, endY), Offset(endX, endY))
+                    segment(Offset(endX, endY - arm), Offset(endX, endY))
+                }
+            }
         } else {
             Box(Modifier.fillMaxWidth().weight(1f)
                 .background(Color(0xFF101B2C), shape = RoundedCornerShape(28.dp)),
