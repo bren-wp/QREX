@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.core.view.WindowCompat
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -203,6 +204,17 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
         error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
+    // Match Android system-bar icon contrast to the *actual selected theme*.
+    // Dark first, while existing explicit light preferences remain respected.
+    val hostActivity = context as? ComponentActivity
+    SideEffect {
+        hostActivity?.let { activity ->
+            WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
+                isAppearanceLightStatusBars = store.lightMode
+                isAppearanceLightNavigationBars = store.lightMode
+            }
+        }
+    }
     // White/light navigation surfaces need darker selected labels for contrast.
     val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright
     MaterialTheme(colorScheme = colors) {
