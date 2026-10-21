@@ -297,6 +297,22 @@ class QREXStore(context: Context) {
         return true
     }
 
+    /**
+     * Toggle a saved code without changing its timestamp or reordering history.
+     * Preserve encrypted Wi-Fi records and refuse all writes when old history
+     * cannot be authenticated/decrypted.
+     */
+    fun setSaved(item: QRRecord, saved: Boolean): Boolean {
+        if (items.none { it.raw == item.raw }) return false
+        val next = items.map {
+            if (it.raw == item.raw) it.copy(saved = saved) else it
+        }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
+    }
+
     fun remove(item: QRRecord): Boolean {
         val next = items.filterNot { it == item }
         if (!persist(next)) return false
