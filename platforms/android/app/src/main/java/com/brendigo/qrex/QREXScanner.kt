@@ -111,9 +111,10 @@ fun ScanScreen(onRead: (String) -> Unit) {
                         val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
                         if (size > 20_000_000L) return@runCatching null
                         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                        resolver.openInputStream(uri)?.use {
-                            BitmapFactory.decodeStream(it, null, bounds)
-                        } ?: return@runCatching null
+                        val boundsStream = resolver.openInputStream(uri) ?: return@runCatching null
+                        boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
+                        // inJustDecodeBounds returns a null Bitmap by design:
+                        // validate populated dimensions rather than its return value.
                         val width = bounds.outWidth.toLong()
                         val height = bounds.outHeight.toLong()
                         if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
