@@ -534,7 +534,13 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 FilterChip(
                     selected = kind == index,
                     onClick = { kind = index; content = ""; password = "" },
-                    label = { Text(types[index]) }
+                    label = { Text(types[index], fontWeight = FontWeight.SemiBold) },
+                    shape = RoundedCornerShape(11.dp),
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedContainerColor = QrexDesign.accent,
+                        selectedLabelColor = Color.White)
                 )
             }
         }
@@ -544,6 +550,7 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         Spacer(Modifier.height(10.dp))
         OutlinedTextField(value = content, onValueChange = { content = it.take(2000) },
             modifier = Modifier.fillMaxWidth().testTag("qrex-create-content"),
+            shape = RoundedCornerShape(14.dp),
             label = { Text(types[kind]) },
             keyboardOptions = KeyboardOptions(keyboardType =
                 if (kind == 0) KeyboardType.Uri else KeyboardType.Text))
@@ -561,8 +568,7 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.height(18.dp))
-        Surface(shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.fillMaxWidth()) {
+        QrexPanel(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
@@ -588,13 +594,14 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
         }, enabled = qr != null,
-            modifier = Modifier.fillMaxWidth().testTag("qrex-create-save")) {
+            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                .testTag("qrex-create-save")) {
             Text(tr("save_qr"))
         }
         Spacer(Modifier.height(16.dp))
         }
         PrimaryAction(tr("show_qr"), enabled = canOpenQr,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .testTag("qrex-create-show")) {
             // Clear focus, but do not programmatically issue an IME hide/back
             // transition before opening Result. On older Android versions a
