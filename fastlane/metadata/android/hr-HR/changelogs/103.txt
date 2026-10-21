@@ -1,0 +1,1 @@
+Poboljšane su povratne informacije svjetiljke kamere, preglednost povijesti, pristupačnost postavki, kontrast svijetle i tamne teme te regresijski testovi životnog ciklusa aplikacije.

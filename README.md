@@ -97,6 +97,12 @@ gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 
 GitHub Actions also exercises Android instrumentation tests, minified release build/AAB generation and a genuine Android emulator screenshot.
 
+## F-Droid distribution (preparation)
+
+QREX is **not yet available** in the official F-Droid repository. The F-Droid preparation branch replaces ML Kit with a ZXing/CameraX QR decoder for camera and gallery scanning. **Compile, F-Droid scanner, license, device and release-signing checks are still required** before official F-Droid submission. A Brendigo F-Droid-compatible repository is also being prepared; **there is no live subscription link yet**.
+
+[Official F-Droid eligibility and independent repo plan](docs/FDROID_DISTRIBUTION.md) · [Brendigo repository starter](distribution/brendigo-fdroid/README.md)
+
 ## Download QREX 1.0.3 for Android
 
 [**GitHub Releases — APK, AAB and SHA-256 checksums →**](https://github.com/bren-wp/QREX/releases)

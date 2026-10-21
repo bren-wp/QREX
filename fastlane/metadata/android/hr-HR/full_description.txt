@@ -1,0 +1,15 @@
+QREX je Android aplikacija za skeniranje i stvaranje QR kodova koju razvija Brendigo.
+
+• Skenirajte QR kod kamerom ili odaberite sliku iz galerije.
+• Stvarajte QR kodove za tekst, poveznice, Wi-Fi, kontakte, e-poštu, telefonske brojeve i lokacije.
+• Pregledajte odredište poveznice prije otvaranja.
+• Spremajte povijest i favorite lokalno, uz mogućnost brisanja.
+• Izvezite QR sliku u PNG ili spremljene kodove u PDF i ZIP.
+• Birajte svijetli ili tamni izgled i jedan od 23 jezika sučelja.
+
+Za korištenje nisu potrebni račun, oglasi ni internetska dozvola. Kamera traži dopuštenje samo kada želite skenirati kamerom.
+
+Spremljeni Wi-Fi podaci štite se putem Android Keystorea gdje je primjenjivo. Izvezene PDF i ZIP datoteke nisu šifrirane.
+
+Izvorni kod: https://github.com/bren-wp/QREX
+Licenca: MIT

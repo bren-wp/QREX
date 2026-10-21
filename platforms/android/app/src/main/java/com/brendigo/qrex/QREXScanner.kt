@@ -17,7 +17,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -37,10 +36,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.Dispatchers
@@ -105,90 +100,67 @@ fun ScanScreen(onRead: (String) -> Unit) {
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
-    val options = remember {
-        BarcodeScannerOptions.Builder()
-            .setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()
-    }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             scope.launch {
-                // Gallery providers can be slow and can return decompression bombs.
-                // Check dimensions before decoding, off the Compose UI thread.
-                val image = withContext(Dispatchers.IO) {
+                // Bound gallery inputs before allocation. Camera permission is not
+                // required by the system photo picker.
+                val bitmap = withContext(Dispatchers.IO) {
                     runCatching {
                         val resolver = context.contentResolver
                         val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
                         if (size > 20_000_000L) return@runCatching null
                         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                        val stream = resolver.openInputStream(uri) ?: return@runCatching null
-                        stream.use { BitmapFactory.decodeStream(it, null, bounds) }
+                        val boundsStream = resolver.openInputStream(uri) ?: return@runCatching null
+                        boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
+                        // inJustDecodeBounds returns a null Bitmap by design:
+                        // validate populated dimensions rather than its return value.
                         val width = bounds.outWidth.toLong()
                         val height = bounds.outHeight.toLong()
                         if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
                             return@runCatching null
                         }
-                        // fromFilePath decodes the entire original image (up to
-                        // 24 million pixels). Decode a sampled bitmap instead to
-                        // avoid 96 MB+ transient allocations on smaller devices.
-                        val options = BitmapFactory.Options().apply {
+                        val sampled = BitmapFactory.Options().apply {
                             inSampleSize = gallerySampleSize(bounds.outWidth, bounds.outHeight)
                         }
-                        val bitmap = resolver.openInputStream(uri)?.use {
-                            BitmapFactory.decodeStream(it, null, options)
+                        val decoded = resolver.openInputStream(uri)?.use {
+                            BitmapFactory.decodeStream(it, null, sampled)
                         } ?: return@runCatching null
                         val orientation = runCatching {
                             resolver.openInputStream(uri)?.use {
                                 ExifInterface(it).getAttributeInt(
-                                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+                                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                                )
                             } ?: ExifInterface.ORIENTATION_NORMAL
                         }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
-                        val upright = try {
-                            orientGalleryBitmap(bitmap, orientation)
-                        } catch (failure: Throwable) {
-                            bitmap.recycle()
-                            throw failure
-                        }
-                        // ML Kit holds the pixel buffer during asynchronous
-                        // processing. Recycle only when its Task is complete.
                         try {
-                            InputImage.fromBitmap(upright, 0) to upright
-                        } catch (failure: Throwable) {
-                            upright.recycle()
+                            orientGalleryBitmap(decoded, orientation)
+                        } catch (failure: Exception) {
+                            decoded.recycle()
                             throw failure
                         }
                     }.getOrNull()
                 }
                 if (!scope.coroutineContext.isActive) {
-                    image?.second?.recycle()
+                    bitmap?.recycle()
                     return@launch
                 }
-                if (image == null) {
+                if (bitmap == null) {
                     message = imageFailed
                 } else {
-                    val (input, bitmap) = image
-                    val client = runCatching { BarcodeScanning.getClient(options) }.getOrElse {
-                        bitmap.recycle()
-                        message = imageFailed
-                        return@launch
-                    }
-                    runCatching {
-                        client.process(input).addOnSuccessListener { codes ->
-                            if (!scope.coroutineContext.isActive) return@addOnSuccessListener
-                            val raw = codes.firstOrNull { it.format == Barcode.FORMAT_QR_CODE }?.rawValue
-                            if (!raw.isNullOrEmpty()) {
-                                if (handled.compareAndSet(false, true)) onRead(raw)
-                            } else message = qrNotFound
-                        }.addOnFailureListener {
-                            if (scope.coroutineContext.isActive) message = imageFailed
-                        }.addOnCompleteListener {
+                    // Heavy QR detection runs off main; recycle even on decode errors.
+                    val result = withContext(Dispatchers.Default) {
+                        try {
+                            runCatching { QREXQrDecoder.decodeBitmap(bitmap) }
+                        } finally {
                             bitmap.recycle()
-                            client.close()
                         }
-                    }.onFailure {
-                        bitmap.recycle()
-                        client.close()
-                        if (scope.coroutineContext.isActive) message = imageFailed
                     }
+                    if (!scope.coroutineContext.isActive) return@launch
+                    val raw = result.getOrNull()
+                    if (result.isFailure) message = imageFailed
+                    else if (raw.isNullOrEmpty()) message = qrNotFound
+                    else if (handled.compareAndSet(false, true)) onRead(raw)
                 }
             }
         }
@@ -218,7 +190,6 @@ fun ScanScreen(onRead: (String) -> Unit) {
             DisposableEffect(owner, allowed) {
                 val cameraFuture = ProcessCameraProvider.getInstance(context)
                 val disposed = AtomicBoolean(false)
-                val scanner = BarcodeScanning.getClient(options)
                 val analysisExecutor = Executors.newSingleThreadExecutor()
                 var analyzer: ImageAnalysis? = null
                 cameraFuture.addListener({
@@ -233,40 +204,26 @@ fun ScanScreen(onRead: (String) -> Unit) {
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
                         newAnalyzer.setAnalyzer(analysisExecutor, object : ImageAnalysis.Analyzer {
-                            @ExperimentalGetImage
                             override fun analyze(frame: ImageProxy) {
-                                val media = frame.image
-                            if (disposed.get() || media == null || handled.get()) {
-                                frame.close()
-                            } else {
-                                runCatching {
-                                    val input = InputImage.fromMediaImage(
-                                        media, frame.imageInfo.rotationDegrees
-                                    )
-                                    scanner.process(input).addOnSuccessListener(
-                                        ContextCompat.getMainExecutor(context)
-                                    ) { codes ->
-                                        if (!disposed.get()) {
-                                            val value = codes.firstOrNull {
-                                                it.format == Barcode.FORMAT_QR_CODE
-                                            }?.rawValue
-                                            if (!value.isNullOrEmpty() &&
-                                                handled.compareAndSet(false, true)) onRead(value)
-                                        }
-                                    }.addOnFailureListener(
-                                        ContextCompat.getMainExecutor(context)
-                                    ) {
-                                        if (!disposed.get()) message = cameraFailed
-                                    }.addOnCompleteListener { frame.close() }
-                                }.onFailure {
-                                    frame.close()
-                                    if (!disposed.get()) {
-                                        ContextCompat.getMainExecutor(context).execute {
-                                            if (!disposed.get()) message = cameraFailed
+                                try {
+                                    if (!disposed.get() && !handled.get()) {
+                                        val decoded = QREXQrDecoder.decodeFrame(frame)
+                                        if (!decoded.isNullOrEmpty() &&
+                                            handled.compareAndSet(false, true)) {
+                                            ContextCompat.getMainExecutor(context).execute {
+                                                if (!disposed.get()) onRead(decoded)
+                                            }
                                         }
                                     }
+                                } catch (_: Exception) {
+                                    ContextCompat.getMainExecutor(context).execute {
+                                        if (!disposed.get()) message = cameraFailed
+                                    }
+                                } finally {
+                                    // CameraX requires closure of every frame; never
+                                    // retain ImageProxy after this background callback.
+                                    frame.close()
                                 }
-                            }
                             }
                         })
                         provider.unbindAll()
@@ -285,7 +242,6 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     torchBusy = false
                     analyzer?.clearAnalyzer()
                     if (cameraFuture.isDone) runCatching { cameraFuture.get().unbindAll() }
-                    scanner.close()
                     analysisExecutor.shutdown()
                 }
             }
