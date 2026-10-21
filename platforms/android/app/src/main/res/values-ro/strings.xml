@@ -58,6 +58,8 @@
     <string name="settings">Setări</string>
     <string name="save_history">Salvează istoricul</string>
     <string name="light_theme">Temă luminoasă</string>
+    <string name="theme">Temă</string>
+    <string name="dark_theme">Temă întunecată</string>
     <string name="delete_all">Șterge toate datele</string>
     <string name="privacy">Confidențialitate</string>
     <string name="privacy_summary">Codurile QR sunt procesate pe dispozitiv. Fără cont, reclame sau analiză. Istoricul este opțional. Parolele Wi-Fi nu sunt salvate automat; salvarea manuală a unui cod Wi-Fi salvează și parola. Acțiunile externe pot trimite date către alte aplicații. Poți șterge datele locale din Setări. Contact: brendigo.com.</string>
