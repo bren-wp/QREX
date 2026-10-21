@@ -112,6 +112,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("gh release create v1.0.4", published)
         self.assertIn("gh run download", published)
         self.assertIn("tool/verify_screenshots.py", published)
+        self.assertIn("android-splash.png", published)
         self.assertIn("android-scan.png", published)
         self.assertIn("android-history.png", published)
         self.assertIn("android-more.png", published)
