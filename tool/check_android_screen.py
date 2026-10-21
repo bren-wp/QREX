@@ -32,6 +32,7 @@ def validate(xml_content: str, screen: str = "create") -> None:
     # Require screen-specific actual app text and control markers. These
     # are screenshots of production Compose UI with *debug-only* neutral data.
     expected = {
+        "splash": ("qrex", "scan. create. share."),
         "create": ("create qr code", "https://brendigo.com", "wi-fi"),
         "wifi": ("create qr code", "qrex-demo", "wi-fi"),
         "result": ("scan complete", "https://brendigo.com", "close"),
