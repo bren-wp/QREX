@@ -1,0 +1,1 @@
+QREX 1.0.5: Tamnoplava tema sada je zadana, uz obnovljene zaslone Skeniranje, Izrada, Rezultat, Povijest, Favoriti i Više. Ispravljena je regresija provjere tema te proširene provjere stabilnosti. Offline skeniranje i lokalna privatna povijest ostaju očuvani.
