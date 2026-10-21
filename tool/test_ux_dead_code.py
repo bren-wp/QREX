@@ -30,6 +30,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("selectedTextColor = selectedNavigationColor", self.main)
         self.assertIn("color = MaterialTheme.colorScheme.primary", self.scanner)
 
+    def test_primary_actions_have_explicit_readable_light_text(self):
+        self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
+
     def test_history_truncates_long_labels_without_removing_delete(self):
         self.assertIn("Text(QRContent.label(item.raw), maxLines = 2", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
