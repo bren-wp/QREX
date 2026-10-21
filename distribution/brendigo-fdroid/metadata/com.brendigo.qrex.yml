@@ -1,0 +1,18 @@
+Categories:
+  - Multimedia
+License: MIT
+AuthorName: Brendigo
+WebSite: https://brendigo.com
+SourceCode: https://github.com/bren-wp/QREX
+IssueTracker: https://github.com/bren-wp/QREX/issues
+Name: QREX
+Summary: Scan and create QR codes offline
+Description: |-
+  QREX scans and creates QR codes on Android, including camera and gallery scans.
+  Create codes for links, text, Wi-Fi and contacts; keep local history and export
+  images or saved codes. No account or advertising is required.
+
+  Note: The current Play/GitHub build includes Google's non-free ML Kit barcode
+  scanning dependency. This third-party repository is NOT the official F-Droid
+  main repository. Users of Play or older GitHub APKs may have a different APK
+  signing certificate and cannot upgrade in place.
