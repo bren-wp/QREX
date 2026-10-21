@@ -45,6 +45,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.QrCode
@@ -246,6 +247,37 @@ private fun AppHeader(title: String, subtitle: String) {
 }
 
 @Composable
+private fun QREXActionRow(
+    icon: ImageVector,
+    label: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    Surface(onClick = onClick, enabled = enabled,
+        shape = RoundedCornerShape(15.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(1.dp,
+            MaterialTheme.colorScheme.outline),
+        modifier = modifier.fillMaxWidth().heightIn(min = 53.dp)) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(13.dp))
+            Text(label, fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f), maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
+            Icon(Icons.Default.ChevronRight, contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp))
+        }
+    }
+}
+
+@Composable
 private fun QREXTile(
     icon: ImageVector,
     title: String,
@@ -418,23 +450,14 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             PrimaryAction(tr("open_link")) { openLink(context, url) }
             Spacer(Modifier.height(10.dp))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedButton(onClick = {
-                copyQrToClipboard(context, raw)
-                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
-            }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("copy"), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            OutlinedButton(onClick = {
-                if (wifi) confirmWifiShare = true
-                else shareQrText(context, raw, shareTitle, sharingFailed)
-            }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("share"), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
+        QREXActionRow(Icons.Default.ContentCopy, tr("copy")) {
+            copyQrToClipboard(context, raw)
+            Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+        }
+        Spacer(Modifier.height(8.dp))
+        QREXActionRow(Icons.Default.Share, tr("share")) {
+            if (wifi) confirmWifiShare = true
+            else shareQrText(context, raw, shareTitle, sharingFailed)
         }
         Spacer(Modifier.height(12.dp))
         val bitmap = exportBitmap
@@ -455,7 +478,9 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             ) { Text(tr("export_png")) }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
+        QREXActionRow(Icons.Default.FavoriteBorder,
+            if (alreadySaved) tr("saved") else tr("save_qr"),
+            enabled = !alreadySaved) {
             if (wifi) confirmWifiSave = true
             else if (!store.save(raw)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
