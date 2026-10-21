@@ -36,7 +36,7 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "wifi": ("create qr code", "qrex-demo", "wi-fi"),
         "result": ("scan complete", "https://brendigo.com", "close"),
         "history": ("history", "brendigo.com", "saved"),
-        "saved": ("history", "brendigo.com", "saved"),
+        "saved": ("saved", "brendigo.com"),
         "more": ("settings", "pdf", "language"),
         "scan": ("scan qr code", "from gallery", "point your camera"),
     }
