@@ -1,7 +1,7 @@
 # PROPOSAL ONLY — not valid for submission until v1.0.4 source tag exists
 # and F-Droid scanner/lint/build pass on the exact version.
 Categories:
-  - Multimedia
+  - Connectivity
 License: MIT
 AuthorName: Brendigo
 WebSite: https://brendigo.com
