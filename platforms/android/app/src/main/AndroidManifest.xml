@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- The bundled on-device ML Kit/CameraX dependency graph must not grant
-         QREX network access. These merge directives remove SDK-added entries. -->
+    <!-- No app networking is required: even transitive AndroidX dependencies
+         must not add INTERNET or ACCESS_NETWORK_STATE to the final manifest. -->
     <uses-permission android:name="android.permission.INTERNET"
         tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"
