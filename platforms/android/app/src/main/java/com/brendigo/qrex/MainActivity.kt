@@ -364,30 +364,45 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("QREX", color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Black, fontSize = 29.sp)
-        Spacer(Modifier.height(22.dp))
-        Icon(Icons.Default.QrCode, contentDescription = null,
-            tint = cyan, modifier = Modifier.size(68.dp))
-        Spacer(Modifier.height(14.dp))
-        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold,
-            fontSize = 23.sp)
-        Spacer(Modifier.height(18.dp))
-        Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface) {
-            Column(Modifier.fillMaxWidth().padding(18.dp)) {
+        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.ExtraBold, fontSize = 24.sp,
+            modifier = Modifier.fillMaxWidth())
+        Spacer(Modifier.height(16.dp))
+        Surface(shape = RoundedCornerShape(22.dp),
+            color = MaterialTheme.colorScheme.surface,
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+            modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth().padding(22.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Surface(shape = RoundedCornerShape(18.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer) {
+                    Icon(Icons.Default.QrCode, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(16.dp).size(34.dp))
+                }
+                Spacer(Modifier.height(16.dp))
                 if (wifi) {
                     Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
-                        fontWeight = FontWeight.Bold)
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Spacer(Modifier.height(8.dp))
                     Text(if (showPassword)
-                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}" else "${tr("password")}: ••••••••",
-                        softWrap = true)
+                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}"
+                    else "${tr("password")}: ••••••••",
+                        softWrap = true, textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
                     TextButton(onClick = { showPassword = !showPassword }) {
                         Text(if (showPassword) tr("hide") else tr("show"))
                     }
                 } else {
-                    Text(raw, color = MaterialTheme.colorScheme.onSurface)
-                    if (url != null) Text(tr("check_url"),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                    Text(raw, color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+                    if (url != null) {
+                        Spacer(Modifier.height(8.dp))
+                        Text(tr("check_url"),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp, textAlign = TextAlign.Center)
+                    }
                 }
             }
         }
