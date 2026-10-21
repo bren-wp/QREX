@@ -151,7 +151,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val pages = listOf("scan", "create", "history", "saved", "more")
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.QrCode, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
