@@ -98,11 +98,12 @@ internal fun QrexSettingsTile(
     onClick: () -> Unit,
     subtitle: String? = null,
     destructive: Boolean = false,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val foreground = if (destructive) MaterialTheme.colorScheme.error
         else MaterialTheme.colorScheme.primary
-    QrexPanel(modifier = modifier.clickable(onClick = onClick)) {
+    QrexPanel(modifier = modifier.clickable(enabled = enabled, onClick = onClick)) {
         Column(Modifier.fillMaxWidth().heightIn(min = 102.dp).padding(13.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(shape = RoundedCornerShape(12.dp),
@@ -113,7 +114,8 @@ internal fun QrexSettingsTile(
                 }
             }
             Text(label, fontWeight = FontWeight.SemiBold,
-                color = if (destructive) foreground else MaterialTheme.colorScheme.onSurface,
+                color = if (!enabled) MaterialTheme.colorScheme.onSurfaceVariant
+                    else if (destructive) foreground else MaterialTheme.colorScheme.onSurface,
                 maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 13.sp)
             if (subtitle != null) {
                 Text(subtitle, fontSize = 11.sp,
