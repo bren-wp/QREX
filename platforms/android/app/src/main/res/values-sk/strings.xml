@@ -3,6 +3,7 @@
     <string name="scan">Skenovať</string>
     <string name="create">Vytvoriť</string>
     <string name="history">História</string>
+    <string name="favorites">Obľúbené</string>
     <string name="more">Viac</string>
     <string name="scan_qr">Skenovať QR kód</string>
     <string name="point_camera">Namierte fotoaparát na QR kód</string>
