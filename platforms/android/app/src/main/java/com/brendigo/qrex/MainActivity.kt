@@ -28,6 +28,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Brightness4
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
@@ -67,10 +82,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import java.text.DateFormat
 import java.util.Date
 
-private val midnight = Color(0xFF030C1B)
-private val card = Color(0xFF101B2C)
-private val cyan = Color(0xFF10C5FA)
-private val purple = Color(0xFF9047F8)
+private val midnight = QrexDesign.background
+private val card = QrexDesign.surface
+private val cyan = QrexDesign.cyan
+private val purple = QrexDesign.purple
 private val white = Color.White
 
 /** QR navigation remains available while the preview bitmap is rendering. */
@@ -129,17 +144,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val context = LocalContext.current
-    val pages = listOf("scan", "create", "history", "more")
+    val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
-            "history", "saved" -> 2
-            "more" -> 3
+            "history" -> 2
+            "saved" -> 3
+            "more" -> 4
             else -> 0
         })
     }
@@ -165,14 +181,18 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
         primary = Color(0xFF1677FF), secondary = purple,
         background = Color(0xFFF3F6FF), surface = Color.White,
         onSurface = midnight, onBackground = midnight
-    ) else darkColorScheme(primary = cyan, secondary = purple,
-        background = midnight, surface = card, onSurface = white, onBackground = white)
+    ) else darkColorScheme(primary = QrexDesign.accentBright, secondary = purple,
+        background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
+        onSurface = white, onBackground = white,
+        onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
+        error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
     // White/light navigation surfaces need darker selected labels for contrast.
     val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else cyan
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
         Scaffold(containerColor = colors.background, bottomBar = {
-            NavigationBar(containerColor = if (store.lightMode) Color.White else Color(0xFF071225)) {
+            NavigationBar(containerColor = if (store.lightMode) Color.White else QrexDesign.backgroundDeep,
+                tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == index,
@@ -184,11 +204,15 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                             selectedIconColor = selectedNavigationColor,
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)))
                 }
             }
         }) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding)) {
+            Box(Modifier.fillMaxSize().background(
+                if (store.lightMode) androidx.compose.ui.graphics.Brush.verticalGradient(
+                    listOf(colors.background, colors.background)) else QrexDesign.heroBrush
+            ).padding(padding)) {
                 if (currentCode != null) {
                     ResultScreen(currentCode!!, store, onClose = { currentCode = null })
                 } else {
@@ -199,8 +223,10 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                         })
                         1 -> CreateScreen(store, screenshotMode = screenshotMode, onResult = { currentCode = it })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
+                            screenshotItems = screenshotItems)
+                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
-                            initiallySavedOnly = screenshotMode == "saved")
+                            initiallySavedOnly = true, favoritesPage = true)
                         else -> MoreScreen(store)
                     }
                 }
@@ -212,12 +238,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
 
 @Composable
 private fun AppHeader(title: String, subtitle: String) {
-    Column(Modifier.fillMaxWidth().padding(bottom = 18.dp)) {
-        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp,
-            color = MaterialTheme.colorScheme.onBackground)
-        Spacer(Modifier.height(6.dp))
-        Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
+    QrexBrandHeader(title, subtitle, Modifier.padding(bottom = 16.dp))
 }
 
 @Composable
