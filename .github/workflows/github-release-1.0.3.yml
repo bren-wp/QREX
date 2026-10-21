@@ -22,7 +22,7 @@ jobs:
     # A future merge triggers this publisher only after main native CI
     # succeeds. Existing-release/tag checks guarantee one-time publication.
     # Lock this condition to the exact published commit after v1.0.3 ships.
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_sha == '8c9946efd3be2d7d1f635347bc0adf13263e7350' }}
     runs-on: ubuntu-latest
     timeout-minutes: 65
     env:
