@@ -24,6 +24,7 @@ These are **real Android emulator captures of the running QREX app**, generated 
 
 <table>
 <tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
@@ -38,7 +39,7 @@ These are **real Android emulator captures of the running QREX app**, generated 
 </tr>
 </table>
 
-[**Explore all seven full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.5)
+[**Explore all eight full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.5)
 
 </div>
 
@@ -69,7 +70,7 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-Latest GitHub distribution: **v1.0.5** (Android `com.brendigo.qrex`, code 105). **Dark navy is the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), seven real Android screenshots and checksums.
+Latest GitHub distribution: **v1.0.5** (Android `com.brendigo.qrex`, code 105). **Dark navy is the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), eight real Android screenshots and checksums.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
