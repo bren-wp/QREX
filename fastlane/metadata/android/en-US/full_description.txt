@@ -1,0 +1,15 @@
+QREX is a QR scanner and creator for Android designed by Brendigo.
+
+• Scan QR codes with the camera or choose an image from the gallery.
+• Create QR codes for text, links, Wi-Fi, contacts, email, phone numbers and locations.
+• Review scanned links before choosing to open them.
+• Keep local history and favorites, with controls to delete saved items.
+• Export QR images as PNG and saved QR content as PDF or ZIP.
+• Choose light or dark appearance, with offline interface translations in 23 languages.
+
+QREX does not require an account, advertisements or an internet permission. QR creation and scanning operate on your device. Camera permission is requested for live scanning only.
+
+Saved Wi-Fi QR data is protected with Android Keystore where applicable. PDF and ZIP exports are not encrypted: treat exported personal data as sensitive.
+
+Source: https://github.com/bren-wp/QREX
+License: MIT
