@@ -566,7 +566,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         // Keep the primary Show QR action outside the scroller: a changing
         // preview/IME/scroll offset must not move its touch target.
         Column(Modifier.weight(1f).fillMaxWidth()
-            .verticalScroll(rememberScrollState()).padding(20.dp)) {
+            .verticalScroll(rememberScrollState()).testTag("qrex-create-scroll")
+            .padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
         // All supported QR types remain directly accessible by swiping tabs.
         val visibleKinds = listOf(0, 1, 2, 6, 3, 4, 5)
