@@ -58,6 +58,8 @@
     <string name="settings">Beállítások</string>
     <string name="save_history">Előzmények mentése</string>
     <string name="light_theme">Világos téma</string>
+    <string name="theme">Téma</string>
+    <string name="dark_theme">Sötét téma</string>
     <string name="delete_all">Összes adat törlése</string>
     <string name="privacy">Adatvédelem</string>
     <string name="privacy_summary">A QR-kódok feldolgozása az eszközön történik. Nincs fiók, reklám vagy analitika. Az előzmények opcionálisak. A Wi-Fi jelszavakat a rendszer nem menti automatikusan; a Wi-Fi kód kézi mentése a jelszót is menti. Külső műveletek más alkalmazásoknak adhatnak át adatokat. A helyi adatokat a Beállításokban törölheted. Kapcsolat: brendigo.com.</string>
