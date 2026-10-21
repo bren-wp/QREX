@@ -3,6 +3,7 @@
     <string name="scan">Skann</string>
     <string name="create">Opprett</string>
     <string name="history">Historikk</string>
+    <string name="favorites">Favoritter</string>
     <string name="more">Mer</string>
     <string name="scan_qr">Skann QR-kode</string>
     <string name="point_camera">Rett kameraet mot en QR-kode</string>
@@ -57,6 +58,8 @@
     <string name="settings">Innstillinger</string>
     <string name="save_history">Lagre skannehistorikk</string>
     <string name="light_theme">Lyst tema</string>
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Mørkt tema</string>
     <string name="delete_all">Slett alle data</string>
     <string name="privacy">Personvern</string>
     <string name="privacy_summary">QR-koder behandles på enheten. Ingen konto, annonser eller analyse. Historikk er valgfritt. Wi-Fi-passord lagres aldri automatisk; hvis du lagrer en Wi-Fi-kode manuelt, lagres også passordet. Eksterne handlinger kan dele data med andre apper. Du kan slette alle lokale data i Innstillinger. Kontakt: brendigo.com.</string>

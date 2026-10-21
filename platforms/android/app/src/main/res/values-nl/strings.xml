@@ -3,6 +3,7 @@
     <string name="scan">Scannen</string>
     <string name="create">Maken</string>
     <string name="history">Geschiedenis</string>
+    <string name="favorites">Favorieten</string>
     <string name="more">Meer</string>
     <string name="scan_qr">QR-code scannen</string>
     <string name="point_camera">Richt de camera op een QR-code</string>
@@ -57,6 +58,8 @@
     <string name="settings">Instellingen</string>
     <string name="save_history">Scangeschiedenis opslaan</string>
     <string name="light_theme">Licht thema</string>
+    <string name="theme">Thema</string>
+    <string name="dark_theme">Donker thema</string>
     <string name="delete_all">Alle gegevens verwijderen</string>
     <string name="privacy">Privacy</string>
     <string name="privacy_summary">QR-codes worden op dit apparaat verwerkt. Geen account, advertenties of analyses. Geschiedenis is optioneel. Wifiwachtwoorden worden niet automatisch bewaard; handmatig opslaan van een wifi-code bewaart ook het wachtwoord. Externe acties kunnen gegevens delen met andere apps. Alle lokale gegevens kunnen in Instellingen worden gewist. Contact: brendigo.com.</string>

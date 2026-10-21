@@ -28,6 +28,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Brightness4
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
@@ -67,10 +82,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import java.text.DateFormat
 import java.util.Date
 
-private val midnight = Color(0xFF030C1B)
-private val card = Color(0xFF101B2C)
-private val cyan = Color(0xFF10C5FA)
-private val purple = Color(0xFF9047F8)
+private val midnight = QrexDesign.background
+private val card = QrexDesign.surface
+private val cyan = QrexDesign.cyan
+private val purple = QrexDesign.purple
 private val white = Color.White
 
 /** QR navigation remains available while the preview bitmap is rendering. */
@@ -129,17 +144,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val context = LocalContext.current
-    val pages = listOf("scan", "create", "history", "more")
+    val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
-            "history", "saved" -> 2
-            "more" -> 3
+            "history" -> 2
+            "saved" -> 3
+            "more" -> 4
             else -> 0
         })
     }
@@ -165,14 +181,18 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
         primary = Color(0xFF1677FF), secondary = purple,
         background = Color(0xFFF3F6FF), surface = Color.White,
         onSurface = midnight, onBackground = midnight
-    ) else darkColorScheme(primary = cyan, secondary = purple,
-        background = midnight, surface = card, onSurface = white, onBackground = white)
+    ) else darkColorScheme(primary = QrexDesign.accentBright, secondary = purple,
+        background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
+        onSurface = white, onBackground = white,
+        onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
+        error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
     // White/light navigation surfaces need darker selected labels for contrast.
     val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else cyan
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
         Scaffold(containerColor = colors.background, bottomBar = {
-            NavigationBar(containerColor = if (store.lightMode) Color.White else Color(0xFF071225)) {
+            NavigationBar(containerColor = if (store.lightMode) Color.White else QrexDesign.backgroundDeep,
+                tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == index,
@@ -184,11 +204,15 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                             selectedIconColor = selectedNavigationColor,
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)))
                 }
             }
         }) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding)) {
+            Box(Modifier.fillMaxSize().background(
+                if (store.lightMode) androidx.compose.ui.graphics.Brush.verticalGradient(
+                    listOf(colors.background, colors.background)) else QrexDesign.heroBrush
+            ).padding(padding)) {
                 if (currentCode != null) {
                     ResultScreen(currentCode!!, store, onClose = { currentCode = null })
                 } else {
@@ -199,8 +223,10 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                         })
                         1 -> CreateScreen(store, screenshotMode = screenshotMode, onResult = { currentCode = it })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
+                            screenshotItems = screenshotItems)
+                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
-                            initiallySavedOnly = screenshotMode == "saved")
+                            initiallySavedOnly = true, favoritesPage = true)
                         else -> MoreScreen(store)
                     }
                 }
@@ -212,11 +238,12 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
 
 @Composable
 private fun AppHeader(title: String, subtitle: String) {
-    Column(Modifier.fillMaxWidth().padding(bottom = 18.dp)) {
-        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp,
+    Column(Modifier.fillMaxWidth().padding(bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 24.sp,
             color = MaterialTheme.colorScheme.onBackground)
-        Spacer(Modifier.height(6.dp))
-        Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(subtitle, fontSize = 12.sp, maxLines = 3,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -252,6 +279,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
+    var confirmResultDelete by remember(raw) { mutableStateOf(false) }
+    var showQrPreview by remember(raw) { mutableStateOf(false) }
     val wifi = QRContent.isWifi(raw)
     val alreadySaved = store.items.any { it.raw == raw && it.saved }
     val copied = tr("copied")
@@ -263,8 +292,12 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val exportScope = rememberCoroutineScope()
     // Associate each bitmap with its exact payload: stale frames must never
     // be exported after a user switches to a different QR result.
-    val exportFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = raw) {
+    val exportFrame by produceState<Pair<String, Bitmap>?>(
+        initialValue = null, key1 = raw, key2 = showQrPreview
+    ) {
         value = null
+        // Do not generate a large QR bitmap until the user asks to see it.
+        if (!showQrPreview) return@produceState
         val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
         value = bitmap?.let { raw to it }
         // Compose/RenderThread may still draw the last frame after navigation.
@@ -312,16 +345,17 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("QREX", color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Black, fontSize = 29.sp)
-        Spacer(Modifier.height(22.dp))
-        Icon(Icons.Default.QrCode, contentDescription = null,
-            tint = cyan, modifier = Modifier.size(68.dp))
+        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Spacer(Modifier.height(16.dp))
+        Surface(shape = RoundedCornerShape(16.dp), color = QrexDesign.accent) {
+            Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
+                Icon(Icons.Default.Link, contentDescription = null,
+                    tint = Color.White, modifier = Modifier.size(38.dp))
+            }
+        }
         Spacer(Modifier.height(14.dp))
-        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold,
-            fontSize = 23.sp)
-        Spacer(Modifier.height(18.dp))
-        Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface) {
+        QrexPanel(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.fillMaxWidth().padding(18.dp)) {
                 if (wifi) {
                     Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
@@ -333,7 +367,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                         Text(if (showPassword) tr("hide") else tr("show"))
                     }
                 } else {
-                    Text(raw, color = MaterialTheme.colorScheme.onSurface)
+                    Text(raw, color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth())
                     if (url != null) Text(tr("check_url"),
                         color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
@@ -363,28 +400,52 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        val bitmap = exportBitmap
-        if (bitmap != null) {
-            // Regular Box avoids SubcomposeLayout churn when a Result is
-            // repeatedly mounted/unmounted. widthIn + aspectRatio naturally
-            // cap the preview at 230dp without overflowing narrow displays.
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                    modifier = Modifier.testTag("qrex-result-qr-ready")
-                        .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
-                        .background(white).padding(12.dp))
-            }
+        OutlinedButton(
+            onClick = { showQrPreview = !showQrPreview },
+            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                .testTag("qrex-result-toggle-qr")
+        ) {
+            Icon(Icons.Default.QrCode, contentDescription = null,
+                modifier = Modifier.size(19.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(tr("show_qr"))
+        }
+        if (showQrPreview) {
             Spacer(Modifier.height(12.dp))
-            OutlinedButton(
-                onClick = { pngExport.launch("QREX-QR.png") },
-                modifier = Modifier.fillMaxWidth()
-            ) { Text(tr("export_png")) }
+            val bitmap = exportBitmap
+            if (bitmap != null) {
+                // No nested SubcomposeLayout: repeated Create/Result teardown
+                // remains safe under the existing P03 stress test.
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
+                        modifier = Modifier.testTag("qrex-result-qr-ready")
+                            .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
+                            .background(white).padding(12.dp))
+                }
+                Spacer(Modifier.height(10.dp))
+                OutlinedButton(
+                    onClick = { pngExport.launch("QREX-QR.png") },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                ) { Text(tr("export_png")) }
+            }
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
             if (wifi) confirmWifiSave = true
             else if (!store.save(raw)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            }
+        }
+        if (alreadySaved) {
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = { confirmResultDelete = true },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error)) {
+                Icon(Icons.Default.Delete, contentDescription = null,
+                    modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(tr("delete"))
             }
         }
         Spacer(Modifier.height(16.dp))
@@ -400,6 +461,23 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 .heightIn(min = 52.dp)
                 .testTag("qrex-result-close-bottom")
         ) { Text(tr("close")) }
+    }
+    if (confirmResultDelete) {
+        AlertDialog(onDismissRequest = { confirmResultDelete = false },
+            title = { Text(tr("delete")) },
+            text = { Text(tr("confirm_delete")) },
+            confirmButton = { TextButton(onClick = {
+                val item = store.items.firstOrNull { it.raw == raw }
+                if (item != null && !store.remove(item)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                } else {
+                    onClose()
+                }
+                confirmResultDelete = false
+            }) { Text(tr("delete")) } },
+            dismissButton = { TextButton(onClick = { confirmResultDelete = false }) {
+                Text(tr("cancel"))
+            } })
     }
     if (confirmWifiShare) {
         AlertDialog(onDismissRequest = { confirmWifiShare = false },
@@ -470,7 +548,6 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
     }
     var password by remember { mutableStateOf("") }
     var reveal by remember { mutableStateOf(false) }
-    var more by remember { mutableStateOf(false) }
     val input = content.trim()
     val payload = when (kind) {
         0 -> if (QRContent.safeUrl(input) != null) input else ""
@@ -503,8 +580,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
-        val visibleKinds = if (more) listOf(0, 1, 2, 6, 3, 4, 5)
-            else listOf(0, 1, 2, 6)
+        // All supported QR types remain directly accessible by swiping tabs.
+        val visibleKinds = listOf(0, 1, 2, 6, 3, 4, 5)
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -513,16 +590,20 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 FilterChip(
                     selected = kind == index,
                     onClick = { kind = index; content = ""; password = "" },
-                    label = { Text(types[index]) }
+                    label = { Text(types[index], fontWeight = FontWeight.SemiBold) },
+                    shape = RoundedCornerShape(11.dp),
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedContainerColor = QrexDesign.accent,
+                        selectedLabelColor = Color.White)
                 )
             }
-        }
-        TextButton(onClick = { more = !more; if (!more && kind !in listOf(0, 1, 2, 6)) kind = 0 }) {
-            Text(if (more) tr("fewer_options") else tr("more_options"))
         }
         Spacer(Modifier.height(10.dp))
         OutlinedTextField(value = content, onValueChange = { content = it.take(2000) },
             modifier = Modifier.fillMaxWidth().testTag("qrex-create-content"),
+            shape = RoundedCornerShape(14.dp),
             label = { Text(types[kind]) },
             keyboardOptions = KeyboardOptions(keyboardType =
                 if (kind == 0) KeyboardType.Uri else KeyboardType.Text))
@@ -540,11 +621,10 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.height(18.dp))
-        Surface(shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.fillMaxWidth()) {
+        QrexPanel(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(10.dp))
                 val previewBitmap = qr
                 // Avoid a nested subcomposition per rapidly changing QR
                 // preview. The parent Box stays stable across payload edits.
@@ -552,7 +632,7 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                     if (previewBitmap != null) {
                         Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                             modifier = Modifier.testTag("qrex-create-preview-ready")
-                                .widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)
+                                .widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)
                                 .background(white).padding(14.dp))
                     } else {
                         Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -567,13 +647,14 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
         }, enabled = qr != null,
-            modifier = Modifier.fillMaxWidth().testTag("qrex-create-save")) {
+            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                .testTag("qrex-create-save")) {
             Text(tr("save_qr"))
         }
         Spacer(Modifier.height(16.dp))
         }
         PrimaryAction(tr("show_qr"), enabled = canOpenQr,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .testTag("qrex-create-show")) {
             // Clear focus, but do not programmatically issue an IME hide/back
             // transition before opening Result. On older Android versions a
@@ -602,7 +683,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
 @Composable
 private fun HistoryScreen(
     store: QREXStore, onOpen: (String) -> Unit,
-    screenshotItems: List<QRRecord>? = null, initiallySavedOnly: Boolean = false
+    screenshotItems: List<QRRecord>? = null, initiallySavedOnly: Boolean = false,
+    favoritesPage: Boolean = false
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
@@ -610,19 +692,24 @@ private fun HistoryScreen(
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
-        QRHistory.matches(it, search, savedOnly)
+        QRHistory.matches(it, search, savedOnly || favoritesPage)
     }
-    Column(Modifier.fillMaxSize().padding(20.dp)) {
-        AppHeader(tr("history"), tr("history_local"))
+    Column(Modifier.fillMaxSize().padding(20.dp)
+        .testTag(if (favoritesPage) "qrex-favorites-screen" else "qrex-history-screen")) {
+        AppHeader(if (favoritesPage) tr("favorites") else tr("history"),
+            if (favoritesPage) tr("saved") else tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
-            label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
-        Spacer(Modifier.height(8.dp))
-        FilterChip(
-            selected = savedOnly,
-            onClick = { savedOnly = !savedOnly },
-            label = { Text(tr("saved")) }
-        )
-        Spacer(Modifier.height(8.dp))
+            label = { Text(tr("search_qr")) },
+            leadingIcon = { Icon(Icons.Default.History, contentDescription = null) },
+            singleLine = true,
+            shape = RoundedCornerShape(14.dp), modifier = Modifier.fillMaxWidth())
+        if (!favoritesPage) {
+            Spacer(Modifier.height(6.dp))
+            FilterChip(selected = savedOnly,
+                onClick = { savedOnly = !savedOnly },
+                label = { Text(tr("saved")) })
+        }
+        Spacer(Modifier.height(10.dp))
         if (found.isEmpty()) {
             Surface(shape = RoundedCornerShape(16.dp),
                 color = MaterialTheme.colorScheme.surface,
@@ -639,8 +726,24 @@ private fun HistoryScreen(
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(found, key = { it.raw }) { item ->
-                Surface(shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surface) {
+                QrexPanel(Modifier.fillMaxWidth()) {
                     Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                        val icon = when {
+                            QRContent.isWifi(item.raw) -> Icons.Default.Wifi
+                            item.raw.startsWith("mailto:", ignoreCase = true) -> Icons.Default.Email
+                            item.raw.startsWith("tel:", ignoreCase = true) -> Icons.Default.Phone
+                            item.raw.startsWith("geo:", ignoreCase = true) -> Icons.Default.LocationOn
+                            QRContent.safeUrl(item.raw) != null -> Icons.Default.Link
+                            else -> Icons.Default.QrCode
+                        }
+                        val tint = when {
+                            QRContent.isWifi(item.raw) -> QrexDesign.cyan
+                            item.raw.startsWith("mailto:", ignoreCase = true) -> QrexDesign.accentBright
+                            item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.danger
+                            else -> MaterialTheme.colorScheme.primary
+                        }
+                        QrexHistoryGlyph(icon, tint)
+                        Spacer(Modifier.width(6.dp))
                         TextButton(onClick = { onOpen(item.raw) }, modifier = Modifier.weight(1f)) {
                             Column(horizontalAlignment = Alignment.Start) {
                                 // SSIDs may be arbitrarily long; constrain the row
@@ -727,82 +830,108 @@ private fun MoreScreen(store: QREXStore) {
         }
     }
     var languageMenu by remember { mutableStateOf(false) }
+    var exportMenu by remember { mutableStateOf(false) }
     val selectedLanguage = store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
-        AppHeader(tr("more"), tr("history_local"))
-        Text(tr("settings"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(tr("save_history"), Modifier.weight(1f))
-            Switch(checked = store.historyEnabled, onCheckedChange = store::updateHistoryEnabled)
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        .padding(horizontal = 16.dp, vertical = 18.dp)
+        .testTag("qrex-more-screen")) {
+        AppHeader(tr("more"), tr("settings"))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("theme"), icon = Icons.Default.Brightness4,
+                onClick = { store.updateLightMode(!store.lightMode) },
+                subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
+                modifier = Modifier.weight(1f)
+            )
+            Box(Modifier.weight(1f)) {
+                QrexSettingsTile(
+                    label = tr("language"), icon = Icons.Default.Translate,
+                    onClick = { languageMenu = true }, subtitle = languageName,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                DropdownMenu(expanded = languageMenu, onDismissRequest = {
+                    languageMenu = false
+                }) {
+                    DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
+                        store.updateLanguage("system"); languageMenu = false
+                    })
+                    QREXStrings.languages.forEach { localeCode ->
+                        DropdownMenuItem(text = {
+                            Text(Locale.forLanguageTag(localeCode).getDisplayName(
+                                Locale.forLanguageTag(localeCode)))
+                        }, onClick = {
+                            store.updateLanguage(localeCode); languageMenu = false
+                        })
+                    }
+                }
+            }
         }
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(tr("light_theme"), Modifier.weight(1f))
-            Switch(checked = store.lightMode, onCheckedChange = store::updateLightMode)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("export_archive"), icon = Icons.Default.Archive,
+                onClick = { exportMenu = true },
+                enabled = store.items.any { it.saved },
+                subtitle = "PDF · ZIP", modifier = Modifier.weight(1f)
+            )
+            QrexSettingsTile(
+                label = tr("privacy_policy"), icon = Icons.Default.Shield,
+                onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("terms_of_use"), icon = Icons.Default.Description,
+                onClick = { showTerms = true }, modifier = Modifier.weight(1f)
+            )
+            QrexSettingsTile(
+                label = tr("about"), icon = Icons.Default.Info,
+                onClick = { openLink(context, Uri.parse("https://brendigo.com")) },
+                subtitle = tr("developed_by"), modifier = Modifier.weight(1f)
+            )
         }
         Spacer(Modifier.height(12.dp))
-        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(
-                onClick = { confirmPdfExport = true },
-                enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-            ) { Text("PDF") }
-            OutlinedButton(
-                onClick = { confirmExport = true },
-                enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-            ) { Text("ZIP") }
-        }
         OutlinedButton(onClick = { showDelete = true },
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.error)) {
+            Icon(Icons.Default.DeleteForever, contentDescription = null,
+                modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(8.dp))
             Text(tr("delete_all"))
         }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Box(Modifier.fillMaxWidth()) {
-            OutlinedButton(onClick = { languageMenu = true },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
-                Text(languageName, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Spacer(Modifier.height(12.dp))
+        QrexPanel(Modifier.fillMaxWidth()) {
+            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 14.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(tr("save_history"), Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurface)
+                Switch(checked = store.historyEnabled,
+                    onCheckedChange = store::updateHistoryEnabled)
             }
-            DropdownMenu(expanded = languageMenu, onDismissRequest = { languageMenu = false }) {
-                DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
-                    store.updateLanguage("system"); languageMenu = false
-                })
-                QREXStrings.languages.forEach { localeCode ->
-                    DropdownMenuItem(text = {
-                        Text(Locale.forLanguageTag(localeCode).getDisplayName(Locale.forLanguageTag(localeCode)))
-                    }, onClick = { store.updateLanguage(localeCode); languageMenu = false })
+        }
+        Spacer(Modifier.height(20.dp))
+    }
+    if (exportMenu) {
+        AlertDialog(onDismissRequest = { exportMenu = false },
+            title = { Text(tr("export_archive")) },
+            text = { Text(tr("export_archive_warning")) },
+            confirmButton = {
+                Row {
+                    TextButton(onClick = { exportMenu = false; confirmPdfExport = true }) {
+                        Text("PDF")
+                    }
+                    TextButton(onClick = { exportMenu = false; confirmExport = true }) {
+                        Text("ZIP")
+                    }
                 }
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-        Text(tr("about"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text("QREX", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        TextButton(onClick = {
-            openLink(context, Uri.parse("https://brendigo.com"))
-        }) { Text(tr("developed_by")) }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextButton(onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)) {
-                Text(tr("privacy_policy"), maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-            }
-            TextButton(onClick = { showTerms = true }, modifier = Modifier.weight(1f)) {
-                Text(tr("terms_of_use"), maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-            }
-        }
+            },
+            dismissButton = { TextButton(onClick = { exportMenu = false }) {
+                Text(tr("cancel"))
+            } })
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },

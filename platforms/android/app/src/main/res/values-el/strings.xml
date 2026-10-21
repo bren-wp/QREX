@@ -3,6 +3,7 @@
     <string name="scan">Σάρωση</string>
     <string name="create">Δημιουργία</string>
     <string name="history">Ιστορικό</string>
+    <string name="favorites">Αγαπημένα</string>
     <string name="more">Περισσότερα</string>
     <string name="scan_qr">Σάρωση κωδικού QR</string>
     <string name="point_camera">Στρέψτε την κάμερα προς έναν κωδικό QR</string>
@@ -57,6 +58,8 @@
     <string name="settings">Ρυθμίσεις</string>
     <string name="save_history">Αποθήκευση ιστορικού</string>
     <string name="light_theme">Φωτεινό θέμα</string>
+    <string name="theme">Θέμα</string>
+    <string name="dark_theme">Σκούρο θέμα</string>
     <string name="delete_all">Διαγραφή όλων των δεδομένων</string>
     <string name="privacy">Απόρρητο</string>
     <string name="privacy_summary">Οι κωδικοί QR επεξεργάζονται στη συσκευή. Χωρίς λογαριασμό, διαφημίσεις ή αναλυτικά στοιχεία. Το ιστορικό είναι προαιρετικό. Οι κωδικοί Wi-Fi δεν αποθηκεύονται αυτόματα· η μη αυτόματη αποθήκευση αποθηκεύει και τον κωδικό πρόσβασης. Εξωτερικές ενέργειες μπορούν να μοιραστούν δεδομένα με άλλη εφαρμογή. Μπορείτε να διαγράψετε τα τοπικά δεδομένα στις Ρυθμίσεις. Επικοινωνία: brendigo.com.</string>

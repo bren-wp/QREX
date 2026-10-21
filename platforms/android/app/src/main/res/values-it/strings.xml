@@ -3,6 +3,7 @@
     <string name="scan">Scansiona</string>
     <string name="create">Crea</string>
     <string name="history">Cronologia</string>
+    <string name="favorites">Preferiti</string>
     <string name="more">Altro</string>
     <string name="scan_qr">Scansiona codice QR</string>
     <string name="point_camera">Inquadra un codice QR con la fotocamera</string>
@@ -57,6 +58,8 @@
     <string name="settings">Impostazioni</string>
     <string name="save_history">Salva cronologia</string>
     <string name="light_theme">Tema chiaro</string>
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Tema scuro</string>
     <string name="delete_all">Elimina tutti i dati</string>
     <string name="privacy">Privacy</string>
     <string name="privacy_summary">I codici QR vengono elaborati sul dispositivo. Nessun account, pubblicità o analisi. La cronologia è facoltativa. Le password Wi-Fi non vengono salvate automaticamente; salvare manualmente un codice Wi-Fi salva anche la password. Le azioni esterne possono condividere dati con altre app. Puoi eliminare i dati locali dalle Impostazioni. Contatto: brendigo.com.</string>

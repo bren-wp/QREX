@@ -3,6 +3,7 @@
     <string name="scan">Scannen</string>
     <string name="create">Erstellen</string>
     <string name="history">Verlauf</string>
+    <string name="favorites">Favoriten</string>
     <string name="more">Mehr</string>
     <string name="scan_qr">QR-Code scannen</string>
     <string name="point_camera">Kamera auf einen QR-Code richten</string>
@@ -57,6 +58,8 @@
     <string name="settings">Einstellungen</string>
     <string name="save_history">Scanverlauf speichern</string>
     <string name="light_theme">Helles Design</string>
+    <string name="theme">Design</string>
+    <string name="dark_theme">Dunkles Design</string>
     <string name="delete_all">Alle Daten löschen</string>
     <string name="privacy">Datenschutz</string>
     <string name="privacy_summary">QR-Codes werden auf dem Gerät verarbeitet. Kein Konto, keine Werbung oder Analysen. Der Verlauf ist optional. WLAN-Passwörter werden nicht automatisch gespeichert; manuell gespeicherte WLAN-Codes enthalten auch das Passwort. Externe Aktionen können Daten an andere Apps übergeben. Alle lokalen Daten können in den Einstellungen gelöscht werden. Kontakt: brendigo.com.</string>

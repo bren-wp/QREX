@@ -3,6 +3,7 @@
     <string name="scan">Сканировать</string>
     <string name="create">Создать</string>
     <string name="history">История</string>
+    <string name="favorites">Избранное</string>
     <string name="more">Ещё</string>
     <string name="scan_qr">Сканировать QR-код</string>
     <string name="point_camera">Наведите камеру на QR-код</string>
@@ -57,6 +58,8 @@
     <string name="settings">Настройки</string>
     <string name="save_history">Сохранять историю</string>
     <string name="light_theme">Светлая тема</string>
+    <string name="theme">Тема</string>
+    <string name="dark_theme">Тёмная тема</string>
     <string name="delete_all">Удалить все данные</string>
     <string name="privacy">Конфиденциальность</string>
     <string name="privacy_summary">QR-коды обрабатываются на устройстве. Без аккаунта, рекламы и аналитики. История необязательна. Пароли Wi-Fi не сохраняются автоматически; ручное сохранение кода Wi-Fi сохраняет пароль. Внешние действия могут передавать данные другим приложениям. Все локальные данные можно удалить в Настройках. Контакт: brendigo.com.</string>

@@ -21,14 +21,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
-        self.assertIn(".widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)", self.main)
+        self.assertIn(".widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
     def test_light_theme_navigation_has_legible_separate_selection_color(self):
         self.assertIn('if (store.lightMode) Color(0xFF1156AE) else cyan', self.main)
         self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
         self.assertIn("selectedTextColor = selectedNavigationColor", self.main)
-        self.assertIn("color = MaterialTheme.colorScheme.primary", self.scanner)
+        self.assertIn("QrexBrandHeader(tr(\"scan_qr\"), tr(\"point_camera\"))", self.scanner)
+        self.assertIn("color = MaterialTheme.colorScheme.primary",
+                      (NATIVE / "QREXDesign.kt").read_text("utf-8"))
 
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
@@ -40,12 +42,25 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("pendingDelete = item", self.main)
         self.assertIn("store.remove(actual)", self.main)
 
-    def test_settings_actions_have_minimum_touch_height(self):
-        self.assertIn('Text(tr("light_theme"), Modifier.weight(1f))', self.main)
-        self.assertIn('Text(tr("save_history"), Modifier.weight(1f))', self.main)
-        self.assertIn('modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)', self.main)
-        self.assertIn('colors = ButtonDefaults.outlinedButtonColors(', self.main)
-        self.assertIn('Text(languageName, maxLines = 1', self.main)
+    def test_settings_grid_has_real_actions_and_accessible_touch_targets(self):
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("QrexSettingsTile(", self.main)
+        self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
+        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 56.dp)", self.main)
+        self.assertIn("min = 88.dp", design)
+        self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
+        self.assertIn('store.updateLanguage("system")', self.main)
+        self.assertIn('confirmPdfExport = true', self.main)
+        self.assertIn('confirmExport = true', self.main)
+        self.assertIn('showDelete = true', self.main)
+
+    def test_dark_first_five_tab_navigation_and_saved_filter(self):
+        self.assertIn('listOf("scan", "create", "history", "favorites", "more")', self.main)
+        self.assertIn("QrexDesign.heroBrush", self.main)
+        self.assertIn("favoritesPage = true", self.main)
+        self.assertIn("QRHistory.matches(it, search, savedOnly || favoritesPage)", self.main)
+        self.assertIn("private fun AppHeader(", self.main)
+        self.assertIn("enabled = store.items.any { it.saved }", self.main)
 
     def test_scanner_torch_waits_for_actual_camerax_completion(self):
         self.assertIn("var torchBusy by remember { mutableStateOf(false) }", self.scanner)

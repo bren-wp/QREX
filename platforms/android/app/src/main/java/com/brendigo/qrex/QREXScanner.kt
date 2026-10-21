@@ -22,6 +22,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
@@ -32,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,36 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+
+/** Draws the actual live scanner framing guide above the CameraX PreviewView.
+ * Nothing is composited into the scanned image and no camera frames are stored.
+ */
+@Composable
+private fun ScannerCornerOverlay(modifier: Modifier = Modifier) {
+    Canvas(modifier) {
+        val side = size.minDimension * 0.56f
+        val left = (size.width - side) / 2f
+        val top = (size.height - side) / 2f
+        val right = left + side
+        val bottom = top + side
+        val segment = side * 0.23f
+        val stroke = 4.dp.toPx()
+        val tint = QrexDesign.accentBright
+        val corners = listOf(
+            Offset(left, top + segment) to Offset(left, top),
+            Offset(left, top) to Offset(left + segment, top),
+            Offset(right - segment, top) to Offset(right, top),
+            Offset(right, top) to Offset(right, top + segment),
+            Offset(left, bottom - segment) to Offset(left, bottom),
+            Offset(left, bottom) to Offset(left + segment, bottom),
+            Offset(right - segment, bottom) to Offset(right, bottom),
+            Offset(right, bottom) to Offset(right, bottom - segment)
+        )
+        corners.forEach { (from, to) ->
+            drawLine(tint, from, to, strokeWidth = stroke, cap = StrokeCap.Round)
+        }
+    }
+}
 
 /**
  * Use a power-of-two decoder sample to keep accepted camera-roll images below
@@ -189,12 +222,9 @@ fun ScanScreen(onRead: (String) -> Unit) {
         owner.lifecycle.addObserver(observer)
         onDispose { owner.lifecycle.removeObserver(observer) }
     }
-    Column(Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("QREX", color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.headlineLarge)
-        Spacer(Modifier.height(12.dp))
-        Text(tr("scan_qr"), style = MaterialTheme.typography.titleLarge)
-        Spacer(Modifier.height(20.dp))
+    Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        QrexBrandHeader(tr("scan_qr"), tr("point_camera"))
+        Spacer(Modifier.height(8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }
             DisposableEffect(owner, allowed) {
@@ -258,13 +288,15 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     analysisExecutor.shutdown()
                 }
             }
-            AndroidView(factory = { preview }, modifier = Modifier
-                .fillMaxWidth().weight(1f)
+            Box(Modifier.fillMaxWidth().weight(1f)
                 .clip(RoundedCornerShape(28.dp))
-                .background(Color(0xFF101B2C)))
+                .background(QrexDesign.surface)) {
+                AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
+                ScannerCornerOverlay(Modifier.fillMaxSize())
+            }
         } else {
             Box(Modifier.fillMaxWidth().weight(1f)
-                .background(Color(0xFF101B2C), shape = RoundedCornerShape(28.dp)),
+                .background(QrexDesign.surface, shape = RoundedCornerShape(28.dp)),
                 contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
                     .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -285,7 +317,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
                 }
             }
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
         FlowRow(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {

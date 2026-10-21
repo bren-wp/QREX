@@ -3,6 +3,7 @@
     <string name="scan">Skeniraj</string>
     <string name="create">Stvori</string>
     <string name="history">Povijest</string>
+    <string name="favorites">Favoriti</string>
     <string name="more">Više</string>
     <string name="scan_qr">Skeniraj QR kod</string>
     <string name="point_camera">Usmjeri kameru prema QR kodu</string>
@@ -57,6 +58,8 @@
     <string name="settings">Postavke</string>
     <string name="save_history">Spremanje povijesti</string>
     <string name="light_theme">Svijetli izgled</string>
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Tamna tema</string>
     <string name="delete_all">Izbriši sve podatke</string>
     <string name="privacy">Privatnost</string>
     <string name="privacy_summary">QR kodovi obrađuju se na uređaju. Bez računa, oglasa i analitike. Povijest je neobavezna. Wi-Fi lozinke ne spremaju se automatski; ručno spremljeni Wi-Fi kod sadrži i lozinku. Vanjske radnje mogu predati podatke drugoj aplikaciji. Sve lokalne podatke možeš izbrisati u postavkama. Kontakt: brendigo.com.</string>

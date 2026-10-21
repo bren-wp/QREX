@@ -3,6 +3,7 @@
     <string name="scan">Skenovat</string>
     <string name="create">Vytvořit</string>
     <string name="history">Historie</string>
+    <string name="favorites">Oblíbené</string>
     <string name="more">Více</string>
     <string name="scan_qr">Skenovat QR kód</string>
     <string name="point_camera">Namiřte fotoaparát na QR kód</string>
@@ -57,6 +58,8 @@
     <string name="settings">Nastavení</string>
     <string name="save_history">Ukládat historii</string>
     <string name="light_theme">Světlý motiv</string>
+    <string name="theme">Motiv</string>
+    <string name="dark_theme">Tmavý motiv</string>
     <string name="delete_all">Smazat všechna data</string>
     <string name="privacy">Soukromí</string>
     <string name="privacy_summary">QR kódy se zpracovávají v zařízení. Bez účtu, reklam a analytiky. Historie je volitelná. Hesla Wi-Fi se automaticky neukládají; ručně uložený Wi-Fi kód obsahuje i heslo. Externí akce mohou předat data jiné aplikaci. Místní data lze odstranit v Nastavení. Kontakt: brendigo.com.</string>

@@ -3,6 +3,7 @@
     <string name="scan">Skeniraj</string>
     <string name="create">Ustvari</string>
     <string name="history">Zgodovina</string>
+    <string name="favorites">Priljubljeno</string>
     <string name="more">Več</string>
     <string name="scan_qr">Skeniraj kodo QR</string>
     <string name="point_camera">Usmeri kamero proti kodi QR</string>
@@ -57,6 +58,8 @@
     <string name="settings">Nastavitve</string>
     <string name="save_history">Shrani zgodovino</string>
     <string name="light_theme">Svetla tema</string>
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Temna tema</string>
     <string name="delete_all">Izbriši vse podatke</string>
     <string name="privacy">Zasebnost</string>
     <string name="privacy_summary">Kode QR se obdelujejo v napravi. Brez računa, oglasov ali analitike. Zgodovina je neobvezna. Gesla Wi-Fi se ne shranijo samodejno; ročno shranjena koda Wi-Fi vsebuje tudi geslo. Zunanja dejanja lahko podatke posredujejo drugim aplikacijam. Lokalne podatke izbrišeš v nastavitvah. Stik: brendigo.com.</string>

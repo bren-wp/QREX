@@ -12,6 +12,7 @@ object QREXStrings {
         "scan" -> R.string.scan
         "create" -> R.string.create
         "history" -> R.string.history
+        "favorites" -> R.string.favorites
         "more" -> R.string.more
         "scan_qr" -> R.string.scan_qr
         "point_camera" -> R.string.point_camera
@@ -66,6 +67,8 @@ object QREXStrings {
         "settings" -> R.string.settings
         "save_history" -> R.string.save_history
         "light_theme" -> R.string.light_theme
+        "theme" -> R.string.theme
+        "dark_theme" -> R.string.dark_theme
         "delete_all" -> R.string.delete_all
         "privacy" -> R.string.privacy
         "privacy_summary" -> R.string.privacy_summary

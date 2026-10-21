@@ -1,7 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-<defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#02C6F6"/><stop offset=".43" stop-color="#1665FC"/><stop offset="1" stop-color="#6E15E8"/></linearGradient></defs>
-<rect width="1024" height="1024" rx="230" fill="#03152E"/><rect x="20" y="20" width="984" height="984" rx="215" fill="url(#bg)"/>
-<g fill="none" stroke="#F8FCFF" stroke-width="79" stroke-linecap="round">
-<path d="M252 410V300Q252 252 300 252H410 M614 252H724Q772 252 772 300V410 M252 614V724Q252 772 300 772H410 M614 772H724Q772 772 772 724V614"/>
-</g><rect x="388" y="386" width="248" height="248" rx="44" fill="#83A6FF"/><path d="M240 511H783" stroke="#C9DEFF" stroke-width="17"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+  <linearGradient id="qrex" x1="0" y1="0" x2="0.92" y2="1">
+    <stop stop-color="#16D8FF"/><stop offset="0.42" stop-color="#087BFA"/><stop offset="1" stop-color="#0A2A90"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="0" width="1024" height="1024" rx="226" fill="#061020"/>
+<rect x="18" y="18" width="988" height="988" rx="215" fill="url(#qrex)"/>
+<g fill="none" stroke="#F8FCFF" stroke-width="72" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M252 385V290Q252 252 290 252H385 M639 252H734Q772 252 772 290V385 M252 639V734Q252 772 290 772H385 M639 772H734Q772 772 772 734V639"/>
+ <circle cx="458" cy="502" r="130"/>
+ <path d="M534 578L628 680"/>
+</g>
+<rect x="658" y="418" width="116" height="116" rx="13" fill="#FFFFFF"/>
+<rect x="688" y="448" width="56" height="56" rx="4" fill="#1154B7"/>
+<rect x="658" y="564" width="55" height="55" rx="8" fill="#F8FCFF"/>
+<rect x="735" y="564" width="39" height="39" rx="6" fill="#F8FCFF"/>
+<rect x="734" y="633" width="40" height="40" rx="6" fill="#11D5FE"/>
 </svg>

@@ -13,7 +13,7 @@ class ForegroundTests(unittest.TestCase):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Create QR code" />'
             '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
-            '<node package="com.brendigo.qrex" text="More options" />'
+            '<node package="com.brendigo.qrex" text="Wi-Fi" />'
         ))
 
     def test_genuine_result_screen_is_accepted(self):

@@ -1,13 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="240" viewBox="0 0 900 240">
- <defs>
-  <linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#10CEFF"/><stop offset=".50" stop-color="#1677FF"/><stop offset="1" stop-color="#8D24F7"/></linearGradient>
- </defs>
- <rect width="216" height="216" x="12" y="12" rx="50" fill="url(#g)"/>
- <g fill="none" stroke="white" stroke-width="17" stroke-linecap="round">
-  <path d="M67 103V77Q67 65 80 65H104 M137 65H162Q175 65 175 78V103 M67 137V161Q67 174 80 174H104 M137 174H162Q175 174 175 161V137"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="240" viewBox="0 0 940 240">
+ <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#12D8FF"/><stop offset=".5" stop-color="#087BFA"/><stop offset="1" stop-color="#5223CA"/></linearGradient></defs>
+ <rect x="13" y="13" width="210" height="210" rx="48" fill="url(#g)"/>
+ <g fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round">
+   <path d="M66 96V77Q66 66 77 66H96 M141 66H159Q171 66 171 78V96 M66 141V160Q66 171 78 171H96 M141 171H160Q171 171 171 160V141"/>
+   <circle cx="109" cy="120" r="30"/><path d="M126 141L149 167"/>
  </g>
- <rect x="96" y="94" width="49" height="49" rx="7" fill="#79A1FC"/><path d="M66 122H175" stroke="#C3D9FF" stroke-width="4"/>
- <text x="258" y="155" fill="#F4F7FF" font-size="128" font-weight="900" font-family="Arial, sans-serif" letter-spacing="-7">QR</text>
- <text x="433" y="155" fill="#1677FF" font-size="128" font-weight="900" font-family="Arial, sans-serif" letter-spacing="-7">EX</text>
- <text x="264" y="195" fill="#A4B5D0" font-size="23" font-family="Arial, sans-serif" letter-spacing="2">Skeniraj. Stvori. Dijeli.</text>
+ <rect x="153" y="102" width="21" height="21" rx="3" fill="#fff"/>
+ <rect x="159" y="108" width="9" height="9" fill="#1461D1"/>
+ <rect x="154" y="130" width="12" height="12" rx="2" fill="#fff"/>
+ <rect x="171" y="135" width="10" height="10" rx="2" fill="#13D5FF"/>
+ <text x="255" y="150" fill="#FFFFFF" font-size="126" font-weight="900" font-family="Arial, Helvetica, sans-serif" letter-spacing="-5">QRE</text>
+ <text x="533" y="150" fill="#12AEFF" font-size="126" font-weight="900" font-family="Arial, Helvetica, sans-serif" letter-spacing="-5">X</text>
+ <text x="260" y="198" fill="#A9BAD2" font-size="29" font-family="Arial, Helvetica, sans-serif">Scan. Create. Share.</text>
 </svg>

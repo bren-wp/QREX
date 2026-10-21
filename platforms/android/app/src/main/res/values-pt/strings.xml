@@ -3,6 +3,7 @@
     <string name="scan">Ler</string>
     <string name="create">Criar</string>
     <string name="history">Histórico</string>
+    <string name="favorites">Favoritos</string>
     <string name="more">Mais</string>
     <string name="scan_qr">Ler código QR</string>
     <string name="point_camera">Aponte a câmara para um código QR</string>
@@ -57,6 +58,8 @@
     <string name="settings">Definições</string>
     <string name="save_history">Guardar histórico</string>
     <string name="light_theme">Tema claro</string>
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Tema escuro</string>
     <string name="delete_all">Eliminar todos os dados</string>
     <string name="privacy">Privacidade</string>
     <string name="privacy_summary">Os códigos QR são processados no dispositivo. Sem conta, anúncios ou análise. O histórico é opcional. As palavras-passe Wi-Fi nunca são guardadas automaticamente; guardar manualmente um código Wi-Fi também guarda a palavra-passe. Ações externas podem enviar dados a outras aplicações. Pode eliminar os dados locais nas Definições. Contacto: brendigo.com.</string>
