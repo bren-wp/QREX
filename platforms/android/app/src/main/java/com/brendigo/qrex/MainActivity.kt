@@ -280,6 +280,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
     var confirmResultDelete by remember(raw) { mutableStateOf(false) }
+    var showQrPreview by remember(raw) { mutableStateOf(false) }
     val wifi = QRContent.isWifi(raw)
     val alreadySaved = store.items.any { it.raw == raw && it.saved }
     val copied = tr("copied")
@@ -291,8 +292,12 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     val exportScope = rememberCoroutineScope()
     // Associate each bitmap with its exact payload: stale frames must never
     // be exported after a user switches to a different QR result.
-    val exportFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = raw) {
+    val exportFrame by produceState<Pair<String, Bitmap>?>(
+        initialValue = null, key1 = raw, key2 = showQrPreview
+    ) {
         value = null
+        // Do not generate a large QR bitmap until the user asks to see it.
+        if (!showQrPreview) return@produceState
         val bitmap = withContext(Dispatchers.Default) { generateQR(raw) }
         value = bitmap?.let { raw to it }
         // Compose/RenderThread may still draw the last frame after navigation.
@@ -395,22 +400,34 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        val bitmap = exportBitmap
-        if (bitmap != null) {
-            // Regular Box avoids SubcomposeLayout churn when a Result is
-            // repeatedly mounted/unmounted. widthIn + aspectRatio naturally
-            // cap the preview at 230dp without overflowing narrow displays.
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
-                    modifier = Modifier.testTag("qrex-result-qr-ready")
-                        .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
-                        .background(white).padding(12.dp))
-            }
+        OutlinedButton(
+            onClick = { showQrPreview = !showQrPreview },
+            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                .testTag("qrex-result-toggle-qr")
+        ) {
+            Icon(Icons.Default.QrCode, contentDescription = null,
+                modifier = Modifier.size(19.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(tr("show_qr"))
+        }
+        if (showQrPreview) {
             Spacer(Modifier.height(12.dp))
-            OutlinedButton(
-                onClick = { pngExport.launch("QREX-QR.png") },
-                modifier = Modifier.fillMaxWidth()
-            ) { Text(tr("export_png")) }
+            val bitmap = exportBitmap
+            if (bitmap != null) {
+                // No nested SubcomposeLayout: repeated Create/Result teardown
+                // remains safe under the existing P03 stress test.
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
+                        modifier = Modifier.testTag("qrex-result-qr-ready")
+                            .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
+                            .background(white).padding(12.dp))
+                }
+                Spacer(Modifier.height(10.dp))
+                OutlinedButton(
+                    onClick = { pngExport.launch("QREX-QR.png") },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                ) { Text(tr("export_png")) }
+            }
         }
         Spacer(Modifier.height(12.dp))
         PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
