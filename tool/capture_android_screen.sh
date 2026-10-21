@@ -33,6 +33,11 @@ trap on_exit EXIT
 timeout -k 10s 120s adb wait-for-device
 timeout -k 20s 900s gradle -p platforms/android --no-daemon --stacktrace :app:connectedDebugAndroidTest
 timeout -k 5s 90s adb install -r platforms/android/app/build/outputs/apk/debug/app-debug.apk
+# Google Play's phone screenshot format: 1080 × 1920, portrait 9:16.
+timeout -k 2s 10s adb shell wm size 1080x1920
+timeout -k 2s 10s adb shell wm density 420
+# The Scan screen must show actual camera UI, not a fabricated preview.
+timeout -k 2s 12s adb shell pm grant com.brendigo.qrex android.permission.CAMERA
 timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
 timeout -k 2s 12s adb shell input keyevent KEYCODE_HOME || true
 timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
@@ -50,7 +55,7 @@ for attempt in 1 2 3 4; do
     if timeout -k 3s 20s adb exec-out screencap -p > "$screenshot" \
       && python3 tool/verify_screenshots.py "$screenshot"; then
       echo "Verified real QREX Create screen on Android ($attempt/4)."
-      exit 0
+      break
     fi
   fi
   echo "Android capture attempt $attempt/4 failed; bounded retry." >&2
@@ -61,5 +66,38 @@ for attempt in 1 2 3 4; do
     --es qrex_screenshot create || true
 done
 
-echo "No validated QREX screen; fail closed (no screenshot artifact)." >&2
-exit 1
+if ! test -s "$screenshot"; then
+  echo "No validated QREX screen; fail closed (no screenshot artifact)." >&2
+  exit 1
+fi
+
+# Capture each screen from the *installed QREX debug APK*. The intent extra
+# chooses a screen and injects only in-memory, non-sensitive demo records.
+# Debug routing is forbidden by MainActivity in production builds.
+for screen in scan wifi result history saved more; do
+  screenshot="docs/screenshots/android-${screen}.png"
+  hierarchy="docs/screenshots/android-${screen}-hierarchy.xml"
+  rm -f "$screenshot" "$hierarchy"
+  for attempt in 1 2 3 4; do
+    timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
+    timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
+      --es qrex_screenshot "$screen"
+    sleep 5
+    if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-window.xml >/dev/null 2>&1 \
+      && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-window.xml > "$hierarchy" \
+      && test -s "$hierarchy" \
+      && python3 tool/check_android_screen.py "$hierarchy" "$screen" \
+      && timeout -k 3s 20s adb exec-out screencap -p > "$screenshot" \
+      && python3 tool/verify_screenshots.py "$screenshot"; then
+      echo "Verified real QREX $screen screen ($attempt/4)."
+      break
+    fi
+    rm -f "$screenshot" "$hierarchy"
+  done
+  if ! test -s "$screenshot"; then
+    echo "No validated QREX $screen screen; fail closed." >&2
+    exit 1
+  fi
+done
+python3 tool/verify_screenshots.py docs/screenshots/android-*.png
+echo "Seven actual QREX Android screens captured and verified."

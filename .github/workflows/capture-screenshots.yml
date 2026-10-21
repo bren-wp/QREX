@@ -79,12 +79,21 @@ jobs:
           # capture_android_screen.sh already runs connectedDebugAndroidTest
           # with hard deadlines; keep ONE shell to avoid duplicate runs.
           script: bash tool/capture_android_screen.sh
-      - name: Enforce fresh screenshot file
+      - name: Verify all seven actual emulator screenshots
         run: |
           test -s docs/screenshots/android-create.png
-          python3 tool/verify_screenshots.py docs/screenshots/android-create.png
+          for screen in create scan wifi result history saved more; do
+            test -s "docs/screenshots/android-${screen}.png"
+          done
+          python3 tool/verify_screenshots.py docs/screenshots/android-*.png
+          python3 - <<'PY'
+          from pathlib import Path
+          from tool.verify_screenshots import verify
+          for image in Path("docs/screenshots").glob("android-*.png"):
+              assert verify(image) == (1080, 1920), f"Google Play screenshot has invalid dimensions: {image}"
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: qrex-actual-android
-          path: docs/screenshots/android-create.png
+          path: docs/screenshots/android-*.png
           if-no-files-found: error

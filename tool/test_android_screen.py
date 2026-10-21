@@ -16,6 +16,32 @@ class ForegroundTests(unittest.TestCase):
             '<node package="com.brendigo.qrex" text="More options" />'
         ))
 
+    def test_genuine_result_screen_is_accepted(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="Scan complete" />'
+            '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
+            '<node package="com.brendigo.qrex" text="Close" />'
+        ), "result")
+
+    def test_genuine_history_screen_is_accepted(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="History" />'
+            '<node package="com.brendigo.qrex" text="brendigo.com" />'
+            '<node package="com.brendigo.qrex" text="Saved" />'
+        ), "saved")
+
+    def test_wrong_screen_or_anr_is_rejected_even_with_qrex_package(self):
+        with self.assertRaises(ValueError):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="Scan complete" />'
+                '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
+            ), "create")
+        with self.assertRaises(ValueError):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="Scan QR code" />'
+                '<node package="com.android.systemui" text="App isn\'t responding" />'
+            ), "scan")
+
     def test_system_ui_anr_is_rejected(self):
         with self.assertRaises(ValueError):
             validate(screen(

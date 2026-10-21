@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
-def validate(xml_content: str) -> None:
+def validate(xml_content: str, screen: str = "create") -> None:
     root = ET.fromstring(xml_content)
     nodes = list(root.iter("node"))
     if not nodes:
@@ -29,18 +29,30 @@ def validate(xml_content: str) -> None:
     packages = {n.attrib.get("package", "") for n in nodes}
     if "com.brendigo.qrex" not in packages:
         raise ValueError(f"QREX is not the foreground package: {sorted(packages)}")
-    if "create qr code" not in texts or "https://brendigo.com" not in texts:
-        raise ValueError("QREX create screen not fully visible")
-    if "more options" not in texts:
-        raise ValueError("QR creation controls not ready")
+    # Require screen-specific actual app text and control markers. These
+    # are screenshots of production Compose UI with *debug-only* neutral data.
+    expected = {
+        "create": ("create qr code", "https://brendigo.com", "more options"),
+        "wifi": ("create qr code", "qrex-demo", "wi-fi"),
+        "result": ("scan complete", "https://brendigo.com", "close"),
+        "history": ("history", "brendigo.com", "saved"),
+        "saved": ("history", "brendigo.com", "saved"),
+        "more": ("settings", "pdf", "language"),
+        "scan": ("scan qr code", "from gallery", "point your camera"),
+    }
+    if screen not in expected:
+        raise ValueError("Unsupported screenshot screen")
+    if not all(value in texts for value in expected[screen]):
+        raise ValueError(f"QREX {screen} screen not fully visible")
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("Usage: check_android_screen.py <uiautomator XML>", file=sys.stderr)
+    if len(sys.argv) not in (2, 3):
+        print("Usage: check_android_screen.py <uiautomator XML> [screen]", file=sys.stderr)
         return 2
     try:
-        validate(Path(sys.argv[1]).read_text(encoding="utf-8"))
+        validate(Path(sys.argv[1]).read_text(encoding="utf-8"),
+                 sys.argv[2] if len(sys.argv) == 3 else "create")
     except (ValueError, ET.ParseError) as exc:
         print(f"Android screenshot rejected: {exc}", file=sys.stderr)
         return 1

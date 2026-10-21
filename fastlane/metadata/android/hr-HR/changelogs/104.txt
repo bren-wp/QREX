@@ -1,0 +1,1 @@
+QREX 1.0.4: ograničeno opterećenje procesora pri skeniranju, potpuno offline ZXing skener, dodatni testovi stabilnosti i sedam stvarnih snimki zaslona. Povijest i šifrirani Wi-Fi podaci ostaju lokalni.

@@ -1,0 +1,1 @@
+QREX 1.0.4: camera decoding paced to reduce CPU use, fully offline ZXing scanning, better stability checks and seven actual Android screenshots. History and encrypted Wi-Fi storage remain local.
