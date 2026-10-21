@@ -99,7 +99,7 @@ GitHub Actions also exercises Android instrumentation tests, minified release bu
 
 ## F-Droid distribution (preparation)
 
-QREX is **not yet available** in the official F-Droid repository. The current Android scanner depends on Google's non-free ML Kit, which must be replaced or isolated in a Play-only build before the official F-Droid project can accept it. An independent Brendigo F-Droid-compatible repository is also being prepared; **there is no live subscription link yet**.
+QREX is **not yet available** in the official F-Droid repository. The F-Droid preparation branch replaces ML Kit with a ZXing/CameraX QR decoder for camera and gallery scanning. **Compile, F-Droid scanner, license, device and release-signing checks are still required** before official F-Droid submission. A Brendigo F-Droid-compatible repository is also being prepared; **there is no live subscription link yet**.
 
 [Official F-Droid eligibility and independent repo plan](docs/FDROID_DISTRIBUTION.md) · [Brendigo repository starter](distribution/brendigo-fdroid/README.md)
 
