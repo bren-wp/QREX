@@ -273,6 +273,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
+    var confirmResultDelete by remember(raw) { mutableStateOf(false) }
     val wifi = QRContent.isWifi(raw)
     val alreadySaved = store.items.any { it.raw == raw && it.saved }
     val copied = tr("copied")
@@ -333,16 +334,17 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("QREX", color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Black, fontSize = 29.sp)
-        Spacer(Modifier.height(22.dp))
-        Icon(Icons.Default.QrCode, contentDescription = null,
-            tint = cyan, modifier = Modifier.size(68.dp))
+        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Spacer(Modifier.height(16.dp))
+        Surface(shape = RoundedCornerShape(16.dp), color = QrexDesign.accent) {
+            Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
+                Icon(Icons.Default.Link, contentDescription = null,
+                    tint = Color.White, modifier = Modifier.size(38.dp))
+            }
+        }
         Spacer(Modifier.height(14.dp))
-        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold,
-            fontSize = 23.sp)
-        Spacer(Modifier.height(18.dp))
-        Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surface) {
+        QrexPanel(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.fillMaxWidth().padding(18.dp)) {
                 if (wifi) {
                     Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
@@ -354,7 +356,10 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                         Text(if (showPassword) tr("hide") else tr("show"))
                     }
                 } else {
-                    Text(raw, color = MaterialTheme.colorScheme.onSurface)
+                    Text(raw, color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth())
                     if (url != null) Text(tr("check_url"),
                         color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
@@ -408,6 +413,18 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
         }
+        if (alreadySaved) {
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = { confirmResultDelete = true },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error)) {
+                Icon(Icons.Default.Delete, contentDescription = null,
+                    modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(tr("delete"))
+            }
+        }
         Spacer(Modifier.height(16.dp))
         }
         // This secondary Close remains reachable even if Android's IME
@@ -421,6 +438,23 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
                 .heightIn(min = 52.dp)
                 .testTag("qrex-result-close-bottom")
         ) { Text(tr("close")) }
+    }
+    if (confirmResultDelete) {
+        AlertDialog(onDismissRequest = { confirmResultDelete = false },
+            title = { Text(tr("delete")) },
+            text = { Text(tr("confirm_delete")) },
+            confirmButton = { TextButton(onClick = {
+                val item = store.items.firstOrNull { it.raw == raw }
+                if (item != null && !store.remove(item)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                } else {
+                    onClose()
+                }
+                confirmResultDelete = false
+            }) { Text(tr("delete")) } },
+            dismissButton = { TextButton(onClick = { confirmResultDelete = false }) {
+                Text(tr("cancel"))
+            } })
     }
     if (confirmWifiShare) {
         AlertDialog(onDismissRequest = { confirmWifiShare = false },
