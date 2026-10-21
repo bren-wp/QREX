@@ -6,18 +6,18 @@ Status (2026-10-21): **PREPARATION ONLY; not accepted by or released on F-Droid.
 - Upstream: https://github.com/bren-wp/QREX — publicly accessible, MIT licensed.
 - Package: `com.brendigo.qrex`; source version 1.0.3, versionCode 103.
 - Android: `platforms/android` Kotlin/Compose, Gradle, CameraX.
-- **Official-repository blocker:** `com.google.mlkit:barcode-scanning:17.3.0` is a proprietary dependency.
-- `QREXScanner.kt` uses ML Kit for **live camera** and **gallery image** QR decoding. Removing the Maven dependency alone will break compilation and/or scanning.
-- ZXing core 3.5.3 is already present but currently used for QR creation; it is a possible FOSS decoding path.
+- Historical main/v1.0.3 blocker: `com.google.mlkit:barcode-scanning:17.3.0` was proprietary. The preparation branch now removes it and implements a ZXing decoder; resolved dependency and device validation are pending.
+- Historical v1.0.3 `QREXScanner.kt` used ML Kit for live camera and gallery; the preparation branch changes both paths to ZXing, with CI and device validation still required.
+- ZXing core 3.5.3 is now also used for decoding in the preparation branch. The decoder includes CameraX Y-plane row/pixel stride processing, rotation, bitmap bounds, and inverted QR support.
 - GitHub v1.0.0–v1.0.3 signed APKs use **different disposable signing keys**. They cannot provide an in-place update path.
 - The provided Google Play AAB is not an F-Droid APK. The Play upload key is not the APK installation-signing identity.
 
 ## Phase A — official F-Droid, not yet submit-ready
-1. Move ML Kit-dependent scanning into a Play-only source set or replace decoding using a verified FLOSS implementation (for example ZXing with CameraX). Keep gallery EXIF handling, bounds checks, lifecycle cancellation, camera permission behavior, asynchronous torch feedback and localized error messages.
+1. **Source updated in draft PR #30:** ZXing/CameraX decoder replaces ML Kit for camera and gallery. **Not yet verified:** successful Gradle build, full regression/device behavior (EXIF, lifecycle, cancellation, permissions, torch and performance).
 2. Add a `fdroid` product flavor that contains **no ML Kit, Play Services, Firebase, other non-FOSS libraries or binary blobs**. Audit **resolved transitive** runtime and build dependencies and all assets/licenses; merely grepping Gradle files is insufficient.
 3. Test live camera (portrait/landscape, rotation, low light, camera pause/resume), gallery scans (EXIF rotations/mirroring), error/permission paths, 23 locales, history/Keystore migration, performance and accessibility on real devices. Tests are REQUIRED, not claimed complete.
-4. Run Gradle build, lint, unit/instrumentation tests and F-Droid scanner (`fdroid scanner`). Confirm the app builds offline where possible with trusted repositories and no proprietary build-tool dependencies.
-5. Add release tags for exact source commits, maintain Fastlane upstream metadata (included as draft in this branch), and create `fdroiddata/metadata/com.brendigo.qrex.yml` **only after** a successful build. Define accurate `subdir`, `gradle`, `commit`, `versionCode` and `versionName` fields based on that tested source/tag; don't submit an untested recipe.
+4. Run CI `.github/workflows/fdroid-audit.yml`: Gradle build, lint, unit tests, resolved transitive release dependency audit and `fdroid scanner`/`fdroid lint`; also do instrumentation and physical-device tests. CI addition is not evidence the checks passed. Release builds need internet to resolve dependencies unless caches are prepopulated.
+5. Add release tags for exact source commits, maintain Fastlane metadata and complete `distribution/official-fdroid/metadata/com.brendigo.qrex.yml.example` **only after** a successful build. Define accurate `subdir`, `gradle`, `commit`, `versionCode` and `versionName` fields based on that tested source/tag; don't submit an untested recipe.
 6. Submit to https://gitlab.com/fdroid/fdroiddata as an MR; or file https://gitlab.com/fdroid/rfp/-/issues asking for packaging assistance. The F-Droid maintainers independently decide inclusion.
 
 Reference: https://f-droid.org/docs/Inclusion_Policy/
