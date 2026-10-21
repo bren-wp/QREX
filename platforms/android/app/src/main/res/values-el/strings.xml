@@ -3,6 +3,7 @@
     <string name="scan">Σάρωση</string>
     <string name="create">Δημιουργία</string>
     <string name="history">Ιστορικό</string>
+    <string name="favorites">Αγαπημένα</string>
     <string name="more">Περισσότερα</string>
     <string name="scan_qr">Σάρωση κωδικού QR</string>
     <string name="point_camera">Στρέψτε την κάμερα προς έναν κωδικό QR</string>
