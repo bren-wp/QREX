@@ -3,6 +3,7 @@
     <string name="scan">Scan</string>
     <string name="create">Opret</string>
     <string name="history">Historik</string>
+    <string name="favorites">Favoritter</string>
     <string name="more">Mere</string>
     <string name="scan_qr">Scan QR-kode</string>
     <string name="point_camera">Ret kameraet mod en QR-kode</string>
