@@ -72,9 +72,26 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/fdroid-tools"
           "$RUNNER_TEMP/fdroid-tools/bin/pip" install --disable-pip-version-check fdroidserver
           export PATH="$RUNNER_TEMP/fdroid-tools/bin:$PATH"
-          mkdir -p "$RUNNER_TEMP/fdroid-qrex/metadata" "$RUNNER_TEMP/fdroid-qrex/build"
+          mkdir -p "$RUNNER_TEMP/fdroid-qrex/metadata" \
+            "$RUNNER_TEMP/fdroid-qrex/build" "$RUNNER_TEMP/fdroid-qrex/config"
           cp distribution/official-fdroid/metadata/com.brendigo.qrex.yml.example \
             "$RUNNER_TEMP/fdroid-qrex/metadata/com.brendigo.qrex.yml"
+          # fdroid lint validates app categories against the REPOSITORY category
+          # config, not a hardcoded list. An isolated temporary repo has no
+          # config/categories.yml, so even real F-Droid categories were rejected.
+          # Use the authoritative fdroiddata list and fail closed if unavailable.
+          curl --fail --location --retry 3 --silent --show-error \
+            "https://gitlab.com/fdroid/fdroiddata/-/raw/master/config/categories.yml" \
+            --output "$RUNNER_TEMP/fdroid-qrex/config/categories.yml"
+          "$RUNNER_TEMP/fdroid-tools/bin/python" - "$RUNNER_TEMP/fdroid-qrex/config/categories.yml" <<'PY'
+          import sys
+          import yaml
+          with open(sys.argv[1], encoding="utf-8") as category_file:
+              categories = yaml.safe_load(category_file)
+          if not isinstance(categories, dict) or "Connectivity" not in categories:
+              raise SystemExit("Official fdroiddata category list is unavailable or invalid")
+          print("Loaded official fdroiddata categories for lint")
+          PY
           ln -s "$GITHUB_WORKSPACE" "$RUNNER_TEMP/fdroid-qrex/build/com.brendigo.qrex"
           cd "$RUNNER_TEMP/fdroid-qrex"
           fdroid lint com.brendigo.qrex
