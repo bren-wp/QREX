@@ -1,136 +1,94 @@
 <div align="center">
 
-<img src="assets/brand/qrex-logo.svg" alt="QREX — Scan. Create. Share." width="440">
+<img src="assets/brand/qrex-logo.svg" alt="QREX — Scan. Create. Share." width="380">
 
 ### Scan. Create. Share.
 
 **Your QR codes. Your device. Your choice.**
 
-A clean, capable QR scanner and creator designed exclusively for **Android**.
+Scan, create and organize QR codes with an Android app built for simplicity and privacy.
 
-[Explore features](#features) · [See the app](#preview) · [Privacy](#privacy-by-design) · [Releases](https://github.com/bren-wp/QREX/releases)
+**Free · Offline · No ads · No account**
 
-<img src="assets/brand/qrex-icon.svg" alt="QREX Android icon" width="86">
-
-**Free to use · No accounts · No ads · No tracking**
+[See the app](#see-qrex-in-action) · [Features](#everything-you-need) · [Privacy](#privacy-comes-first) · [Get QREX](#get-qrex)
 
 </div>
 
 ---
 
-## A simple way to do more with QR
+## See QREX in action
 
-Scan a code, create one of your own, or keep the information you actually need. QREX makes common tasks easy without moving your personal QR content to a QREX server.
-
-<img src="assets/previews/qrex-hero.svg" alt="QREX Android visual identity — Scan. Create. Share.">
-
-## Preview
+These are **real Android emulator captures of the running QREX app**, generated and checked by CI using non-sensitive demonstration data. They are *not* AI illustrations or simulated device interfaces. Screenshots are attached to the matching GitHub release.
 
 <div align="center">
 
-<img src="docs/screenshots/android-create.png" alt="Actual Android emulator screenshot of the QREX Create screen" width="290">
+<table>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
+</tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
+</tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
+</tr>
+</table>
 
-<sub>Actual Android emulator capture, verified by CI. Device appearance and layout can vary. Brand visuals below are design illustrations, not app screenshots.</sub>
-
-<img src="assets/previews/qrex-showcase.svg" alt="QREX design showcase with six conceptual app screens">
+[**Explore all seven full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.4)
 
 </div>
 
-## Features
+## Everything you need
 
-| | What QREX does |
+| | Feature |
 |:--|:--|
-| 📷 **Scan** | Read QR codes with the camera or choose a photo from your gallery. |
-| ✨ **Create** | Make QR codes for links, text, Wi-Fi access, contacts, email, phone numbers and locations. |
-| 🔗 **Review before opening** | Check the scanned destination before deciding whether to open it. |
-| 🔖 **History & favorites** | Keep, find and delete locally stored codes on your own terms. |
-| 🛡️ **Private Wi-Fi codes** | Encrypt manually saved Wi-Fi QR contents using Android Keystore; ask before sharing Wi-Fi QR credentials. |
-| 📄 **Export** | Export QR images as PNG and manually saved QR codes as PDF or ZIP using Android's file picker. |
-| 🌐 **23 languages** | Choose English, Croatian or another supported interface language. |
-| 🌗 **Comfortable UI** | Light/dark appearance and layouts designed to adapt to different Android display sizes. |
+| 📷 **Scan from camera or photos** | Point your camera at a QR code or select an image from Android's system photo picker. |
+| ✨ **Create QR codes** | Make QR codes for links, text, Wi-Fi, contact details, email, phone numbers and places. |
+| 🔎 **Review before opening** | Choose whether to open a scanned website. No automatic URL opening. |
+| 🔖 **History & saved codes** | Browse, search, save and remove locally stored QR codes. |
+| 🔐 **Protect Wi-Fi details** | Wi-Fi codes are never recorded automatically; manually saved Wi-Fi details use Android Keystore encryption. |
+| 📄 **Save and export** | Export individual PNG images or your manually saved QR collection as PDF/ZIP. |
+| 🌍 **23 languages** | Including English and Croatian, all without an online translation service. |
+| 🌗 **Make it yours** | Light and dark appearances, accessible controls and responsive layouts. |
 
-## Privacy by design
+## Privacy comes first
 
-QREX scans and generates codes locally. **No account, advertising SDK, analytics SDK, or internet permission is required.** Camera permission is requested only when you choose to enable live camera scanning. Gallery selection uses Android's system photo picker instead of broad media access.
+QREX scans and generates QR codes **on your phone**, without a developer cloud account, advertising, analytics or a required Internet connection. Camera access is requested only for camera scanning; you can choose a gallery image without granting camera permission.
 
-Wi-Fi QR codes are not added to history automatically. If you explicitly save one, its contents are protected using AES-GCM with Android Keystore. When copying a Wi-Fi QR code, Android receives a *sensitive clipboard* flag; sharing a Wi-Fi code asks for confirmation.
+QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM backed by Android Keystore.
 
-**Important:** exported PDF/ZIP files are *not encrypted*. Treat exports that contain private information or Wi-Fi credentials as sensitive. The destination app or file provider you select may keep copies.
+**Exported PDF and ZIP files are not encrypted.** Protect those files when they include private information.
 
-[Read the Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md)
+[Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
 
-## Languages
+## Get QREX
 
-QREX includes 23 offline interface languages:
+[**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-English · Hrvatski · Deutsch · Français · Español · Italiano · Português · Nederlands · Polski · Čeština · Slovenčina · Slovenščina · Magyar · Română · Български · Ελληνικά · Türkçe · Українська · Русский · Svenska · Dansk · Suomi · Norsk bokmål.
+Latest planned distribution: **v1.0.4** (Android `com.brendigo.qrex`). The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), seven real Android screenshots and checksums.
 
-No download or online translation service is needed to switch languages.
+**Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
-## Built for Android
+**Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
 
-| | |
-|:--|:--|
-| **Platform** | Android only |
-| **Application ID** | `com.brendigo.qrex` |
-| **UI** | Kotlin + Jetpack Compose |
-| **Scanning** | CameraX + on-device ML Kit |
-| **QR generation** | ZXing |
-| **Private storage** | Android Keystore / AES-GCM |
-| **Android SDK** | Compile/target API 36 |
-| **Latest GitHub release** | Version `1.0.3` · versionCode `103` (not a Play release) |
+**F-Droid:** [Open-source distribution status](docs/FDROID_DISTRIBUTION.md). Source-level ZXing QR scanning is FLOSS-oriented, and CI tests dependencies and metadata. QREX is **not yet listed in the official F-Droid catalog**, and no public Brendigo F-Droid subscription URL is active.
 
-The former iOS and Flutter app source trees have been retired. The Android application **retains migration support** for users upgrading from the earlier Flutter-based Android version.
-
-### Build from source
-
-Requirements: JDK 17, Android SDK API 36 and Gradle 8.13.
-
-```bash
-python3 tool/generate_localizations.py --check
-python3 tool/check_translation_usage.py
-python3 -m unittest discover -s tool -p 'test_*.py'
-
-cd platforms/android
-gradle --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
-```
-
-GitHub Actions also exercises Android instrumentation tests, minified release build/AAB generation and a genuine Android emulator screenshot.
-
-## F-Droid distribution (preparation)
-
-QREX is **not yet available** in the official F-Droid repository. The F-Droid preparation branch replaces ML Kit with a ZXing/CameraX QR decoder for camera and gallery scanning. **Compile, F-Droid scanner, license, device and release-signing checks are still required** before official F-Droid submission. A Brendigo F-Droid-compatible repository is also being prepared; **there is no live subscription link yet**.
-
-[Official F-Droid eligibility and independent repo plan](docs/FDROID_DISTRIBUTION.md) · [Brendigo repository starter](distribution/brendigo-fdroid/README.md)
-
-## Download QREX 1.0.3 for Android
-
-[**GitHub Releases — APK, AAB and SHA-256 checksums →**](https://github.com/bren-wp/QREX/releases)
-
-| File | Purpose |
-| --- | --- |
-| **`QREX-Android-1.0.3.apk`** | Standalone Android release APK for GitHub distribution |
-| **`QREX-Android-1.0.3.aab`** | Android App Bundle; not directly installable and not Play-upload signed |
-| **`SHA256SUMS.txt`** | Checksums to verify release downloads |
-
-QREX 1.0.3 improves UI/UX, camera flashlight feedback, history legibility and accessibility, and adds further Android lifecycle crash regression coverage.
-
-**Signing warning:** GitHub generates a new temporary certificate for each version. This 1.0.3 APK **cannot update any existing 1.0.2, 1.0.1, 1.0.0 or Google Play installation in place.** Uninstalling QREX can irreversibly delete local history, favorites and Wi-Fi QR data. Safeguard all needed records before choosing a different-signed installation. Earlier [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1) and [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2) remain preserved.
-
-A real Google Play update requires separate checks for available versionCode and the existing approved upload certificate; this GitHub-signed AAB **must not** be uploaded to Play Console. The historical manual 1.0.1 Play workflow is not a Play 1.0.3 publisher. [Google Play guide](docs/PLAY_STORE_SUBMISSION.md).
-
-Automatic GitHub publishing requires the exact source commit to pass native Android CI, screenshot and localization checks. [QREX 1.0.3 release notes](docs/releases/v1.0.3.md) · [v1.0.3 GitHub release](https://github.com/bren-wp/QREX/releases/tag/v1.0.3).
-
-[All releases](https://github.com/bren-wp/QREX/releases) · [Android QA checklist](docs/STORE_CHECKLIST.md) · [Support](https://brendigo.com)
+Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), and [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3) remain archived and downloadable.
 
 ---
 
 <div align="center">
 
-<img src="assets/brand/qrex-logo.svg" alt="QREX by Brendigo" width="245">
+<img src="assets/brand/qrex-icon.svg" alt="QREX by Brendigo" width="85">
 
-**Scan. Create. Share.**
+**QREX — Scan. Create. Share.**
 
-Created by [Brendigo](https://brendigo.com) · [Support](https://brendigo.com) · [MIT License](LICENSE)
+Created by [Brendigo](https://brendigo.com) · [Open-source license](LICENSE)
+
+[Developer documentation](platforms/README.md)
 
 </div>
