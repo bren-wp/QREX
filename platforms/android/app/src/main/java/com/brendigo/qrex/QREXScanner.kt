@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import android.graphics.Bitmap
@@ -38,6 +39,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
@@ -55,6 +57,13 @@ internal fun gallerySampleSize(width: Int, height: Int): Int {
     }
     return sample
 }
+
+/** Bound camera QR decoding to ~6 frames per second, not every 30/60 FPS frame. 
+ * The monotonic uptime timestamp avoids wall-clock jumps on Android devices.
+ * This only throttles live camera frames, never the explicit gallery action.
+ */
+internal fun cameraFrameDue(nowMillis: Long, lastMillis: Long): Boolean =
+    lastMillis <= 0L || nowMillis - lastMillis >= 180L
 
 /** Apply all eight EXIF orientations, including mirrored JPEGs, after sampling. */
 internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
@@ -97,6 +106,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
     val qrNotFound = tr("qr_not_found")
     val cameraFailed = tr("camera_failed")
     val handled = remember { AtomicBoolean(false) }
+    val lastCameraDecodeMs = remember { AtomicLong(0L) }
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
@@ -206,7 +216,10 @@ fun ScanScreen(onRead: (String) -> Unit) {
                         newAnalyzer.setAnalyzer(analysisExecutor, object : ImageAnalysis.Analyzer {
                             override fun analyze(frame: ImageProxy) {
                                 try {
-                                    if (!disposed.get() && !handled.get()) {
+                                    val now = SystemClock.elapsedRealtime()
+                                    if (!disposed.get() && !handled.get() &&
+                                        cameraFrameDue(now, lastCameraDecodeMs.get())) {
+                                        lastCameraDecodeMs.set(now)
                                         val decoded = QREXQrDecoder.decodeFrame(frame)
                                         if (!decoded.isNullOrEmpty() &&
                                             handled.compareAndSet(false, true)) {
