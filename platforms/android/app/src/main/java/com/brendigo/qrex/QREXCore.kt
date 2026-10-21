@@ -96,7 +96,7 @@ class QREXStore(context: Context) {
         private set
     var lightMode by mutableStateOf(preferences.getBoolean("lightMode", false))
         private set
-    var language by mutableStateOf(preferences.getString("language", "en") ?: "en")
+    var language by mutableStateOf(preferences.getString("language", "system") ?: "system")
         private set
 
     init {
@@ -320,7 +320,7 @@ class QREXStore(context: Context) {
         protectedWifi.clear()
         historyEnabled = true
         lightMode = false
-        language = "en"
+        language = "system"
         return true
     }
 
