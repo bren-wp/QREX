@@ -31,6 +31,14 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.FilePresent
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.QrCode
@@ -45,6 +53,7 @@ import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -227,6 +236,39 @@ private fun AppHeader(title: String, subtitle: String) {
             color = MaterialTheme.colorScheme.onBackground)
         Spacer(Modifier.height(6.dp))
         Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+@Composable
+private fun QREXTile(
+    icon: ImageVector,
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier,
+    destructive: Boolean = false,
+    onClick: () -> Unit
+) {
+    val accent = if (destructive) MaterialTheme.colorScheme.error
+        else MaterialTheme.colorScheme.secondary
+    Surface(onClick = onClick,
+        modifier = modifier.heightIn(min = 132.dp),
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(1.dp,
+            MaterialTheme.colorScheme.outline)) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            Surface(shape = RoundedCornerShape(12.dp),
+                color = if (destructive) MaterialTheme.colorScheme.errorContainer
+                else MaterialTheme.colorScheme.primaryContainer) {
+                Icon(icon, contentDescription = null,
+                    tint = accent, modifier = Modifier.padding(9.dp).size(23.dp))
+            }
+            Text(title, fontWeight = FontWeight.SemiBold,
+                color = if (destructive) accent else MaterialTheme.colorScheme.onSurface,
+                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 13.sp)
+            Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 11.sp)
+        }
     }
 }
 
@@ -753,77 +795,80 @@ private fun MoreScreen(store: QREXStore) {
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
-        AppHeader(tr("more"), tr("history_local"))
-        Text(tr("settings"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(tr("save_history"), Modifier.weight(1f))
-            Switch(checked = store.historyEnabled, onCheckedChange = store::updateHistoryEnabled)
-        }
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(tr("light_theme"), Modifier.weight(1f))
-            Switch(checked = store.lightMode, onCheckedChange = store::updateLightMode)
+        AppHeader(tr("more"), tr("settings"))
+        Text(tr("settings"), fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground, fontSize = 17.sp)
+        Spacer(Modifier.height(12.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Box(Modifier.weight(1f)) {
+                QREXTile(Icons.Default.DarkMode, tr("light_theme"),
+                    if (store.lightMode) tr("light_theme") else tr("system"),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { store.updateLightMode(!store.lightMode) })
+            }
+            Box(Modifier.weight(1f)) {
+                QREXTile(Icons.Default.Language, tr("language"), languageName,
+                    modifier = Modifier.fillMaxWidth(), onClick = { languageMenu = true })
+                DropdownMenu(expanded = languageMenu, onDismissRequest = { languageMenu = false }) {
+                    DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
+                        store.updateLanguage("system"); languageMenu = false
+                    })
+                    QREXStrings.languages.forEach { localeCode ->
+                        DropdownMenuItem(text = {
+                            Text(Locale.forLanguageTag(localeCode)
+                                .getDisplayName(Locale.forLanguageTag(localeCode)))
+                        }, onClick = {
+                            store.updateLanguage(localeCode); languageMenu = false
+                        })
+                    }
+                }
+            }
         }
         Spacer(Modifier.height(12.dp))
-        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(
-                onClick = { confirmPdfExport = true },
-                enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-            ) { Text("PDF") }
-            OutlinedButton(
-                onClick = { confirmExport = true },
-                enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-            ) { Text("ZIP") }
+        Surface(shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            border = androidx.compose.foundation.BorderStroke(1.dp,
+                MaterialTheme.colorScheme.outline)) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 15.dp).heightIn(min = 58.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(tr("save_history"), Modifier.weight(1f), fontSize = 14.sp)
+                Switch(checked = store.historyEnabled, onCheckedChange = store::updateHistoryEnabled)
+            }
         }
+        Spacer(Modifier.height(22.dp))
+        Text(tr("data_tools"), fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground, fontSize = 17.sp)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            QREXTile(Icons.Default.FilePresent, "PDF", tr("export_archive_hint"),
+                modifier = Modifier.weight(1f),
+                onClick = { confirmPdfExport = true })
+            QREXTile(Icons.Default.Archive, "ZIP", tr("export_archive"),
+                modifier = Modifier.weight(1f),
+                onClick = { confirmExport = true })
+        }
+        Spacer(Modifier.height(22.dp))
+        Text(tr("privacy"), fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground, fontSize = 17.sp)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            QREXTile(Icons.Default.Security, tr("privacy_policy"), tr("privacy"),
+                modifier = Modifier.weight(1f), onClick = { showPrivacy = true })
+            QREXTile(Icons.Default.Article, tr("terms_of_use"), tr("terms_summary"),
+                modifier = Modifier.weight(1f), onClick = { showTerms = true })
+        }
+        Spacer(Modifier.height(12.dp))
+        QREXTile(Icons.Default.Info, tr("about"), tr("developed_by") + " · QREX",
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { openLink(context, Uri.parse("https://brendigo.com")) })
+        Spacer(Modifier.height(16.dp))
         OutlinedButton(onClick = { showDelete = true },
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.error)) {
+            Icon(Icons.Default.Delete, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
             Text(tr("delete_all"))
-        }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Box(Modifier.fillMaxWidth()) {
-            OutlinedButton(onClick = { languageMenu = true },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
-                Text(languageName, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            DropdownMenu(expanded = languageMenu, onDismissRequest = { languageMenu = false }) {
-                DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
-                    store.updateLanguage("system"); languageMenu = false
-                })
-                QREXStrings.languages.forEach { localeCode ->
-                    DropdownMenuItem(text = {
-                        Text(Locale.forLanguageTag(localeCode).getDisplayName(Locale.forLanguageTag(localeCode)))
-                    }, onClick = { store.updateLanguage(localeCode); languageMenu = false })
-                }
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-        Text(tr("about"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text("QREX", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        TextButton(onClick = {
-            openLink(context, Uri.parse("https://brendigo.com"))
-        }) { Text(tr("developed_by")) }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextButton(onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)) {
-                Text(tr("privacy_policy"), maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-            }
-            TextButton(onClick = { showTerms = true }, modifier = Modifier.weight(1f)) {
-                Text(tr("terms_of_use"), maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-            }
         }
     }
     if (confirmPdfExport) AlertDialog(
