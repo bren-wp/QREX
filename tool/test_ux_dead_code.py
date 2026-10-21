@@ -54,7 +54,11 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_history_truncates_long_labels_without_removing_delete(self):
         self.assertIn("Text(QRContent.label(item.raw), maxLines = 2", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
-        self.assertIn("Icon(Icons.Default.Delete, contentDescription = tr(\"delete\")", self.main)
+        # The reference uses a real overflow menu and favorite heart rather
+        # than an always-visible trash icon on each History row.
+        self.assertIn('DropdownMenuItem(text = { Text(tr("delete")) }', self.main)
+        self.assertIn("store.setSaved(item, !item.saved)", self.main)
+        self.assertIn('testTag("qrex-history-menu")', self.main)
         self.assertIn("pendingDelete = item", self.main)
         self.assertIn("store.remove(actual)", self.main)
 
@@ -77,6 +81,17 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QRHistory.matches(it, search, savedOnly || favoritesPage)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("enabled = store.items.any { it.saved }", self.main)
+
+    def test_dark_splash_and_reference_app_bars_are_real_compose_actions(self):
+        splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
+        self.assertIn("internal fun QrexSplashScreen(", splash)
+        self.assertIn("QrexDesign.backgroundDeep", splash)
+        self.assertIn("R.drawable.qrex_icon_monochrome", splash)
+        self.assertIn("screenshotMode != \"splash\"", self.main)
+        self.assertIn('testTag("qrex-create-back")', self.main)
+        self.assertIn("onBack = { selected = 0 }", self.main)
+        self.assertIn("showResultMenu", self.main)
+        self.assertIn('testTag("qrex-result-close")', self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
         self.assertIn('leadingIcon = { Icon(typeIcons[index]', self.main)
