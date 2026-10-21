@@ -51,10 +51,11 @@ test "$brendigo_actual" = "$brendigo_expected" || { echo "Brendigo APK cert mism
 
 # Unset all Gradle signing variables: produce a fresh unsigned APK and AAB,
 # then sign each binary for its own distribution channel.
-unset QREX_UPLOAD_STORE_FILE QREX_UPLOAD_STORE_PASSWORD_GRADLE
 python3 tool/generate_localizations.py --check
 python3 tool/check_native_release.py
-gradle -p platforms/android --no-daemon --stacktrace \
+env -u QREX_UPLOAD_STORE_FILE -u QREX_UPLOAD_STORE_PASSWORD \
+  -u QREX_UPLOAD_KEY_ALIAS -u QREX_UPLOAD_KEY_PASSWORD \
+  gradle -p platforms/android --no-daemon --stacktrace \
   :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
 
 UNSIGNED_APK="platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk"
