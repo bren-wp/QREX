@@ -838,9 +838,9 @@ private fun MoreScreen(store: QREXStore) {
         AppHeader(tr("more"), tr("settings"))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
-                label = tr("light_theme"), icon = Icons.Default.Brightness4,
+                label = tr("theme"), icon = Icons.Default.Brightness4,
                 onClick = { store.updateLightMode(!store.lightMode) },
-                subtitle = if (store.lightMode) tr("light_theme") else tr("system"),
+                subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
                 modifier = Modifier.weight(1f)
             )
             Box(Modifier.weight(1f)) {
