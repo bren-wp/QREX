@@ -3,6 +3,7 @@
     <string name="scan">Сканировать</string>
     <string name="create">Создать</string>
     <string name="history">История</string>
+    <string name="favorites">Избранное</string>
     <string name="more">Ещё</string>
     <string name="scan_qr">Сканировать QR-код</string>
     <string name="point_camera">Наведите камеру на QR-код</string>
