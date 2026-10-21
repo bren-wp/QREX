@@ -9,6 +9,12 @@ def screen(body: str) -> str:
 
 
 class ForegroundTests(unittest.TestCase):
+    def test_actual_dark_splash(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="QREX" />'
+            '<node package="com.brendigo.qrex" text="Scan. Create. Share." />'
+        ), "splash")
+
     def test_real_app(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Create QR code" />'
