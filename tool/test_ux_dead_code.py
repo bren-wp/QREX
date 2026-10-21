@@ -28,7 +28,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('if (store.lightMode) Color(0xFF1156AE) else cyan', self.main)
         self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
         self.assertIn("selectedTextColor = selectedNavigationColor", self.main)
-        self.assertIn("color = MaterialTheme.colorScheme.primary", self.scanner)
+        self.assertIn("QrexBrandHeader(tr(\"scan_qr\"), tr(\"point_camera\"))", self.scanner)
+        self.assertIn("color = MaterialTheme.colorScheme.primary",
+                      (NATIVE / "QREXDesign.kt").read_text("utf-8"))
 
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
@@ -43,7 +45,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_settings_grid_has_real_actions_and_accessible_touch_targets(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("QrexSettingsTile(", self.main)
-        self.assertIn('Text(tr("save_history"), Modifier.weight(1f))', self.main)
+        self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 56.dp)", self.main)
         self.assertIn("min = 102.dp", design)
         self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
