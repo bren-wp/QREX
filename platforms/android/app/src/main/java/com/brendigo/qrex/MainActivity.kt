@@ -694,7 +694,8 @@ private fun HistoryScreen(
     val found = (screenshotItems ?: store.items).filter {
         QRHistory.matches(it, search, savedOnly || favoritesPage)
     }
-    Column(Modifier.fillMaxSize().padding(20.dp)) {
+    Column(Modifier.fillMaxSize().padding(20.dp)
+        .testTag(if (favoritesPage) "qrex-favorites-screen" else "qrex-history-screen")) {
         AppHeader(if (favoritesPage) tr("favorites") else tr("history"),
             if (favoritesPage) tr("saved") else tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
@@ -834,7 +835,8 @@ private fun MoreScreen(store: QREXStore) {
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp, vertical = 18.dp)) {
+        .padding(horizontal = 16.dp, vertical = 18.dp)
+        .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
