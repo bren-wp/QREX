@@ -623,7 +623,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
 @Composable
 private fun HistoryScreen(
     store: QREXStore, onOpen: (String) -> Unit,
-    screenshotItems: List<QRRecord>? = null, initiallySavedOnly: Boolean = false
+    screenshotItems: List<QRRecord>? = null, initiallySavedOnly: Boolean = false,
+    favoritesPage: Boolean = false
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
@@ -631,19 +632,23 @@ private fun HistoryScreen(
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
-        QRHistory.matches(it, search, savedOnly)
+        QRHistory.matches(it, search, savedOnly || favoritesPage)
     }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
-        AppHeader(tr("history"), tr("history_local"))
+        AppHeader(if (favoritesPage) tr("favorites") else tr("history"),
+            if (favoritesPage) tr("saved") else tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
-            label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
-        Spacer(Modifier.height(8.dp))
-        FilterChip(
-            selected = savedOnly,
-            onClick = { savedOnly = !savedOnly },
-            label = { Text(tr("saved")) }
-        )
-        Spacer(Modifier.height(8.dp))
+            label = { Text(tr("search_qr")) },
+            leadingIcon = { Icon(Icons.Default.History, contentDescription = null) },
+            singleLine = true,
+            shape = RoundedCornerShape(14.dp), modifier = Modifier.fillMaxWidth())
+        if (!favoritesPage) {
+            Spacer(Modifier.height(6.dp))
+            FilterChip(selected = savedOnly,
+                onClick = { savedOnly = !savedOnly },
+                label = { Text(tr("saved")) })
+        }
+        Spacer(Modifier.height(10.dp))
         if (found.isEmpty()) {
             Surface(shape = RoundedCornerShape(16.dp),
                 color = MaterialTheme.colorScheme.surface,
@@ -660,8 +665,24 @@ private fun HistoryScreen(
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(found, key = { it.raw }) { item ->
-                Surface(shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surface) {
+                QrexPanel(Modifier.fillMaxWidth()) {
                     Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                        val icon = when {
+                            QRContent.isWifi(item.raw) -> Icons.Default.Wifi
+                            item.raw.startsWith("mailto:", ignoreCase = true) -> Icons.Default.Email
+                            item.raw.startsWith("tel:", ignoreCase = true) -> Icons.Default.Phone
+                            item.raw.startsWith("geo:", ignoreCase = true) -> Icons.Default.LocationOn
+                            QRContent.safeUrl(item.raw) != null -> Icons.Default.Link
+                            else -> Icons.Default.QrCode
+                        }
+                        val tint = when {
+                            QRContent.isWifi(item.raw) -> QrexDesign.cyan
+                            item.raw.startsWith("mailto:", ignoreCase = true) -> QrexDesign.accentBright
+                            item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.danger
+                            else -> MaterialTheme.colorScheme.primary
+                        }
+                        QrexHistoryGlyph(icon, tint)
+                        Spacer(Modifier.width(6.dp))
                         TextButton(onClick = { onOpen(item.raw) }, modifier = Modifier.weight(1f)) {
                             Column(horizontalAlignment = Alignment.Start) {
                                 // SSIDs may be arbitrarily long; constrain the row
