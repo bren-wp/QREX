@@ -128,8 +128,9 @@ class QREXNavigationStressTest {
         // Coordinate-based touch still must open Result while the input has focus.
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "show Result")
-        // Valid input must produce an actual QR bitmap, not merely enable a
-        // navigation button. Use an independent bounded render assertion.
+        // QR bitmap generation is intentionally deferred until the user
+        // opens the real preview. Test the physical touch and decoded image.
+        rule.onNodeWithTag("qrex-result-toggle-qr").assertIsDisplayed().performClick()
         try {
             rule.waitUntil(timeoutMillis = 45_000L) {
                 rule.onAllNodesWithTag("qrex-result-qr-ready", useUnmergedTree = true)
@@ -137,7 +138,7 @@ class QREXNavigationStressTest {
             }
         } catch (error: Throwable) {
             throw AssertionError(
-                "P03 actual QR bitmap not rendered after opening Result", error
+                "P03 actual QR bitmap not rendered after tapping Show QR", error
             )
         }
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
