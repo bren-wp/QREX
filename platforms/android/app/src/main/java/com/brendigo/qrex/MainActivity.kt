@@ -381,34 +381,19 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             PrimaryAction(tr("open_link")) { openLink(context, url) }
             Spacer(Modifier.height(10.dp))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedButton(onClick = {
-                copyQrToClipboard(context, raw)
-                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
-            }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("copy"), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            OutlinedButton(onClick = {
-                if (wifi) confirmWifiShare = true
-                else shareQrText(context, raw, shareTitle, sharingFailed)
-            }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("share"), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
+        QrexResultAction(tr("copy"), Icons.Default.ContentCopy) {
+            copyQrToClipboard(context, raw)
+            Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+        }
+        Spacer(Modifier.height(8.dp))
+        QrexResultAction(tr("share"), Icons.Default.Share) {
+            if (wifi) confirmWifiShare = true
+            else shareQrText(context, raw, shareTitle, sharingFailed)
         }
         Spacer(Modifier.height(12.dp))
-        OutlinedButton(
-            onClick = { showQrPreview = !showQrPreview },
-            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
-                .testTag("qrex-result-toggle-qr")
-        ) {
-            Icon(Icons.Default.QrCode, contentDescription = null,
-                modifier = Modifier.size(19.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(tr("show_qr"))
+        QrexResultAction(tr("show_qr"), Icons.Default.QrCode,
+            modifier = Modifier.testTag("qrex-result-toggle-qr")) {
+            showQrPreview = !showQrPreview
         }
         if (showQrPreview) {
             Spacer(Modifier.height(12.dp))
@@ -430,7 +415,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
+        QrexResultAction(if (alreadySaved) tr("saved") else tr("save_qr"),
+            Icons.Default.FavoriteBorder, enabled = !alreadySaved) {
             if (wifi) confirmWifiSave = true
             else if (!store.save(raw)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
