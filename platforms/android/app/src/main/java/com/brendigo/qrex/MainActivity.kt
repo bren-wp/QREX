@@ -251,11 +251,12 @@ private fun QREXTile(
     description: String,
     modifier: Modifier = Modifier,
     destructive: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val accent = if (destructive) MaterialTheme.colorScheme.error
         else MaterialTheme.colorScheme.secondary
-    Surface(onClick = onClick,
+    Surface(onClick = onClick, enabled = enabled,
         modifier = modifier.heightIn(min = 132.dp),
         shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -881,9 +882,11 @@ private fun MoreScreen(store: QREXStore) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             QREXTile(Icons.Default.FilePresent, "PDF", tr("export_archive_hint"),
                 modifier = Modifier.weight(1f),
+                enabled = store.items.any { it.saved },
                 onClick = { confirmPdfExport = true })
             QREXTile(Icons.Default.Archive, "ZIP", tr("export_archive"),
                 modifier = Modifier.weight(1f),
+                enabled = store.items.any { it.saved },
                 onClick = { confirmExport = true })
         }
         Spacer(Modifier.height(22.dp))
