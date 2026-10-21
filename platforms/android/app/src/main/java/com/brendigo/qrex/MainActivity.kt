@@ -229,7 +229,8 @@ private fun PrimaryAction(
 ) {
     Button(onClick = onClick, enabled = enabled,
         modifier = modifier.fillMaxWidth().heightIn(min = 51.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1677FF))) {
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF1677FF), contentColor = Color.White)) {
         Text(text, fontWeight = FontWeight.Bold)
     }
 }
