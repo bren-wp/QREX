@@ -1,0 +1,1 @@
+Improved camera flashlight feedback, history and settings accessibility, light/dark theme contrast and Android lifecycle regression coverage. QR scanning, creation, local storage and export remain available.
