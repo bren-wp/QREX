@@ -1,0 +1,89 @@
+name: QREX official F-Droid readiness audit
+on:
+  pull_request:
+    paths:
+      - "platforms/**"
+      - "tool/**"
+      - "distribution/**"
+      - ".github/workflows/fdroid-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "platforms/**"
+      - "tool/**"
+      - "distribution/**"
+      - ".github/workflows/fdroid-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: qrex-fdroid-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-and-dependency-check:
+    name: Offline scanner, FLOSS dependency preflight and Android test APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Install Android SDK 36
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d "$ANDROID_HOME/platforms/android-36" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
+      - name: Scan source for proprietary QR runtime and verify Python test suite
+        run: |
+          set -euo pipefail
+          python3 tool/fdroid_readiness.py --strict
+          python3 -m unittest discover -s tool -p 'test_*.py'
+      - name: Build release APK and run Kotlin unit tests + lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          gradle -p platforms/android --no-daemon --stacktrace \
+            :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease
+          test -s platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Audit resolved, transitive release runtime libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          gradle -p platforms/android --no-daemon \
+            :app:dependencies --configuration releaseRuntimeClasspath \
+            > "$RUNNER_TEMP/qrex-release-runtime-dependencies.txt"
+          python3 tool/fdroid_dependency_audit.py \
+            "$RUNNER_TEMP/qrex-release-runtime-dependencies.txt"
+      - name: F-Droid source signature scan and metadata lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/fdroid-tools"
+          "$RUNNER_TEMP/fdroid-tools/bin/pip" install --disable-pip-version-check fdroidserver
+          export PATH="$RUNNER_TEMP/fdroid-tools/bin:$PATH"
+          mkdir -p "$RUNNER_TEMP/fdroid-qrex/metadata" "$RUNNER_TEMP/fdroid-qrex/build"
+          cp distribution/official-fdroid/metadata/com.brendigo.qrex.yml.example \
+            "$RUNNER_TEMP/fdroid-qrex/metadata/com.brendigo.qrex.yml"
+          ln -s "$GITHUB_WORKSPACE" "$RUNNER_TEMP/fdroid-qrex/build/com.brendigo.qrex"
+          cd "$RUNNER_TEMP/fdroid-qrex"
+          fdroid lint com.brendigo.qrex
+          fdroid scanner --exit-code com.brendigo.qrex
+          echo "Scanner passed this checkout. Final release/tag and reproducible build still require review."
+      - name: Upload unsigned build for QA only
+        uses: actions/upload-artifact@v4
+        with:
+          name: QREX-FDroid-unsigned-test-APK
+          path: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          if-no-files-found: error
+          retention-days: 7
