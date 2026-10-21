@@ -3,6 +3,7 @@
     <string name="scan">Skann</string>
     <string name="create">Opprett</string>
     <string name="history">Historikk</string>
+    <string name="favorites">Favoritter</string>
     <string name="more">Mer</string>
     <string name="scan_qr">Skann QR-kode</string>
     <string name="point_camera">Rett kameraet mot en QR-kode</string>
