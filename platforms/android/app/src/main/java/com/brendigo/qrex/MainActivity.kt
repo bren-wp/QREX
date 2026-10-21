@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Wifi
@@ -799,8 +800,44 @@ private fun HistoryScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                             }
                         }
-                        IconButton(onClick = { pendingDelete = item }) {
-                            Icon(Icons.Default.Delete, contentDescription = tr("delete"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        IconButton(
+                            onClick = {
+                                if (screenshotItems == null &&
+                                    !store.setSaved(item, !item.saved)) {
+                                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier.testTag("qrex-history-favorite")
+                        ) {
+                            Icon(
+                                if (item.saved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = tr("favorites"),
+                                tint = if (item.saved) QrexDesign.danger
+                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        var historyMenu by remember(item.raw) { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { historyMenu = true },
+                                modifier = Modifier.testTag("qrex-history-menu")) {
+                                Icon(Icons.Default.MoreVert,
+                                    contentDescription = tr("more"),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            DropdownMenu(expanded = historyMenu,
+                                onDismissRequest = { historyMenu = false }) {
+                                DropdownMenuItem(text = { Text(tr("show_qr")) }, onClick = {
+                                    historyMenu = false
+                                    onOpen(item.raw)
+                                })
+                                DropdownMenuItem(text = { Text(tr("delete")) }, onClick = {
+                                    historyMenu = false
+                                    pendingDelete = item
+                                }, leadingIcon = {
+                                    Icon(Icons.Default.Delete, contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error)
+                                })
+                            }
                         }
                     }
                 }
