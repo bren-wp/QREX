@@ -772,79 +772,96 @@ private fun MoreScreen(store: QREXStore) {
     val selectedLanguage = store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp)) {
-        AppHeader(tr("more"), tr("history_local"))
-        Text(tr("settings"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(tr("save_history"), Modifier.weight(1f))
-            Switch(checked = store.historyEnabled, onCheckedChange = store::updateHistoryEnabled)
-        }
-        Row(Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(tr("light_theme"), Modifier.weight(1f))
-            Switch(checked = store.lightMode, onCheckedChange = store::updateLightMode)
-        }
-        Spacer(Modifier.height(12.dp))
-        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text(tr("export_archive_hint"), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(
-                onClick = { confirmPdfExport = true },
-                enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-            ) { Text("PDF") }
-            OutlinedButton(
-                onClick = { confirmExport = true },
-                enabled = store.items.any { it.saved },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-            ) { Text("ZIP") }
-        }
-        OutlinedButton(onClick = { showDelete = true },
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.error)) {
-            Text(tr("delete_all"))
-        }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("language"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Box(Modifier.fillMaxWidth()) {
-            OutlinedButton(onClick = { languageMenu = true },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
-                Text(languageName, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            DropdownMenu(expanded = languageMenu, onDismissRequest = { languageMenu = false }) {
-                DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
-                    store.updateLanguage("system"); languageMenu = false
-                })
-                QREXStrings.languages.forEach { localeCode ->
-                    DropdownMenuItem(text = {
-                        Text(Locale.forLanguageTag(localeCode).getDisplayName(Locale.forLanguageTag(localeCode)))
-                    }, onClick = { store.updateLanguage(localeCode); languageMenu = false })
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        .padding(horizontal = 16.dp, vertical = 18.dp)) {
+        AppHeader(tr("more"), tr("settings"))
+        Text(tr("settings"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("light_theme"), icon = Icons.Default.Brightness4,
+                onClick = { store.updateLightMode(!store.lightMode) },
+                subtitle = if (store.lightMode) tr("light_theme") else tr("system"),
+                modifier = Modifier.weight(1f)
+            )
+            Box(Modifier.weight(1f)) {
+                QrexSettingsTile(
+                    label = tr("language"), icon = Icons.Default.Translate,
+                    onClick = { languageMenu = true }, subtitle = languageName,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                DropdownMenu(expanded = languageMenu, onDismissRequest = {
+                    languageMenu = false
+                }) {
+                    DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
+                        store.updateLanguage("system"); languageMenu = false
+                    })
+                    QREXStrings.languages.forEach { localeCode ->
+                        DropdownMenuItem(text = {
+                            Text(Locale.forLanguageTag(localeCode).getDisplayName(
+                                Locale.forLanguageTag(localeCode)))
+                        }, onClick = {
+                            store.updateLanguage(localeCode); languageMenu = false
+                        })
+                    }
                 }
             }
         }
-        Spacer(Modifier.height(16.dp))
-        Text(tr("about"), color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text("QREX", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        TextButton(onClick = {
-            openLink(context, Uri.parse("https://brendigo.com"))
-        }) { Text(tr("developed_by")) }
-        Spacer(Modifier.height(20.dp))
-        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextButton(onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)) {
-                Text(tr("privacy_policy"), maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
-            }
-            TextButton(onClick = { showTerms = true }, modifier = Modifier.weight(1f)) {
-                Text(tr("terms_of_use"), maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(14.dp))
+        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = "PDF", icon = Icons.Default.Description,
+                onClick = { confirmPdfExport = true },
+                subtitle = tr("export_archive_hint"), modifier = Modifier.weight(1f)
+            )
+            QrexSettingsTile(
+                label = "ZIP", icon = Icons.Default.Archive,
+                onClick = { confirmExport = true },
+                subtitle = tr("export_archive"), modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        QrexPanel(Modifier.fillMaxWidth()) {
+            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 14.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(tr("save_history"), Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurface)
+                Switch(checked = store.historyEnabled,
+                    onCheckedChange = store::updateHistoryEnabled)
             }
         }
+        Spacer(Modifier.height(14.dp))
+        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("privacy_policy"), icon = Icons.Default.Shield,
+                onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)
+            )
+            QrexSettingsTile(
+                label = tr("terms_of_use"), icon = Icons.Default.Description,
+                onClick = { showTerms = true }, modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("about"), icon = Icons.Default.Info,
+                onClick = { openLink(context, Uri.parse("https://brendigo.com")) },
+                subtitle = "QREX", modifier = Modifier.weight(1f)
+            )
+            QrexSettingsTile(
+                label = tr("delete_all"), icon = Icons.Default.DeleteForever,
+                onClick = { showDelete = true }, destructive = true,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(Modifier.height(22.dp))
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
