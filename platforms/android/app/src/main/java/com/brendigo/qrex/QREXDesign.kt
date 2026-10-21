@@ -104,21 +104,21 @@ internal fun QrexSettingsTile(
     val foreground = if (destructive) MaterialTheme.colorScheme.error
         else MaterialTheme.colorScheme.primary
     QrexPanel(modifier = modifier.clickable(enabled = enabled, onClick = onClick)) {
-        Column(Modifier.fillMaxWidth().heightIn(min = 102.dp).padding(13.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.fillMaxWidth().heightIn(min = 88.dp).padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Surface(shape = RoundedCornerShape(12.dp),
                 color = foreground.copy(alpha = 0.14f)) {
-                Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(34.dp), contentAlignment = Alignment.Center) {
                     Icon(icon, contentDescription = null, tint = foreground,
-                        modifier = Modifier.size(23.dp))
+                        modifier = Modifier.size(20.dp))
                 }
             }
             Text(label, fontWeight = FontWeight.SemiBold,
                 color = if (!enabled) MaterialTheme.colorScheme.onSurfaceVariant
                     else if (destructive) foreground else MaterialTheme.colorScheme.onSurface,
-                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 13.sp)
+                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 12.sp)
             if (subtitle != null) {
-                Text(subtitle, fontSize = 11.sp,
+                Text(subtitle, fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
