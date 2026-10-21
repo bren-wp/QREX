@@ -31,7 +31,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("color = MaterialTheme.colorScheme.primary", self.scanner)
 
     def test_primary_actions_have_explicit_readable_light_text(self):
-        self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
+        self.assertIn("containerColor = electricBlue, contentColor = Color.White", self.main)
 
     def test_dark_first_reference_palette_and_card_hierarchy(self):
         self.assertIn('Color(0xFF050D1D)', self.main)
