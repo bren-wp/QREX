@@ -47,6 +47,8 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Share
@@ -302,6 +304,7 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
     var confirmResultDelete by remember(raw) { mutableStateOf(false) }
     var showQrPreview by remember(raw) { mutableStateOf(false) }
+    var showResultMenu by remember(raw) { mutableStateOf(false) }
     val wifi = QRContent.isWifi(raw)
     val alreadySaved = store.items.any { it.raw == raw && it.saved }
     val copied = tr("copied")
@@ -357,19 +360,45 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
     Column(Modifier.fillMaxSize().imePadding().testTag("qrex-result-screen")) {
         // Keep the primary Close action outside the scrolling Result content.
         // Scroll restoration and keyboard resizing must not hide navigation.
-        Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.End) {
-            TextButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
-                Text(tr("close"))
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
+                Icon(Icons.Default.ArrowBack, contentDescription = tr("close"),
+                    tint = MaterialTheme.colorScheme.onSurface)
+            }
+            Text(tr("scan_complete"), modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold,
+                fontSize = 21.sp, color = MaterialTheme.colorScheme.onSurface)
+            Box {
+                IconButton(onClick = { showResultMenu = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
+                        tint = MaterialTheme.colorScheme.onSurface)
+                }
+                DropdownMenu(expanded = showResultMenu,
+                    onDismissRequest = { showResultMenu = false }) {
+                    DropdownMenuItem(text = { Text(tr("copy")) }, onClick = {
+                        showResultMenu = false
+                        copyQrToClipboard(context, raw)
+                        Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+                    })
+                    DropdownMenuItem(text = { Text(tr("share")) }, onClick = {
+                        showResultMenu = false
+                        if (wifi) confirmWifiShare = true
+                        else shareQrText(context, raw, shareTitle, sharingFailed)
+                    })
+                    DropdownMenuItem(text = { Text(tr("show_qr")) }, onClick = {
+                        showResultMenu = false
+                        showQrPreview = !showQrPreview
+                    })
+                }
             }
         }
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.ExtraBold, fontSize = 24.sp,
-            modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
         Surface(shape = RoundedCornerShape(16.dp), color = QrexDesign.accent) {
             Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
                 Icon(Icons.Default.Link, contentDescription = null,
