@@ -59,7 +59,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.heroBrush", self.main)
         self.assertIn("favoritesPage = true", self.main)
         self.assertIn("QRHistory.matches(it, search, savedOnly || favoritesPage)", self.main)
-        self.assertIn("QrexBrandHeader(", self.main)
+        self.assertIn("private fun AppHeader(", self.main)
+        self.assertIn("enabled = store.items.any { it.saved }", self.main)
 
     def test_scanner_torch_waits_for_actual_camerax_completion(self):
         self.assertIn("var torchBusy by remember { mutableStateOf(false) }", self.scanner)
