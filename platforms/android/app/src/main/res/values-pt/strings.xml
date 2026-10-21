@@ -3,6 +3,7 @@
     <string name="scan">Ler</string>
     <string name="create">Criar</string>
     <string name="history">Histórico</string>
+    <string name="favorites">Favoritos</string>
     <string name="more">Mais</string>
     <string name="scan_qr">Ler código QR</string>
     <string name="point_camera">Aponte a câmara para um código QR</string>
