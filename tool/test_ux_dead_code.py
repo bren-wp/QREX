@@ -24,16 +24,32 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn(".widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
-    def test_light_theme_navigation_has_legible_separate_selection_color(self):
-        self.assertIn('if (store.lightMode) Color(0xFF1156AE) else cyan', self.main)
+    def test_dark_theme_is_default_and_navigation_contrast_is_adaptive(self):
+        # Dark is the persisted fresh-install default, but an existing user's
+        # explicit light-mode choice must continue to be respected.
+        self.assertIn('getBoolean("lightMode", false)', self.core)
+        self.assertIn(") else darkColorScheme(", self.main)
+        self.assertIn("QrexDesign.backgroundDeep", self.main)
+        self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
+        self.assertIn(
+            "if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright",
+            self.main,
+        )
         self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
         self.assertIn("selectedTextColor = selectedNavigationColor", self.main)
         self.assertIn("QrexBrandHeader(tr(\"scan_qr\"), tr(\"point_camera\"))", self.scanner)
-        self.assertIn("color = MaterialTheme.colorScheme.primary",
-                      (NATIVE / "QREXDesign.kt").read_text("utf-8"))
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("val accentBright = Color(0xFF22C7FF)", design)
+        self.assertIn("color = MaterialTheme.colorScheme.primary", design)
 
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
+
+    def test_reference_dark_navigation_and_result_hierarchy(self):
+        self.assertIn("else QrexDesign.accentBright", self.main)
+        self.assertIn("else QrexDesign.surfaceRaised))", self.main)
+        self.assertIn("modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start", self.main)
+        self.assertIn("modifier = Modifier.weight(1f).heightIn(min = 54.dp)", self.main)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
         self.assertIn("Text(QRContent.label(item.raw), maxLines = 2", self.main)

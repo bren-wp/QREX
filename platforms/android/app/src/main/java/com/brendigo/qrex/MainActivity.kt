@@ -187,7 +187,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
         error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
     // White/light navigation surfaces need darker selected labels for contrast.
-    val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else cyan
+    val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
         Scaffold(containerColor = colors.background, bottomBar = {
@@ -205,7 +205,9 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)))
+                            indicatorColor = if (store.lightMode)
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+                            else QrexDesign.surfaceRaised))
                 }
             }
         }) { padding ->
@@ -346,7 +348,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
         Text(tr("scan_complete"), color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+            fontWeight = FontWeight.ExtraBold, fontSize = 24.sp,
+            modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
         Spacer(Modifier.height(16.dp))
         Surface(shape = RoundedCornerShape(16.dp), color = QrexDesign.accent) {
             Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
@@ -733,8 +736,9 @@ private fun HistoryScreen(
                             else -> MaterialTheme.colorScheme.primary
                         }
                         QrexHistoryGlyph(icon, tint)
-                        Spacer(Modifier.width(6.dp))
-                        TextButton(onClick = { onOpen(item.raw) }, modifier = Modifier.weight(1f)) {
+                        Spacer(Modifier.width(10.dp))
+                        TextButton(onClick = { onOpen(item.raw) },
+                            modifier = Modifier.weight(1f).heightIn(min = 54.dp)) {
                             Column(horizontalAlignment = Alignment.Start) {
                                 // SSIDs may be arbitrarily long; constrain the row
                                 // instead of letting them crowd out Delete.
