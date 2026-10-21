@@ -1,0 +1,1 @@
+QREX 1.0.5: Dark navy is the default theme, with refreshed Scan, Create, Result, History, Favorites and More screens. Fixed a theme-related Android/F-Droid CI regression and extended stability testing. Offline QR scanning and private local history remain unchanged.
