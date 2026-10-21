@@ -538,6 +538,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
+    val typeIcons = listOf(Icons.Default.Link, Icons.Default.Description, Icons.Default.Wifi,
+        Icons.Default.Email, Icons.Default.Phone, Icons.Default.LocationOn, Icons.Default.Person)
     var kind by remember(screenshotMode) { mutableIntStateOf(if (screenshotMode == "wifi") 2 else 0) }
     var content by remember(screenshotMode) {
         mutableStateOf(when (screenshotMode) {
@@ -591,6 +593,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                     selected = kind == index,
                     onClick = { kind = index; content = ""; password = "" },
                     label = { Text(types[index], fontWeight = FontWeight.SemiBold) },
+                    leadingIcon = { Icon(typeIcons[index], contentDescription = null,
+                        modifier = Modifier.size(17.dp)) },
                     shape = RoundedCornerShape(11.dp),
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = MaterialTheme.colorScheme.surface,
@@ -640,28 +644,27 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
+        }
+        // The reference keeps Generate above Save. Both controls remain pinned
+        // above the navigation bar so an open IME cannot hide the real targets.
+        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                .testTag("qrex-create-show")) {
+            focusManager.clearFocus(force = true)
+            onResult(payload)
+        }
         OutlinedButton(onClick = {
             if (QRContent.isWifi(payload)) confirmWifiSave = true
             else if (!store.save(payload)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
-        }, enabled = qr != null,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
-                .testTag("qrex-create-save")) {
+        }, enabled = qr != null, shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)
+                .heightIn(min = 50.dp).testTag("qrex-create-save"),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colorScheme.surface)) {
             Text(tr("save_qr"))
-        }
-        Spacer(Modifier.height(16.dp))
-        }
-        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                .testTag("qrex-create-show")) {
-            // Clear focus, but do not programmatically issue an IME hide/back
-            // transition before opening Result. On older Android versions a
-            // delayed keyboard back callback could immediately pop Result.
-            // Unmounting the input field releases its IME focus naturally.
-            focusManager.clearFocus(force = true)
-            onResult(payload)
         }
     }
     if (confirmWifiSave) {
