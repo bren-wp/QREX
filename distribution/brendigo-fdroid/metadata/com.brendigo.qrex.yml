@@ -12,7 +12,8 @@ Description: |-
   Create codes for links, text, Wi-Fi and contacts; keep local history and export
   images or saved codes. No account or advertising is required.
 
-  Note: The current Play/GitHub build includes Google's non-free ML Kit barcode
-  scanning dependency. This third-party repository is NOT the official F-Droid
-  main repository. Users of Play or older GitHub APKs may have a different APK
-  signing certificate and cannot upgrade in place.
+  Earlier GitHub QREX v1.0.3 used Google's proprietary ML Kit decoder. Future
+  Brendigo-signed builds are planned to use open-source ZXing. This third-party
+  repository is NOT the official F-Droid main repository. Existing Play or
+  old GitHub APKs may have a different APK signing certificate and cannot
+  necessarily update in place.
