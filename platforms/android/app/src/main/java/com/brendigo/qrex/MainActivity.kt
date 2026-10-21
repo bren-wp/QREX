@@ -162,6 +162,18 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
     }
+    // True cold-start splash, drawn with the real Compose logo and brand
+    // graphics. It is skipped for deterministic CI screenshots and not
+    // replayed after Activity recreation.
+    var showSplash by rememberSaveable(screenshotMode) {
+        mutableStateOf(screenshotMode == null)
+    }
+    LaunchedEffect(showSplash) {
+        if (showSplash) {
+            delay(950)
+            showSplash = false
+        }
+    }
     // Neutral, in-memory demo history drawn by the *actual Compose UI*.
     // Never persist fixtures, and never enable this in non-debug builds.
     val screenshotItems = remember(screenshotMode) {
@@ -190,6 +202,12 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
+        if (showSplash) {
+            QrexSplashScreen(
+                subtitle = if (store.language == "hr") "Skeniraj. Stvori. Podijeli."
+                else "Scan. Create. Share."
+            )
+        } else {
         Scaffold(containerColor = colors.background, bottomBar = {
             NavigationBar(containerColor = if (store.lightMode) Color.White else QrexDesign.backgroundDeep,
                 tonalElevation = 0.dp) {
@@ -233,6 +251,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                     }
                 }
             }
+        }
         }
         }
     }
