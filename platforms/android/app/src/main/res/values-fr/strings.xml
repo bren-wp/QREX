@@ -58,6 +58,8 @@
     <string name="settings">Paramètres</string>
     <string name="save_history">Enregistrer l\'historique</string>
     <string name="light_theme">Thème clair</string>
+    <string name="theme">Thème</string>
+    <string name="dark_theme">Thème sombre</string>
     <string name="delete_all">Supprimer toutes les données</string>
     <string name="privacy">Confidentialité</string>
     <string name="privacy_summary">Les codes QR sont traités sur l\'appareil. Aucun compte, publicité ou analyse. L\'historique est facultatif. Les mots de passe Wi-Fi ne sont jamais enregistrés automatiquement ; un code Wi-Fi enregistré manuellement contient son mot de passe. Les actions externes peuvent transmettre des données à une autre application. Vous pouvez supprimer toutes les données locales dans les paramètres. Contact : brendigo.com.</string>
