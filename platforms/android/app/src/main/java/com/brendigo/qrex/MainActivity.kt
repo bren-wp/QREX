@@ -132,17 +132,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val context = LocalContext.current
-    val pages = listOf("scan", "create", "history", "more")
+    val pages = listOf("scan", "create", "history", "saved", "more")
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.QrCode, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
-            "history", "saved" -> 2
-            "more" -> 3
+            "history" -> 2
+            "saved" -> 3
+            "more" -> 4
             else -> 0
         })
     }
@@ -207,8 +208,9 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                         })
                         1 -> CreateScreen(store, screenshotMode = screenshotMode, onResult = { currentCode = it })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
-                            screenshotItems = screenshotItems,
-                            initiallySavedOnly = screenshotMode == "saved")
+                            screenshotItems = screenshotItems)
+                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
+                            screenshotItems = screenshotItems, initiallySavedOnly = true)
                         else -> MoreScreen(store)
                     }
                 }
