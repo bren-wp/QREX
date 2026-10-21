@@ -153,7 +153,7 @@ jobs:
           cp "$apk" production/QREX-Android-1.0.5.apk
           cp "$aab" production/QREX-Android-1.0.5.aab
           (cd production && sha256sum QREX-Android-1.0.5.apk QREX-Android-1.0.5.aab > SHA256SUMS.txt)
-      - name: Retrieve seven real screenshots from exact-SHA emulator CI
+      - name: Retrieve eight real screenshots from exact-SHA emulator CI
         shell: bash
         run: |
           set -euo pipefail
@@ -164,7 +164,7 @@ jobs:
           [[ "$capture_run" =~ ^[0-9]+$ ]]
           gh run download "$capture_run" --repo "$GITHUB_REPOSITORY" \
             --name qrex-actual-android --dir production
-          for screen in create scan wifi result history saved more; do
+          for screen in splash create scan wifi result history saved more; do
             test -s "production/android-${screen}.png"
           done
           python3 tool/verify_screenshots.py production/android-*.png
@@ -172,7 +172,7 @@ jobs:
           from pathlib import Path
           from tool.verify_screenshots import verify
           screens = sorted(Path("production").glob("android-*.png"))
-          assert len(screens) == 7, "Release requires seven real captures"
+          assert len(screens) == 8, "Release requires eight real captures"
           for shot in screens:
               assert verify(shot) == (1080, 1920), f"Not a Play-size screenshot: {shot}"
           PY
@@ -226,7 +226,7 @@ jobs:
                 (["QREX-Android-1.0.5.apk", "QREX-Android-1.0.5.aab",
                   "QREX-Android-1.0.5-Play-UNSIGNED-QA.aab",
                   "QREX-Android-1.0.5-FDroid-UNSIGNED-QA.apk", "SHA256SUMS.txt",
-                  "android-create.png", "android-scan.png", "android-wifi.png",
+                  "android-splash.png", "android-create.png", "android-scan.png", "android-wifi.png",
                   "android-result.png", "android-history.png", "android-saved.png",
                   "android-more.png"] | sort)
               and all(.assets[]; .size > 0)
