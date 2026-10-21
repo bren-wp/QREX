@@ -39,6 +39,11 @@ import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.FilePresent
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.QrCode
@@ -691,15 +696,20 @@ private fun HistoryScreen(
         QRHistory.matches(it, search, savedOnly)
     }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
-        AppHeader(tr("history"), tr("history_local"))
+        AppHeader(if (initiallySavedOnly) tr("saved") else tr("history"), tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
             label = { Text(tr("search_qr")) }, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(8.dp))
-        FilterChip(
-            selected = savedOnly,
-            onClick = { savedOnly = !savedOnly },
-            label = { Text(tr("saved")) }
-        )
+        if (!initiallySavedOnly) {
+            FilterChip(
+                selected = savedOnly,
+                onClick = { savedOnly = !savedOnly },
+                label = { Text(tr("saved")) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = Color.White)
+            )
+        }
         Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
             Surface(shape = RoundedCornerShape(16.dp),
@@ -719,7 +729,21 @@ private fun HistoryScreen(
             items(found, key = { it.raw }) { item ->
                 Surface(shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surface,
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)) {
-                    Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        val typeIcon = when {
+                            QRContent.isWifi(item.raw) -> Icons.Default.Wifi
+                            item.raw.startsWith("mailto:", ignoreCase = true) -> Icons.Default.Email
+                            item.raw.startsWith("tel:", ignoreCase = true) -> Icons.Default.Phone
+                            item.raw.startsWith("geo:", ignoreCase = true) -> Icons.Default.LocationOn
+                            else -> Icons.Default.Link
+                        }
+                        Surface(shape = RoundedCornerShape(14.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer) {
+                            Icon(typeIcon, contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.padding(11.dp).size(22.dp))
+                        }
                         TextButton(onClick = { onOpen(item.raw) }, modifier = Modifier.weight(1f)) {
                             Column(horizontalAlignment = Alignment.Start) {
                                 // SSIDs may be arbitrarily long; constrain the row
