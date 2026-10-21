@@ -48,7 +48,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("else QrexDesign.accentBright", self.main)
         self.assertIn("else QrexDesign.surfaceRaised))", self.main)
-        self.assertIn("modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start", self.main)
+        self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         self.assertIn("modifier = Modifier.weight(1f).heightIn(min = 54.dp)", self.main)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
