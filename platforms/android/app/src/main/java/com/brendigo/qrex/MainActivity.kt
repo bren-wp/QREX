@@ -381,34 +381,19 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             PrimaryAction(tr("open_link")) { openLink(context, url) }
             Spacer(Modifier.height(10.dp))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedButton(onClick = {
-                copyQrToClipboard(context, raw)
-                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
-            }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("copy"), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            OutlinedButton(onClick = {
-                if (wifi) confirmWifiShare = true
-                else shareQrText(context, raw, shareTitle, sharingFailed)
-            }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("share"), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
+        QrexResultAction(tr("copy"), Icons.Default.ContentCopy) {
+            copyQrToClipboard(context, raw)
+            Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+        }
+        Spacer(Modifier.height(8.dp))
+        QrexResultAction(tr("share"), Icons.Default.Share) {
+            if (wifi) confirmWifiShare = true
+            else shareQrText(context, raw, shareTitle, sharingFailed)
         }
         Spacer(Modifier.height(12.dp))
-        OutlinedButton(
-            onClick = { showQrPreview = !showQrPreview },
-            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
-                .testTag("qrex-result-toggle-qr")
-        ) {
-            Icon(Icons.Default.QrCode, contentDescription = null,
-                modifier = Modifier.size(19.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(tr("show_qr"))
+        QrexResultAction(tr("show_qr"), Icons.Default.QrCode,
+            modifier = Modifier.testTag("qrex-result-toggle-qr")) {
+            showQrPreview = !showQrPreview
         }
         if (showQrPreview) {
             Spacer(Modifier.height(12.dp))
@@ -430,7 +415,8 @@ private fun ResultScreen(raw: String, store: QREXStore, onClose: () -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        PrimaryAction(if (alreadySaved) tr("saved") else tr("save_qr"), enabled = !alreadySaved) {
+        QrexResultAction(if (alreadySaved) tr("saved") else tr("save_qr"),
+            Icons.Default.FavoriteBorder, enabled = !alreadySaved) {
             if (wifi) confirmWifiSave = true
             else if (!store.save(raw)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
@@ -538,6 +524,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
+    val typeIcons = listOf(Icons.Default.Link, Icons.Default.Description, Icons.Default.Wifi,
+        Icons.Default.Email, Icons.Default.Phone, Icons.Default.LocationOn, Icons.Default.Person)
     var kind by remember(screenshotMode) { mutableIntStateOf(if (screenshotMode == "wifi") 2 else 0) }
     var content by remember(screenshotMode) {
         mutableStateOf(when (screenshotMode) {
@@ -578,7 +566,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         // Keep the primary Show QR action outside the scroller: a changing
         // preview/IME/scroll offset must not move its touch target.
         Column(Modifier.weight(1f).fillMaxWidth()
-            .verticalScroll(rememberScrollState()).padding(20.dp)) {
+            .verticalScroll(rememberScrollState()).testTag("qrex-create-scroll")
+            .padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
         // All supported QR types remain directly accessible by swiping tabs.
         val visibleKinds = listOf(0, 1, 2, 6, 3, 4, 5)
@@ -591,6 +580,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                     selected = kind == index,
                     onClick = { kind = index; content = ""; password = "" },
                     label = { Text(types[index], fontWeight = FontWeight.SemiBold) },
+                    leadingIcon = { Icon(typeIcons[index], contentDescription = null,
+                        modifier = Modifier.size(17.dp)) },
                     shape = RoundedCornerShape(11.dp),
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = MaterialTheme.colorScheme.surface,
@@ -640,28 +631,27 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
+        }
+        // The reference keeps Generate above Save. Both controls remain pinned
+        // above the navigation bar so an open IME cannot hide the real targets.
+        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                .testTag("qrex-create-show")) {
+            focusManager.clearFocus(force = true)
+            onResult(payload)
+        }
         OutlinedButton(onClick = {
             if (QRContent.isWifi(payload)) confirmWifiSave = true
             else if (!store.save(payload)) {
                 Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
             }
-        }, enabled = qr != null,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
-                .testTag("qrex-create-save")) {
+        }, enabled = qr != null, shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)
+                .heightIn(min = 50.dp).testTag("qrex-create-save"),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colorScheme.surface)) {
             Text(tr("save_qr"))
-        }
-        Spacer(Modifier.height(16.dp))
-        }
-        PrimaryAction(tr("show_qr"), enabled = canOpenQr,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                .testTag("qrex-create-show")) {
-            // Clear focus, but do not programmatically issue an IME hide/back
-            // transition before opening Result. On older Android versions a
-            // delayed keyboard back callback could immediately pop Result.
-            // Unmounting the input field releases its IME focus naturally.
-            focusManager.clearFocus(force = true)
-            onResult(payload)
         }
     }
     if (confirmWifiSave) {

@@ -191,7 +191,11 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/sticky-create")
         awaitCreateAction(0, "primary action")
-        rule.onNodeWithTag("qrex-create-save").performScrollTo()
+        // Swipe the actual form, not the pinned Save action outside it.
+        // The physical Generate button must stay clickable after scrolling.
+        rule.onNodeWithTag("qrex-create-scroll")
+            .performTouchInput { swipeUp() }
+        rule.onNodeWithTag("qrex-create-save").assertIsDisplayed()
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "sticky Create result transition")
     }

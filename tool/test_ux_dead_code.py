@@ -62,6 +62,20 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("enabled = store.items.any { it.saved }", self.main)
 
+    def test_reference_create_controls_keep_real_pinned_touch_targets(self):
+        self.assertIn('leadingIcon = { Icon(typeIcons[index]', self.main)
+        self.assertIn('testTag("qrex-create-show")', self.main)
+        self.assertIn('testTag("qrex-create-save")', self.main)
+        self.assertLess(self.main.index('testTag("qrex-create-show")'),
+                        self.main.index('testTag("qrex-create-save")'))
+        self.assertIn('focusManager.clearFocus(force = true)', self.main)
+
+    def test_result_actions_have_full_width_real_callbacks(self):
+        self.assertIn('QrexResultAction(tr("copy"), Icons.Default.ContentCopy)', self.main)
+        self.assertIn('QrexResultAction(tr("share"), Icons.Default.Share)', self.main)
+        self.assertIn('testTag("qrex-result-toggle-qr")', self.main)
+        self.assertIn('Icons.Default.FavoriteBorder, enabled = !alreadySaved', self.main)
+
     def test_scanner_torch_waits_for_actual_camerax_completion(self):
         self.assertIn("var torchBusy by remember { mutableStateOf(false) }", self.scanner)
         self.assertIn("activeCamera.cameraControl.enableTorch(next)", self.scanner)

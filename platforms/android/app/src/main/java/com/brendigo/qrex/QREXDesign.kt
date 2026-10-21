@@ -126,6 +126,41 @@ internal fun QrexSettingsTile(
     }
 }
 
+/** Reference-style result action: real full-width button with a touch target
+ * >= 52dp, clear icon, legible label and chevron. Never an inert decorative card.
+ */
+@Composable
+internal fun QrexResultAction(
+    label: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.fillMaxWidth().heightIn(min = 52.dp),
+        shape = RoundedCornerShape(15.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Row(Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.width(12.dp))
+            Text(label, modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium, maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
+            Icon(Icons.Default.ChevronRight, contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(19.dp))
+        }
+    }
+}
+
 @Composable
 internal fun QrexHistoryGlyph(icon: ImageVector, tint: Color, modifier: Modifier = Modifier) {
     Surface(
