@@ -531,7 +531,6 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
     }
     var password by remember { mutableStateOf("") }
     var reveal by remember { mutableStateOf(false) }
-    var more by remember { mutableStateOf(false) }
     val input = content.trim()
     val payload = when (kind) {
         0 -> if (QRContent.safeUrl(input) != null) input else ""
@@ -564,8 +563,8 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).padding(20.dp)) {
         AppHeader(tr("create_qr"), tr("enter_details"))
-        val visibleKinds = if (more) listOf(0, 1, 2, 6, 3, 4, 5)
-            else listOf(0, 1, 2, 6)
+        // All supported QR types remain directly accessible by swiping tabs.
+        val visibleKinds = listOf(0, 1, 2, 6, 3, 4, 5)
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -583,9 +582,6 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                         selectedLabelColor = Color.White)
                 )
             }
-        }
-        TextButton(onClick = { more = !more; if (!more && kind !in listOf(0, 1, 2, 6)) kind = 0 }) {
-            Text(if (more) tr("fewer_options") else tr("more_options"))
         }
         Spacer(Modifier.height(10.dp))
         OutlinedTextField(value = content, onValueChange = { content = it.take(2000) },
@@ -611,7 +607,7 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         QrexPanel(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(10.dp))
                 val previewBitmap = qr
                 // Avoid a nested subcomposition per rapidly changing QR
                 // preview. The parent Box stays stable across payload edits.
@@ -619,7 +615,7 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                     if (previewBitmap != null) {
                         Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                             modifier = Modifier.testTag("qrex-create-preview-ready")
-                                .widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)
+                                .widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)
                                 .background(white).padding(14.dp))
                     } else {
                         Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
