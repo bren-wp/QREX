@@ -3,6 +3,7 @@
     <string name="scan">Skannaa</string>
     <string name="create">Luo</string>
     <string name="history">Historia</string>
+    <string name="favorites">Suosikit</string>
     <string name="more">Lisää</string>
     <string name="scan_qr">Skannaa QR-koodi</string>
     <string name="point_camera">Osoita kamera QR-koodiin</string>
