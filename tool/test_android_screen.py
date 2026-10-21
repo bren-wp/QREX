@@ -23,12 +23,18 @@ class ForegroundTests(unittest.TestCase):
             '<node package="com.brendigo.qrex" text="Close" />'
         ), "result")
 
-    def test_genuine_history_screen_is_accepted(self):
+    def test_dedicated_saved_screen_is_accepted(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="Saved" />'
+            '<node package="com.brendigo.qrex" text="brendigo.com" />'
+        ), "saved")
+
+    def test_normal_history_screen_is_accepted(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="History" />'
             '<node package="com.brendigo.qrex" text="brendigo.com" />'
             '<node package="com.brendigo.qrex" text="Saved" />'
-        ), "saved")
+        ), "history")
 
     def test_wrong_screen_or_anr_is_rejected_even_with_qrex_package(self):
         with self.assertRaises(ValueError):
