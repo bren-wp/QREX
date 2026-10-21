@@ -67,10 +67,13 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import java.text.DateFormat
 import java.util.Date
 
-private val midnight = Color(0xFF030C1B)
-private val card = Color(0xFF101B2C)
-private val cyan = Color(0xFF10C5FA)
-private val purple = Color(0xFF9047F8)
+private val midnight = Color(0xFF050D1D)
+private val card = Color(0xFF101B30)
+private val cyan = Color(0xFF10CBFA)
+private val electricBlue = Color(0xFF1378FF)
+private val purple = Color(0xFF8655FF)
+private val mutedDark = Color(0xFF9BAFCC)
+private val darkOutline = Color(0xFF203D63)
 private val white = Color.White
 
 /** QR navigation remains available while the preview bitmap is rendering. */
@@ -165,14 +168,18 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
         primary = Color(0xFF1677FF), secondary = purple,
         background = Color(0xFFF3F6FF), surface = Color.White,
         onSurface = midnight, onBackground = midnight
-    ) else darkColorScheme(primary = cyan, secondary = purple,
-        background = midnight, surface = card, onSurface = white, onBackground = white)
+    ) else darkColorScheme(primary = electricBlue, secondary = cyan,
+        tertiary = purple, background = midnight, surface = card,
+        surfaceVariant = Color(0xFF14243B), onSurface = white, onBackground = white,
+        onSurfaceVariant = mutedDark, outline = darkOutline,
+        primaryContainer = Color(0xFF11325E), onPrimaryContainer = white)
     // White/light navigation surfaces need darker selected labels for contrast.
     val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else cyan
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
         Scaffold(containerColor = colors.background, bottomBar = {
-            NavigationBar(containerColor = if (store.lightMode) Color.White else Color(0xFF071225)) {
+            NavigationBar(containerColor = if (store.lightMode) Color.White else Color(0xFF081326),
+                tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == index,
@@ -183,6 +190,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = selectedNavigationColor,
                             selectedTextColor = selectedNavigationColor,
+                            indicatorColor = if (store.lightMode) Color(0xFFE7F0FF) else Color(0xFF132A4A),
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
                 }
@@ -213,7 +221,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
 @Composable
 private fun AppHeader(title: String, subtitle: String) {
     Column(Modifier.fillMaxWidth().padding(bottom = 18.dp)) {
-        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 28.sp,
+        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 26.sp,
             color = MaterialTheme.colorScheme.onBackground)
         Spacer(Modifier.height(6.dp))
         Text(subtitle, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -230,7 +238,7 @@ private fun PrimaryAction(
     Button(onClick = onClick, enabled = enabled,
         modifier = modifier.fillMaxWidth().heightIn(min = 51.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF1677FF), contentColor = Color.White)) {
+            containerColor = electricBlue, contentColor = Color.White)) {
         Text(text, fontWeight = FontWeight.Bold)
     }
 }
@@ -513,7 +521,17 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
                 FilterChip(
                     selected = kind == index,
                     onClick = { kind = index; content = ""; password = "" },
-                    label = { Text(types[index]) }
+                    label = { Text(types[index]) },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedLabelColor = Color.White),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true, selected = kind == index,
+                        borderColor = MaterialTheme.colorScheme.outline,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary)
                 )
             }
         }
@@ -541,6 +559,7 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         }
         Spacer(Modifier.height(18.dp))
         Surface(shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.surface,
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
@@ -639,7 +658,8 @@ private fun HistoryScreen(
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(found, key = { it.raw }) { item ->
-                Surface(shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surface) {
+                Surface(shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surface,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)) {
                     Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
                         TextButton(onClick = { onOpen(item.raw) }, modifier = Modifier.weight(1f)) {
                             Column(horizontalAlignment = Alignment.Start) {
