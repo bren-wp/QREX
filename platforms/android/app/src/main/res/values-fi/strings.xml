@@ -58,6 +58,8 @@
     <string name="settings">Asetukset</string>
     <string name="save_history">Tallenna skannaushistoria</string>
     <string name="light_theme">Vaalea teema</string>
+    <string name="theme">Teema</string>
+    <string name="dark_theme">Tumma teema</string>
     <string name="delete_all">Poista kaikki tiedot</string>
     <string name="privacy">Tietosuoja</string>
     <string name="privacy_summary">QR-koodit käsitellään laitteella. Ei tiliä, mainoksia tai analytiikkaa. Historia on valinnainen. Wi-Fi-salasanoja ei tallenneta automaattisesti; Wi-Fi-koodin manuaalinen tallennus tallentaa myös salasanan. Ulkoiset toiminnot voivat jakaa tietoja muiden sovellusten kanssa. Voit poistaa paikalliset tiedot asetuksista. Yhteys: brendigo.com.</string>
