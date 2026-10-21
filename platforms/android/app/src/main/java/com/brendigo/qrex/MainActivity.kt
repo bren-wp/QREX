@@ -115,14 +115,19 @@ class MainActivity : ComponentActivity() {
         // Screenshot fixtures must never be activated by external intents in
         // production/store builds, even if the launch activity is exported.
         val isDebug = (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-        val screenshotCreate = isDebug &&
-            intent.getStringExtra("qrex_screenshot") == "create"
-        setContent { QREXApp(store, screenshotCreate) }
+        // Debug-only screenshot routing. External intents cannot inject
+        // screenshot fixtures into Play or F-Droid release builds.
+        val screenshotMode = if (isDebug)
+            intent.getStringExtra("qrex_screenshot")?.takeIf {
+                it in setOf("create", "scan", "result", "history", "saved", "more", "wifi")
+            }
+        else null
+        setContent { QREXApp(store, screenshotMode) }
     }
 }
 
 @Composable
-private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
+private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val context = LocalContext.current
     val pages = listOf("scan", "create", "history", "more")
         .map { QREXStrings.get(context, store.language, it) }
@@ -130,8 +135,29 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
         Icons.Default.History, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
-    var selected by rememberSaveable { mutableIntStateOf(if (screenshotCreate) 1 else 0) }
-    var currentCode by remember { mutableStateOf<String?>(null) }
+    var selected by rememberSaveable(screenshotMode) {
+        mutableIntStateOf(when (screenshotMode) {
+            "create", "wifi", "result" -> 1
+            "history", "saved" -> 2
+            "more" -> 3
+            else -> 0
+        })
+    }
+    var currentCode by remember(screenshotMode) {
+        mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
+    }
+    // Neutral, in-memory demo history drawn by the *actual Compose UI*.
+    // Never persist fixtures, and never enable this in non-debug builds.
+    val screenshotItems = remember(screenshotMode) {
+        if (screenshotMode in setOf("history", "saved")) {
+            val now = System.currentTimeMillis()
+            listOf(
+                QRRecord("https://brendigo.com", now, true),
+                QRRecord("mailto:support@brendigo.com", now - 3_600_000, true),
+                QRRecord("QREX offline QR example", now - 86_400_000, false)
+            )
+        } else null
+    }
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
@@ -171,8 +197,10 @@ private fun QREXApp(store: QREXStore, screenshotCreate: Boolean = false) {
                             store.record(raw)
                             currentCode = raw
                         })
-                        1 -> CreateScreen(store, screenshotCreate = screenshotCreate, onResult = { currentCode = it })
-                        2 -> HistoryScreen(store, onOpen = { currentCode = it })
+                        1 -> CreateScreen(store, screenshotMode = screenshotMode, onResult = { currentCode = it })
+                        2 -> HistoryScreen(store, onOpen = { currentCode = it },
+                            screenshotItems = screenshotItems,
+                            initiallySavedOnly = screenshotMode == "saved")
                         else -> MoreScreen(store)
                     }
                 }
@@ -425,14 +453,20 @@ fun generateQR(raw: String): Bitmap? {
 }
 
 @Composable
-private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, onResult: (String) -> Unit) {
+private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onResult: (String) -> Unit) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
-    var kind by remember { mutableIntStateOf(0) }
-    var content by remember { mutableStateOf(if (screenshotCreate) "https://brendigo.com" else "") }
+    var kind by remember(screenshotMode) { mutableIntStateOf(if (screenshotMode == "wifi") 2 else 0) }
+    var content by remember(screenshotMode) {
+        mutableStateOf(when (screenshotMode) {
+            "create" -> "https://brendigo.com"
+            "wifi" -> "QREX-Demo"
+            else -> ""
+        })
+    }
     var password by remember { mutableStateOf("") }
     var reveal by remember { mutableStateOf(false) }
     var more by remember { mutableStateOf(false) }
@@ -565,13 +599,18 @@ private fun CreateScreen(store: QREXStore, screenshotCreate: Boolean = false, on
 }
 
 @Composable
-private fun HistoryScreen(store: QREXStore, onOpen: (String) -> Unit) {
+private fun HistoryScreen(
+    store: QREXStore, onOpen: (String) -> Unit,
+    screenshotItems: List<QRRecord>? = null, initiallySavedOnly: Boolean = false
+) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
-    var savedOnly by remember { mutableStateOf(false) }
+    var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
-    val found = store.items.filter { QRHistory.matches(it, search, savedOnly) }
+    val found = (screenshotItems ?: store.items).filter {
+        QRHistory.matches(it, search, savedOnly)
+    }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
         AppHeader(tr("history"), tr("history_local"))
         OutlinedTextField(value = search, onValueChange = { search = it },
