@@ -99,7 +99,7 @@ jobs:
           icons = {entry.get("icon") for entry in categories.values()
                    if isinstance(entry, dict) and entry.get("icon")}
           for icon in sorted(icons):
-              if not isinstance(icon, str) or not re.fullmatch(r"category_[a-z0-9_]+\\.png", icon):
+              if not isinstance(icon, str) or not re.fullmatch(r"category_[a-z0-9_]+\.png", icon):
                   raise SystemExit(f"Unsafe or unexpected category icon: {icon}")
               destination = category_file.parent / icon
               subprocess.run([
@@ -108,7 +108,7 @@ jobs:
                   f"https://gitlab.com/fdroid/fdroiddata/-/raw/master/config/{icon}",
                   "--output", str(destination),
               ], check=True)
-              if destination.read_bytes()[:8] != b"\\x89PNG\\r\\n\\x1a\\n":
+              if destination.read_bytes()[:8] != b"\x89PNG\r\n\x1a\n":
                   raise SystemExit(f"Category icon is not a PNG: {icon}")
           print(f"Loaded official fdroiddata categories and {len(icons)} icons")
           PY
