@@ -21,7 +21,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
-        self.assertIn(".widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)", self.main)
+        self.assertIn(".widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
     def test_light_theme_navigation_has_legible_separate_selection_color(self):
@@ -47,7 +47,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexSettingsTile(", self.main)
         self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 56.dp)", self.main)
-        self.assertIn("min = 102.dp", design)
+        self.assertIn("min = 88.dp", design)
         self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
         self.assertIn('store.updateLanguage("system")', self.main)
         self.assertIn('confirmPdfExport = true', self.main)
