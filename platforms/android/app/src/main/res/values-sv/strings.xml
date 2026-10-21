@@ -58,6 +58,8 @@
     <string name="settings">Inställningar</string>
     <string name="save_history">Spara historik</string>
     <string name="light_theme">Ljust tema</string>
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Mörkt tema</string>
     <string name="delete_all">Radera alla data</string>
     <string name="privacy">Integritet</string>
     <string name="privacy_summary">QR-koder behandlas på enheten. Inget konto, ingen reklam eller analys. Historik är valfri. Wi-Fi-lösenord sparas aldrig automatiskt; om du sparar en Wi-Fi-kod manuellt sparas även lösenordet. Externa åtgärder kan dela data med andra appar. Du kan radera alla lokala data i Inställningar. Kontakt: brendigo.com.</string>
