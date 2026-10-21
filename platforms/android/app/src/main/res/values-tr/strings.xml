@@ -3,6 +3,7 @@
     <string name="scan">Tara</string>
     <string name="create">Oluştur</string>
     <string name="history">Geçmiş</string>
+    <string name="favorites">Favoriler</string>
     <string name="more">Diğer</string>
     <string name="scan_qr">QR kodu tara</string>
     <string name="point_camera">Kamerayı QR koduna doğrult</string>
