@@ -21,3 +21,8 @@ ios/
 *.mobileprovision
 .env
 production/
+
+# Local F-Droid publisher state; never commit repo signing credentials
+distribution/brendigo-fdroid/config.yml
+distribution/brendigo-fdroid/keystore*
+distribution/brendigo-fdroid/repo/
