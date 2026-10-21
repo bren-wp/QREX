@@ -101,6 +101,27 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("Google Play", notes)
         self.assertNotIn("b15a95a18820cbe8588b4d098a0719a3a5ce7b4a", published)
 
+    def test_github_1_0_4_release_requires_real_emulator_images_and_no_play_key(self):
+        published = (WORKFLOWS / "github-release-1.0.4.yml").read_text("utf-8")
+        screenshots = (WORKFLOWS / "capture-screenshots.yml").read_text("utf-8")
+        main = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
+        for workflow in ("native-platforms.yml", "capture-screenshots.yml",
+                         "generate-localizations.yml"):
+            self.assertIn(workflow, published)
+        self.assertIn('com.brendigo.qrex 104 1.0.4', published)
+        self.assertIn("gh release create v1.0.4", published)
+        self.assertIn("gh run download", published)
+        self.assertIn("tool/verify_screenshots.py", published)
+        self.assertIn("android-scan.png", published)
+        self.assertIn("android-history.png", published)
+        self.assertIn("android-more.png", published)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", published)
+        self.assertIn("android-*.png", screenshots)
+        self.assertIn("ApplicationInfo.FLAG_DEBUGGABLE", main)
+        self.assertIn("screenshotMode", main)
+        self.assertIn("screenshotItems", main)
+        self.assertIn("No validated QREX", (ROOT / "tool/capture_android_screen.sh").read_text("utf-8"))
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
