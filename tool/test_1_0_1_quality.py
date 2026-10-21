@@ -27,7 +27,15 @@ class AndroidCodeAuditTests(unittest.TestCase):
         scanner = (JAVA / "QREXScanner.kt").read_text("utf-8")
         self.assertIn("TextOverflow.Ellipsis", view)
         self.assertIn("BackHandler(enabled = currentCode != null)", view)
-        self.assertIn("FlowRow(modifier = Modifier.fillMaxWidth()", scanner)
+        # The dark reference design uses two balanced, >=66dp real buttons
+        # for Gallery and Torch. Requiring the old FlowRow causes false
+        # failures and would force the former design back into production.
+        self.assertIn("Row(Modifier.fillMaxWidth(),", scanner)
+        self.assertIn("horizontalArrangement = Arrangement.spacedBy(12.dp)", scanner)
+        self.assertGreaterEqual(
+            scanner.count("Modifier.weight(1f).heightIn(min = 66.dp)"), 2)
+        self.assertIn("onClick = toggleTorch", scanner)
+        self.assertIn('Text(tr("from_gallery"), maxLines = 1)', scanner)
         self.assertIn("verticalScroll(rememberScrollState())", scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", scanner)
 
