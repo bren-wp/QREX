@@ -3,6 +3,7 @@
     <string name="scan">Beolvasás</string>
     <string name="create">Létrehozás</string>
     <string name="history">Előzmények</string>
+    <string name="favorites">Kedvencek</string>
     <string name="more">Továbbiak</string>
     <string name="scan_qr">QR-kód beolvasása</string>
     <string name="point_camera">Irányítsd a kamerát a QR-kódra</string>
