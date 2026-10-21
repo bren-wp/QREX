@@ -58,6 +58,8 @@
     <string name="settings">Instellingen</string>
     <string name="save_history">Scangeschiedenis opslaan</string>
     <string name="light_theme">Licht thema</string>
+    <string name="theme">Thema</string>
+    <string name="dark_theme">Donker thema</string>
     <string name="delete_all">Alle gegevens verwijderen</string>
     <string name="privacy">Privacy</string>
     <string name="privacy_summary">QR-codes worden op dit apparaat verwerkt. Geen account, advertenties of analyses. Geschiedenis is optioneel. Wifiwachtwoorden worden niet automatisch bewaard; handmatig opslaan van een wifi-code bewaart ook het wachtwoord. Externe acties kunnen gegevens delen met andere apps. Alle lokale gegevens kunnen in Instellingen worden gewist. Contact: brendigo.com.</string>
