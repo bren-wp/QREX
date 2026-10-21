@@ -29,12 +29,15 @@ class QREXPrivacyStabilityTests(unittest.TestCase):
 
     def test_android_gallery_bitmap_cleanup_on_all_completion_paths(self):
         scanner = (ANDROID / "QREXScanner.kt").read_text("utf-8")
-        self.assertIn("InputImage.fromBitmap(upright, 0) to upright", scanner)
-        self.assertIn("image?.second?.recycle()", scanner)
-        self.assertIn("}.addOnCompleteListener {", scanner)
-        self.assertIn("bitmap.recycle()", scanner)
-        self.assertIn("client.close()", scanner)
-        self.assertIn("BarcodeScanning.getClient(options) }.getOrElse", scanner)
+        reader = (ANDROID / "QREXQrDecoder.kt").read_text("utf-8")
+        self.assertIn("bitmap?.recycle()", scanner)
+        self.assertIn("finally {\n                            bitmap.recycle()", scanner)
+        self.assertIn("frame.close()", scanner)
+        self.assertIn("QREXQrDecoder.decodeBitmap(bitmap)", scanner)
+        self.assertIn("QREXQrDecoder.decodeFrame(frame)", scanner)
+        self.assertIn("QREXQrDecoder", reader)
+        self.assertNotIn("BarcodeScanning.getClient", scanner)
+        self.assertNotIn("InputImage.fromBitmap", scanner)
 
     def test_camera_permission_does_not_block_gallery(self):
         android = (ANDROID / "QREXScanner.kt").read_text("utf-8")
