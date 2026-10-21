@@ -20,7 +20,7 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
         self.assertNotIn("BoxWithConstraints(", main)
         self.assertGreaterEqual(main.count("Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)"), 2)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", main)
-        self.assertIn(".widthIn(max = 238.dp).fillMaxWidth().aspectRatio(1f)", main)
+        self.assertIn(".widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)", main)
         self.assertNotIn("Modifier.size(230.dp).background(white)", main)
         self.assertNotIn("Modifier.size(238.dp).background(white)", main)
 
