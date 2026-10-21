@@ -33,6 +33,18 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
 
+    def test_dark_first_reference_palette_and_card_hierarchy(self):
+        self.assertIn('Color(0xFF050D1D)', self.main)
+        self.assertIn('Color(0xFF101B30)', self.main)
+        self.assertIn('Color(0xFF1378FF)', self.main)
+        self.assertIn('Color(0xFF10CBFA)', self.main)
+        self.assertIn('darkColorScheme(primary = electricBlue, secondary = cyan', self.main)
+        self.assertIn('selectedContainerColor = MaterialTheme.colorScheme.primary', self.main)
+        self.assertIn('indicatorColor = if (store.lightMode)', self.main)
+        self.assertIn('border = androidx.compose.foundation.BorderStroke(', self.main)
+        self.assertIn('contentColor = Color.White', self.main)
+        self.assertNotIn('Color(0xFFF3F6FF), surface = Color.White,', self.main.split(') else darkColorScheme', 1)[1])
+
     def test_history_truncates_long_labels_without_removing_delete(self):
         self.assertIn("Text(QRContent.label(item.raw), maxLines = 2", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
