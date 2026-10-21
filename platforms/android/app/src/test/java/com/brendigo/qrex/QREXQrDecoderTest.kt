@@ -19,6 +19,16 @@ class QREXQrDecoderTest {
     }
 
     @Test
+    fun camera_frames_are_sampled_without_throttling_gallery() {
+        assertTrue(cameraFrameDue(12_000L, 0L))
+        assertFalse(cameraFrameDue(12_080L, 12_000L))
+        assertFalse(cameraFrameDue(12_179L, 12_000L))
+        assertTrue(cameraFrameDue(12_180L, 12_000L))
+        assertTrue(cameraFrameDue(13_500L, 12_000L))
+        assertFalse(cameraFrameDue(12_000L, 13_500L))
+    }
+
+    @Test
     fun scan_standard_qr_without_mlkit() {
         val value = "https://brendigo.com/qrex?ref=fdroid"
         assertEquals(value, QREXQrDecoder.decodeLuma(qr(value), 251, 197))
