@@ -55,7 +55,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_settings_actions_have_minimum_touch_height(self):
         self.assertIn('QREXTile(Icons.Default.DarkMode, tr("light_theme")', self.main)
         self.assertIn('QREXTile(Icons.Default.Language, tr("language"), languageName', self.main)
-        self.assertIn('Text(tr("save_history"), Modifier.weight(1f))', self.main)
+        self.assertIn('Text(tr("save_history"), Modifier.weight(1f), fontSize = 14.sp)', self.main)
         self.assertIn('modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)', self.main)
         self.assertIn('colors = ButtonDefaults.outlinedButtonColors(', self.main)
         self.assertIn('QREXTile(Icons.Default.Security, tr("privacy_policy")', self.main)
