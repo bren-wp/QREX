@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.semantics.SemanticsActions
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,6 +24,17 @@ import org.junit.Test
  */
 class QREXNavigationStressTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
+
+    @Before
+    fun waitForColdStartSplashToFinish() {
+        // The dark-first QREX splash is a genuine cold-start UI, not a test
+        // fixture. Wait for the real navigation bar before interacting, and
+        // fail if the splash never dismisses or the main screen cannot load.
+        rule.waitUntil(timeoutMillis = 15_000L) {
+            rule.onAllNodesWithTag("qrex-tab-0", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
 
     /**
      * Wait for a semantic tag without retaining or logging any QR contents.
