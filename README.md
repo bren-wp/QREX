@@ -33,8 +33,6 @@ These are **real Android emulator captures of the running QREX app**, generated 
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-</tr>
-<tr>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
 </table>
