@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
         // screenshot fixtures into Play or F-Droid release builds.
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
-                it in setOf("create", "scan", "result", "history", "saved", "more", "wifi")
+                it in setOf("splash", "create", "scan", "result", "history", "saved", "more", "wifi")
             }
         else null
         setContent { QREXApp(store, screenshotMode) }
@@ -169,10 +169,12 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     // graphics. It is skipped for deterministic CI screenshots and not
     // replayed after Activity recreation.
     var showSplash by rememberSaveable(screenshotMode) {
-        mutableStateOf(screenshotMode == null)
+        mutableStateOf(screenshotMode == null || screenshotMode == "splash")
     }
-    LaunchedEffect(showSplash) {
-        if (showSplash) {
+    LaunchedEffect(showSplash, screenshotMode) {
+        // In debug-only screenshot mode, keep the *real* splash visible long
+        // enough for a verified emulator screenshot; production dismisses it.
+        if (showSplash && screenshotMode != "splash") {
             delay(950)
             showSplash = false
         }
