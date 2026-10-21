@@ -238,7 +238,13 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
 
 @Composable
 private fun AppHeader(title: String, subtitle: String) {
-    QrexBrandHeader(title, subtitle, Modifier.padding(bottom = 16.dp))
+    Column(Modifier.fillMaxWidth().padding(bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.onBackground)
+        Text(subtitle, fontSize = 12.sp, maxLines = 3,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
 }
 
 @Composable
@@ -857,11 +863,13 @@ private fun MoreScreen(store: QREXStore) {
             QrexSettingsTile(
                 label = "PDF", icon = Icons.Default.Description,
                 onClick = { confirmPdfExport = true },
+                enabled = store.items.any { it.saved },
                 subtitle = tr("export_archive_hint"), modifier = Modifier.weight(1f)
             )
             QrexSettingsTile(
                 label = "ZIP", icon = Icons.Default.Archive,
                 onClick = { confirmExport = true },
+                enabled = store.items.any { it.saved },
                 subtitle = tr("export_archive"), modifier = Modifier.weight(1f)
             )
         }
