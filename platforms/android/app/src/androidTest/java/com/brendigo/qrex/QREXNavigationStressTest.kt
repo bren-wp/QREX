@@ -197,6 +197,19 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun fiveTabsIncludeRealFavoritesAndMoreScreens() {
+        rule.onNodeWithTag("qrex-tab-3").assertIsDisplayed().performClick()
+        rule.onNodeWithTag("qrex-tab-3").assertIsSelected()
+        requireScreenTag("qrex-favorites-screen", 0, "open Favorites")
+        rule.onNodeWithTag("qrex-tab-2").performClick()
+        rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
+        requireScreenTag("qrex-history-screen", 0, "open History")
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        rule.onNodeWithTag("qrex-tab-4").assertIsSelected()
+        requireScreenTag("qrex-more-screen", 0, "open More")
+    }
+
+    @Test
     fun activityRecreationKeepsNonSensitiveTabSelection() {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
