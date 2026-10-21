@@ -221,7 +221,11 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
         CompositionLocalProvider(LocalLanguage provides store.language) {
         if (showSplash) {
             QrexSplashScreen(
-                subtitle = if (store.language == "hr") "Skeniraj. Stvori. Podijeli."
+                subtitle = if (
+                    (if (store.language == "system")
+                        context.resources.configuration.locales[0].language
+                    else store.language) == "hr"
+                ) "Skener. Stvara. Dijeli."
                 else "Scan. Create. Share."
             )
         } else {
