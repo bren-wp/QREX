@@ -148,6 +148,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
+    var selectedZoom by remember { mutableFloatStateOf(1f) }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             scope.launch {
@@ -316,6 +317,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     camera = null
                     torchOn = false
                     torchBusy = false
+                    selectedZoom = 1f
                     analyzer?.clearAnalyzer()
                     if (cameraFuture.isDone) runCatching { cameraFuture.get().unbindAll() }
                     analysisExecutor.shutdown()
@@ -326,6 +328,47 @@ fun ScanScreen(onRead: (String) -> Unit) {
                 .background(QrexDesign.surface)) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
                 ScannerCornerOverlay(Modifier.fillMaxSize())
+                // Actual optical/digital zoom controls: never offer levels
+                // outside the camera's advertised range.
+                val zoomLimits = camera?.cameraInfo?.zoomState?.value
+                Row(
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                        .padding(bottom = 58.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(.5f, 1f, 2f).forEach { ratio ->
+                        val available = camera != null && zoomLimits != null &&
+                            ratio >= zoomLimits.minZoomRatio &&
+                            ratio <= zoomLimits.maxZoomRatio
+                        FilterChip(
+                            selected = selectedZoom == ratio,
+                            onClick = {
+                                val active = camera
+                                if (active != null && available) {
+                                    val request = runCatching {
+                                        active.cameraControl.setZoomRatio(ratio)
+                                    }.getOrNull()
+                                    request?.addListener({
+                                        if (camera === active &&
+                                            runCatching { request.get() }.isSuccess) {
+                                            selectedZoom = ratio
+                                        }
+                                    }, ContextCompat.getMainExecutor(context))
+                                }
+                            },
+                            enabled = available,
+                            label = { Text("${ratio}×") },
+                            modifier = Modifier.heightIn(min = 44.dp),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = QrexDesign.backgroundDeep.copy(alpha = .88f),
+                                labelColor = Color.White,
+                                selectedContainerColor = QrexDesign.accent,
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                    }
+                }
                 if (camera?.cameraInfo?.hasFlashUnit() == true) {
                     Surface(
                         modifier = Modifier.align(Alignment.TopEnd).padding(12.dp),
