@@ -58,6 +58,8 @@
     <string name="settings">Налаштування</string>
     <string name="save_history">Зберігати історію</string>
     <string name="light_theme">Світла тема</string>
+    <string name="theme">Тема</string>
+    <string name="dark_theme">Темна тема</string>
     <string name="delete_all">Видалити всі дані</string>
     <string name="privacy">Конфіденційність</string>
     <string name="privacy_summary">QR-коди обробляються на пристрої. Без облікового запису, реклами й аналітики. Історія необов’язкова. Паролі Wi-Fi не зберігаються автоматично; ручне збереження коду Wi-Fi зберігає і пароль. Зовнішні дії можуть передати дані іншим застосункам. Локальні дані можна видалити в Налаштуваннях. Контакт: brendigo.com.</string>
