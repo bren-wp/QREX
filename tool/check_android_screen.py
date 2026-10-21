@@ -51,7 +51,8 @@ def main() -> int:
         print("Usage: check_android_screen.py <uiautomator XML> [screen]", file=sys.stderr)
         return 2
     try:
-        validate(Path(sys.argv[1]).read_text(encoding="utf-8"),\n                 sys.argv[2] if len(sys.argv) == 3 else "create")
+        validate(Path(sys.argv[1]).read_text(encoding="utf-8"),
+                 sys.argv[2] if len(sys.argv) == 3 else "create")
     except (ValueError, ET.ParseError) as exc:
         print(f"Android screenshot rejected: {exc}", file=sys.stderr)
         return 1
