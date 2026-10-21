@@ -246,7 +246,9 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
                             store.record(raw)
                             currentCode = raw
                         })
-                        1 -> CreateScreen(store, screenshotMode = screenshotMode, onResult = { currentCode = it })
+                        1 -> CreateScreen(store, screenshotMode = screenshotMode,
+                            onBack = { selected = 0 },
+                            onResult = { currentCode = it })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems)
                         3 -> HistoryScreen(store, onOpen = { currentCode = it },
@@ -572,11 +574,15 @@ fun generateQR(raw: String): Bitmap? {
 }
 
 @Composable
-private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onResult: (String) -> Unit) {
+private fun CreateScreen(
+    store: QREXStore, screenshotMode: String? = null,
+    onBack: () -> Unit, onResult: (String) -> Unit
+) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val operationFailed = tr("operation_failed")
     var confirmWifiSave by remember { mutableStateOf(false) }
+    var createMenu by remember { mutableStateOf(false) }
     val types = listOf(tr("url"), tr("text"), tr("wifi"), tr("email"), tr("phone"), tr("location"), tr("contact"))
     val typeIcons = listOf(Icons.Default.Link, Icons.Default.Description, Icons.Default.Wifi,
         Icons.Default.Email, Icons.Default.Phone, Icons.Default.LocationOn, Icons.Default.Person)
@@ -622,7 +628,39 @@ private fun CreateScreen(store: QREXStore, screenshotMode: String? = null, onRes
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-create-scroll")
             .padding(20.dp)) {
-        AppHeader(tr("create_qr"), tr("enter_details"))
+        // Back and overflow are genuine actions, matching the reference's
+        // compact dark app bar. The overflow menu selects actual QR types.
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 56.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack, modifier = Modifier.testTag("qrex-create-back")) {
+                Icon(Icons.Default.ArrowBack, contentDescription = tr("scan"),
+                    tint = MaterialTheme.colorScheme.onSurface)
+            }
+            Text(tr("create_qr"), modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.ExtraBold, fontSize = 23.sp)
+            Box {
+                IconButton(onClick = { createMenu = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
+                        tint = MaterialTheme.colorScheme.onSurface)
+                }
+                DropdownMenu(expanded = createMenu,
+                    onDismissRequest = { createMenu = false }) {
+                    listOf(0, 1, 2, 6, 3, 4, 5).forEach { type ->
+                        DropdownMenuItem(text = { Text(types[type]) }, onClick = {
+                            kind = type
+                            content = ""
+                            password = ""
+                            createMenu = false
+                        })
+                    }
+                }
+            }
+        }
+        Text(tr("enter_details"), modifier = Modifier.padding(bottom = 14.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         // All supported QR types remain directly accessible by swiping tabs.
         val visibleKinds = listOf(0, 1, 2, 6, 3, 4, 5)
         Row(
