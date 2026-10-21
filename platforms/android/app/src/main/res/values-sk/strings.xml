@@ -58,6 +58,8 @@
     <string name="settings">Nastavenia</string>
     <string name="save_history">Ukladať históriu</string>
     <string name="light_theme">Svetlý vzhľad</string>
+    <string name="theme">Motív</string>
+    <string name="dark_theme">Tmavý motív</string>
     <string name="delete_all">Odstrániť všetky údaje</string>
     <string name="privacy">Súkromie</string>
     <string name="privacy_summary">QR kódy sa spracúvajú v zariadení. Bez účtu, reklám a analytiky. História je voliteľná. Heslá Wi-Fi sa automaticky neukladajú; ručné uloženie Wi-Fi kódu uloží aj heslo. Externé akcie môžu údaje poskytnúť inej aplikácii. Miestne údaje vymažete v Nastaveniach. Kontakt: brendigo.com.</string>
