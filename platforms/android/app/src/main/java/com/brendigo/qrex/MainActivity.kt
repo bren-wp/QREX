@@ -816,15 +816,13 @@ private fun MoreScreen(store: QREXStore) {
         }
     }
     var languageMenu by remember { mutableStateOf(false) }
+    var exportMenu by remember { mutableStateOf(false) }
     val selectedLanguage = store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(horizontal = 16.dp, vertical = 18.dp)) {
         AppHeader(tr("more"), tr("settings"))
-        Text(tr("settings"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
                 label = tr("light_theme"), icon = Icons.Default.Brightness4,
@@ -855,25 +853,42 @@ private fun MoreScreen(store: QREXStore) {
                 }
             }
         }
-        Spacer(Modifier.height(14.dp))
-        Text(tr("data_tools"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
-                label = "PDF", icon = Icons.Default.Description,
-                onClick = { confirmPdfExport = true },
+                label = tr("export_archive"), icon = Icons.Default.Archive,
+                onClick = { exportMenu = true },
                 enabled = store.items.any { it.saved },
-                subtitle = tr("export_archive_hint"), modifier = Modifier.weight(1f)
+                subtitle = "PDF · ZIP", modifier = Modifier.weight(1f)
             )
             QrexSettingsTile(
-                label = "ZIP", icon = Icons.Default.Archive,
-                onClick = { confirmExport = true },
-                enabled = store.items.any { it.saved },
-                subtitle = tr("export_archive"), modifier = Modifier.weight(1f)
+                label = tr("privacy_policy"), icon = Icons.Default.Shield,
+                onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)
             )
         }
         Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QrexSettingsTile(
+                label = tr("terms_of_use"), icon = Icons.Default.Description,
+                onClick = { showTerms = true }, modifier = Modifier.weight(1f)
+            )
+            QrexSettingsTile(
+                label = tr("about"), icon = Icons.Default.Info,
+                onClick = { openLink(context, Uri.parse("https://brendigo.com")) },
+                subtitle = tr("developed_by"), modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        OutlinedButton(onClick = { showDelete = true },
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error)) {
+            Icon(Icons.Default.DeleteForever, contentDescription = null,
+                modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(tr("delete_all"))
+        }
+        Spacer(Modifier.height(12.dp))
         QrexPanel(Modifier.fillMaxWidth()) {
             Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 14.dp),
                 verticalAlignment = Alignment.CenterVertically) {
@@ -883,34 +898,25 @@ private fun MoreScreen(store: QREXStore) {
                     onCheckedChange = store::updateHistoryEnabled)
             }
         }
-        Spacer(Modifier.height(14.dp))
-        Text(tr("privacy"), color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(10.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            QrexSettingsTile(
-                label = tr("privacy_policy"), icon = Icons.Default.Shield,
-                onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)
-            )
-            QrexSettingsTile(
-                label = tr("terms_of_use"), icon = Icons.Default.Description,
-                onClick = { showTerms = true }, modifier = Modifier.weight(1f)
-            )
-        }
-        Spacer(Modifier.height(10.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            QrexSettingsTile(
-                label = tr("about"), icon = Icons.Default.Info,
-                onClick = { openLink(context, Uri.parse("https://brendigo.com")) },
-                subtitle = tr("developed_by"), modifier = Modifier.weight(1f)
-            )
-            QrexSettingsTile(
-                label = tr("delete_all"), icon = Icons.Default.DeleteForever,
-                onClick = { showDelete = true }, destructive = true,
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Spacer(Modifier.height(22.dp))
+        Spacer(Modifier.height(20.dp))
+    }
+    if (exportMenu) {
+        AlertDialog(onDismissRequest = { exportMenu = false },
+            title = { Text(tr("export_archive")) },
+            text = { Text(tr("export_archive_warning")) },
+            confirmButton = {
+                Row {
+                    TextButton(onClick = { exportMenu = false; confirmPdfExport = true }) {
+                        Text("PDF")
+                    }
+                    TextButton(onClick = { exportMenu = false; confirmExport = true }) {
+                        Text("ZIP")
+                    }
+                }
+            },
+            dismissButton = { TextButton(onClick = { exportMenu = false }) {
+                Text(tr("cancel"))
+            } })
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
