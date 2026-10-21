@@ -12,6 +12,7 @@ object QREXStrings {
         "scan" -> R.string.scan
         "create" -> R.string.create
         "history" -> R.string.history
+        "favorites" -> R.string.favorites
         "more" -> R.string.more
         "scan_qr" -> R.string.scan_qr
         "point_camera" -> R.string.point_camera
