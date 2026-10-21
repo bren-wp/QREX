@@ -3,6 +3,7 @@
     <string name="scan">Skeniraj</string>
     <string name="create">Stvori</string>
     <string name="history">Povijest</string>
+    <string name="favorites">Favoriti</string>
     <string name="more">Više</string>
     <string name="scan_qr">Skeniraj QR kod</string>
     <string name="point_camera">Usmjeri kameru prema QR kodu</string>
