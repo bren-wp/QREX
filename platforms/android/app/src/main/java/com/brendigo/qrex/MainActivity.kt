@@ -51,7 +51,7 @@ import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
@@ -175,7 +175,7 @@ private fun QREXApp(
     val appLanguage = screenshotLanguage ?: store.language
     val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
-    val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
+    val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
         Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
@@ -273,7 +273,8 @@ private fun QREXApp(
                             editPayload = null
                             resultShowsQr = false
                         },
-                        icon = { Icon(icons[index], contentDescription = null) },
+                        icon = { Icon(if (index == 3 && selected == 3) Icons.Default.Favorite
+                             else icons[index], contentDescription = null) },
                         label = { Text(label, maxLines = 1, softWrap = false,
                             overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
                             fontSize = 10.sp) },
