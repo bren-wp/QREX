@@ -44,5 +44,5 @@ If the Play Console app has already used versionCode 106 or higher, **increment 
 - Play Console account access, signing certificates, real device tests, privacy declarations and review outcomes are external steps that have **not** been independently verified by repository source inspection.
 - A published GitHub `v1.0.0` release is an immutable historical binary; its certificate cannot be changed retroactively without creating a different artifact/signing identity. The supported fix is a distinct Play-signed build/version and correct install/update path.
 
-[Privacy policy](PRIVACY.md) · [QA matrix](QA_MATRIX.md) · [Version 1.0.1 notes](releases/v1.0.1.md)
+[Privacy policy](PRIVACY.md) · [QA matrix](QA_MATRIX.md) · [Version 1.0.6 notes](releases/v1.0.6.md)
 
