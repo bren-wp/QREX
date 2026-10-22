@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -111,14 +112,14 @@ internal fun QrexExportDetails(
             modifier = Modifier.testTag("qrex-export-pdf"),
             onClick = onPdf
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.height(8.dp))
         QrexResultAction(
             label = "ZIP", icon = Icons.Default.Archive,
             enabled = hasSaved,
             modifier = Modifier.testTag("qrex-export-zip"),
             onClick = onZip
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.height(12.dp))
         Surface(
             color = MaterialTheme.colorScheme.primaryContainer,
             shape = RoundedCornerShape(14.dp),
