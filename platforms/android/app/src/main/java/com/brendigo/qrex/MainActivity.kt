@@ -666,6 +666,7 @@ fun generateQR(raw: String): Bitmap? {
     return runCatching {
         val bits = MultiFormatWriter().encode(raw, BarcodeFormat.QR_CODE, 680, 680,
             mapOf(EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
+                EncodeHintType.CHARACTER_SET to Charsets.UTF_8.name(),
                 EncodeHintType.MARGIN to 2))
         val bitmap = Bitmap.createBitmap(bits.width, bits.height, Bitmap.Config.ARGB_8888)
         val data = IntArray(bits.width * bits.height) { index ->
