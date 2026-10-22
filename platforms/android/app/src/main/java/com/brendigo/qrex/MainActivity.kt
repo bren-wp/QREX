@@ -1054,8 +1054,9 @@ private fun HistoryScreen(
 ) {
     val context = LocalContext.current
     val activeLanguage = LocalLanguage.current
-    val historyLocale = remember(activeLanguage) {
-        if (activeLanguage == "system") Locale.getDefault()
+    val systemLocale = LocalConfiguration.current.locales[0]
+    val historyLocale = remember(activeLanguage, systemLocale) {
+        if (activeLanguage == "system") systemLocale
         else Locale.forLanguageTag(activeLanguage)
     }
     val relativeTimeFormatter = remember(historyLocale) {
