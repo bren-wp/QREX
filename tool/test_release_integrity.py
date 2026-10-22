@@ -145,7 +145,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         ):
             self.assertIn(artifact, published)
         self.assertIn("cannot update in place", notes)
-        self.assertIn("v1.0.6/android-create.png",
+        self.assertIn("v1.0.7/android-create.png",
                       (ROOT / "README.md").read_text("utf-8"))
         self.assertIn("1.0.5", notes)
 
