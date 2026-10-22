@@ -145,8 +145,23 @@ class ReleaseIntegrityTests(unittest.TestCase):
         ):
             self.assertIn(artifact, published)
         self.assertIn("cannot update in place", notes)
-        self.assertIn("v1.0.5/android-create.png",
+        self.assertIn("v1.0.6/android-create.png",
                       (ROOT / "README.md").read_text("utf-8"))
+        self.assertIn("1.0.5", notes)
+
+    def test_new_106_publisher_requires_exact_commit_ci_and_avoids_play_keys(self):
+        release = (WORKFLOWS / "github-release-1.0.6.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.6.md").read_text("utf-8")
+        self.assertIn("gh release create v1.0.6", release)
+        self.assertIn("com.brendigo.qrex 106 1.0.6", release)
+        for gate in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml", "SHA256SUMS.txt",
+                     "apksigner", "tool/verify_screenshots.py"):
+            self.assertIn(gate, release)
+        self.assertIn("keytool -genkeypair", release)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", release)
+        self.assertIn("cannot upgrade an installed QREX", notes)
+        self.assertIn("106", notes)
 
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
@@ -164,8 +179,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 105", gradle)
-        self.assertIn('versionName = "1.0.5"', gradle)
+        self.assertIn("versionCode = 106", gradle)
+        self.assertIn('versionName = "1.0.6"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -174,6 +189,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.3.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.4.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.5.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.6.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
