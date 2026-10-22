@@ -2,6 +2,14 @@
 
 **Reference:** the four user-provided QREX images (dark master board, dark phone UI, blue/light banner and earlier light gallery). **Primary authority:** dark master board and dark phone UI, with blue/light references only for branding and secondary theme.
 
+## Canonical 2026-10-22 Android launcher identity
+
+The two newly supplied blue boards headed **QREX** are the canonical launcher-icon direction: a rounded luminous electric-blue/dark-navy badge, a **large white Q with diagonal tail**, three small white QR squares and one white square finder module, with **cyan scanner brackets** at four corners. Preserve strong icon fill instead of placing a tiny mark in a large white safe-area background.
+
+The later "Sve QR funkcije" concept board depicts a **different scanner-square mark**; it is a reference variant, not an instruction to replace the established Q badge in the Android release. The light gallery remains a secondary UI/theme reference. Use one consistent launcher/splash icon source and a matching monochrome path for Android themed icons.
+
+Adaptive launchers may apply circular or squircle masking. The *geometric* reference should stay centered and inside safe bounds; genuinely pixel-for-pixel identical cropping on all OEM launchers cannot be promised. Compare real emulator screenshots with the user-provided reference at a consistent scale, documenting any variance.
+
 ## Visual specification
 
 - **Default dark:** midnight navy `#061020`, deeper navigation `#030A18`, panels `#111E32`, raised cards `#152641`; electric blue `#087BFA`, bright cyan `#22C7FF`, purple `#9866FF`. White foreground and muted slate subtitles. System/light appearance remains an explicit user preference, **not** the primary visual direction.
