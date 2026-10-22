@@ -157,10 +157,15 @@ class MainActivity : ComponentActivity() {
                     "saved", "more", "wifi", "language", "export")
             }
         else null
+        // Only an already enabled debug screenshot can override the palette.
+        // Production intents cannot force a theme or inject fixture data.
+        val screenshotLight = isDebug && screenshotMode != null &&
+            intent.getBooleanExtra("qrex_light", false)
         val screenshotLanguage = if (isDebug && screenshotMode != null)
             intent.getStringExtra("qrex_language")?.takeIf { it in QREXStrings.languages }
         else null
-        setContent { QREXApp(store, screenshotMode, screenshotLanguage) }
+        setContent { QREXApp(store, screenshotMode, screenshotLanguage,
+            screenshotLight = screenshotLight) }
     }
 }
 
@@ -168,12 +173,15 @@ class MainActivity : ComponentActivity() {
 private fun QREXApp(
     store: QREXStore,
     screenshotMode: String? = null,
-    screenshotLanguage: String? = null
+    screenshotLanguage: String? = null,
+    screenshotLight: Boolean = false
 ) {
     val context = LocalContext.current
     // Compose observes locale/configuration changes without stale Resources reads.
     val systemLanguage = LocalConfiguration.current.locales[0].language
     val appLanguage = screenshotLanguage ?: store.language
+    val lightTheme = if (screenshotMode != null && screenshotLight)
+        true else store.lightMode
     val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
     val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
@@ -230,7 +238,7 @@ private fun QREXApp(
     // Explicit reference palettes: the light phone concepts use white cards,
     // navy text, pale-blue containers and subtle blue-grey strokes. Relying on
     // Material defaults here previously introduced unrelated purple/grey hues.
-    val colors = if (store.lightMode) lightColorScheme(
+    val colors = if (lightTheme) lightColorScheme(
         primary = Color(0xFF086BEE),
         onPrimary = Color.White,
         secondary = Color(0xFF7855E9),
@@ -257,13 +265,13 @@ private fun QREXApp(
     SideEffect {
         hostActivity?.let { activity ->
             WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
-                isAppearanceLightStatusBars = store.lightMode
-                isAppearanceLightNavigationBars = store.lightMode
+                isAppearanceLightStatusBars = lightTheme
+                isAppearanceLightNavigationBars = lightTheme
             }
         }
     }
     // White/light navigation surfaces need darker selected labels for contrast.
-    val selectedNavigationColor = if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright
+    val selectedNavigationColor = if (lightTheme) Color(0xFF1156AE) else QrexDesign.accentBright
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides appLanguage) {
         if (showSplash) {
@@ -278,7 +286,7 @@ private fun QREXApp(
         } else {
         Scaffold(containerColor = colors.background, bottomBar = {
             if (currentCode == null) {
-            NavigationBar(containerColor = if (store.lightMode) Color.White else QrexDesign.backgroundDeep,
+            NavigationBar(containerColor = if (lightTheme) Color.White else QrexDesign.backgroundDeep,
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
@@ -299,14 +307,14 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = if (store.lightMode)
+                            indicatorColor = if (lightTheme)
                                 Color(0xFFE7F2FF) else QrexDesign.surfaceRaised))
                 }
             }
             }
         }) { padding ->
             Box(Modifier.fillMaxSize().background(
-                if (store.lightMode) androidx.compose.ui.graphics.Brush.verticalGradient(
+                if (lightTheme) androidx.compose.ui.graphics.Brush.verticalGradient(
                     listOf(colors.background, colors.background)) else QrexDesign.heroBrush
             ).padding(padding)) {
                 if (currentCode != null) {
@@ -331,7 +339,7 @@ private fun QREXApp(
                             currentCode = raw
                         })
                         1 -> CreateScreen(screenshotMode = screenshotMode,
-                            lightTheme = store.lightMode,
+                            lightTheme = lightTheme,
                             initialValue = editPayload,
                             onResult = {
                                 store.record(it)
@@ -346,7 +354,8 @@ private fun QREXApp(
                             initiallySavedOnly = true, favoritesPage = true)
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
-                                screenshotMode == "export") screenshotMode else "root")
+                                screenshotMode == "export") screenshotMode else "root",
+                            lightTheme = lightTheme)
                     }
                 }
             }
@@ -1411,7 +1420,11 @@ private fun HistoryScreen(
 }
 
 @Composable
-private fun MoreScreen(store: QREXStore, initialDetailPage: String = "root") {
+private fun MoreScreen(
+    store: QREXStore,
+    initialDetailPage: String = "root",
+    lightTheme: Boolean = store.lightMode
+) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
@@ -1476,7 +1489,7 @@ private fun MoreScreen(store: QREXStore, initialDetailPage: String = "root") {
         .padding(horizontal = 16.dp, vertical = 18.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
-        if (store.lightMode) {
+        if (lightTheme) {
             // Light reference: accessible full-width white settings rows.
             // The midnight-navy variant keeps its separate 2-column tiles.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
