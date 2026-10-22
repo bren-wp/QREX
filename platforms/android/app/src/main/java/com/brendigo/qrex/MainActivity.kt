@@ -1214,6 +1214,28 @@ private fun HistoryScreen(
                                 fontSize = 9.sp
                             )
                         }
+                        IconButton(
+                            onClick = {
+                                // Favorite is a direct, visible action on every row.
+                                // Debug-only screenshot fixtures must never mutate the store.
+                                if (screenshotItems == null) {
+                                    val changed = store.setSaved(item, !item.saved)
+                                    if (!changed) Toast.makeText(
+                                        context, operationFailed, Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            modifier = Modifier.size(44.dp).testTag("qrex-history-favorite")
+                        ) {
+                            Icon(
+                                if (item.saved) Icons.Default.Favorite
+                                else Icons.Default.FavoriteBorder,
+                                contentDescription = if (item.saved) tr("remove_favorite")
+                                    else tr("add_favorite"),
+                                tint = if (item.saved) QrexDesign.danger
+                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         Box {
                             IconButton(
                                 onClick = { historyMenu = true },
