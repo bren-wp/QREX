@@ -331,6 +331,7 @@ private fun QREXApp(
                             currentCode = raw
                         })
                         1 -> CreateScreen(screenshotMode = screenshotMode,
+                            lightTheme = store.lightMode,
                             initialValue = editPayload,
                             onResult = {
                                 store.record(it)
@@ -702,6 +703,7 @@ fun generateQR(raw: String): Bitmap? {
 @Composable
 private fun CreateScreen(
     screenshotMode: String? = null,
+    lightTheme: Boolean = false,
     initialValue: String? = null,
     onResult: (String) -> Unit
 ) {
@@ -1032,6 +1034,7 @@ private fun CreateScreen(
         if (!imeVisible) {
             QrexPanel(Modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp)) {
+                if (lightTheme) {
                 Row(
                     Modifier.fillMaxWidth().padding(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -1065,6 +1068,36 @@ private fun CreateScreen(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(30.dp))
                         }
+                    }
+                }
+                } else {
+                    // The dark design board gives the generated QR much more
+                    // visual weight than the compact white/light form card.
+                    Column(Modifier.fillMaxWidth().padding(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(tr("qr_preview"), fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface)
+                        if (qr != null) {
+                            Image(qr.asImageBitmap(), contentDescription = tr("qr_preview"),
+                                modifier = Modifier.testTag("qrex-create-preview-ready")
+                                    .size(156.dp).background(Color.White).padding(9.dp))
+                        } else {
+                            Box(Modifier.size(156.dp).background(
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                RoundedCornerShape(12.dp)),
+                                contentAlignment = Alignment.Center) {
+                                Icon(Icons.Default.QrCode, contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(50.dp))
+                            }
+                        }
+                        Text(if (payload.isBlank()) tr("invalid_content")
+                             else QRContent.label(payload),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 11.sp, maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
                     }
                 }
             }
