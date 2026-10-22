@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ native starting window, followed by the actual Compose
+         QREX splash. Reuse the real vector icon, never an AI mockup. -->
+    <style name="Theme.QREX" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#030A18</item>
+        <item name="android:statusBarColor">#030A18</item>
+        <item name="android:navigationBarColor">#030A18</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowSplashScreenBackground">#030A18</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/qrex_icon</item>
+    </style>
+</resources>

@@ -60,13 +60,11 @@
     <string name="light_theme">Vaalea teema</string>
     <string name="theme">Teema</string>
     <string name="dark_theme">Tumma teema</string>
-    <string name="delete_all">Poista kaikki tiedot</string>
     <string name="privacy">Tietosuoja</string>
-    <string name="privacy_summary">QR-koodit käsitellään laitteella. Ei tiliä, mainoksia tai analytiikkaa. Historia on valinnainen. Wi-Fi-salasanoja ei tallenneta automaattisesti; Wi-Fi-koodin manuaalinen tallennus tallentaa myös salasanan. Ulkoiset toiminnot voivat jakaa tietoja muiden sovellusten kanssa. Voit poistaa paikalliset tiedot asetuksista. Yhteys: brendigo.com.</string>
+    <string name="privacy_summary">QR-koodit käsitellään tällä laitteella. Ei tiliä, mainoksia tai analytiikkaa. Historia on valinnainen. Wi-Fi-salasanoja ei tallenneta automaattisesti; Wi-Fi-koodin manuaalinen tallennus tallentaa myös salasanan. Tietoja jaetaan toiseen sovellukseen vain, kun valitset ulkoisen toiminnon. Tyhjennä historia Asetuksissa; teema- ja kieliasetukset säilyvät. Yhteys: brendigo.com.</string>
     <string name="about">Tietoja</string>
     <string name="developed_by">Kehittäjä Brendigo</string>
-    <string name="confirm_delete">Poistetaanko kaikki tiedot?</string>
-    <string name="delete_warning">Historia, tallennetut koodit ja asetukset poistetaan pysyvästi.</string>
+    <string name="confirm_delete">Poistetaanko tämä QR-koodi?</string>
     <string name="language">Kieli</string>
     <string name="system">Laitteen kieli</string>
     <string name="history_local">Oma QR-kokoelmasi</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Käyttöehdot</string>
     <string name="terms_summary">Tarkista QR-kohteet ennen linkkien avaamista. Jaa tai vie vain koodeja, joihin sinulla on lupa. ZIP voi sisältää Wi-Fi-salasanoja. QREX tarjotaan ilman takuita lain sallimissa rajoissa. Tuki: brendigo.com.</string>
     <string name="read_full_policy">Lue koko käytäntö</string>
+    <string name="tagline">Skannaa. Luo. Jaa.</string>
+    <string name="event">Tapahtuma</string>
+    <string name="event_title">Tapahtuman nimi</string>
+    <string name="event_start">Alku</string>
+    <string name="event_end">Loppu</string>
+    <string name="event_location">Sijainti</string>
+    <string name="event_details">Tiedot</string>
+    <string name="generate_qr">Luo QR-koodi</string>
+    <string name="save_to_device">Tallenna laitteelle</string>
+    <string name="add_to_calendar">Lisää kalenteriin</string>
+    <string name="edit">Muokkaa</string>
+    <string name="add_favorite">Lisää suosikkeihin</string>
+    <string name="remove_favorite">Poista suosikeista</string>
+    <string name="clear_history">Tyhjennä historia</string>
+    <string name="confirm_clear_history">Tyhjennetäänkö historia?</string>
+    <string name="clear_history_warning">Kaikki historiatiedot ja tallennetut QR-koodit poistetaan pysyvästi. Teema- ja kieliasetukset säilyvät.</string>
 </resources>

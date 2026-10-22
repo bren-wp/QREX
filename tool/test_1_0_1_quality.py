@@ -27,14 +27,26 @@ class AndroidCodeAuditTests(unittest.TestCase):
         scanner = (JAVA / "QREXScanner.kt").read_text("utf-8")
         self.assertIn("TextOverflow.Ellipsis", view)
         self.assertIn("BackHandler(enabled = currentCode != null)", view)
-        self.assertIn("FlowRow(modifier = Modifier.fillMaxWidth()", scanner)
+        # The dark reference design uses two balanced, >=66dp real buttons
+        # for Gallery and Torch. Requiring the old FlowRow causes false
+        # failures and would force the former design back into production.
+        self.assertIn("Row(Modifier.fillMaxWidth(),", scanner)
+        self.assertIn("horizontalArrangement = Arrangement.spacedBy(12.dp)", scanner)
+        self.assertGreaterEqual(
+            scanner.count("Modifier.weight(1f).heightIn(min = 66.dp)"), 2)
+        self.assertIn("onClick = toggleTorch", scanner)
+        self.assertIn('Text(tr("from_gallery"), maxLines = 1)', scanner)
         self.assertIn("verticalScroll(rememberScrollState())", scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", scanner)
 
-    def test_no_unreachable_legacy_history_api(self):
+    def test_history_clear_preserves_theme_language_and_encrypted_data_rules(self):
         core = (JAVA / "QREXCore.kt").read_text("utf-8")
-        self.assertNotIn("fun clearHistory()", core)
-        self.assertIn("fun clearAll()", core)
+        self.assertIn("fun clearHistory(): Boolean", core)
+        self.assertNotIn("fun clearAll()", core)
+        clear = core.split("fun clearHistory(): Boolean {", 1)[1].split("\n    }", 1)[0]
+        self.assertIn('putString("history", "[]")', clear)
+        self.assertNotIn('putBoolean("lightMode"', clear)
+        self.assertNotIn('putString("language"', clear)
         self.assertIn("migrateFlutterV1()", core)
         self.assertIn("QREXSecretCipher.encrypt(item.raw)", core)
 
@@ -42,7 +54,8 @@ class AndroidCodeAuditTests(unittest.TestCase):
         play = (ROOT / ".github/workflows/production-release.yml").read_text("utf-8")
         public = (ROOT / ".github/workflows/github-release-1.0.1.yml").read_text("utf-8")
         for required in ("QREX_UPLOAD_CERT_SHA256", "QREX_UPLOAD_KEYSTORE_BASE64",
-                         "environment: production", "QREX-Android-1.0.1.aab"):
+                         "environment: production", "RELEASE_VERSION",
+                         "production/QREX-Android-${{ inputs.version }}.aab"):
             self.assertIn(required, play)
         self.assertNotIn("keytool -genkeypair", play)
         self.assertIn("keytool -genkeypair", public)
@@ -78,3 +91,4 @@ class AndroidCodeAuditTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -60,13 +60,11 @@
     <string name="light_theme">Tema chiaro</string>
     <string name="theme">Tema</string>
     <string name="dark_theme">Tema scuro</string>
-    <string name="delete_all">Elimina tutti i dati</string>
     <string name="privacy">Privacy</string>
-    <string name="privacy_summary">I codici QR vengono elaborati sul dispositivo. Nessun account, pubblicità o analisi. La cronologia è facoltativa. Le password Wi-Fi non vengono salvate automaticamente; salvare manualmente un codice Wi-Fi salva anche la password. Le azioni esterne possono condividere dati con altre app. Puoi eliminare i dati locali dalle Impostazioni. Contatto: brendigo.com.</string>
+    <string name="privacy_summary">I codici QR vengono elaborati su questo dispositivo. Nessun account, pubblicità o analisi. La cronologia è facoltativa. Le password Wi-Fi non vengono salvate automaticamente; salvare manualmente un codice Wi-Fi salva anche la password. I dati vengono condivisi con altre app solo quando scegli un’azione esterna. Puoi cancellare la cronologia nelle Impostazioni; tema e lingua restano salvati. Contatto: brendigo.com.</string>
     <string name="about">Informazioni</string>
     <string name="developed_by">Sviluppato da Brendigo</string>
-    <string name="confirm_delete">Eliminare tutti i dati?</string>
-    <string name="delete_warning">Cronologia, codici e impostazioni saranno eliminati definitivamente.</string>
+    <string name="confirm_delete">Eliminare questo codice QR?</string>
     <string name="language">Lingua</string>
     <string name="system">Lingua del dispositivo</string>
     <string name="history_local">La tua raccolta QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Condizioni d’uso</string>
     <string name="terms_summary">Controlla le destinazioni QR prima di aprire i link. Condividi o esporta solo codici autorizzati. Gli ZIP possono contenere password Wi-Fi. QREX è fornito senza garanzie nei limiti di legge. Assistenza: brendigo.com.</string>
     <string name="read_full_policy">Leggi l’informativa completa</string>
+    <string name="tagline">Scansiona. Crea. Condividi.</string>
+    <string name="event">Evento</string>
+    <string name="event_title">Titolo dell’evento</string>
+    <string name="event_start">Inizio</string>
+    <string name="event_end">Fine</string>
+    <string name="event_location">Luogo</string>
+    <string name="event_details">Dettagli</string>
+    <string name="generate_qr">Genera codice QR</string>
+    <string name="save_to_device">Salva sul dispositivo</string>
+    <string name="add_to_calendar">Aggiungi al calendario</string>
+    <string name="edit">Modifica</string>
+    <string name="add_favorite">Aggiungi ai preferiti</string>
+    <string name="remove_favorite">Rimuovi dai preferiti</string>
+    <string name="clear_history">Cancella cronologia</string>
+    <string name="confirm_clear_history">Cancellare la cronologia?</string>
+    <string name="clear_history_warning">Tutte le voci della cronologia e i codici QR salvati verranno eliminati definitivamente. Tema e lingua resteranno salvati.</string>
 </resources>

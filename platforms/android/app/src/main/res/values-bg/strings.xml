@@ -60,13 +60,11 @@
     <string name="light_theme">Светла тема</string>
     <string name="theme">Тема</string>
     <string name="dark_theme">Тъмна тема</string>
-    <string name="delete_all">Изтрий всички данни</string>
     <string name="privacy">Поверителност</string>
-    <string name="privacy_summary">QR кодовете се обработват на устройството. Без акаунт, реклами и анализи. Историята е незадължителна. Wi-Fi паролите не се запазват автоматично; ръчното запазване на Wi-Fi код запазва и паролата. Външните действия могат да споделят данни с други приложения. Можеш да изтриеш всички местни данни от Настройки. Контакт: brendigo.com.</string>
+    <string name="privacy_summary">QR кодовете се обработват на това устройство. Без профил, реклами или анализи. Историята е по избор. Паролите за Wi-Fi не се запазват автоматично; ръчното запазване на Wi-Fi код запазва и паролата. Данните се споделят с друго приложение само когато изберете външно действие. Историята може да се изчисти от Настройки; темата и езикът остават запазени. Контакт: brendigo.com.</string>
     <string name="about">За приложението</string>
     <string name="developed_by">Разработено от Brendigo</string>
-    <string name="confirm_delete">Изтриване на всички данни?</string>
-    <string name="delete_warning">Историята, кодовете и настройките ще бъдат изтрити завинаги.</string>
+    <string name="confirm_delete">Да изтрия ли този QR код?</string>
     <string name="language">Език</string>
     <string name="system">Език на устройството</string>
     <string name="history_local">Вашата QR колекция</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Условия за ползване</string>
     <string name="terms_summary">Проверявайте QR адресите преди отваряне. Споделяйте само кодове, за които имате разрешение. ZIP архивите може да съдържат Wi-Fi пароли. QREX се предоставя без гаранции в законовите граници. Поддръжка: brendigo.com.</string>
     <string name="read_full_policy">Прочетете пълната политика</string>
+    <string name="tagline">Сканирай. Създай. Сподели.</string>
+    <string name="event">Събитие</string>
+    <string name="event_title">Заглавие на събитието</string>
+    <string name="event_start">Начало</string>
+    <string name="event_end">Край</string>
+    <string name="event_location">Място</string>
+    <string name="event_details">Подробности</string>
+    <string name="generate_qr">Генерирай QR код</string>
+    <string name="save_to_device">Запази на устройството</string>
+    <string name="add_to_calendar">Добави в календара</string>
+    <string name="edit">Редактирай</string>
+    <string name="add_favorite">Добави във фаворити</string>
+    <string name="remove_favorite">Премахни от фаворити</string>
+    <string name="clear_history">Изчисти историята</string>
+    <string name="confirm_clear_history">Да изчистя ли историята?</string>
+    <string name="clear_history_warning">Всички записи в историята и запазени QR кодове ще бъдат изтрити окончателно. Настройките за тема и език ще останат запазени.</string>
 </resources>

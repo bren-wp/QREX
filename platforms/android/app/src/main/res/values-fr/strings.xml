@@ -60,13 +60,11 @@
     <string name="light_theme">Thème clair</string>
     <string name="theme">Thème</string>
     <string name="dark_theme">Thème sombre</string>
-    <string name="delete_all">Supprimer toutes les données</string>
     <string name="privacy">Confidentialité</string>
-    <string name="privacy_summary">Les codes QR sont traités sur l\'appareil. Aucun compte, publicité ou analyse. L\'historique est facultatif. Les mots de passe Wi-Fi ne sont jamais enregistrés automatiquement ; un code Wi-Fi enregistré manuellement contient son mot de passe. Les actions externes peuvent transmettre des données à une autre application. Vous pouvez supprimer toutes les données locales dans les paramètres. Contact : brendigo.com.</string>
+    <string name="privacy_summary">Les codes QR sont traités sur cet appareil. Aucun compte, publicité ni analyse. L’historique est facultatif. Les mots de passe Wi-Fi ne sont jamais enregistrés automatiquement ; enregistrer manuellement un code Wi-Fi enregistre aussi son mot de passe. Les données ne sont partagées avec une autre application que lorsque vous choisissez une action externe. Vous pouvez effacer l’historique dans les paramètres ; le thème et la langue restent enregistrés. Contact : brendigo.com.</string>
     <string name="about">À propos</string>
     <string name="developed_by">Développé par Brendigo</string>
-    <string name="confirm_delete">Tout supprimer ?</string>
-    <string name="delete_warning">L\'historique, les codes et les paramètres seront effacés définitivement.</string>
+    <string name="confirm_delete">Supprimer ce code QR ?</string>
     <string name="language">Langue</string>
     <string name="system">Langue de l\'appareil</string>
     <string name="history_local">Votre collection QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Conditions d’utilisation</string>
     <string name="terms_summary">Vérifiez les destinations QR avant d’ouvrir les liens. Partagez ou exportez uniquement les codes autorisés. Les ZIP peuvent contenir des mots de passe Wi-Fi. QREX est fourni sans garantie dans les limites de la loi. Assistance : brendigo.com.</string>
     <string name="read_full_policy">Lire la politique complète</string>
+    <string name="tagline">Scanner. Créer. Partager.</string>
+    <string name="event">Événement</string>
+    <string name="event_title">Titre de l’événement</string>
+    <string name="event_start">Début</string>
+    <string name="event_end">Fin</string>
+    <string name="event_location">Lieu</string>
+    <string name="event_details">Détails</string>
+    <string name="generate_qr">Créer un code QR</string>
+    <string name="save_to_device">Enregistrer sur l’appareil</string>
+    <string name="add_to_calendar">Ajouter au calendrier</string>
+    <string name="edit">Modifier</string>
+    <string name="add_favorite">Ajouter aux favoris</string>
+    <string name="remove_favorite">Retirer des favoris</string>
+    <string name="clear_history">Effacer l’historique</string>
+    <string name="confirm_clear_history">Effacer l’historique ?</string>
+    <string name="clear_history_warning">Tous les éléments de l’historique et les codes QR enregistrés seront supprimés définitivement. Le thème et la langue resteront enregistrés.</string>
 </resources>

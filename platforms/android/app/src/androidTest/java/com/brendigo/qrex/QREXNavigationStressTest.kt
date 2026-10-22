@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.semantics.SemanticsActions
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,6 +24,17 @@ import org.junit.Test
  */
 class QREXNavigationStressTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
+
+    @Before
+    fun waitForColdStartSplashToFinish() {
+        // The dark-first QREX splash is a genuine cold-start UI, not a test
+        // fixture. Wait for the real navigation bar before interacting, and
+        // fail if the splash never dismisses or the main screen cannot load.
+        rule.waitUntil(timeoutMillis = 15_000L) {
+            rule.onAllNodesWithTag("qrex-tab-0", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
 
     /**
      * Wait for a semantic tag without retaining or logging any QR contents.
@@ -147,7 +159,7 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun bottomCloseStillReturnsToCreateAfterScrolling() {
+    fun pinnedCloseReturnsToCreateAfterScrollingWithIme() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create")
         // Retain text-field focus / IME during navigation. On Android 16
@@ -159,14 +171,14 @@ class QREXNavigationStressTest {
         awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result")
-        // Scroll real Result content, then tap its permanently visible
-        // bottom Close target with physical injection. An OnClick semantics
-        // fallback could mask a keyboard-occluded touch target.
+        // The reference layout keeps one Back control pinned above the
+        // scrolling Result content. Verify it stays reachable with the IME
+        // dismissed during navigation, without adding a non-reference button.
         rule.onNodeWithTag("qrex-result-scroll")
             .performTouchInput { swipeUp() }
-        rule.onNodeWithTag("qrex-result-close-bottom")
+        rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
-        requireScreenTag("qrex-create-screen", 0, "bottom Close returns to Create")
+        requireScreenTag("qrex-create-screen", 0, "pinned Back returns to Create")
     }
 
     @Test
@@ -225,3 +237,4 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-tab-0").assertIsSelected()
     }
 }
+

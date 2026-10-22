@@ -60,13 +60,11 @@
     <string name="light_theme">Φωτεινό θέμα</string>
     <string name="theme">Θέμα</string>
     <string name="dark_theme">Σκούρο θέμα</string>
-    <string name="delete_all">Διαγραφή όλων των δεδομένων</string>
     <string name="privacy">Απόρρητο</string>
-    <string name="privacy_summary">Οι κωδικοί QR επεξεργάζονται στη συσκευή. Χωρίς λογαριασμό, διαφημίσεις ή αναλυτικά στοιχεία. Το ιστορικό είναι προαιρετικό. Οι κωδικοί Wi-Fi δεν αποθηκεύονται αυτόματα· η μη αυτόματη αποθήκευση αποθηκεύει και τον κωδικό πρόσβασης. Εξωτερικές ενέργειες μπορούν να μοιραστούν δεδομένα με άλλη εφαρμογή. Μπορείτε να διαγράψετε τα τοπικά δεδομένα στις Ρυθμίσεις. Επικοινωνία: brendigo.com.</string>
+    <string name="privacy_summary">Οι κωδικοί QR υποβάλλονται σε επεξεργασία σε αυτήν τη συσκευή. Χωρίς λογαριασμό, διαφημίσεις ή αναλυτικά στοιχεία. Το ιστορικό είναι προαιρετικό. Οι κωδικοί Wi-Fi δεν αποθηκεύονται αυτόματα· η χειροκίνητη αποθήκευση κωδικού Wi-Fi αποθηκεύει και τον κωδικό πρόσβασης. Τα δεδομένα κοινοποιούνται σε άλλη εφαρμογή μόνο όταν επιλέγετε εξωτερική ενέργεια. Μπορείτε να διαγράψετε το ιστορικό από τις Ρυθμίσεις· το θέμα και η γλώσσα παραμένουν αποθηκευμένα. Επικοινωνία: brendigo.com.</string>
     <string name="about">Σχετικά</string>
     <string name="developed_by">Ανάπτυξη από Brendigo</string>
-    <string name="confirm_delete">Διαγραφή όλων των δεδομένων;</string>
-    <string name="delete_warning">Το ιστορικό, οι κωδικοί και οι ρυθμίσεις θα διαγραφούν οριστικά.</string>
+    <string name="confirm_delete">Να διαγραφεί αυτός ο κωδικός QR;</string>
     <string name="language">Γλώσσα</string>
     <string name="system">Γλώσσα συσκευής</string>
     <string name="history_local">Η συλλογή QR σας</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Όροι χρήσης</string>
     <string name="terms_summary">Ελέγχετε τους προορισμούς QR πριν ανοίξετε συνδέσμους. Μοιραστείτε μόνο κωδικούς που επιτρέπεται. Τα ZIP μπορεί να περιέχουν κωδικούς Wi-Fi. Το QREX παρέχεται χωρίς εγγυήσεις στον βαθμό που επιτρέπει ο νόμος. Υποστήριξη: brendigo.com.</string>
     <string name="read_full_policy">Διαβάστε όλη την πολιτική</string>
+    <string name="tagline">Σάρωση. Δημιουργία. Κοινοποίηση.</string>
+    <string name="event">Εκδήλωση</string>
+    <string name="event_title">Τίτλος εκδήλωσης</string>
+    <string name="event_start">Έναρξη</string>
+    <string name="event_end">Λήξη</string>
+    <string name="event_location">Τοποθεσία</string>
+    <string name="event_details">Λεπτομέρειες</string>
+    <string name="generate_qr">Δημιουργία κωδικού QR</string>
+    <string name="save_to_device">Αποθήκευση στη συσκευή</string>
+    <string name="add_to_calendar">Προσθήκη στο ημερολόγιο</string>
+    <string name="edit">Επεξεργασία</string>
+    <string name="add_favorite">Προσθήκη στα αγαπημένα</string>
+    <string name="remove_favorite">Αφαίρεση από τα αγαπημένα</string>
+    <string name="clear_history">Εκκαθάριση ιστορικού</string>
+    <string name="confirm_clear_history">Να διαγραφεί το ιστορικό;</string>
+    <string name="clear_history_warning">Όλο το ιστορικό και οι αποθηκευμένοι κωδικοί QR θα διαγραφούν οριστικά. Οι ρυθμίσεις θέματος και γλώσσας θα παραμείνουν αποθηκευμένες.</string>
 </resources>

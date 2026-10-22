@@ -29,8 +29,8 @@ class QREXQrDecoderTest {
     }
 
     @Test
-    fun scan_standard_qr_without_mlkit() {
-        val value = "https://brendigo.com/qrex?ref=fdroid"
+    fun scan_standard_qr() {
+        val value = "https://brendigo.com/qrex?ref=android"
         assertEquals(value, QREXQrDecoder.decodeLuma(qr(value), 251, 197))
     }
 
@@ -43,7 +43,7 @@ class QREXQrDecoderTest {
 
     @Test
     fun rotation_90_and_270_preserves_qr() {
-        val value = "QREX F-Droid rotation test"
+        val value = "QREX rotation test"
         val base = qr(value)
         for (degrees in listOf(90, 180, 270)) {
             val (pixels, w, h) = QREXQrDecoder.rotateLuma(base, 251, 197, degrees)
@@ -75,3 +75,4 @@ class QREXQrDecoderTest {
         assertNull(QREXQrDecoder.decodeLuma(ByteArray(80 * 80) { 255.toByte() }, 80, 80))
     }
 }
+

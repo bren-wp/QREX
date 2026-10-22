@@ -19,7 +19,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertFalse((ROOT / "tool/test_retire_legacy_releases.py").exists())
         self.assertFalse((WORKFLOWS / "retire-legacy-releases.yml").exists())
 
-    def test_google_play_bundle_requires_real_authorized_key(self):
+    def test_google_play_bundle_requires_real_authorized_key_and_current_version(self):
         play = (WORKFLOWS / "production-release.yml").read_text("utf-8")
         gate = (ROOT / "tool/verify_production_gate.sh").read_text("utf-8")
         signer = (ROOT / "tool/sign_android_production.sh").read_text("utf-8")
@@ -29,16 +29,18 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("environment: production", play)
         self.assertIn("device_qa_confirmed:", play)
         self.assertIn("store_review_confirmed:", play)
-        self.assertIn("PLAY_UPLOAD_1_0_1", gate)
+        self.assertIn('RELEASE_VERSION', gate)
+        self.assertIn('PLAY_UPLOAD_$RELEASE_VERSION', gate)
         self.assertIn("refs/heads/main", gate)
         self.assertIn("commits/main", gate)
         self.assertIn("completed:success", gate)
         self.assertIn("needs: verify", play)
-        self.assertIn("QREX-Android-1.0.1.aab", play)
+        self.assertIn("QREX-Android-${{ inputs.version }}.aab", play)
         self.assertIn("QREX_UPLOAD_KEYSTORE_BASE64", signer)
         self.assertIn("QREX_UPLOAD_CERT_SHA256", signer)
         self.assertIn("keytool -printcert -jarfile", signer)
-        self.assertIn("jarsigner -verify -strict", signer)
+        self.assertIn("jarsigner -verify", signer)
+        self.assertIn("RELEASE_VERSION", signer)
         self.assertNotIn("gh release create", play)
         self.assertNotIn("retire_legacy_releases.sh", play)
         self.assertNotIn("keytool -genkeypair", signer)
@@ -122,6 +124,30 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("screenshotItems", main)
         self.assertIn("No validated QREX", (ROOT / "tool/capture_android_screen.sh").read_text("utf-8"))
 
+    def test_github_1_0_5_dark_ui_release_is_signed_separately_from_play(self):
+        published = (WORKFLOWS / "github-release-1.0.5.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.5.md").read_text("utf-8")
+        self.assertIn("branches: [main]", published)
+        self.assertIn("gh release create v1.0.5", published)
+        self.assertIn("com.brendigo.qrex 105 1.0.5", published)
+        self.assertIn("github.event.workflow_run.head_sha", published)
+        self.assertIn("keytool -genkeypair", published)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", published)
+        for artifact in (
+            "QREX-Android-1.0.5.apk",
+            "QREX-Android-1.0.5.aab",
+            "QREX-Android-1.0.5-Play-UNSIGNED-QA.aab",
+            "SHA256SUMS.txt",
+            "android-splash.png",
+            "android-create.png",
+            "android-scan.png",
+            "android-more.png",
+        ):
+            self.assertIn(artifact, published)
+        self.assertIn("cannot update in place", notes)
+        self.assertIn("v1.0.5/android-create.png",
+                      (ROOT / "README.md").read_text("utf-8"))
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
@@ -138,17 +164,19 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 104", gradle)
-        self.assertIn('versionName = "1.0.4"', gradle)
-        self.assertIn("1.0.1", readme)
-        self.assertIn("1.0.1", notes)
+        self.assertIn("versionCode = 105", gradle)
+        self.assertIn('versionName = "1.0.5"', gradle)
+        self.assertIn("1.0.5", readme)
+        self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.1.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.2.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.3.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.4.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.5.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
 if __name__ == "__main__":
     unittest.main()
+

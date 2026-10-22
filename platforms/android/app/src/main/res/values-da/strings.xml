@@ -60,13 +60,11 @@
     <string name="light_theme">Lyst tema</string>
     <string name="theme">Tema</string>
     <string name="dark_theme">Mørkt tema</string>
-    <string name="delete_all">Slet alle data</string>
     <string name="privacy">Privatliv</string>
-    <string name="privacy_summary">QR-koder behandles på enheden. Ingen konto, reklamer eller analyse. Historik er valgfri. Wi-Fi-adgangskoder gemmes aldrig automatisk; manuel lagring af en Wi-Fi-kode gemmer også adgangskoden. Eksterne handlinger kan dele data med andre apps. Du kan slette alle lokale data i Indstillinger. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR-koder behandles på denne enhed. Ingen konto, annoncer eller analyse. Historik er valgfri. Wi-Fi-adgangskoder gemmes ikke automatisk; når du gemmer en Wi-Fi-kode manuelt, gemmes adgangskoden også. Data deles kun med en anden app, når du vælger en ekstern handling. Ryd historikken i Indstillinger; tema og sprogvalg gemmes. Kontakt: brendigo.com.</string>
     <string name="about">Om</string>
     <string name="developed_by">Udviklet af Brendigo</string>
-    <string name="confirm_delete">Slet alle data?</string>
-    <string name="delete_warning">Historik, gemte koder og indstillinger slettes permanent.</string>
+    <string name="confirm_delete">Slet denne QR-kode?</string>
     <string name="language">Sprog</string>
     <string name="system">Enhedens sprog</string>
     <string name="history_local">Din QR-samling</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Brugsvilkår</string>
     <string name="terms_summary">Kontrollér QR-mål, før du åbner links. Del kun koder, du har tilladelse til at dele. ZIP kan indeholde Wi-Fi-adgangskoder. QREX leveres uden garantier i lovens omfang. Support: brendigo.com.</string>
     <string name="read_full_policy">Læs hele politikken</string>
+    <string name="tagline">Scan. Opret. Del.</string>
+    <string name="event">Begivenhed</string>
+    <string name="event_title">Begivenhedens titel</string>
+    <string name="event_start">Start</string>
+    <string name="event_end">Slut</string>
+    <string name="event_location">Sted</string>
+    <string name="event_details">Detaljer</string>
+    <string name="generate_qr">Generér QR-kode</string>
+    <string name="save_to_device">Gem på enheden</string>
+    <string name="add_to_calendar">Tilføj til kalender</string>
+    <string name="edit">Rediger</string>
+    <string name="add_favorite">Føj til favoritter</string>
+    <string name="remove_favorite">Fjern fra favoritter</string>
+    <string name="clear_history">Ryd historik</string>
+    <string name="confirm_clear_history">Ryd historikken?</string>
+    <string name="clear_history_warning">Alle historikposter og gemte QR-koder slettes permanent. Tema- og sprogvalg gemmes.</string>
 </resources>

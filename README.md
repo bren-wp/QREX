@@ -24,21 +24,20 @@ These are **real Android emulator captures of the running QREX app**, generated 
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.4/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.5/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
 </table>
 
-[**Explore all seven full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.4)
+[**Explore all eight full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.5)
 
 </div>
 
@@ -47,7 +46,7 @@ These are **real Android emulator captures of the running QREX app**, generated 
 | | Feature |
 |:--|:--|
 | 📷 **Scan from camera or photos** | Point your camera at a QR code or select an image from Android's system photo picker. |
-| ✨ **Create QR codes** | Make QR codes for links, text, Wi-Fi, contact details, email, phone numbers and places. |
+| ✨ **Create QR codes** | Make QR codes for links, text, Wi-Fi, contact details, email, phone numbers, places and calendar events. |
 | 🔎 **Review before opening** | Choose whether to open a scanned website. No automatic URL opening. |
 | 🔖 **History & saved codes** | Browse, search, save and remove locally stored QR codes. |
 | 🔐 **Protect Wi-Fi details** | Wi-Fi codes are never recorded automatically; manually saved Wi-Fi details use Android Keystore encryption. |
@@ -69,15 +68,13 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-Latest planned distribution: **v1.0.4** (Android `com.brendigo.qrex`). The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), seven real Android screenshots and checksums.
+Latest GitHub distribution: **v1.0.5** (Android `com.brendigo.qrex`, code 105). **Dark navy is the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), eight real Android screenshots and checksums.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
 **Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
 
-**F-Droid:** [Open-source distribution status](docs/FDROID_DISTRIBUTION.md). Source-level ZXing QR scanning is FLOSS-oriented, and CI tests dependencies and metadata. QREX is **not yet listed in the official F-Droid catalog**, and no public Brendigo F-Droid subscription URL is active.
-
-Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), and [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3) remain archived and downloadable.
+Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3) and [v1.0.4](https://github.com/bren-wp/QREX/releases/tag/v1.0.4) remain archived and downloadable.
 
 ---
 

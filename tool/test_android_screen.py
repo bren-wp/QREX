@@ -9,36 +9,58 @@ def screen(body: str) -> str:
 
 
 class ForegroundTests(unittest.TestCase):
+    def test_actual_dark_splash(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" content-desc="QREX splash: Skener. Stvara. Dijeli." />'
+            '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+        ), "splash")
+
     def test_real_app(self):
         validate(screen(
-            '<node package="com.brendigo.qrex" text="Create QR code" />'
+            '<node package="com.brendigo.qrex" text="Stvori QR kod" />'
             '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
             '<node package="com.brendigo.qrex" text="Wi-Fi" />'
         ))
 
     def test_genuine_result_screen_is_accepted(self):
         validate(screen(
-            '<node package="com.brendigo.qrex" text="Scan complete" />'
+            '<node package="com.brendigo.qrex" text="Rezultat" />'
             '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
-            '<node package="com.brendigo.qrex" text="Close" />'
+            '<node package="com.brendigo.qrex" content-desc="Zatvori" />'
         ), "result")
 
     def test_genuine_history_screen_is_accepted(self):
         validate(screen(
-            '<node package="com.brendigo.qrex" text="History" />'
+            '<node package="com.brendigo.qrex" text="Favoriti" />'
             '<node package="com.brendigo.qrex" text="brendigo.com" />'
-            '<node package="com.brendigo.qrex" text="Saved" />'
+            '<node package="com.brendigo.qrex" text="Pretraži povijest..." />'
+            '<node package="com.brendigo.qrex" text="Spremljeno" />'
         ), "saved")
+
+
+    def test_wifi_create_fixture_is_visible(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="Stvori QR kod" />'
+            '<node package="com.brendigo.qrex" text="QREX-Demo" />'
+            '<node package="com.brendigo.qrex" text="Wi-Fi" />'
+        ), "wifi")
+
+    def test_live_scan_screen_has_camera_actions(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+            '<node package="com.brendigo.qrex" text="Iz galerije" />'
+            '<node package="com.brendigo.qrex" text="Usmjeri kameru prema QR kodu" />'
+        ), "scan")
 
     def test_wrong_screen_or_anr_is_rejected_even_with_qrex_package(self):
         with self.assertRaises(ValueError):
             validate(screen(
-                '<node package="com.brendigo.qrex" text="Scan complete" />'
+                '<node package="com.brendigo.qrex" text="Rezultat" />'
                 '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
             ), "create")
         with self.assertRaises(ValueError):
             validate(screen(
-                '<node package="com.brendigo.qrex" text="Scan QR code" />'
+                '<node package="com.brendigo.qrex" text="Skeniraj QR kod" />'
                 '<node package="com.android.systemui" text="App isn\'t responding" />'
             ), "scan")
 

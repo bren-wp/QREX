@@ -60,13 +60,11 @@
     <string name="light_theme">Açık tema</string>
     <string name="theme">Tema</string>
     <string name="dark_theme">Koyu tema</string>
-    <string name="delete_all">Tüm verileri sil</string>
     <string name="privacy">Gizlilik</string>
-    <string name="privacy_summary">QR kodları cihazda işlenir. Hesap, reklam veya analiz yoktur. Geçmiş isteğe bağlıdır. Wi-Fi şifreleri otomatik kaydedilmez; Wi-Fi kodunu elle kaydetmek şifreyi de kaydeder. Dış işlemler verileri başka uygulamalarla paylaşabilir. Tüm yerel verileri Ayarlar\'dan silebilirsiniz. İletişim: brendigo.com.</string>
+    <string name="privacy_summary">QR kodları bu cihazda işlenir. Hesap, reklam veya analiz yoktur. Geçmiş isteğe bağlıdır. Wi-Fi parolaları otomatik olarak kaydedilmez; bir Wi-Fi kodunu elle kaydetmek parolayı da kaydeder. Veriler başka bir uygulamayla yalnızca bir dış işlemi seçtiğinizde paylaşılır. Geçmişi Ayarlar\'dan temizleyebilirsiniz; tema ve dil tercihleri kayıtlı kalır. İletişim: brendigo.com.</string>
     <string name="about">Hakkında</string>
     <string name="developed_by">Brendigo tarafından geliştirildi</string>
-    <string name="confirm_delete">Tüm veriler silinsin mi?</string>
-    <string name="delete_warning">Geçmiş, kayıtlı kodlar ve ayarlar kalıcı olarak silinecek.</string>
+    <string name="confirm_delete">Bu QR kodu silinsin mi?</string>
     <string name="language">Dil</string>
     <string name="system">Cihaz dili</string>
     <string name="history_local">QR koleksiyonun</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Kullanım Koşulları</string>
     <string name="terms_summary">Bağlantıları açmadan önce QR hedeflerini kontrol et. Yalnızca izinli kodları paylaş veya dışa aktar. ZIP dosyaları Wi-Fi parolaları içerebilir. QREX yasanın izin verdiği ölçüde garantisiz sunulur. Destek: brendigo.com.</string>
     <string name="read_full_policy">Politikanın tamamını oku</string>
+    <string name="tagline">Tara. Oluştur. Paylaş.</string>
+    <string name="event">Etkinlik</string>
+    <string name="event_title">Etkinlik başlığı</string>
+    <string name="event_start">Başlangıç</string>
+    <string name="event_end">Bitiş</string>
+    <string name="event_location">Konum</string>
+    <string name="event_details">Ayrıntılar</string>
+    <string name="generate_qr">QR kodu oluştur</string>
+    <string name="save_to_device">Cihaza kaydet</string>
+    <string name="add_to_calendar">Takvime ekle</string>
+    <string name="edit">Düzenle</string>
+    <string name="add_favorite">Favorilere ekle</string>
+    <string name="remove_favorite">Favorilerden kaldır</string>
+    <string name="clear_history">Geçmişi temizle</string>
+    <string name="confirm_clear_history">Geçmiş temizlensin mi?</string>
+    <string name="clear_history_warning">Tüm geçmiş kayıtları ve kaydedilen QR kodları kalıcı olarak silinecek. Tema ve dil seçimleri kayıtlı kalacak.</string>
 </resources>

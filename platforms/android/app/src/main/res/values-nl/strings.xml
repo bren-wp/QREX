@@ -60,13 +60,11 @@
     <string name="light_theme">Licht thema</string>
     <string name="theme">Thema</string>
     <string name="dark_theme">Donker thema</string>
-    <string name="delete_all">Alle gegevens verwijderen</string>
     <string name="privacy">Privacy</string>
-    <string name="privacy_summary">QR-codes worden op dit apparaat verwerkt. Geen account, advertenties of analyses. Geschiedenis is optioneel. Wifiwachtwoorden worden niet automatisch bewaard; handmatig opslaan van een wifi-code bewaart ook het wachtwoord. Externe acties kunnen gegevens delen met andere apps. Alle lokale gegevens kunnen in Instellingen worden gewist. Contact: brendigo.com.</string>
+    <string name="privacy_summary">QR-codes worden op dit apparaat verwerkt. Geen account, advertenties of analyses. Geschiedenis is optioneel. Wifiwachtwoorden worden nooit automatisch opgeslagen; als je een wifi-code handmatig opslaat, wordt ook het wachtwoord bewaard. Gegevens worden alleen met een andere app gedeeld wanneer je een externe actie kiest. Wis de geschiedenis in Instellingen; thema en taal blijven bewaard. Contact: brendigo.com.</string>
     <string name="about">Over</string>
     <string name="developed_by">Ontwikkeld door Brendigo</string>
-    <string name="confirm_delete">Alle gegevens verwijderen?</string>
-    <string name="delete_warning">Geschiedenis, opgeslagen codes en instellingen worden permanent verwijderd.</string>
+    <string name="confirm_delete">Deze QR-code verwijderen?</string>
     <string name="language">Taal</string>
     <string name="system">Apparaattaal gebruiken</string>
     <string name="history_local">Jouw QR-verzameling</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Gebruiksvoorwaarden</string>
     <string name="terms_summary">Controleer QR-bestemmingen voordat je links opent. Deel of exporteer alleen codes waarvoor je toestemming hebt. ZIP-bestanden kunnen wifiwachtwoorden bevatten. QREX wordt zonder garanties geleverd voor zover wettelijk toegestaan. Hulp: brendigo.com.</string>
     <string name="read_full_policy">Volledig beleid lezen</string>
+    <string name="tagline">Scan. Maak. Deel.</string>
+    <string name="event">Gebeurtenis</string>
+    <string name="event_title">Naam van de gebeurtenis</string>
+    <string name="event_start">Start</string>
+    <string name="event_end">Einde</string>
+    <string name="event_location">Locatie</string>
+    <string name="event_details">Details</string>
+    <string name="generate_qr">QR-code genereren</string>
+    <string name="save_to_device">Opslaan op apparaat</string>
+    <string name="add_to_calendar">Toevoegen aan agenda</string>
+    <string name="edit">Bewerken</string>
+    <string name="add_favorite">Toevoegen aan favorieten</string>
+    <string name="remove_favorite">Verwijderen uit favorieten</string>
+    <string name="clear_history">Geschiedenis wissen</string>
+    <string name="confirm_clear_history">Geschiedenis wissen?</string>
+    <string name="clear_history_warning">Alle geschiedenisitems en opgeslagen QR-codes worden permanent verwijderd. Thema en taal blijven bewaard.</string>
 </resources>

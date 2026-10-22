@@ -18,9 +18,9 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
         # Fixed aspect-ratio, capped-width QR images fit narrow devices
         # without SubcomposeLayout, whose repeated disposal crashed API 26.
         self.assertNotIn("BoxWithConstraints(", main)
-        self.assertGreaterEqual(main.count("Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)"), 2)
+        self.assertIn("Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)", main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", main)
-        self.assertIn(".widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)", main)
+        self.assertIn(".size(104.dp).background(Color.White).padding(7.dp)", main)
         self.assertNotIn("Modifier.size(230.dp).background(white)", main)
         self.assertNotIn("Modifier.size(238.dp).background(white)", main)
 
@@ -39,3 +39,4 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

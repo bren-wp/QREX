@@ -12,6 +12,9 @@ import org.json.JSONObject
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class QRRecord(val raw: String, val timestamp: Long, val saved: Boolean)
 
@@ -27,6 +30,70 @@ object QRHistory {
 
 object QRContent {
     fun isWifi(raw: String): Boolean = raw.startsWith("WIFI:", ignoreCase = true)
+
+    fun isEvent(raw: String): Boolean = raw.contains("BEGIN:VEVENT", ignoreCase = true)
+
+    fun event(
+        title: String,
+        start: LocalDateTime,
+        end: LocalDateTime,
+        location: String,
+        description: String
+    ): String? {
+        if (title.isBlank() || end <= start) return null
+        fun escape(value: String): String = value
+            .replace("\\", "\\\\")
+            .replace("\r\n", "\n")
+            .replace('\r', '\n')
+            .replace("\n", "\\n")
+            .replace(";", "\\;")
+            .replace(",", "\\,")
+        fun utc(value: LocalDateTime): String = DateTimeFormatter
+            .ofPattern("yyyyMMdd'T'HHmmss'Z'", Locale.ROOT)
+            .withZone(ZoneOffset.UTC)
+            .format(value.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC))
+        return buildString {
+            append("BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Brendigo//QREX//EN\r\n")
+            append("BEGIN:VEVENT\r\nSUMMARY:").append(escape(title)).append("\r\n")
+            append("DTSTART:").append(utc(start)).append("\r\n")
+            append("DTEND:").append(utc(end)).append("\r\n")
+            if (location.isNotBlank()) append("LOCATION:").append(escape(location)).append("\r\n")
+            if (description.isNotBlank()) append("DESCRIPTION:").append(escape(description)).append("\r\n")
+            append("END:VEVENT\r\nEND:VCALENDAR")
+        }
+    }
+
+    fun eventField(raw: String, name: String): String? {
+        if (!isEvent(raw) || name !in setOf("SUMMARY", "DTSTART", "DTEND", "LOCATION", "DESCRIPTION")) return null
+        val value = raw.lineSequence().firstOrNull {
+            it.startsWith("$name:", ignoreCase = true)
+        }?.substringAfter(':') ?: return null
+        val result = StringBuilder()
+        var escaped = false
+        for (char in value) {
+            when {
+                escaped -> {
+                    result.append(if (char == 'n' || char == 'N') '\n' else char)
+                    escaped = false
+                }
+                char == '\\' -> escaped = true
+                else -> result.append(char)
+            }
+        }
+        if (escaped) result.append('\\')
+        return result.toString()
+    }
+
+    fun eventTimeMillis(raw: String, name: String): Long? {
+        val value = eventField(raw, name) ?: return null
+        return runCatching {
+            val utc = LocalDateTime.parse(
+                value.removeSuffix("Z"),
+                DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss", Locale.ROOT)
+            )
+            utc.toInstant(ZoneOffset.UTC).toEpochMilli()
+        }.getOrNull()
+    }
 
     fun wifiField(raw: String, name: String): String? {
         if (!isWifi(raw) || name !in setOf("S", "P", "T", "H")) return null
@@ -73,6 +140,16 @@ object QRContent {
 
     fun label(raw: String): String {
         if (isWifi(raw)) return wifiField(raw, "S") ?: "Wi-Fi"
+        if (isEvent(raw)) return eventField(raw, "SUMMARY") ?: "Event"
+        if (raw.startsWith("mailto:", ignoreCase = true)) {
+            return raw.substringAfter(':').substringBefore('?').take(56)
+        }
+        if (raw.startsWith("tel:", ignoreCase = true)) return raw.substringAfter(':').take(56)
+        if (raw.startsWith("geo:", ignoreCase = true)) return raw.substringAfter(':').take(56)
+        if (raw.contains("BEGIN:VCARD", ignoreCase = true)) {
+            return raw.lineSequence().firstOrNull { it.startsWith("FN:", ignoreCase = true) }
+                ?.substringAfter(':')?.takeIf { it.isNotBlank() } ?: "Contact"
+        }
         // Decode URLs once; history filtering can call this for every entry.
         return safeUrl(raw)?.host ?: raw.replace("\n", " ").take(56)
     }
@@ -96,7 +173,7 @@ class QREXStore(context: Context) {
         private set
     var lightMode by mutableStateOf(preferences.getBoolean("lightMode", false))
         private set
-    var language by mutableStateOf(preferences.getString("language", "en") ?: "en")
+    var language by mutableStateOf(preferences.getString("language", "system") ?: "system")
         private set
 
     init {
@@ -297,6 +374,22 @@ class QREXStore(context: Context) {
         return true
     }
 
+    /**
+     * Toggle a saved code without changing its timestamp or reordering history.
+     * Preserve encrypted Wi-Fi records and refuse all writes when old history
+     * cannot be authenticated/decrypted.
+     */
+    fun setSaved(item: QRRecord, saved: Boolean): Boolean {
+        if (items.none { it.raw == item.raw }) return false
+        val next = items.map {
+            if (it.raw == item.raw) it.copy(saved = saved) else it
+        }
+        if (!persist(next)) return false
+        items.clear()
+        items.addAll(next)
+        return true
+    }
+
     fun remove(item: QRRecord): Boolean {
         val next = items.filterNot { it == item }
         if (!persist(next)) return false
@@ -305,22 +398,18 @@ class QREXStore(context: Context) {
         return true
     }
 
-    /** Explicit erasure also removes untransferred Flutter records and settings. */
-    fun clearAll(): Boolean {
-        // Remove legacy values first: otherwise they could reappear on next start
-        // after qrex.user was cleared and the migration marker was lost.
-        val legacyCleared = legacyPreferences.edit()
-            .remove("flutter.qrex_history_v1")
-            .remove("flutter.qrex_light_v1")
-            .remove("flutter.qrex_record_v1")
-            .commit()
-        if (!legacyCleared || !preferences.edit().clear().commit()) return false
+    /** Explicitly erase the QR history while preserving theme and language choices. */
+    fun clearHistory(): Boolean {
+        if (!preferences.edit()
+                .putString("history", "[]")
+                .putBoolean("flutterMigrationV1", true)
+                .commit()) return false
+        // The migration marker prevents stale legacy records from returning if
+        // cleanup is interrupted; the next startup retries this exact removal.
+        legacyPreferences.edit().remove("flutter.qrex_history_v1").commit()
         historyReadable = true
         items.clear()
         protectedWifi.clear()
-        historyEnabled = true
-        lightMode = false
-        language = "en"
         return true
     }
 

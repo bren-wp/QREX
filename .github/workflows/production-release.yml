@@ -1,13 +1,17 @@
-name: QREX 1.0.1 — authorized Google Play AAB
+name: QREX authorized Google Play upload
 
-# This workflow produces the original-key signed Google Play UPLOAD bundle.
-# A GitHub public APK signed with a disposable key is NOT interchangeable.
-# Approval and key provisioning require the repository's production environment.
+# This workflow produces the existing-key signed Google Play UPLOAD bundle.
+# It never submits automatically; Play Console review remains a manual step.
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: 'VersionName already set in Android Gradle metadata'
+        required: true
+        type: string
+        default: '1.0.5'
       confirmation:
-        description: 'Type PLAY_UPLOAD_1_0_1 after reviewing the exact main commit'
+        description: 'Type PLAY_UPLOAD_<version> after reviewing the exact main commit'
         required: true
         type: string
       device_qa_confirmed:
@@ -25,27 +29,28 @@ permissions:
   contents: read
 
 concurrency:
-  group: qrex-play-1-0-1
+  group: qrex-play-upload
   cancel-in-progress: false
 
 jobs:
   verify:
     name: Require exact main commit, policy and approved QA
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     permissions:
       actions: read
       contents: read
     env:
       GH_TOKEN: ${{ github.token }}
       PRODUCTION_APPROVED: ${{ inputs.confirmation }}
+      RELEASE_VERSION: ${{ inputs.version }}
       DEVICE_QA_CONFIRMED: ${{ inputs.device_qa_confirmed }}
       STORE_REVIEW_CONFIRMED: ${{ inputs.store_review_confirmed }}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check 1.0.1 metadata and exact-commit Android quality gates
+      - name: Check version metadata and exact-commit Android quality gates
         run: |
           set -euo pipefail
           bash -n tool/verify_production_gate.sh
@@ -61,6 +66,7 @@ jobs:
     permissions:
       contents: read
     env:
+      RELEASE_VERSION: ${{ inputs.version }}
       QREX_UPLOAD_KEYSTORE_BASE64: ${{ secrets.QREX_UPLOAD_KEYSTORE_BASE64 }}
       QREX_UPLOAD_STORE_PASSWORD: ${{ secrets.QREX_UPLOAD_STORE_PASSWORD }}
       QREX_UPLOAD_KEY_ALIAS: ${{ secrets.QREX_UPLOAD_KEY_ALIAS }}
@@ -87,17 +93,17 @@ jobs:
       - name: Build and verify with the approved existing Play upload certificate
         run: bash tool/sign_android_production.sh
       - name: Generate checksums of signed upload bundle
-        run: (cd production && sha256sum QREX-Android-1.0.1.aab > SHA256SUMS-PLAY.txt)
+        run: (cd production && sha256sum "QREX-Android-$RELEASE_VERSION.aab" > SHA256SUMS-PLAY.txt)
       - name: Upload authenticated bundle for manual Play Console submission
         uses: actions/upload-artifact@v4
         with:
-          name: QREX-1.0.1-Google-Play-Upload-Signed-AAB
+          name: QREX-${{ inputs.version }}-Google-Play-Upload-Signed-AAB
           path: |
-            production/QREX-Android-1.0.1.aab
+            production/QREX-Android-${{ inputs.version }}.aab
             production/SHA256SUMS-PLAY.txt
           if-no-files-found: error
           retention-days: 30
 
-# No automatic Google Play submission: the developer must approve policy
-# declarations and submit the signed AAB to the correct existing app.
-# No GitHub tag/release replacement or destructive legacy cleanup.
+# The developer must review declarations and submit the signed AAB to Play Console.
+# This workflow does not publish a GitHub release or automatically change store tracks.
+

@@ -22,7 +22,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
@@ -123,7 +128,7 @@ internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
 }
 
 @Composable
-fun ScanScreen(onRead: (String) -> Unit) {
+fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
@@ -143,6 +148,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
+    var selectedZoom by remember { mutableFloatStateOf(1f) }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             scope.launch {
@@ -222,8 +228,36 @@ fun ScanScreen(onRead: (String) -> Unit) {
         owner.lifecycle.addObserver(observer)
         onDispose { owner.lifecycle.removeObserver(observer) }
     }
+    // Both the scanner overlay and bottom action use the SAME CameraX future.
+    // Do not claim the torch is enabled until CameraX confirms success.
+    val toggleTorch: () -> Unit = {
+        val activeCamera = camera
+        if (activeCamera == null) {
+            message = cameraFailed
+        } else {
+            val next = !torchOn
+            val request = runCatching {
+                activeCamera.cameraControl.enableTorch(next)
+            }.getOrNull()
+            if (request == null) {
+                message = cameraFailed
+            } else {
+                torchBusy = true
+                request.addListener({
+                    if (camera === activeCamera) {
+                        if (runCatching { request.get() }.isSuccess) {
+                            torchOn = next
+                        } else {
+                            message = cameraFailed
+                        }
+                        torchBusy = false
+                    }
+                }, ContextCompat.getMainExecutor(context))
+            }
+        }
+    }
     Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        QrexBrandHeader(tr("scan_qr"), tr("point_camera"))
+        QrexBrandHeader(onMore = onMore)
         Spacer(Modifier.height(8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }
@@ -283,6 +317,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
                     camera = null
                     torchOn = false
                     torchBusy = false
+                    selectedZoom = 1f
                     analyzer?.clearAnalyzer()
                     if (cameraFuture.isDone) runCatching { cameraFuture.get().unbindAll() }
                     analysisExecutor.shutdown()
@@ -293,6 +328,75 @@ fun ScanScreen(onRead: (String) -> Unit) {
                 .background(QrexDesign.surface)) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
                 ScannerCornerOverlay(Modifier.fillMaxSize())
+                // Actual optical/digital zoom controls: never offer levels
+                // outside the camera's advertised range.
+                val zoomLimits = camera?.cameraInfo?.zoomState?.value
+                Row(
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                        .padding(bottom = 58.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(.5f, 1f, 2f).forEach { ratio ->
+                        val available = camera != null && zoomLimits != null &&
+                            ratio >= zoomLimits.minZoomRatio &&
+                            ratio <= zoomLimits.maxZoomRatio
+                        FilterChip(
+                            selected = selectedZoom == ratio,
+                            onClick = {
+                                val active = camera
+                                if (active != null && available) {
+                                    val request = runCatching {
+                                        active.cameraControl.setZoomRatio(ratio)
+                                    }.getOrNull()
+                                    request?.addListener({
+                                        if (camera === active &&
+                                            runCatching { request.get() }.isSuccess) {
+                                            selectedZoom = ratio
+                                        }
+                                    }, ContextCompat.getMainExecutor(context))
+                                }
+                            },
+                            enabled = available,
+                            label = { Text("${ratio}×") },
+                            modifier = Modifier.heightIn(min = 44.dp),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = QrexDesign.backgroundDeep.copy(alpha = .88f),
+                                labelColor = Color.White,
+                                selectedContainerColor = QrexDesign.accent,
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                    }
+                }
+                if (camera?.cameraInfo?.hasFlashUnit() == true) {
+                    Surface(
+                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = QrexDesign.backgroundDeep.copy(alpha = .88f),
+                        border = BorderStroke(1.dp, QrexDesign.stroke)
+                    ) {
+                        IconButton(
+                            onClick = toggleTorch, enabled = allowed && !torchBusy,
+                            modifier = Modifier.size(46.dp)
+                        ) {
+                            Icon(
+                                if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                                contentDescription = tr("flashlight"),
+                                tint = if (torchOn) QrexDesign.accentBright else Color.White
+                            )
+                        }
+                    }
+                }
+                Text(
+                    tr("point_camera"),
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                        .padding(18.dp)
+                        .background(QrexDesign.backgroundDeep.copy(alpha = .76f),
+                            RoundedCornerShape(9.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    color = Color.White
+                )
             }
         } else {
             Box(Modifier.fillMaxWidth().weight(1f)
@@ -318,53 +422,46 @@ fun ScanScreen(onRead: (String) -> Unit) {
             }
         }
         Spacer(Modifier.height(12.dp))
-        FlowRow(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedButton(
                 onClick = {
-                    val activeCamera = camera
-                    if (activeCamera == null) {
-                        message = cameraFailed
-                    } else {
-                        val next = !torchOn
-                        val request = runCatching {
-                            activeCamera.cameraControl.enableTorch(next)
-                        }.getOrNull()
-                        if (request == null) {
-                            message = cameraFailed
-                        } else {
-                            // CameraX reports success asynchronously. Do not
-                            // claim the torch changed until the request succeeds.
-                            torchBusy = true
-                            request.addListener({
-                                if (camera === activeCamera) {
-                                    if (runCatching { request.get() }.isSuccess) {
-                                        torchOn = next
-                                    } else {
-                                        message = cameraFailed
-                                    }
-                                    torchBusy = false
-                                }
-                            }, ContextCompat.getMainExecutor(context))
-                        }
-                    }
+                    photoPicker.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
                 },
-                enabled = allowed && !torchBusy &&
-                    camera?.cameraInfo?.hasFlashUnit() == true
-            ) {
-                Text(tr("flashlight"))
-            }
-            OutlinedButton(onClick = {
-                photoPicker.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                modifier = Modifier.weight(1f).heightIn(min = 66.dp),
+                shape = RoundedCornerShape(15.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = QrexDesign.surface
                 )
-            }) {
-                Text(tr("from_gallery"))
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Default.PhotoLibrary, contentDescription = null,
+                        tint = QrexDesign.accentBright, modifier = Modifier.size(22.dp))
+                    Spacer(Modifier.height(4.dp))
+                    Text(tr("from_gallery"), maxLines = 1)
+                }
+            }
+            OutlinedButton(
+                onClick = toggleTorch,
+                enabled = allowed && !torchBusy &&
+                    camera?.cameraInfo?.hasFlashUnit() == true,
+                modifier = Modifier.weight(1f).heightIn(min = 66.dp),
+                shape = RoundedCornerShape(15.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = QrexDesign.surface
+                )
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                        contentDescription = null, tint = QrexDesign.accentBright,
+                        modifier = Modifier.size(22.dp))
+                    Spacer(Modifier.height(4.dp))
+                    Text(tr("flashlight"), maxLines = 1)
+                }
             }
         }
-        Spacer(Modifier.height(8.dp))
-        Text(tr("point_camera"), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
     if (message != null) AlertDialog(onDismissRequest = { message = null },

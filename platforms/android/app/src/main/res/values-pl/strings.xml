@@ -60,13 +60,11 @@
     <string name="light_theme">Jasny motyw</string>
     <string name="theme">Motyw</string>
     <string name="dark_theme">Ciemny motyw</string>
-    <string name="delete_all">Usuń wszystkie dane</string>
     <string name="privacy">Prywatność</string>
-    <string name="privacy_summary">Kody QR są przetwarzane na urządzeniu. Bez konta, reklam i analityki. Historia jest opcjonalna. Hasła Wi-Fi nie są zapisywane automatycznie; ręczne zapisanie kodu Wi-Fi zapisuje też hasło. Działania zewnętrzne mogą udostępniać dane innym aplikacjom. Dane lokalne można usunąć w Ustawieniach. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">Kody QR są przetwarzane na tym urządzeniu. Bez konta, reklam i analityki. Historia jest opcjonalna. Hasła Wi-Fi nie są zapisywane automatycznie; ręczne zapisanie kodu Wi-Fi zapisuje również hasło. Dane są udostępniane innej aplikacji tylko po wybraniu działania zewnętrznego. Historię można wyczyścić w Ustawieniach; motyw i język pozostają zapisane. Kontakt: brendigo.com.</string>
     <string name="about">Informacje</string>
     <string name="developed_by">Opracowano przez Brendigo</string>
-    <string name="confirm_delete">Usunąć wszystkie dane?</string>
-    <string name="delete_warning">Historia, zapisane kody i ustawienia zostaną trwale usunięte.</string>
+    <string name="confirm_delete">Usunąć ten kod QR?</string>
     <string name="language">Język</string>
     <string name="system">Język urządzenia</string>
     <string name="history_local">Twoja kolekcja QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Warunki korzystania</string>
     <string name="terms_summary">Sprawdzaj adresy QR przed otwarciem. Udostępniaj lub eksportuj tylko kody, do których masz prawa. Archiwa ZIP mogą zawierać hasła Wi-Fi. QREX jest udostępniany bez gwarancji w zakresie dozwolonym prawem. Pomoc: brendigo.com.</string>
     <string name="read_full_policy">Przeczytaj pełną politykę</string>
+    <string name="tagline">Skanuj. Twórz. Udostępniaj.</string>
+    <string name="event">Wydarzenie</string>
+    <string name="event_title">Nazwa wydarzenia</string>
+    <string name="event_start">Początek</string>
+    <string name="event_end">Koniec</string>
+    <string name="event_location">Lokalizacja</string>
+    <string name="event_details">Szczegóły</string>
+    <string name="generate_qr">Generuj kod QR</string>
+    <string name="save_to_device">Zapisz na urządzeniu</string>
+    <string name="add_to_calendar">Dodaj do kalendarza</string>
+    <string name="edit">Edytuj</string>
+    <string name="add_favorite">Dodaj do ulubionych</string>
+    <string name="remove_favorite">Usuń z ulubionych</string>
+    <string name="clear_history">Wyczyść historię</string>
+    <string name="confirm_clear_history">Wyczyścić historię?</string>
+    <string name="clear_history_warning">Wszystkie wpisy historii i zapisane kody QR zostaną trwale usunięte. Ustawienia motywu i języka pozostaną zapisane.</string>
 </resources>

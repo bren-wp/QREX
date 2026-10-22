@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Native window colors match the QREX dark Compose cold-start splash.
+         Prevent a bright blank frame before the first Compose draw. -->
+    <style name="Theme.QREX" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#030A18</item>
+        <item name="android:statusBarColor">#030A18</item>
+        <item name="android:navigationBarColor">#030A18</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
