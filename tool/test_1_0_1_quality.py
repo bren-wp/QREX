@@ -31,11 +31,11 @@ class AndroidCodeAuditTests(unittest.TestCase):
         # for Gallery and Torch. Requiring the old FlowRow causes false
         # failures and would force the former design back into production.
         self.assertIn("Row(Modifier.fillMaxWidth(),", scanner)
-        self.assertIn("horizontalArrangement = Arrangement.spacedBy(12.dp)", scanner)
+        self.assertIn("horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)", scanner)
         self.assertGreaterEqual(
-            scanner.count("Modifier.weight(1f).heightIn(min = 66.dp)"), 2)
+            scanner.count("Modifier.weight(1f).heightIn(min = if (compactScan) 52.dp else 66.dp)"), 2)
         self.assertIn("onClick = toggleTorch", scanner)
-        self.assertIn('Text(tr("from_gallery"), maxLines = 1)', scanner)
+        self.assertIn('Text(tr("from_gallery"), maxLines = 2,', scanner)
         self.assertIn("verticalScroll(rememberScrollState())", scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", scanner)
 
