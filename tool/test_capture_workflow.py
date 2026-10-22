@@ -83,6 +83,14 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("python3 tool/verify_screenshots.py", body)
         self.assertIn("--es qrex_language hr", body)
         self.assertIn("adb exec-out screencap -p", body)
+        responsive = (ROOT / "tool/capture_responsive_android.sh").read_text("utf-8")
+        subprocess.run(["bash", "-n", str(ROOT / "tool/capture_responsive_android.sh")],
+                       check=True)
+        self.assertIn("320dp compact", responsive)
+        self.assertIn("settings put system font_scale", responsive)
+        self.assertIn("trap restore_device EXIT", responsive)
+        self.assertIn('qrex-responsive-android', WORKFLOW.read_text("utf-8"))
+        self.assertIn("capture_responsive_android.sh", body)
         self.assertIn("exit 1", body)
 
 
