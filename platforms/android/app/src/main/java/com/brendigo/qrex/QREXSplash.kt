@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -86,22 +86,13 @@ internal fun QrexSplashScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Box(
-                modifier = Modifier.size(146.dp)
-                    .background(
-                        Brush.linearGradient(
-                            listOf(Color(0xFF08BDF7), Color(0xFF0767EE), Color(0xFF0732A4))
-                        ),
-                        RoundedCornerShape(34.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.qrex_icon_monochrome),
-                    contentDescription = null,
-                    modifier = Modifier.size(122.dp)
-                )
-            }
+            // Display exactly the launcher artwork, not a second simplified
+            // monochrome graphic on a separately rendered gradient tile.
+            Image(
+                painter = painterResource(R.drawable.qrex_icon),
+                contentDescription = null,
+                modifier = Modifier.size(192.dp).clip(RoundedCornerShape(42.dp))
+            )
             Spacer(Modifier.height(24.dp))
             // Two-tone mark and copy follow the supplied dark reference;
             // both are actual Compose text (never baked into a mockup image).

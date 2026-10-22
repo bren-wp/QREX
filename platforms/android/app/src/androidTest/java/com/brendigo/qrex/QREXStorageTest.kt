@@ -42,6 +42,19 @@ class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
+    fun renderedUnicodeContactsDecodeExactlyAsGenerated() {
+        val qr = QRContent.contact("Šime Željka Kovačić", "+385 91 123 4567",
+            "info@example.hr")!!
+        val bitmap = generateQR(qr)
+        assertNotNull(bitmap)
+        try {
+            assertEquals(qr, QREXQrDecoder.decodeBitmap(bitmap!!))
+        } finally {
+            bitmap?.recycle()
+        }
+    }
+
+    @Test
     fun wifiClipboardSuppressesAndroidSystemPreview() {
         val secret = QRContent.wifi("Guest", "super-private-pass")
         val clip = makeQrClipboardClip(secret)

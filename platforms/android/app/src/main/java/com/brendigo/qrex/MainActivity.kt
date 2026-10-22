@@ -51,7 +51,7 @@ import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
@@ -76,6 +76,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
@@ -174,7 +175,7 @@ private fun QREXApp(
     val appLanguage = screenshotLanguage ?: store.language
     val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
-    val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
+    val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
         Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
@@ -272,7 +273,8 @@ private fun QREXApp(
                             editPayload = null
                             resultShowsQr = false
                         },
-                        icon = { Icon(icons[index], contentDescription = null) },
+                        icon = { Icon(if (index == 3 && selected == 3) Icons.Default.Favorite
+                             else icons[index], contentDescription = null) },
                         label = { Text(label, maxLines = 1, softWrap = false,
                             overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
                             fontSize = 10.sp) },
@@ -666,6 +668,7 @@ fun generateQR(raw: String): Bitmap? {
     return runCatching {
         val bits = MultiFormatWriter().encode(raw, BarcodeFormat.QR_CODE, 680, 680,
             mapOf(EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
+                EncodeHintType.CHARACTER_SET to Charsets.UTF_8.name(),
                 EncodeHintType.MARGIN to 2))
         val bitmap = Bitmap.createBitmap(bits.width, bits.height, Bitmap.Config.ARGB_8888)
         val data = IntArray(bits.width * bits.height) { index ->
@@ -704,9 +707,8 @@ private fun CreateScreen(
             raw.startsWith("mailto:", ignoreCase = true) -> 3 to raw.substringAfter(':')
             raw.startsWith("tel:", ignoreCase = true) -> 4 to raw.substringAfter(':')
             raw.startsWith("geo:", ignoreCase = true) -> 5 to raw.substringAfter(':')
-            raw.contains("BEGIN:VCARD", ignoreCase = true) ->
-                6 to (raw.lineSequence().firstOrNull { it.startsWith("FN:", true) }
-                    ?.substringAfter(':') ?: "")
+            raw.startsWith("BEGIN:VCARD", ignoreCase = true) ->
+                6 to (QRContent.contactField(raw, "FN") ?: "")
             QRContent.safeUrl(raw) != null -> 0 to raw
             raw.isNotBlank() -> 1 to raw
             else -> 0 to ""
@@ -716,6 +718,12 @@ private fun CreateScreen(
     var content by remember(screenshotMode, initialValue) { mutableStateOf(draft.second) }
     var password by remember(screenshotMode, initialValue) {
         mutableStateOf(initialValue?.let { QRContent.wifiField(it, "P") }.orEmpty())
+    }
+    var contactPhone by remember(screenshotMode, initialValue) {
+        mutableStateOf(initialValue?.let { QRContent.contactField(it, "TEL") }.orEmpty())
+    }
+    var contactEmail by remember(screenshotMode, initialValue) {
+        mutableStateOf(initialValue?.let { QRContent.contactField(it, "EMAIL") }.orEmpty())
     }
     var reveal by remember { mutableStateOf(false) }
     var createMenu by remember { mutableStateOf(false) }
@@ -750,8 +758,7 @@ private fun CreateScreen(
         3 -> if (input.contains("@") && !input.contains("\n")) "mailto:$input" else ""
         4 -> if (input.isBlank()) "" else "tel:$input"
         5 -> if (input.isBlank()) "" else "geo:$input"
-        6 -> if (input.isBlank()) "" else
-            "BEGIN:VCARD\nVERSION:3.0\nFN:" + input.replace("\n", " ") + "\nEND:VCARD"
+        6 -> QRContent.contact(input, contactPhone, contactEmail).orEmpty()
         else -> QRContent.event(input, eventStart, eventEnd, eventLocation, eventDescription).orEmpty()
     }
 
@@ -802,7 +809,7 @@ private fun CreateScreen(
         DatePickerDialog(
             context,
             { _, year, month, day ->
-                val selectedDate = current.withYear(year).withMonth(month + 1).withDayOfMonth(day)
+                val selectedDate = eventDateTimeWithDate(current, year, month, day)
                 TimePickerDialog(
                     context,
                     { _, hour, minute ->
@@ -819,6 +826,7 @@ private fun CreateScreen(
         ).show()
     }
 
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     Column(Modifier.fillMaxSize().imePadding().testTag("qrex-create-screen")) {
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
@@ -852,6 +860,8 @@ private fun CreateScreen(
                                 kind = type
                                 content = ""
                                 password = ""
+                                contactPhone = ""
+                                contactEmail = ""
                                 eventLocation = ""
                                 eventDescription = ""
                                 createMenu = false
@@ -869,7 +879,13 @@ private fun CreateScreen(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 listOf(0, 1, 2, 6).forEach { index ->
                     Surface(
-                        onClick = { kind = index; content = ""; password = "" },
+                        onClick = {
+                            kind = index
+                            content = ""
+                            password = ""
+                            contactPhone = ""
+                            contactEmail = ""
+                        },
                         modifier = Modifier.weight(1f).heightIn(min = 40.dp),
                         shape = RoundedCornerShape(11.dp),
                         color = if (kind == index) QrexDesign.accent
@@ -925,6 +941,26 @@ private fun CreateScreen(
                 Text(tr("wifi_warning"), fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            if (kind == 6) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = contactPhone,
+                    onValueChange = { contactPhone = it.take(100) },
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-contact-phone"),
+                    label = { Text(tr("phone")) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                )
+                Spacer(Modifier.height(6.dp))
+                OutlinedTextField(
+                    value = contactEmail,
+                    onValueChange = { contactEmail = it.take(254) },
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-contact-email"),
+                    label = { Text(tr("email")) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                )
+            }
             if (kind == 7) {
                 Spacer(Modifier.height(7.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -970,8 +1006,13 @@ private fun CreateScreen(
                     maxLines = 2
                 )
             }
-            Spacer(Modifier.height(8.dp))
-            QrexPanel(Modifier.fillMaxWidth()) {
+        }
+        // Keep the QR preview directly above Generate and Save, as in the
+        // approved phone reference. Collapse only the preview while typing,
+        // leaving the scrollable form and essential actions accessible.
+        if (!imeVisible) {
+            QrexPanel(Modifier.fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)) {
                 Row(
                     Modifier.fillMaxWidth().padding(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -1212,6 +1253,28 @@ private fun HistoryScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 9.sp
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                // Favorite is a direct, visible action on every row.
+                                // Debug-only screenshot fixtures must never mutate the store.
+                                if (screenshotItems == null) {
+                                    val changed = store.setSaved(item, !item.saved)
+                                    if (!changed) Toast.makeText(
+                                        context, operationFailed, Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            modifier = Modifier.size(44.dp).testTag("qrex-history-favorite")
+                        ) {
+                            Icon(
+                                if (item.saved) Icons.Default.Favorite
+                                else Icons.Default.FavoriteBorder,
+                                contentDescription = if (item.saved) tr("remove_favorite")
+                                    else tr("add_favorite"),
+                                tint = if (item.saved) QrexDesign.danger
+                                    else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Box {

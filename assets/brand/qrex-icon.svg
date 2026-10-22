@@ -1,19 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-<defs>
-  <linearGradient id="qrex" x1="0" y1="0" x2="0.92" y2="1">
-    <stop stop-color="#16D8FF"/><stop offset="0.42" stop-color="#087BFA"/><stop offset="1" stop-color="#0A2A90"/>
-  </linearGradient>
-</defs>
-<rect x="0" y="0" width="1024" height="1024" rx="226" fill="#061020"/>
-<rect x="18" y="18" width="988" height="988" rx="215" fill="url(#qrex)"/>
-<g fill="none" stroke="#F8FCFF" stroke-width="72" stroke-linecap="round" stroke-linejoin="round">
- <path d="M252 385V290Q252 252 290 252H385 M639 252H734Q772 252 772 290V385 M252 639V734Q252 772 290 772H385 M639 772H734Q772 772 772 734V639"/>
- <circle cx="458" cy="502" r="130"/>
- <path d="M534 578L628 680"/>
-</g>
-<rect x="658" y="418" width="116" height="116" rx="13" fill="#FFFFFF"/>
-<rect x="688" y="448" width="56" height="56" rx="4" fill="#1154B7"/>
-<rect x="658" y="564" width="55" height="55" rx="8" fill="#F8FCFF"/>
-<rect x="735" y="564" width="39" height="39" rx="6" fill="#F8FCFF"/>
-<rect x="734" y="633" width="40" height="40" rx="6" fill="#11D5FE"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="QREX app icon">
+  <defs>
+    <linearGradient id="tile" x1="0.08" y1="0.02" x2="0.84" y2="1">
+      <stop offset="0" stop-color="#19CAFF"/>
+      <stop offset=".44" stop-color="#0868EE"/>
+      <stop offset="1" stop-color="#07187E"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" rx="240" fill="#061020"/>
+  <rect x="50" y="50" width="980" height="980" rx="215" fill="url(#tile)" stroke="#54E9FF" stroke-width="8"/>
+  <g fill="none" stroke-width="56" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M220 370 V300 Q220 230 290 230 H350" stroke="#E5F9FF"/>
+    <path d="M740 230 H800 Q860 230 860 300 V370" stroke="#41C9FF"/>
+    <path d="M220 720 V800 Q220 860 290 860 H360" stroke="#3FD0FF"/>
+    <path d="M740 860 H800 Q860 860 860 800 V730" stroke="#13E3F1"/>
+  </g>
+  <circle cx="440" cy="570" r="180" fill="none" stroke="#fff" stroke-width="100"/>
+  <path d="M510 640 L590 570 L760 770 L680 840 Z" fill="#fff"/>
+  <rect x="680" y="360" width="150" height="150" rx="10" fill="#fff"/>
+  <rect x="720" y="400" width="70" height="70" rx="4" fill="#1151BA"/>
+  <rect x="690" y="570" width="70" height="70" rx="7" fill="#fff"/>
+  <rect x="800" y="570" width="70" height="70" rx="7" fill="#fff"/>
+  <rect x="690" y="680" width="70" height="70" rx="7" fill="#fff"/>
 </svg>

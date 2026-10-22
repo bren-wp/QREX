@@ -11,7 +11,8 @@ class QREXQrDecoderTest {
     private fun qr(value: String, width: Int = 251, height: Int = 197): ByteArray {
         val matrix = QRCodeWriter().encode(
             value, BarcodeFormat.QR_CODE, width, height,
-            mapOf(EncodeHintType.MARGIN to 4)
+            mapOf(EncodeHintType.MARGIN to 4,
+                EncodeHintType.CHARACTER_SET to "UTF-8")
         )
         return ByteArray(width * height) { i ->
             if (matrix[i % width, i / width]) 0 else 255.toByte()
@@ -32,6 +33,14 @@ class QREXQrDecoderTest {
     fun scan_standard_qr() {
         val value = "https://brendigo.com/qrex?ref=android"
         assertEquals(value, QREXQrDecoder.decodeLuma(qr(value), 251, 197))
+    }
+
+    @Test
+    fun scan_utf8_croatian_contact_qr_without_losing_accents() {
+        val card = QRContent.contact(
+            "Čić Đorđe Šimić Željko", "+385 91 555 1234", "osoba@example.hr"
+        )!!
+        assertEquals(card, QREXQrDecoder.decodeLuma(qr(card, 420, 420), 420, 420))
     }
 
     @Test

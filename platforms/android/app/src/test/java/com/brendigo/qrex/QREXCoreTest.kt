@@ -11,6 +11,49 @@ class QREXCoreTest {
     }
 
 
+    @Test fun eventDatePickerDoesNotCrashAcrossShorterMonths() {
+        val endOfJanuary = java.time.LocalDateTime.of(2026, 1, 31, 23, 45)
+        assertEquals(
+            java.time.LocalDateTime.of(2026, 2, 28, 23, 45),
+            eventDateTimeWithDate(endOfJanuary, 2026, 1, 28)
+        )
+        assertEquals(
+            java.time.LocalDateTime.of(2028, 2, 29, 23, 45),
+            eventDateTimeWithDate(endOfJanuary, 2028, 1, 29)
+        )
+    }
+
+    @Test fun eventDatePickerPreservesTimeAndSwitchesYearSafely() {
+        val leapDay = java.time.LocalDateTime.of(2028, 2, 29, 14, 7, 18)
+        assertEquals(
+            java.time.LocalDateTime.of(2029, 3, 1, 14, 7, 18),
+            eventDateTimeWithDate(leapDay, 2029, 2, 1)
+        )
+    }
+
+    @Test fun contactVcardRoundTripKeepsCroatianUnicodeAndEscapedDelimiters() {
+        val name = "Šime, Željka; Kovačić"
+        val phone = "+385 91 123 4567"
+        val email = "kontakt@example.hr"
+        val card = QRContent.contact(name, phone, email)
+        assertNotNull(card)
+        assertTrue(card!!.contains("VERSION:3.0"))
+        assertEquals(name, QRContent.contactField(card, "FN"))
+        assertEquals(phone, QRContent.contactField(card, "TEL"))
+        assertEquals(email, QRContent.contactField(card, "EMAIL"))
+        assertEquals(name, QRContent.label(card))
+        assertTrue(QRContent.canRender(card))
+        assertNull(QRContent.contact("   "))
+        assertNull(QRContent.contactField("ordinary text", "FN"))
+    }
+
+    @Test fun contactNameNewlinesCannotInjectVcardFields() {
+        val name = "Ana\nBEGIN:VCARD"
+        val card = QRContent.contact(name)!!
+        assertEquals(1, card.lines().count { it == "BEGIN:VCARD" })
+        assertEquals(name, QRContent.contactField(card, "FN"))
+    }
+
     @Test fun wifiEscapesDelimiters() {
         val raw = QRContent.wifi("Office;P:fake", "a\\b:c")
         assertEquals("Office;P:fake", QRContent.wifiField(raw, "S"))

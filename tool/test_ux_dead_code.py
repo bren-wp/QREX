@@ -104,7 +104,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
         self.assertIn("internal fun QrexSplashScreen(", splash)
         self.assertIn("QrexDesign.backgroundDeep", splash)
-        self.assertIn("R.drawable.qrex_icon_monochrome", splash)
+        self.assertIn("R.drawable.qrex_icon", splash)
         self.assertIn("screenshotMode != \"splash\"", self.main)
         # Create is a root tab in the reference; its app bar starts with
         # the QREX wordmark, then privacy and overflow actions, with no extra
@@ -140,6 +140,19 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("runCatching { request.get() }.isSuccess", self.scanner)
         self.assertIn("enabled = allowed && !torchBusy &&", self.scanner)
         self.assertIn(".clip(RoundedCornerShape(28.dp))", self.scanner)
+
+    def test_reference_create_preview_and_favorite_hearts_are_live_actions(self):
+        # The QR preview and Generate/Save actions share a fixed bottom group.
+        self.assertIn("WindowInsets.ime.getBottom(LocalDensity.current) > 0", self.main)
+        self.assertIn('testTag("qrex-create-preview-ready")', self.main)
+        self.assertIn('testTag("qrex-create-show")', self.main)
+        self.assertIn('testTag("qrex-create-save")', self.main)
+        self.assertIn('testTag("qrex-history-favorite")', self.main)
+        self.assertIn("store.setSaved(item, !item.saved)", self.main)
+        self.assertIn("QRContent.contact(input, contactPhone, contactEmail)", self.main)
+        self.assertIn('EncodeHintType.CHARACTER_SET to Charsets.UTF_8.name()', self.main)
+        splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
+        self.assertIn("Modifier.size(192.dp).clip(RoundedCornerShape(42.dp))", splash)
 
     def test_irreplaceable_history_migration_and_wifi_encryption_are_retained(self):
         self.assertIn('getSharedPreferences("FlutterSharedPreferences"', self.core)

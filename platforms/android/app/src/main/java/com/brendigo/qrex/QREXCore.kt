@@ -18,6 +18,15 @@ import java.util.Locale
 
 data class QRRecord(val raw: String, val timestamp: Long, val saved: Boolean)
 
+/** Keep the chosen time while changing calendar date. DatePicker already
+ * validates the new day/month; never apply the year or month to the old date
+ * first (31 January -> February can throw DateTimeException).
+ */
+internal fun eventDateTimeWithDate(
+    current: LocalDateTime, year: Int, monthZeroBased: Int, day: Int
+): LocalDateTime = java.time.LocalDate.of(year, monthZeroBased + 1, day)
+    .atTime(current.toLocalTime())
+
 /** Search saved QR information without exposing Wi-Fi secrets through keyword matches. */
 object QRHistory {
     fun matches(record: QRRecord, query: String, savedOnly: Boolean): Boolean {
@@ -61,6 +70,46 @@ object QRContent {
             if (description.isNotBlank()) append("DESCRIPTION:").append(escape(description)).append("\r\n")
             append("END:VEVENT\r\nEND:VCALENDAR")
         }
+    }
+
+    /** Standards-compatible vCard 3.0 fields. QR contacts must preserve
+     * Croatian characters, commas, semicolons and newlines during a round trip.
+     * No remote contacts API or extra Android permission is required.
+     */
+    fun contact(name: String, phone: String = "", email: String = ""): String? {
+        if (name.isBlank()) return null
+        fun escape(value: String) = value.trim().replace("\\", "\\\\")
+            .replace("\r\n", "\n").replace('\r', '\n')
+            .replace("\n", "\\n").replace(";", "\\;").replace(",", "\\,")
+        return buildString {
+            append("BEGIN:VCARD\r\nVERSION:3.0\r\nFN:")
+            append(escape(name)).append("\r\n")
+            if (phone.isNotBlank()) append("TEL:").append(escape(phone)).append("\r\n")
+            if (email.isNotBlank()) append("EMAIL:").append(escape(email)).append("\r\n")
+            append("END:VCARD")
+        }
+    }
+
+    fun contactField(raw: String, field: String): String? {
+        if (!raw.startsWith("BEGIN:VCARD", ignoreCase = true) ||
+            field !in setOf("FN", "TEL", "EMAIL")) return null
+        val encoded = raw.lineSequence().firstOrNull {
+            it.startsWith("$field:", ignoreCase = true)
+        }?.substringAfter(':')?.trimEnd('\r') ?: return null
+        val plain = StringBuilder()
+        var escaped = false
+        for (char in encoded) {
+            when {
+                escaped -> {
+                    plain.append(if (char == 'n' || char == 'N') '\n' else char)
+                    escaped = false
+                }
+                char == '\\' -> escaped = true
+                else -> plain.append(char)
+            }
+        }
+        if (escaped) return null
+        return plain.toString()
     }
 
     fun eventField(raw: String, name: String): String? {
@@ -146,9 +195,8 @@ object QRContent {
         }
         if (raw.startsWith("tel:", ignoreCase = true)) return raw.substringAfter(':').take(56)
         if (raw.startsWith("geo:", ignoreCase = true)) return raw.substringAfter(':').take(56)
-        if (raw.contains("BEGIN:VCARD", ignoreCase = true)) {
-            return raw.lineSequence().firstOrNull { it.startsWith("FN:", ignoreCase = true) }
-                ?.substringAfter(':')?.takeIf { it.isNotBlank() } ?: "Contact"
+        if (raw.startsWith("BEGIN:VCARD", ignoreCase = true)) {
+            return contactField(raw, "FN")?.takeIf { it.isNotBlank() } ?: "Contact"
         }
         // Decode URLs once; history filtering can call this for every entry.
         return safeUrl(raw)?.host ?: raw.replace("\n", " ").take(56)

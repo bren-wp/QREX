@@ -41,6 +41,24 @@ class CustomerProductReadinessTests(unittest.TestCase):
             self.assertIsNotNone(root.find("foreground"))
         self.assertTrue((RES / "drawable/qrex_icon_monochrome.xml").exists())
 
+    def test_approved_qrex_icon_geometry_is_shared_with_splash(self):
+        ns = "{http://schemas.android.com/apk/res/android}"
+        launcher = ET.parse(RES / "drawable/qrex_icon.xml").getroot()
+        mono = ET.parse(RES / "drawable/qrex_icon_monochrome.xml").getroot()
+        self.assertEqual(launcher.get(ns + "viewportWidth"), "108")
+        self.assertEqual(mono.get(ns + "viewportWidth"), "108")
+        paths = launcher.findall("path")
+        mono_paths = mono.findall("path")
+        # Q stroke and QR pixel cells must be real vector geometry,
+        # not a screenshot of an app UI or a white rectangle placeholder.
+        for path_list in (paths, mono_paths):
+            self.assertTrue(any(p.get(ns + "strokeWidth") == "10" for p in path_list))
+            self.assertTrue(any("M68,36" in p.get(ns + "pathData", "") for p in path_list))
+            self.assertTrue(any("M51,64" in p.get(ns + "pathData", "") for p in path_list))
+        splash = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXSplash.kt").read_text("utf-8")
+        self.assertIn("painterResource(R.drawable.qrex_icon)", splash)
+        self.assertNotIn("painterResource(R.drawable.qrex_icon_monochrome)", splash)
+
     def test_document_export_and_legal_actions_are_real_on_android(self):
         android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         for key in ("export_archive", "privacy_policy", "terms_of_use", "developed_by"):
