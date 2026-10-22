@@ -181,6 +181,32 @@ internal fun QrexSettingsListRow(
     }
 }
 
+/** Window-class layout rules for phones: source of truth for responsive
+ * Compose sizing. Width/height refer to the available content viewport in dp,
+ * not a particular physical handset, density or marketing mockup.
+ */
+internal data class QrexLayoutProfile(
+    val stackTypeChoices: Boolean,
+    val showQrPreview: Boolean,
+    val lightQrSizeDp: Int,
+    val darkQrSizeDp: Int,
+    val horizontalPaddingDp: Int
+)
+
+internal fun qrexLayoutProfile(
+    widthDp: Int, heightDp: Int, fontScale: Float
+): QrexLayoutProfile {
+    val narrow = widthDp < 360 || fontScale >= 1.30f
+    val short = heightDp < 620 || fontScale >= 1.45f
+    return QrexLayoutProfile(
+        stackTypeChoices = narrow,
+        showQrPreview = heightDp >= 420 && fontScale < 1.70f,
+        lightQrSizeDp = if (narrow || short) 80 else 104,
+        darkQrSizeDp = if (narrow || short) 104 else 156,
+        horizontalPaddingDp = if (widthDp < 350) 12 else 16
+    )
+}
+
 /** Reference-style result action: real full-width button with a touch target
  * >= 52dp, clear icon, legible label and chevron. Never an inert decorative card.
  */
