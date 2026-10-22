@@ -104,7 +104,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
         self.assertIn("internal fun QrexSplashScreen(", splash)
         self.assertIn("QrexDesign.backgroundDeep", splash)
-        self.assertIn("R.drawable.qrex_icon_monochrome", splash)
+        self.assertIn("R.drawable.qrex_icon", splash)
         self.assertIn("screenshotMode != \"splash\"", self.main)
         # Create is a root tab in the reference; its app bar starts with
         # the QREX wordmark, then privacy and overflow actions, with no extra
