@@ -92,7 +92,7 @@ internal fun QrexSplashScreen(
             Image(
                 painter = painterResource(R.drawable.qrex_icon),
                 contentDescription = null,
-                modifier = Modifier.size(158.dp).clip(RoundedCornerShape(34.dp))
+                modifier = Modifier.size(192.dp).clip(RoundedCornerShape(42.dp))
             )
             Spacer(Modifier.height(24.dp))
             // Two-tone mark and copy follow the supplied dark reference;
