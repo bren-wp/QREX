@@ -11,6 +11,29 @@ class QREXCoreTest {
     }
 
 
+    @Test fun responsivePhoneLayoutProfilesKeepActionsAvailable() {
+        val compact = qrexLayoutProfile(320, 568, 1.0f)
+        assertTrue(compact.stackTypeChoices)
+        assertTrue(compact.showQrPreview)
+        assertEquals(104, compact.darkQrSizeDp)
+        assertEquals(80, compact.lightQrSizeDp)
+        assertEquals(12, compact.horizontalPaddingDp)
+
+        val veryShort = qrexLayoutProfile(320, 400, 1.0f)
+        assertFalse(veryShort.showQrPreview)
+        assertTrue(veryShort.stackTypeChoices)
+
+        val normal = qrexLayoutProfile(393, 852, 1.0f)
+        assertFalse(normal.stackTypeChoices)
+        assertEquals(156, normal.darkQrSizeDp)
+        assertEquals(104, normal.lightQrSizeDp)
+
+        val largeText = qrexLayoutProfile(393, 852, 1.6f)
+        assertTrue(largeText.stackTypeChoices)
+        assertEquals(104, largeText.darkQrSizeDp)
+        assertFalse(qrexLayoutProfile(393, 852, 1.8f).showQrPreview)
+    }
+
     @Test fun eventDatePickerDoesNotCrashAcrossShorterMonths() {
         val endOfJanuary = java.time.LocalDateTime.of(2026, 1, 31, 23, 45)
         assertEquals(
