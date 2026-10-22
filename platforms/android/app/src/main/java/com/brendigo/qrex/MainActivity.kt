@@ -13,7 +13,9 @@ import android.graphics.Color as AndroidColor
 import android.net.Uri
 import android.os.Bundle
 import android.content.Context
+import android.content.res.Configuration
 import android.widget.Toast
+import android.text.format.DateUtils
 import androidx.activity.ComponentActivity
 import androidx.core.view.WindowCompat
 import androidx.activity.compose.BackHandler
@@ -210,8 +212,8 @@ private fun QREXApp(
         if (screenshotMode in setOf("history", "saved")) {
             val now = System.currentTimeMillis()
             listOf(
-                QRRecord("https://brendigo.com", now, true),
-                QRRecord("WIFI:T:WPA;S:QREX-Office;P:demo-password;;", now - 300_000, true),
+                QRRecord("https://brendigo.com", now - 300_000, true),
+                QRRecord("WIFI:T:WPA;S:QREX-Office;P:demo-password;;", now - 600_000, true),
                 QRRecord("BEGIN:VCARD\nVERSION:3.0\nFN:QREX demo contact\nTEL:+10000000000\nEND:VCARD",
                     now - 900_000, false),
                 QRRecord("https://maps.google.com/?q=Rijeka", now - 1_800_000, false),
@@ -1051,6 +1053,15 @@ private fun HistoryScreen(
     favoritesPage: Boolean = false
 ) {
     val context = LocalContext.current
+    val activeLanguage = LocalLanguage.current
+    val historyDateContext = remember(context, activeLanguage) {
+        if (activeLanguage == "system") context
+        else context.createConfigurationContext(
+            Configuration(context.resources.configuration).apply {
+                setLocale(Locale.forLanguageTag(activeLanguage))
+            }
+        )
+    }
     val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
@@ -1131,9 +1142,9 @@ private fun HistoryScreen(
                     QRContent.isEvent(item.raw) -> QrexDesign.purple
                     else -> MaterialTheme.colorScheme.primary
                 }
-                val date = DateFormat.getDateTimeInstance(
-                    DateFormat.SHORT, DateFormat.SHORT
-                ).format(Date(item.timestamp))
+                val date = DateUtils.getRelativeTimeSpanString(
+                    historyDateContext, item.timestamp
+                ).toString()
                 val detail = when {
                     QRContent.isWifi(item.raw) -> tr("wifi")
                     QRContent.isEvent(item.raw) -> QRContent.eventField(item.raw, "LOCATION").orEmpty()
