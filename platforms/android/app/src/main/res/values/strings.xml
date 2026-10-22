@@ -72,7 +72,7 @@
     <string name="png_save_failed">Unable to save PNG image.</string>
     <string name="operation_failed">Action failed. Please try again.</string>
     <string name="data_tools">Your codes &amp; files</string>
-    <string name="export_archive">Export saved QR codes as PDF · ZIP</string>
+    <string name="export_archive">Archive export</string>
     <string name="export_archive_hint">Keep your favorite QR codes in a printable PDF archive.</string>
     <string name="export_archive_warning">Exported PDFs may contain saved Wi-Fi passwords. Only share this ZIP with people you trust.</string>
     <string name="archive_failed">Could not create the ZIP archive.</string>
