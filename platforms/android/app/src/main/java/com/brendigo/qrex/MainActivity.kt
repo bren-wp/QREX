@@ -1416,14 +1416,25 @@ private fun MoreScreen(store: QREXStore) {
             }
         }
     }
-    var languageMenu by remember { mutableStateOf(false) }
-    var exportMenu by remember { mutableStateOf(false) }
+    // The supplied light reference has separate Language and Export screens,
+    // not oversized dropdown menus. Preserve this local, nonsensitive page
+    // over configuration recreation, without touching QR history.
+    var detailPage by rememberSaveable { mutableStateOf("root") }
+    BackHandler(enabled = detailPage != "root") { detailPage = "root" }
     val uiLanguage = LocalLanguage.current
     val selectedLanguage = if (store.language == "system" && uiLanguage != "system")
         uiLanguage else store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+    when (detailPage) {
+    "language" -> QrexLanguageDetails(store, onBack = { detailPage = "root" })
+    "export" -> QrexExportDetails(
+        hasSaved = store.items.any { it.saved },
+        onBack = { detailPage = "root" },
+        onPdf = { confirmPdfExport = true },
+        onZip = { confirmExport = true }
+    )
+    else -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(horizontal = 16.dp, vertical = 18.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
@@ -1434,36 +1445,19 @@ private fun MoreScreen(store: QREXStore) {
                 subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
                 modifier = Modifier.weight(1f)
             )
-            Box(Modifier.weight(1f)) {
-                QrexSettingsTile(
-                    label = tr("language"), icon = Icons.Default.Translate,
-                    onClick = { languageMenu = true }, subtitle = languageName,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                DropdownMenu(expanded = languageMenu, onDismissRequest = {
-                    languageMenu = false
-                }) {
-                    DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
-                        store.updateLanguage("system"); languageMenu = false
-                    })
-                    QREXStrings.languages.forEach { localeCode ->
-                        DropdownMenuItem(text = {
-                            Text(Locale.forLanguageTag(localeCode).getDisplayName(
-                                Locale.forLanguageTag(localeCode)))
-                        }, onClick = {
-                            store.updateLanguage(localeCode); languageMenu = false
-                        })
-                    }
-                }
-            }
+            QrexSettingsTile(
+                label = tr("language"), icon = Icons.Default.Translate,
+                onClick = { detailPage = "language" }, subtitle = languageName,
+                modifier = Modifier.weight(1f).testTag("qrex-more-language")
+            )
         }
         Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
                 label = tr("export_archive"), icon = Icons.Default.Archive,
-                onClick = { exportMenu = true },
-                enabled = store.items.any { it.saved },
-                subtitle = "PDF · ZIP", modifier = Modifier.weight(1f)
+                onClick = { detailPage = "export" },
+                subtitle = "PDF · ZIP",
+                modifier = Modifier.weight(1f).testTag("qrex-more-export")
             )
             QrexSettingsTile(
                 label = tr("privacy_policy"), icon = Icons.Default.Shield,
@@ -1494,23 +1488,6 @@ private fun MoreScreen(store: QREXStore) {
         }
         Spacer(Modifier.height(20.dp))
     }
-    if (exportMenu) {
-        AlertDialog(onDismissRequest = { exportMenu = false },
-            title = { Text(tr("export_archive")) },
-            text = { Text(tr("export_archive_warning")) },
-            confirmButton = {
-                Row {
-                    TextButton(onClick = { exportMenu = false; confirmPdfExport = true }) {
-                        Text("PDF")
-                    }
-                    TextButton(onClick = { exportMenu = false; confirmExport = true }) {
-                        Text("ZIP")
-                    }
-                }
-            },
-            dismissButton = { TextButton(onClick = { exportMenu = false }) {
-                Text(tr("cancel"))
-            } })
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
