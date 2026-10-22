@@ -21,7 +21,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
-        self.assertIn(".widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)", self.main)
+        self.assertIn(".widthIn(max = 148.dp).fillMaxWidth().aspectRatio(1f)", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
     def test_dark_theme_is_default_and_navigation_contrast_is_adaptive(self):
@@ -41,6 +41,17 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("val accentBright = Color(0xFF22C7FF)", design)
         self.assertIn("color = MaterialTheme.colorScheme.primary", design)
+
+    def test_reference_splash_tagline_and_android_26_window_theme(self):
+        splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
+        styles = (ROOT / "platforms/android/app/src/main/res/values/styles.xml").read_text("utf-8")
+        self.assertIn('"Sve što može QR — jednostavno, brzo i bez prijave."', splash)
+        self.assertIn('Text("QRE"', splash)
+        self.assertIn('Text("X"', splash)
+        self.assertIn('android:windowBackground', styles)
+        self.assertIn('#030A18', styles)
+        # Android API 26 must lint/build without referencing API 27-only attrs.
+        self.assertNotIn('android:windowLightNavigationBar', styles)
 
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
