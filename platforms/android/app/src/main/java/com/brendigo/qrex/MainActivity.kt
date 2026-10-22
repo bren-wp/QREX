@@ -13,9 +13,9 @@ import android.graphics.Color as AndroidColor
 import android.net.Uri
 import android.os.Bundle
 import android.content.Context
-import android.content.res.Configuration
 import android.widget.Toast
 import android.text.format.DateUtils
+import android.icu.text.RelativeDateTimeFormatter
 import androidx.activity.ComponentActivity
 import androidx.core.view.WindowCompat
 import androidx.activity.compose.BackHandler
@@ -1054,14 +1054,15 @@ private fun HistoryScreen(
 ) {
     val context = LocalContext.current
     val activeLanguage = LocalLanguage.current
-    val baseConfiguration = LocalConfiguration.current
-    val historyDateContext = remember(context, activeLanguage, baseConfiguration) {
-        if (activeLanguage == "system") context
-        else context.createConfigurationContext(
-            Configuration(baseConfiguration).apply {
-                setLocale(Locale.forLanguageTag(activeLanguage))
-            }
-        )
+    val historyLocale = remember(activeLanguage) {
+        if (activeLanguage == "system") Locale.getDefault()
+        else Locale.forLanguageTag(activeLanguage)
+    }
+    val relativeTimeFormatter = remember(historyLocale) {
+        RelativeDateTimeFormatter.getInstance(historyLocale)
+    }
+    val absoluteDateFormatter = remember(historyLocale) {
+        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, historyLocale)
     }
     val operationFailed = tr("operation_failed")
     var search by remember { mutableStateOf("") }
@@ -1143,9 +1144,33 @@ private fun HistoryScreen(
                     QRContent.isEvent(item.raw) -> QrexDesign.purple
                     else -> MaterialTheme.colorScheme.primary
                 }
-                val date = DateUtils.getRelativeTimeSpanString(
-                    historyDateContext, item.timestamp
-                ).toString()
+                val ageMillis = (System.currentTimeMillis() - item.timestamp).coerceAtLeast(0L)
+                val date = when {
+                    ageMillis < DateUtils.MINUTE_IN_MILLIS ->
+                        relativeTimeFormatter.format(
+                            RelativeDateTimeFormatter.Direction.PLAIN,
+                            RelativeDateTimeFormatter.AbsoluteUnit.NOW
+                        )
+                    ageMillis < DateUtils.HOUR_IN_MILLIS ->
+                        relativeTimeFormatter.format(
+                            (ageMillis / DateUtils.MINUTE_IN_MILLIS).toDouble(),
+                            RelativeDateTimeFormatter.Direction.LAST,
+                            RelativeDateTimeFormatter.RelativeUnit.MINUTES
+                        )
+                    ageMillis < DateUtils.DAY_IN_MILLIS ->
+                        relativeTimeFormatter.format(
+                            (ageMillis / DateUtils.HOUR_IN_MILLIS).toDouble(),
+                            RelativeDateTimeFormatter.Direction.LAST,
+                            RelativeDateTimeFormatter.RelativeUnit.HOURS
+                        )
+                    ageMillis < 7L * DateUtils.DAY_IN_MILLIS ->
+                        relativeTimeFormatter.format(
+                            (ageMillis / DateUtils.DAY_IN_MILLIS).toDouble(),
+                            RelativeDateTimeFormatter.Direction.LAST,
+                            RelativeDateTimeFormatter.RelativeUnit.DAYS
+                        )
+                    else -> absoluteDateFormatter.format(Date(item.timestamp))
+                }
                 val detail = when {
                     QRContent.isWifi(item.raw) -> tr("wifi")
                     QRContent.isEvent(item.raw) -> QRContent.eventField(item.raw, "LOCATION").orEmpty()
