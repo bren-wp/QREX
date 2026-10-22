@@ -719,11 +719,11 @@ private fun CreateScreen(
             Text(tr("wifi_warning"), fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(10.dp))
         QrexPanel(modifier = Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(tr("qr_preview"), fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(6.dp))
                 val previewBitmap = qr
                 // Avoid a nested subcomposition per rapidly changing QR
                 // preview. The parent Box stays stable across payload edits.
@@ -731,15 +731,15 @@ private fun CreateScreen(
                     if (previewBitmap != null) {
                         Image(previewBitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                             modifier = Modifier.testTag("qrex-create-preview-ready")
-                                .widthIn(max = 176.dp).fillMaxWidth().aspectRatio(1f)
-                                .background(white).padding(14.dp))
+                                .widthIn(max = 148.dp).fillMaxWidth().aspectRatio(1f)
+                                .background(white).padding(9.dp))
                     } else {
                         Text(tr("invalid_content"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
         }
         // The reference keeps Generate above Save. Both controls remain pinned
         // above the navigation bar so an open IME cannot hide the real targets.
