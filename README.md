@@ -35,9 +35,14 @@ These are **real Android emulator captures of the running QREX app**, generated 
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-language.png" width="210" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-export.png" width="210" alt="Actual QREX PDF and ZIP Export settings screen"><br><b>Export</b></td>
+<td colspan="2"></td>
+</tr>
 </table>
 
-[**Explore all eight full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.6)
+[**Explore all ten full-size screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.7)
 
 </div>
 
@@ -68,7 +73,7 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-Next Android QA candidate: **v1.0.7** (`com.brendigo.qrex`, versionCode 107). The actual latest published release remains available under GitHub Releases until all v1.0.7 gates succeed. **The launcher and splash now use the new Q/QR reference mark. Dark navy remains the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), eight real Android screenshots and checksums.
+Next Android QA candidate: **v1.0.7** (`com.brendigo.qrex`, versionCode 107). The actual latest published release remains available under GitHub Releases until all v1.0.7 gates succeed. **The launcher and splash now use the new Q/QR reference mark. Dark navy remains the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), ten real Android screenshots and checksums.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
