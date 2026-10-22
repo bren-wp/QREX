@@ -802,7 +802,7 @@ private fun CreateScreen(
         DatePickerDialog(
             context,
             { _, year, month, day ->
-                val selectedDate = current.withYear(year).withMonth(month + 1).withDayOfMonth(day)
+                val selectedDate = eventDateTimeWithDate(current, year, month, day)
                 TimePickerDialog(
                     context,
                     { _, hour, minute ->
