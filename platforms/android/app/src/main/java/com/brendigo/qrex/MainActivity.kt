@@ -704,9 +704,8 @@ private fun CreateScreen(
             raw.startsWith("mailto:", ignoreCase = true) -> 3 to raw.substringAfter(':')
             raw.startsWith("tel:", ignoreCase = true) -> 4 to raw.substringAfter(':')
             raw.startsWith("geo:", ignoreCase = true) -> 5 to raw.substringAfter(':')
-            raw.contains("BEGIN:VCARD", ignoreCase = true) ->
-                6 to (raw.lineSequence().firstOrNull { it.startsWith("FN:", true) }
-                    ?.substringAfter(':') ?: "")
+            raw.startsWith("BEGIN:VCARD", ignoreCase = true) ->
+                6 to (QRContent.contactField(raw, "FN") ?: "")
             QRContent.safeUrl(raw) != null -> 0 to raw
             raw.isNotBlank() -> 1 to raw
             else -> 0 to ""
@@ -716,6 +715,12 @@ private fun CreateScreen(
     var content by remember(screenshotMode, initialValue) { mutableStateOf(draft.second) }
     var password by remember(screenshotMode, initialValue) {
         mutableStateOf(initialValue?.let { QRContent.wifiField(it, "P") }.orEmpty())
+    }
+    var contactPhone by remember(screenshotMode, initialValue) {
+        mutableStateOf(initialValue?.let { QRContent.contactField(it, "TEL") }.orEmpty())
+    }
+    var contactEmail by remember(screenshotMode, initialValue) {
+        mutableStateOf(initialValue?.let { QRContent.contactField(it, "EMAIL") }.orEmpty())
     }
     var reveal by remember { mutableStateOf(false) }
     var createMenu by remember { mutableStateOf(false) }
@@ -750,8 +755,7 @@ private fun CreateScreen(
         3 -> if (input.contains("@") && !input.contains("\n")) "mailto:$input" else ""
         4 -> if (input.isBlank()) "" else "tel:$input"
         5 -> if (input.isBlank()) "" else "geo:$input"
-        6 -> if (input.isBlank()) "" else
-            "BEGIN:VCARD\nVERSION:3.0\nFN:" + input.replace("\n", " ") + "\nEND:VCARD"
+        6 -> QRContent.contact(input, contactPhone, contactEmail).orEmpty()
         else -> QRContent.event(input, eventStart, eventEnd, eventLocation, eventDescription).orEmpty()
     }
 
@@ -852,6 +856,8 @@ private fun CreateScreen(
                                 kind = type
                                 content = ""
                                 password = ""
+                                contactPhone = ""
+                                contactEmail = ""
                                 eventLocation = ""
                                 eventDescription = ""
                                 createMenu = false
@@ -869,7 +875,13 @@ private fun CreateScreen(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 listOf(0, 1, 2, 6).forEach { index ->
                     Surface(
-                        onClick = { kind = index; content = ""; password = "" },
+                        onClick = {
+                            kind = index
+                            content = ""
+                            password = ""
+                            contactPhone = ""
+                            contactEmail = ""
+                        },
                         modifier = Modifier.weight(1f).heightIn(min = 40.dp),
                         shape = RoundedCornerShape(11.dp),
                         color = if (kind == index) QrexDesign.accent
@@ -924,6 +936,26 @@ private fun CreateScreen(
                 )
                 Text(tr("wifi_warning"), fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            if (kind == 6) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = contactPhone,
+                    onValueChange = { contactPhone = it.take(100) },
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-contact-phone"),
+                    label = { Text(tr("phone")) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                )
+                Spacer(Modifier.height(6.dp))
+                OutlinedTextField(
+                    value = contactEmail,
+                    onValueChange = { contactEmail = it.take(254) },
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-contact-email"),
+                    label = { Text(tr("email")) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                )
             }
             if (kind == 7) {
                 Spacer(Modifier.height(7.dp))
