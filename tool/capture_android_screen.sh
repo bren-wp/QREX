@@ -74,7 +74,7 @@ fi
 # Capture each screen from the *installed QREX debug APK*. The intent extra
 # chooses a screen and injects only in-memory, non-sensitive demo records.
 # Debug routing is forbidden by MainActivity in production builds.
-for screen in splash scan wifi result history saved more; do
+for screen in splash scan wifi result history saved more language export; do
   screenshot="docs/screenshots/android-${screen}.png"
   hierarchy="docs/screenshots/android-${screen}-hierarchy.xml"
   rm -f "$screenshot" "$hierarchy"
@@ -100,4 +100,4 @@ for screen in splash scan wifi result history saved more; do
   fi
 done
 python3 tool/verify_screenshots.py docs/screenshots/android-*.png
-echo "Eight actual QREX Android screens (including splash) captured and verified."
+echo "Ten actual QREX Android screens (including Language and Export) captured and verified."
