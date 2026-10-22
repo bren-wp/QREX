@@ -72,7 +72,7 @@
     <string name="png_save_failed">PNG sliku nije moguće spremiti.</string>
     <string name="operation_failed">Radnja nije uspjela. Pokušajte ponovno.</string>
     <string name="data_tools">Vaši kodovi i datoteke</string>
-    <string name="export_archive">Izvezi spremljene QR kodove u PDF · ZIP</string>
+    <string name="export_archive">Izvoz arhive</string>
     <string name="export_archive_hint">Svoje omiljene QR kodove spremite u PDF arhivu spremnu za ispis.</string>
     <string name="export_archive_warning">Izvezeni PDF dokumenti mogu sadržavati spremljene Wi-Fi lozinke. ZIP dijelite samo s osobama kojima vjerujete.</string>
     <string name="archive_failed">ZIP arhivu nije moguće izraditi.</string>
