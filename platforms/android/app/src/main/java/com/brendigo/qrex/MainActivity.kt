@@ -311,7 +311,6 @@ private fun QREXApp(
                         })
                         1 -> CreateScreen(screenshotMode = screenshotMode,
                             initialValue = editPayload,
-                            onBack = { selected = 0 },
                             onResult = {
                                 store.record(it)
                                 resultShowsQr = false
@@ -680,7 +679,6 @@ fun generateQR(raw: String): Bitmap? {
 private fun CreateScreen(
     screenshotMode: String? = null,
     initialValue: String? = null,
-    onBack: () -> Unit,
     onResult: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -829,10 +827,6 @@ private fun CreateScreen(
                 Modifier.fillMaxWidth().heightIn(min = 44.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack, modifier = Modifier.testTag("qrex-create-back")) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = tr("scan"),
-                        tint = MaterialTheme.colorScheme.onSurface)
-                }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("QRE", fontWeight = FontWeight.Black, fontSize = 18.sp,
