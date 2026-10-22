@@ -226,11 +226,26 @@ private fun QREXApp(
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
+    // Explicit reference palettes: the light phone concepts use white cards,
+    // navy text, pale-blue containers and subtle blue-grey strokes. Relying on
+    // Material defaults here previously introduced unrelated purple/grey hues.
     val colors = if (store.lightMode) lightColorScheme(
-        primary = Color(0xFF1677FF), secondary = purple,
-        background = Color(0xFFF3F6FF), surface = Color.White,
-        onSurface = midnight, onBackground = midnight
-    ) else darkColorScheme(primary = QrexDesign.accentBright, secondary = purple,
+        primary = Color(0xFF086BEE),
+        onPrimary = Color.White,
+        secondary = Color(0xFF7855E9),
+        background = Color(0xFFF7FAFF),
+        onBackground = Color(0xFF0A1940),
+        surface = Color.White,
+        onSurface = Color(0xFF0A1940),
+        surfaceVariant = Color(0xFFEDF5FF),
+        onSurfaceVariant = Color(0xFF546984),
+        outline = Color(0xFFBBD0EC),
+        outlineVariant = Color(0xFFDCE7F6),
+        primaryContainer = Color(0xFFE7F2FF),
+        onPrimaryContainer = Color(0xFF0853B9),
+        error = Color(0xFFC62148)
+    ) else darkColorScheme(
+        primary = QrexDesign.accentBright, secondary = purple,
         background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
@@ -283,7 +298,8 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = Color.Transparent))
+                            indicatorColor = if (store.lightMode)
+                                Color(0xFFE7F2FF) else QrexDesign.surfaceRaised))
                 }
             }
             }
