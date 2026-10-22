@@ -76,6 +76,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
@@ -824,6 +825,7 @@ private fun CreateScreen(
         ).show()
     }
 
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     Column(Modifier.fillMaxSize().imePadding().testTag("qrex-create-screen")) {
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
@@ -1007,7 +1009,7 @@ private fun CreateScreen(
         // Keep the QR preview directly above Generate and Save, as in the
         // approved phone reference. Collapse only the preview while typing,
         // leaving the scrollable form and essential actions accessible.
-        if (!WindowInsets.isImeVisible) {
+        if (!imeVisible) {
             QrexPanel(Modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp)) {
                 Row(
