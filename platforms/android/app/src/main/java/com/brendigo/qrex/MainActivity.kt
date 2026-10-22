@@ -1054,10 +1054,11 @@ private fun HistoryScreen(
 ) {
     val context = LocalContext.current
     val activeLanguage = LocalLanguage.current
-    val historyDateContext = remember(context, activeLanguage) {
+    val baseConfiguration = LocalConfiguration.current
+    val historyDateContext = remember(context, activeLanguage, baseConfiguration) {
         if (activeLanguage == "system") context
         else context.createConfigurationContext(
-            Configuration(context.resources.configuration).apply {
+            Configuration(baseConfiguration).apply {
                 setLocale(Locale.forLanguageTag(activeLanguage))
             }
         )
