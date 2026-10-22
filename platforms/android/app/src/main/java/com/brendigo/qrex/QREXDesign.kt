@@ -131,6 +131,56 @@ internal fun QrexSettingsTile(
     }
 }
 
+/** Reference light-mode More page uses compact *rows* rather than the
+ * dark design's two-column tiles. A single real surface is the touch target;
+ * no nested decorative clickable elements or fake menu controls.
+ */
+@Composable
+internal fun QrexSettingsListRow(
+    label: String,
+    icon: ImageVector,
+    subtitle: String? = null,
+    destructive: Boolean = false,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val accent = if (destructive) MaterialTheme.colorScheme.error
+        else MaterialTheme.colorScheme.primary
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth().heightIn(min = 58.dp),
+        shape = RoundedCornerShape(13.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Surface(shape = RoundedCornerShape(11.dp),
+                color = accent.copy(alpha = .10f)) {
+                Box(Modifier.size(34.dp), contentAlignment = Alignment.Center) {
+                    Icon(icon, contentDescription = null, tint = accent,
+                        modifier = Modifier.size(19.dp))
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(label, fontWeight = FontWeight.SemiBold,
+                    color = if (destructive) accent
+                        else MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                if (subtitle != null) {
+                    Text(subtitle, fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            }
+            Icon(Icons.Default.ChevronRight, contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp))
+        }
+    }
+}
+
 /** Reference-style result action: real full-width button with a touch target
  * >= 52dp, clear icon, legible label and chevron. Never an inert decorative card.
  */
