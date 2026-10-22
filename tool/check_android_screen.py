@@ -36,7 +36,7 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "create": ("stvori qr kod", "https://brendigo.com", "wi-fi"),
         "wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
         "result": ("rezultat", "https://brendigo.com", "zatvori"),
-        "history": ("povijest", "brendigo.com", "pretraži kodove"),
+        "history": ("povijest", "brendigo.com", "pretraži povijest..."),
         "saved": ("favoriti", "brendigo.com", "spremljeno"),
         "more": ("postavke", "pdf", "jezik"),
         "scan": ("skener. stvara. dijeli.", "iz galerije", "usmjeri kameru prema qr kodu"),
