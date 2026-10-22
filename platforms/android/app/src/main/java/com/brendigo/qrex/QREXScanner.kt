@@ -35,6 +35,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -264,9 +266,13 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             }
         }
     }
-    Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    val compactScan = maxWidth < 360.dp || maxHeight < 590.dp ||
+        LocalDensity.current.fontScale >= 1.35f
+    Column(Modifier.fillMaxSize().padding(if (compactScan) 10.dp else 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
         QrexBrandHeader(onMore = onMore)
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(if (compactScan) 4.dp else 8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }
             DisposableEffect(owner, allowed) {
@@ -339,7 +345,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 // Actual optical/digital zoom controls: never offer levels
                 // outside the camera's advertised range.
                 val zoomLimits = camera?.cameraInfo?.zoomState?.value
-                Row(
+                if (!compactScan) Row(
                     modifier = Modifier.align(Alignment.BottomCenter)
                         .padding(bottom = 58.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -429,16 +435,16 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(if (compactScan) 7.dp else 12.dp))
         Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)) {
             OutlinedButton(
                 onClick = {
                     photoPicker.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
                 },
-                modifier = Modifier.weight(1f).heightIn(min = 66.dp),
+                modifier = Modifier.weight(1f).heightIn(min = if (compactScan) 52.dp else 66.dp),
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = QrexDesign.surface
@@ -448,14 +454,15 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     Icon(Icons.Default.PhotoLibrary, contentDescription = null,
                         tint = QrexDesign.accentBright, modifier = Modifier.size(22.dp))
                     Spacer(Modifier.height(4.dp))
-                    Text(tr("from_gallery"), maxLines = 1)
+                    Text(tr("from_gallery"), maxLines = 2,
+                        textAlign = TextAlign.Center)
                 }
             }
             OutlinedButton(
                 onClick = toggleTorch,
                 enabled = allowed && !torchBusy &&
                     camera?.cameraInfo?.hasFlashUnit() == true,
-                modifier = Modifier.weight(1f).heightIn(min = 66.dp),
+                modifier = Modifier.weight(1f).heightIn(min = if (compactScan) 52.dp else 66.dp),
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = QrexDesign.surface
@@ -466,10 +473,12 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         contentDescription = null, tint = QrexDesign.accentBright,
                         modifier = Modifier.size(22.dp))
                     Spacer(Modifier.height(4.dp))
-                    Text(tr("flashlight"), maxLines = 1)
+                    Text(tr("flashlight"), maxLines = 2,
+                        textAlign = TextAlign.Center)
                 }
             }
         }
+    }
     }
 
     if (message != null) AlertDialog(onDismissRequest = { message = null },
