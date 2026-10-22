@@ -11,6 +11,26 @@ class QREXCoreTest {
     }
 
 
+    @Test fun eventDatePickerDoesNotCrashAcrossShorterMonths() {
+        val endOfJanuary = java.time.LocalDateTime.of(2026, 1, 31, 23, 45)
+        assertEquals(
+            java.time.LocalDateTime.of(2026, 2, 28, 23, 45),
+            eventDateTimeWithDate(endOfJanuary, 2026, 1, 28)
+        )
+        assertEquals(
+            java.time.LocalDateTime.of(2028, 2, 29, 23, 45),
+            eventDateTimeWithDate(endOfJanuary, 2028, 1, 29)
+        )
+    }
+
+    @Test fun eventDatePickerPreservesTimeAndSwitchesYearSafely() {
+        val leapDay = java.time.LocalDateTime.of(2028, 2, 29, 14, 7, 18)
+        assertEquals(
+            java.time.LocalDateTime.of(2029, 3, 1, 14, 7, 18),
+            eventDateTimeWithDate(leapDay, 2029, 2, 1)
+        )
+    }
+
     @Test fun wifiEscapesDelimiters() {
         val raw = QRContent.wifi("Office;P:fake", "a\\b:c")
         assertEquals("Office;P:fake", QRContent.wifiField(raw, "S"))
