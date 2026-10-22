@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -100,12 +102,9 @@ internal fun QrexExportDetails(
     onPdf: () -> Unit,
     onZip: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)
-        .testTag("qrex-export-screen")) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        .padding(horizontal = 16.dp).testTag("qrex-export-screen")) {
         QrexDetailHeader(tr("export_archive"), onBack)
-        Text(tr("export_archive_warning"),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(vertical = 12.dp))
         QrexResultAction(
             label = "PDF", icon = Icons.Default.PictureAsPdf,
             enabled = hasSaved,
@@ -120,6 +119,9 @@ internal fun QrexExportDetails(
             onClick = onZip
         )
         Spacer(Modifier.height(12.dp))
+        Text(tr("export_archive_warning"), fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(vertical = 8.dp))
         Surface(
             color = MaterialTheme.colorScheme.primaryContainer,
             shape = RoundedCornerShape(14.dp),
@@ -130,6 +132,7 @@ internal fun QrexExportDetails(
                     tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
                 Spacer(Modifier.width(10.dp))
                 Text(tr("privacy_summary"), fontSize = 12.sp,
+                    maxLines = 4,
                     color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
