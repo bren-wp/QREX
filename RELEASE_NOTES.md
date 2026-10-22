@@ -1,6 +1,12 @@
 # QREX — Scan. Create. Share.
 
-## Latest candidate: v1.0.6 · Android versionCode 106
+## Latest candidate: v1.0.7 · Android versionCode 107
+
+QREX 1.0.7 refines the actual Android adaptive Q/QR launcher icon, light theme, luminous live-camera scanner, dedicated Language and PDF/ZIP Export screens, and ten real emulator captures. The protected GitHub release process must complete before these changes are called published.
+
+[Version 1.0.7 changes](docs/releases/v1.0.7.md)
+
+## Previous: v1.0.6 · Android versionCode 106
 
 QREX 1.0.6 redraws the adaptive launcher icon in the supplied blue Q/QR style and uses that same artwork on the Compose splash. Create QR now groups its preview with the Generate/Save actions, History and Favorites display direct heart actions, Contact QR encodes name/phone/email, and UTF-8 QR encoding preserves Croatian characters. Calendar date selection is hardened against shorter months and leap-year changes. The dark-first UI, offline QR scanning, protected history, 23 languages and existing local data remain supported. This is a pending candidate until mandatory release checks succeed.
 

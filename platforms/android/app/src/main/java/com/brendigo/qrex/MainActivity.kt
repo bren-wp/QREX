@@ -153,7 +153,8 @@ class MainActivity : ComponentActivity() {
         // screenshot fixtures into release builds.
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
-                it in setOf("splash", "create", "scan", "result", "history", "saved", "more", "wifi")
+                it in setOf("splash", "create", "scan", "result", "history",
+                    "saved", "more", "wifi", "language", "export")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
@@ -184,7 +185,7 @@ private fun QREXApp(
             "create", "wifi", "result" -> 1
             "history" -> 2
             "saved" -> 3
-            "more" -> 4
+            "more", "language", "export" -> 4
             else -> 0
         })
     }
@@ -226,11 +227,26 @@ private fun QREXApp(
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
+    // Explicit reference palettes: the light phone concepts use white cards,
+    // navy text, pale-blue containers and subtle blue-grey strokes. Relying on
+    // Material defaults here previously introduced unrelated purple/grey hues.
     val colors = if (store.lightMode) lightColorScheme(
-        primary = Color(0xFF1677FF), secondary = purple,
-        background = Color(0xFFF3F6FF), surface = Color.White,
-        onSurface = midnight, onBackground = midnight
-    ) else darkColorScheme(primary = QrexDesign.accentBright, secondary = purple,
+        primary = Color(0xFF086BEE),
+        onPrimary = Color.White,
+        secondary = Color(0xFF7855E9),
+        background = Color(0xFFF7FAFF),
+        onBackground = Color(0xFF0A1940),
+        surface = Color.White,
+        onSurface = Color(0xFF0A1940),
+        surfaceVariant = Color(0xFFEDF5FF),
+        onSurfaceVariant = Color(0xFF546984),
+        outline = Color(0xFFBBD0EC),
+        outlineVariant = Color(0xFFDCE7F6),
+        primaryContainer = Color(0xFFE7F2FF),
+        onPrimaryContainer = Color(0xFF0853B9),
+        error = Color(0xFFC62148)
+    ) else darkColorScheme(
+        primary = QrexDesign.accentBright, secondary = purple,
         background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
@@ -283,7 +299,8 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = Color.Transparent))
+                            indicatorColor = if (store.lightMode)
+                                Color(0xFFE7F2FF) else QrexDesign.surfaceRaised))
                 }
             }
             }
@@ -326,7 +343,9 @@ private fun QREXApp(
                         3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
                             initiallySavedOnly = true, favoritesPage = true)
-                        else -> MoreScreen(store)
+                        else -> MoreScreen(store,
+                            initialDetailPage = if (screenshotMode == "language" ||
+                                screenshotMode == "export") screenshotMode else "root")
                     }
                 }
             }
@@ -1359,7 +1378,7 @@ private fun HistoryScreen(
 }
 
 @Composable
-private fun MoreScreen(store: QREXStore) {
+private fun MoreScreen(store: QREXStore, initialDetailPage: String = "root") {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
@@ -1400,14 +1419,27 @@ private fun MoreScreen(store: QREXStore) {
             }
         }
     }
-    var languageMenu by remember { mutableStateOf(false) }
-    var exportMenu by remember { mutableStateOf(false) }
+    // The supplied light reference has separate Language and Export screens,
+    // not oversized dropdown menus. Preserve this local, nonsensitive page
+    // over configuration recreation, without touching QR history.
+    var detailPage by rememberSaveable(initialDetailPage) {
+        mutableStateOf(initialDetailPage)
+    }
+    BackHandler(enabled = detailPage != "root") { detailPage = "root" }
     val uiLanguage = LocalLanguage.current
     val selectedLanguage = if (store.language == "system" && uiLanguage != "system")
         uiLanguage else store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+    when (detailPage) {
+    "language" -> QrexLanguageDetails(store, onBack = { detailPage = "root" })
+    "export" -> QrexExportDetails(
+        hasSaved = store.items.any { it.saved },
+        onBack = { detailPage = "root" },
+        onPdf = { confirmPdfExport = true },
+        onZip = { confirmExport = true }
+    )
+    else -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(horizontal = 16.dp, vertical = 18.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
@@ -1418,36 +1450,19 @@ private fun MoreScreen(store: QREXStore) {
                 subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
                 modifier = Modifier.weight(1f)
             )
-            Box(Modifier.weight(1f)) {
-                QrexSettingsTile(
-                    label = tr("language"), icon = Icons.Default.Translate,
-                    onClick = { languageMenu = true }, subtitle = languageName,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                DropdownMenu(expanded = languageMenu, onDismissRequest = {
-                    languageMenu = false
-                }) {
-                    DropdownMenuItem(text = { Text(tr("system")) }, onClick = {
-                        store.updateLanguage("system"); languageMenu = false
-                    })
-                    QREXStrings.languages.forEach { localeCode ->
-                        DropdownMenuItem(text = {
-                            Text(Locale.forLanguageTag(localeCode).getDisplayName(
-                                Locale.forLanguageTag(localeCode)))
-                        }, onClick = {
-                            store.updateLanguage(localeCode); languageMenu = false
-                        })
-                    }
-                }
-            }
+            QrexSettingsTile(
+                label = tr("language"), icon = Icons.Default.Translate,
+                onClick = { detailPage = "language" }, subtitle = languageName,
+                modifier = Modifier.weight(1f).testTag("qrex-more-language")
+            )
         }
         Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
                 label = tr("export_archive"), icon = Icons.Default.Archive,
-                onClick = { exportMenu = true },
-                enabled = store.items.any { it.saved },
-                subtitle = "PDF · ZIP", modifier = Modifier.weight(1f)
+                onClick = { detailPage = "export" },
+                subtitle = "PDF · ZIP",
+                modifier = Modifier.weight(1f).testTag("qrex-more-export")
             )
             QrexSettingsTile(
                 label = tr("privacy_policy"), icon = Icons.Default.Shield,
@@ -1478,23 +1493,6 @@ private fun MoreScreen(store: QREXStore) {
         }
         Spacer(Modifier.height(20.dp))
     }
-    if (exportMenu) {
-        AlertDialog(onDismissRequest = { exportMenu = false },
-            title = { Text(tr("export_archive")) },
-            text = { Text(tr("export_archive_warning")) },
-            confirmButton = {
-                Row {
-                    TextButton(onClick = { exportMenu = false; confirmPdfExport = true }) {
-                        Text("PDF")
-                    }
-                    TextButton(onClick = { exportMenu = false; confirmExport = true }) {
-                        Text("ZIP")
-                    }
-                }
-            },
-            dismissButton = { TextButton(onClick = { exportMenu = false }) {
-                Text(tr("cancel"))
-            } })
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },

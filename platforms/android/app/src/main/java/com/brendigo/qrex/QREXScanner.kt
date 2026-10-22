@@ -78,7 +78,15 @@ private fun ScannerCornerOverlay(modifier: Modifier = Modifier) {
             Offset(right, bottom) to Offset(right, bottom - segment)
         )
         corners.forEach { (from, to) ->
-            drawLine(tint, from, to, strokeWidth = stroke, cap = StrokeCap.Round)
+            // Reference's luminous blue scan corners are a visual guide over
+            // the live CameraX PreviewView, never pixels substituted into a
+            // decoded frame. Translucent outer strokes imitate their glow.
+            drawLine(tint.copy(alpha = .14f), from, to,
+                strokeWidth = 13.dp.toPx(), cap = StrokeCap.Round)
+            drawLine(tint.copy(alpha = .42f), from, to,
+                strokeWidth = 8.dp.toPx(), cap = StrokeCap.Round)
+            drawLine(Color.White.copy(alpha = .94f), from, to,
+                strokeWidth = stroke, cap = StrokeCap.Round)
         }
     }
 }
@@ -324,7 +332,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 }
             }
             Box(Modifier.fillMaxWidth().weight(1f)
-                .clip(RoundedCornerShape(28.dp))
+                .clip(RoundedCornerShape(24.dp))
                 .background(QrexDesign.surface)) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
                 ScannerCornerOverlay(Modifier.fillMaxSize())
