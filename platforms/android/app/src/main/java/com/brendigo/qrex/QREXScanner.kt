@@ -36,6 +36,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
@@ -266,8 +267,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             }
         }
     }
-    BoxWithConstraints(Modifier.fillMaxSize()) {
-    val compactScan = maxWidth < 360.dp || maxHeight < 590.dp ||
+    // LocalConfiguration is responsive without introducing SubcomposeLayout
+    // disposal/lifecycle regressions on low-memory Android 8 devices.
+    val window = LocalConfiguration.current
+    val compactScan = window.screenWidthDp < 360 ||
+        window.screenHeightDp < 670 ||
         LocalDensity.current.fontScale >= 1.35f
     Column(Modifier.fillMaxSize().padding(if (compactScan) 10.dp else 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -478,7 +482,6 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 }
             }
         }
-    }
     }
 
     if (message != null) AlertDialog(onDismissRequest = { message = null },
