@@ -39,7 +39,26 @@ class CustomerProductReadinessTests(unittest.TestCase):
             self.assertEqual(root.tag, "adaptive-icon")
             self.assertIsNotNone(root.find("monochrome"))
             self.assertIsNotNone(root.find("foreground"))
+            self.assertEqual(
+                root.find("foreground").get(namespace + "drawable"),
+                "@drawable/qrex_launcher_foreground",
+            )
+            self.assertEqual(
+                root.find("background").get(namespace + "drawable"),
+                "@drawable/qrex_launcher_background",
+            )
         self.assertTrue((RES / "drawable/qrex_icon_monochrome.xml").exists())
+        # Native adaptive icon must expose an Android launcher safe-zone glyph.
+        # Do not crop a square marketing image as launcher foreground.
+        foreground = ET.parse(
+            RES / "drawable/qrex_launcher_foreground.xml"
+        ).getroot()
+        self.assertEqual(foreground.get(namespace + "viewportWidth"), "108")
+        self.assertTrue(foreground.findall("group/path"))
+        background = ET.parse(
+            RES / "drawable/qrex_launcher_background.xml"
+        ).getroot()
+        self.assertTrue(background.findall("path"))
 
     def test_approved_qrex_icon_geometry_is_shared_with_splash(self):
         ns = "{http://schemas.android.com/apk/res/android}"
@@ -58,6 +77,27 @@ class CustomerProductReadinessTests(unittest.TestCase):
         splash = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXSplash.kt").read_text("utf-8")
         self.assertIn("painterResource(R.drawable.qrex_icon)", splash)
         self.assertNotIn("painterResource(R.drawable.qrex_icon_monochrome)", splash)
+
+    def test_reference_language_and_export_pages_are_real_actions(self):
+        root = ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex"
+        screen = (root / "QREXMoreDetails.kt").read_text("utf-8")
+        activity = (root / "MainActivity.kt").read_text("utf-8")
+        for marker in (
+            'testTag("qrex-language-screen")',
+            'testTag("qrex-export-screen")',
+            'testTag("qrex-language-option-$code")',
+            'testTag("qrex-export-pdf")',
+            'testTag("qrex-export-zip")',
+            'store.updateLanguage(code)',
+            "QrexResultAction(",
+        ):
+            self.assertIn(marker, screen)
+        self.assertIn('"language" -> QrexLanguageDetails(', activity)
+        self.assertIn('"export" -> QrexExportDetails(', activity)
+        screenshots = (
+            ROOT / "tool/capture_android_screen.sh"
+        ).read_text("utf-8")
+        self.assertIn("saved more language export", screenshots)
 
     def test_document_export_and_legal_actions_are_real_on_android(self):
         android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
