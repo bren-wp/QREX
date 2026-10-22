@@ -36,6 +36,14 @@ class QREXQrDecoderTest {
     }
 
     @Test
+    fun scan_utf8_croatian_contact_qr_without_losing_accents() {
+        val card = QRContent.contact(
+            "Čić Đorđe Šimić Željko", "+385 91 555 1234", "osoba@example.hr"
+        )!!
+        assertEquals(card, QREXQrDecoder.decodeLuma(qr(card, 420, 420), 420, 420))
+    }
+
+    @Test
     fun scan_inverted_qr() {
         val value = "WIFI:T:WPA;S:PrivateNetwork;P:open-source;;"
         val inverted = qr(value).map { (255 - (it.toInt() and 255)).toByte() }.toByteArray()
