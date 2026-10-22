@@ -65,6 +65,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -148,6 +149,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
     val context = LocalContext.current
+    // Compose observes locale/configuration changes without stale Resources reads.
+    val systemLanguage = LocalConfiguration.current.locales[0].language
     val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, store.language, it) }
     val icons = listOf(Icons.Default.CameraAlt, Icons.Default.AddCircle,
@@ -223,7 +226,7 @@ private fun QREXApp(store: QREXStore, screenshotMode: String? = null) {
             QrexSplashScreen(
                 subtitle = if (
                     (if (store.language == "system")
-                        context.resources.configuration.locales[0].language
+                        systemLanguage
                     else store.language) == "hr"
                 ) "Skener. Stvara. Dijeli."
                 else "Scan. Create. Share."
