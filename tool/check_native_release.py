@@ -39,7 +39,7 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
             f"Android versionCode must advance beyond published QREX build "
             f"{LAST_PUBLISHED_NATIVE_BUILD_CODE}")
     if version != PRODUCTION_VERSION or code != str(PRODUCTION_BUILD_CODE):
-        issues.append("Production candidate must be QREX 1.0.6 / build 105")
+        issues.append("Production candidate must be QREX 1.0.6 / build 106")
     try:
         root = ET.fromstring(android_manifest)
         app = root.find("application")
