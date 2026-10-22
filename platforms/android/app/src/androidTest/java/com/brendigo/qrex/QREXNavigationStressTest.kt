@@ -250,6 +250,24 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun bothThemeSettingsLayoutsPreserveClickableActions() {
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        requireScreenTag("qrex-more-screen", 0, "More before theme switch")
+        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-more-screen", 0, "More after theme switch")
+        rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-more-export", useUnmergedTree = true)
+            .assertIsDisplayed()
+        // Restore the previous preference; other tests must not inherit a
+        // changed persisted theme from this design-regression check.
+        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-more-screen", 0, "More theme restored")
+    }
+
+    @Test
     fun activityRecreationKeepsNonSensitiveTabSelection() {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
