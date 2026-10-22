@@ -43,7 +43,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Description
@@ -103,7 +102,6 @@ import java.util.Date
 
 private val midnight = QrexDesign.background
 private val card = QrexDesign.surface
-private val cyan = QrexDesign.cyan
 private val purple = QrexDesign.purple
 private val white = Color.White
 
