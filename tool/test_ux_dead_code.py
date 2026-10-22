@@ -143,7 +143,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
 
     def test_reference_create_preview_and_favorite_hearts_are_live_actions(self):
         # The QR preview and Generate/Save actions share a fixed bottom group.
-        self.assertIn("if (!WindowInsets.isImeVisible)", self.main)
+        self.assertIn("WindowInsets.ime.getBottom(LocalDensity.current) > 0", self.main)
         self.assertIn('testTag("qrex-create-preview-ready")', self.main)
         self.assertIn('testTag("qrex-create-show")', self.main)
         self.assertIn('testTag("qrex-create-save")', self.main)
