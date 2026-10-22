@@ -159,7 +159,7 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun bottomCloseStillReturnsToCreateAfterScrolling() {
+    fun pinnedCloseReturnsToCreateAfterScrollingWithIme() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create")
         // Retain text-field focus / IME during navigation. On Android 16
@@ -171,14 +171,14 @@ class QREXNavigationStressTest {
         awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result")
-        // Scroll real Result content, then tap its permanently visible
-        // bottom Close target with physical injection. An OnClick semantics
-        // fallback could mask a keyboard-occluded touch target.
+        // The reference layout keeps one Back control pinned above the
+        // scrolling Result content. Verify it stays reachable with the IME
+        // dismissed during navigation, without adding a non-reference button.
         rule.onNodeWithTag("qrex-result-scroll")
             .performTouchInput { swipeUp() }
-        rule.onNodeWithTag("qrex-result-close-bottom")
+        rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
-        requireScreenTag("qrex-create-screen", 0, "bottom Close returns to Create")
+        requireScreenTag("qrex-create-screen", 0, "pinned Back returns to Create")
     }
 
     @Test
