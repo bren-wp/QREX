@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -97,11 +98,27 @@ internal fun QrexSplashScreen(
                 )
             }
             Spacer(Modifier.height(24.dp))
-            Text("QREX", color = Color.White, fontSize = 52.sp,
-                fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+            // Two-tone mark and copy follow the supplied dark reference;
+            // both are actual Compose text (never baked into a mockup image).
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("QRE", color = Color.White, fontSize = 52.sp,
+                    fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                Text("X", color = QrexDesign.accentBright, fontSize = 52.sp,
+                    fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+            }
             Spacer(Modifier.height(4.dp))
-            Text(subtitle, color = QrexDesign.accentBright, fontSize = 17.sp,
+            Text(subtitle, color = Color.White, fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(12.dp))
+            Text(
+                if (subtitle.startsWith("Skener."))
+                    "Sve što može QR — jednostavno, brzo i bez prijave."
+                else "Everything QR — simple, fast and without an account.",
+                color = QrexDesign.muted,
+                fontSize = 13.sp,
+                lineHeight = 19.sp,
+                textAlign = TextAlign.Center
+            )
         }
         Column(
             Modifier.align(Alignment.BottomCenter).padding(bottom = 62.dp),
