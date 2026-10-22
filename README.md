@@ -74,7 +74,7 @@ Latest GitHub distribution: **v1.0.6** (Android `com.brendigo.qrex`, code 106). 
 
 **Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
 
-Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3) [v1.0.4](https://github.com/bren-wp/QREX/releases/tag/v1.0.4) and [v1.0.5](https://github.com/bren-wp/QREX/releases/tag/v1.0.5) remain archived and downloadable.
+Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3), [v1.0.4](https://github.com/bren-wp/QREX/releases/tag/v1.0.4) and [v1.0.5](https://github.com/bren-wp/QREX/releases/tag/v1.0.5) remain archived and downloadable.
 
 ---
 
