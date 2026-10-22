@@ -1443,6 +1443,36 @@ private fun MoreScreen(store: QREXStore, initialDetailPage: String = "root") {
         .padding(horizontal = 16.dp, vertical = 18.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
+        if (store.lightMode) {
+            // Light reference: accessible full-width white settings rows.
+            // The midnight-navy variant keeps its separate 2-column tiles.
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                QrexSettingsListRow(tr("theme"), Icons.Default.Brightness4,
+                    subtitle = tr("light_theme"),
+                    onClick = { store.updateLightMode(false) },
+                    modifier = Modifier.testTag("qrex-more-theme"))
+                QrexSettingsListRow(tr("language"), Icons.Default.Translate,
+                    subtitle = languageName,
+                    onClick = { detailPage = "language" },
+                    modifier = Modifier.testTag("qrex-more-language"))
+                QrexSettingsListRow(tr("export_archive"), Icons.Default.Archive,
+                    subtitle = "PDF · ZIP",
+                    onClick = { detailPage = "export" },
+                    modifier = Modifier.testTag("qrex-more-export"))
+                QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Shield,
+                    onClick = { showPrivacy = true })
+                QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
+                    onClick = { showTerms = true })
+                QrexSettingsListRow(tr("about"), Icons.Default.Info,
+                    subtitle = tr("developed_by"),
+                    onClick = {
+                        openLink(context, Uri.parse("https://brendigo.com"))
+                    })
+                Spacer(Modifier.height(6.dp))
+                QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
+                    destructive = true, onClick = { showDelete = true })
+            }
+        } else {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QrexSettingsTile(
                 label = tr("theme"), icon = Icons.Default.Brightness4,
@@ -1490,6 +1520,7 @@ private fun MoreScreen(store: QREXStore, initialDetailPage: String = "root") {
                 modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
             Text(tr("clear_history"))
+        }
         }
         Spacer(Modifier.height(20.dp))
     }
