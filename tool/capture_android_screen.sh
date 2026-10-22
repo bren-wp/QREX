@@ -106,4 +106,7 @@ for screen in splash scan wifi result history saved more language export light-c
   fi
 done
 python3 tool/verify_screenshots.py docs/screenshots/android-*.png
+# Capture separate real phone-size screenshots. These do not enter the
+# Play-sized public release screenshot list or alter user settings.
+bash tool/capture_responsive_android.sh
 echo "Twelve real QREX Android screens (including light Create and light More) captured and verified."
