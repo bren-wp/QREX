@@ -106,8 +106,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.backgroundDeep", splash)
         self.assertIn("R.drawable.qrex_icon_monochrome", splash)
         self.assertIn("screenshotMode != \"splash\"", self.main)
-        self.assertIn('testTag("qrex-create-back")', self.main)
-        self.assertIn("onBack = { selected = 0 }", self.main)
+        # Create is a root tab in the reference; its app bar starts with
+        # the QREX wordmark, then privacy and overflow actions, with no extra
+        # navigation arrow before the brand.
+        self.assertNotIn('testTag("qrex-create-back")', self.main)
+        self.assertIn('Text("QRE"', self.main)
+        self.assertIn('Text("X"', self.main)
+        self.assertIn("Icons.Default.Shield", self.main)
+        self.assertIn("contentDescription = tr("more")", self.main)
         self.assertIn("showResultMenu", self.main)
         self.assertIn('testTag("qrex-result-close")', self.main)
 
