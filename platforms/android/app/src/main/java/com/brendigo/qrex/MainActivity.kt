@@ -184,7 +184,7 @@ private fun QREXApp(
             "create", "wifi", "result" -> 1
             "history" -> 2
             "saved" -> 3
-            "more" -> 4
+            "more", "language", "export" -> 4
             else -> 0
         })
     }
@@ -342,7 +342,9 @@ private fun QREXApp(
                         3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
                             initiallySavedOnly = true, favoritesPage = true)
-                        else -> MoreScreen(store)
+                        else -> MoreScreen(store,
+                            initialDetailPage = if (screenshotMode == "language" ||
+                                screenshotMode == "export") screenshotMode else "root")
                     }
                 }
             }
@@ -1375,7 +1377,7 @@ private fun HistoryScreen(
 }
 
 @Composable
-private fun MoreScreen(store: QREXStore) {
+private fun MoreScreen(store: QREXStore, initialDetailPage: String = "root") {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
@@ -1419,7 +1421,9 @@ private fun MoreScreen(store: QREXStore) {
     // The supplied light reference has separate Language and Export screens,
     // not oversized dropdown menus. Preserve this local, nonsensitive page
     // over configuration recreation, without touching QR history.
-    var detailPage by rememberSaveable { mutableStateOf("root") }
+    var detailPage by rememberSaveable(initialDetailPage) {
+        mutableStateOf(initialDetailPage)
+    }
     BackHandler(enabled = detailPage != "root") { detailPage = "root" }
     val uiLanguage = LocalLanguage.current
     val selectedLanguage = if (store.language == "system" && uiLanguage != "system")
