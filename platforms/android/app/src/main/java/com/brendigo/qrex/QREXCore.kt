@@ -413,26 +413,6 @@ class QREXStore(context: Context) {
         return true
     }
 
-    /**
-     * Reset every persisted QREX preference and any untransferred legacy value.
-     * The app's history action uses clearHistory() so user preferences remain intact.
-     */
-    fun clearAll(): Boolean {
-        val legacyCleared = legacyPreferences.edit()
-            .remove("flutter.qrex_history_v1")
-            .remove("flutter.qrex_light_v1")
-            .remove("flutter.qrex_record_v1")
-            .commit()
-        if (!legacyCleared || !preferences.edit().clear().commit()) return false
-        historyReadable = true
-        items.clear()
-        protectedWifi.clear()
-        historyEnabled = true
-        lightMode = false
-        language = "system"
-        return true
-    }
-
     fun updateLanguage(value: String) {
         require(value == "system" || value in QREXStrings.languages)
         language = value
