@@ -2,6 +2,10 @@
 
 **Reference:** the four user-provided QREX images (dark master board, dark phone UI, blue/light banner and earlier light gallery). **Primary authority:** dark master board and dark phone UI, with blue/light references only for branding and secondary theme.
 
+## QREX 1.0.7 dark/light implementation notes
+
+The light references use white cards, pale-blue surfaces, navy text and selected blue navigation. The dark references use midnight navy surfaces and luminous cyan corner strokes. The application must render both sets from Compose using user-selectable themes. The Android launcher is built as a real adaptive vector with separate gradient background and safe-zone Q/QR foreground; splash retains the full rounded tile. Main Settings, Language and Export routes are actual functional screens, not design images. Ten emulator screenshots include the new subpages. These references show multiple alternative designs; passing a screenshot pipeline does not alone prove pixel-level parity.
+
 ## Canonical 2026-10-22 Android launcher identity
 
 The two newly supplied blue boards headed **QREX** are the canonical launcher-icon direction: a rounded luminous electric-blue/dark-navy badge, a **large white Q with diagonal tail**, three small white QR squares and one white square finder module, with **cyan scanner brackets** at four corners. Preserve strong icon fill instead of placing a tiny mark in a large white safe-area background.
