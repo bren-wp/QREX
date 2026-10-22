@@ -6,7 +6,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Device-backed regression tests: never write Wi-Fi credentials to plaintext preferences. */
 /**
  * Device-test fixture reset. Production history deletion intentionally preserves
  * theme and language; this helper restores an isolated empty app state between
