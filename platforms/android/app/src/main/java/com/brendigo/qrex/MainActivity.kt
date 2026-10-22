@@ -1524,7 +1524,7 @@ private fun MoreScreen(
                 label = tr("theme"), icon = Icons.Default.Brightness4,
                 onClick = { store.updateLightMode(!store.lightMode) },
                 subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).testTag("qrex-more-theme")
             )
             QrexSettingsTile(
                 label = tr("language"), icon = Icons.Default.Translate,
