@@ -52,6 +52,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('#030A18', styles)
         # Android API 26 must lint/build without referencing API 27-only attrs.
         self.assertNotIn('android:windowLightNavigationBar', styles)
+        self.assertIn('val systemLanguage = LocalConfiguration.current.locales[0].language', self.main)
+        self.assertNotIn('context.resources.configuration.locales[0].language', self.main)
 
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
