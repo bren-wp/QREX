@@ -17,6 +17,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         cls.main = (NATIVE / "MainActivity.kt").read_text("utf-8")
         cls.scanner = (NATIVE / "QREXScanner.kt").read_text("utf-8")
         cls.core = (NATIVE / "QREXCore.kt").read_text("utf-8")
+        cls.details = (NATIVE / "QREXMoreDetails.kt").read_text("utf-8")
 
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
@@ -61,7 +62,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("else QrexDesign.accentBright", self.main)
         self.assertIn("else QrexDesign.backgroundDeep", self.main)
-        self.assertIn("indicatorColor = Color.Transparent", self.main)
+        self.assertIn("indicatorColor = if (store.lightMode)", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 48.dp)", design)
@@ -87,7 +88,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
         self.assertIn("heightIn(min = 84.dp)", design)
         self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
-        self.assertIn('store.updateLanguage("system")', self.main)
+        self.assertIn('store.updateLanguage(code)', self.details)
+        self.assertIn('"language" -> QrexLanguageDetails(store,', self.main)
+        self.assertIn('"export" -> QrexExportDetails(', self.main)
         self.assertIn('confirmPdfExport = true', self.main)
         self.assertIn('confirmExport = true', self.main)
         self.assertIn('showDelete = true', self.main)
@@ -98,7 +101,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("favoritesPage = true", self.main)
         self.assertIn("QRHistory.matches(it, search, savedOnly || favoritesPage)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
-        self.assertIn("enabled = store.items.any { it.saved }", self.main)
+        self.assertIn("hasSaved = store.items.any { it.saved }", self.main)
 
     def test_dark_splash_and_reference_app_bars_are_real_compose_actions(self):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
@@ -139,7 +142,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("request.addListener({", self.scanner)
         self.assertIn("runCatching { request.get() }.isSuccess", self.scanner)
         self.assertIn("enabled = allowed && !torchBusy &&", self.scanner)
-        self.assertIn(".clip(RoundedCornerShape(28.dp))", self.scanner)
+        self.assertIn(".clip(RoundedCornerShape(24.dp))", self.scanner)
 
     def test_reference_create_preview_and_favorite_hearts_are_live_actions(self):
         # The QR preview and Generate/Save actions share a fixed bottom group.
