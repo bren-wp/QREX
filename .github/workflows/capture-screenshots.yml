@@ -75,10 +75,12 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 600
           # software is supported; swiftshader_indirect is deprecated in newer emulators.
-          # Use the emulator's actual 3D virtual environment rather than
-          # the synthetic colored software-camera test pattern. This remains
-          # a real CameraX frame; no scene image is baked into the QREX UI.
-          emulator-options: -no-window -gpu software -camera-back virtualscene -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
+          # A software-rendered GitHub runner cannot reliably boot with
+          # -camera-back virtualscene: the emulator exits before ADB attaches
+          # (TCP 5554 connection refused). Keep the previously verified
+          # supported emulator configuration; screenshots must remain actual
+          # CameraX/UI captures, never injected or composited marketing art.
+          emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory 4096 -cores 2
           # capture_android_screen.sh already runs connectedDebugAndroidTest
           # with hard deadlines; keep ONE shell to avoid duplicate runs.
           script: bash tool/capture_android_screen.sh
