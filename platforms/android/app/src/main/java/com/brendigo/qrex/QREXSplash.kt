@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -91,7 +92,7 @@ internal fun QrexSplashScreen(
             Image(
                 painter = painterResource(R.drawable.qrex_icon),
                 contentDescription = null,
-                modifier = Modifier.size(158.dp)
+                modifier = Modifier.size(158.dp).clip(RoundedCornerShape(34.dp))
             )
             Spacer(Modifier.height(24.dp))
             // Two-tone mark and copy follow the supplied dark reference;
