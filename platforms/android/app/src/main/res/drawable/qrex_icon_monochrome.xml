@@ -2,15 +2,17 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Android themed icon: same QREX symbol, without color background. -->
     <path android:fillColor="#00000000"
-        android:strokeColor="#FFFFFFFF" android:strokeWidth="5.5"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="5.6"
         android:strokeLineCap="round" android:strokeLineJoin="round"
-        android:pathData="M22,42V30Q22,22 30,22H42 M66,22H78Q86,22 86,30V42 M22,66V78Q22,86 30,86H42 M66,86H78Q86,86 86,78V66"/>
+        android:pathData="M22,37 V30 Q22,23 29,23 H35 M74,23 H80 Q86,23 86,30 V37 M22,72 V80 Q22,86 29,86 H36 M74,86 H80 Q86,86 86,80 V73"/>
     <path android:fillColor="#00000000"
-        android:strokeColor="#FFFFFFFF" android:strokeWidth="6.5"
-        android:strokeLineCap="round"
-        android:pathData="M46,40 C38.3,40 32,46.3 32,54 C32,61.7 38.3,68 46,68 C53.7,68 60,61.7 60,54 C60,46.3 53.7,40 46,40 Z M55,63L65,74"/>
-    <path android:fillColor="#FFFFFFFF" android:pathData="M67,42H80V55H67Z M67,62H73V68H67Z M77,62H82V67H77Z M77,71H82V76H77Z"/>
-    <path android:fillColor="#00000000"
-        android:strokeColor="#00000000" android:pathData="M71,46H76V51H71Z"/>
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="10"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M44,39 C34.1,39 26,47.1 26,57 C26,66.9 34.1,75 44,75 C53.9,75 62,66.9 62,57 C62,47.1 53.9,39 44,39 Z"/>
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M51,64 L59,57 L76,77 L68,84 Z"/>
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M68,36 H83 V51 H68 Z M69,57 H76 V64 H69 Z M80,57 H87 V64 H80 Z M69,68 H76 V75 H69 Z"/>
 </vector>
