@@ -23,8 +23,8 @@ class ProductionGateSafetyTests(unittest.TestCase):
             "GITHUB_REPOSITORY": "bren-wp/QREX",
             "GITHUB_SHA": "0" * 40,
             "GITHUB_REF": "refs/heads/main",
-            "PRODUCTION_APPROVED": "PLAY_UPLOAD_1.0.6",
-            "RELEASE_VERSION": "1.0.6",
+            "PRODUCTION_APPROVED": "PLAY_UPLOAD_1.0.7",
+            "RELEASE_VERSION": "1.0.7",
             "DEVICE_QA_CONFIRMED": "true",
             "STORE_REVIEW_CONFIRMED": "true",
         })
@@ -50,7 +50,7 @@ class ProductionGateSafetyTests(unittest.TestCase):
                     "QREX_UPLOAD_KEY_ALIAS", "QREX_UPLOAD_KEY_PASSWORD",
                     "QREX_UPLOAD_CERT_SHA256"):
             env.pop(key, None)
-        env["RELEASE_VERSION"] = "1.0.6"
+        env["RELEASE_VERSION"] = "1.0.7"
         env["GITHUB_REF"] = "refs/heads/main"
         result = subprocess.run(["bash", str(SIGNER)], cwd=ROOT, env=env,
                                 text=True, capture_output=True, timeout=10)
