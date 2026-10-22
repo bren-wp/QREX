@@ -113,7 +113,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('Text("QRE"', self.main)
         self.assertIn('Text("X"', self.main)
         self.assertIn("Icons.Default.Shield", self.main)
-        self.assertIn("contentDescription = tr("more")", self.main)
+        self.assertIn('contentDescription = tr("more")', self.main)
         self.assertIn("showResultMenu", self.main)
         self.assertIn('testTag("qrex-result-close")', self.main)
 
