@@ -163,6 +163,22 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("cannot upgrade an installed QREX", notes)
         self.assertIn("106", notes)
 
+    def test_next_107_android_reference_release_requires_ten_real_screens(self):
+        workflow = (WORKFLOWS / "github-release-1.0.7.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.7.md").read_text("utf-8")
+        self.assertIn("gh release create v1.0.7", workflow)
+        self.assertIn("com.brendigo.qrex 107 1.0.7", workflow)
+        self.assertIn("assert len(screens) == 10", workflow)
+        for item in ("android-language.png", "android-export.png",
+                     "native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml", "SHA256SUMS.txt",
+                     "tool/verify_screenshots.py", "apksigner"):
+            self.assertIn(item, workflow)
+        self.assertIn("keytool -genkeypair", workflow)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", workflow)
+        self.assertIn("107", notes)
+        self.assertIn("cannot upgrade differently signed", notes)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
@@ -179,8 +195,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 106", gradle)
-        self.assertIn('versionName = "1.0.6"', gradle)
+        self.assertIn("versionCode = 107", gradle)
+        self.assertIn('versionName = "1.0.7"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -190,6 +206,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.4.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.5.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.6.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.7.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
