@@ -33,7 +33,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.backgroundDeep", self.main)
         self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
         self.assertIn(
-            "if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright",
+            "if (lightTheme) Color(0xFF1156AE) else QrexDesign.accentBright",
             self.main,
         )
         self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
@@ -62,7 +62,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("else QrexDesign.accentBright", self.main)
         self.assertIn("else QrexDesign.backgroundDeep", self.main)
-        self.assertIn("indicatorColor = if (store.lightMode)", self.main)
+        self.assertIn("indicatorColor = if (lightTheme)", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 48.dp)", design)
@@ -88,6 +88,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
         self.assertIn("heightIn(min = 84.dp)", design)
         self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
+        self.assertIn("QrexSettingsListRow(", self.main)
         self.assertIn('store.updateLanguage(code)', self.details)
         self.assertIn('"language" -> QrexLanguageDetails(store,', self.main)
         self.assertIn('"export" -> QrexExportDetails(', self.main)
