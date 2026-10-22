@@ -970,8 +970,13 @@ private fun CreateScreen(
                     maxLines = 2
                 )
             }
-            Spacer(Modifier.height(8.dp))
-            QrexPanel(Modifier.fillMaxWidth()) {
+        }
+        // Keep the QR preview directly above Generate and Save, as in the
+        // approved phone reference. Collapse only the preview while typing,
+        // leaving the scrollable form and essential actions accessible.
+        if (!WindowInsets.isImeVisible) {
+            QrexPanel(Modifier.fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)) {
                 Row(
                     Modifier.fillMaxWidth().padding(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
