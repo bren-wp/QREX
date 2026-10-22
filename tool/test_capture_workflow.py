@@ -66,6 +66,10 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         body = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("emulator-options: -no-window -gpu software ", body)
         self.assertNotIn("-gpu swiftshader_indirect", body)
+        # Virtual-scene camera causes GitHub software emulator to exit before
+        # adb connects to TCP 5554. Keep its boot-stable default camera.
+        self.assertNotIn("-camera-back virtualscene", body)
+        self.assertIn("-memory 4096 -cores 2", body)
         self.assertIn("Enable available KVM acceleration", body)
         self.assertIn("if-no-files-found: error", body)
         self.assertIn("test -s docs/screenshots/android-create.png", body)
