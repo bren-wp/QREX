@@ -314,7 +314,7 @@ private fun QREXApp(
                             onBack = { selected = 0 },
                             onResult = {
                                 store.record(it)
-                                resultShowsQr = true
+                                resultShowsQr = false
                                 editPayload = null
                                 currentCode = it
                             })
