@@ -153,7 +153,8 @@ class MainActivity : ComponentActivity() {
         // screenshot fixtures into release builds.
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
-                it in setOf("splash", "create", "scan", "result", "history", "saved", "more", "wifi")
+                it in setOf("splash", "create", "scan", "result", "history",
+                    "saved", "more", "wifi", "language", "export")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
