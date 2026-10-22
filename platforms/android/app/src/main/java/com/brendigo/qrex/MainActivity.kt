@@ -894,16 +894,18 @@ private fun CreateScreen(
     }
 
     val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
-        // Remeasure on window-size, rotation and font-scale changes.
-        val layout = qrexLayoutProfile(
-            maxWidth.value.toInt(), maxHeight.value.toInt(),
-            LocalDensity.current.fontScale
-        )
-        val horizontalPadding = layout.horizontalPaddingDp.dp
-        val qrSize = (if (lightTheme) layout.lightQrSizeDp
-            else layout.darkQrSizeDp).dp
-        Column(Modifier.fillMaxSize().testTag("qrex-create-screen")) {
+    // Android LocalConfiguration updates for screen sizes, rotation and
+    // multi-window. Do not use BoxWithConstraints/SubcomposeLayout here:
+    // repeated subcomposition caused a documented Android 8 crash.
+    val window = LocalConfiguration.current
+    val layout = qrexLayoutProfile(
+        window.screenWidthDp, (window.screenHeightDp - 80).coerceAtLeast(0),
+        LocalDensity.current.fontScale
+    )
+    val horizontalPadding = layout.horizontalPaddingDp.dp
+    val qrSize = (if (lightTheme) layout.lightQrSizeDp
+        else layout.darkQrSizeDp).dp
+    Column(Modifier.fillMaxSize().imePadding().testTag("qrex-create-screen")) {
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
                 .testTag("qrex-create-scroll")
@@ -1174,7 +1176,6 @@ private fun CreateScreen(
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = MaterialTheme.colorScheme.surface)
         ) { Text(tr("save_to_device")) }
-        }
     }
     if (confirmWifiSave) {
         AlertDialog(
