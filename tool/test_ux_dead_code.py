@@ -21,7 +21,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
-        self.assertIn(".widthIn(max = 148.dp).fillMaxWidth().aspectRatio(1f)", self.main)
+        self.assertIn(".size(104.dp).background(Color.White).padding(7.dp)", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
     def test_dark_theme_is_default_and_navigation_contrast_is_adaptive(self):
@@ -37,7 +37,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         )
         self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
         self.assertIn("selectedTextColor = selectedNavigationColor", self.main)
-        self.assertIn("QrexBrandHeader(tr(\"scan_qr\"), tr(\"point_camera\"))", self.scanner)
+        self.assertIn("QrexBrandHeader(onMore = onMore)", self.scanner)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("val accentBright = Color(0xFF22C7FF)", design)
         self.assertIn("color = MaterialTheme.colorScheme.primary", design)
@@ -60,17 +60,22 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("else QrexDesign.accentBright", self.main)
-        self.assertIn("else QrexDesign.surfaceRaised))", self.main)
+        self.assertIn("else QrexDesign.backgroundDeep", self.main)
+        self.assertIn("indicatorColor = Color.Transparent", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
-        self.assertIn("modifier = Modifier.weight(1f).heightIn(min = 54.dp)", self.main)
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 48.dp)", design)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
-        self.assertIn("Text(QRContent.label(item.raw), maxLines = 2", self.main)
+        self.assertIn("QRContent.label(item.raw),\n                                maxLines = 1", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
         # The reference uses a real overflow menu and favorite heart rather
         # than an always-visible trash icon on each History row.
-        self.assertIn('DropdownMenuItem(text = { Text(tr("delete")) }', self.main)
-        self.assertIn("store.setSaved(item, !item.saved)", self.main)
+        self.assertIn("historyMenu = true", self.main)
+        self.assertIn('Text(tr("delete"))', self.main)
+        self.assertIn("DropdownMenu(", self.main)
+        self.assertIn("store.setSaved(item, false)", self.main)
+        self.assertIn("store.setSaved(item, true)", self.main)
         self.assertIn('testTag("qrex-history-menu")', self.main)
         self.assertIn("pendingDelete = item", self.main)
         self.assertIn("store.remove(actual)", self.main)
@@ -79,8 +84,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("QrexSettingsTile(", self.main)
         self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
-        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 56.dp)", self.main)
-        self.assertIn("min = 88.dp", design)
+        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
+        self.assertIn("heightIn(min = 84.dp)", design)
         self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
         self.assertIn('store.updateLanguage("system")', self.main)
         self.assertIn('confirmPdfExport = true', self.main)
@@ -107,7 +112,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('testTag("qrex-result-close")', self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
-        self.assertIn('leadingIcon = { Icon(typeIcons[index]', self.main)
+        self.assertIn("Icon(typeIcons[index]", self.main)
+        self.assertIn("listOf(0, 1, 2, 6)", self.main)
         self.assertIn('testTag("qrex-create-show")', self.main)
         self.assertIn('testTag("qrex-create-save")', self.main)
         self.assertLess(self.main.index('testTag("qrex-create-show")'),
@@ -118,7 +124,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('QrexResultAction(tr("copy"), Icons.Default.ContentCopy)', self.main)
         self.assertIn('QrexResultAction(tr("share"), Icons.Default.Share)', self.main)
         self.assertIn('testTag("qrex-result-toggle-qr")', self.main)
-        self.assertIn('Icons.Default.FavoriteBorder, enabled = !alreadySaved', self.main)
+        self.assertIn('if (alreadySaved) tr("remove_favorite") else tr("add_favorite")', self.main)
+        self.assertIn("if (currentCode == null)", self.main)
 
     def test_scanner_torch_waits_for_actual_camerax_completion(self):
         self.assertIn("var torchBusy by remember { mutableStateOf(false) }", self.scanner)
@@ -139,3 +146,4 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

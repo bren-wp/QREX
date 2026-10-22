@@ -60,13 +60,11 @@
     <string name="light_theme">Helles Design</string>
     <string name="theme">Design</string>
     <string name="dark_theme">Dunkles Design</string>
-    <string name="delete_all">Alle Daten löschen</string>
     <string name="privacy">Datenschutz</string>
-    <string name="privacy_summary">QR-Codes werden auf dem Gerät verarbeitet. Kein Konto, keine Werbung oder Analysen. Der Verlauf ist optional. WLAN-Passwörter werden nicht automatisch gespeichert; manuell gespeicherte WLAN-Codes enthalten auch das Passwort. Externe Aktionen können Daten an andere Apps übergeben. Alle lokalen Daten können in den Einstellungen gelöscht werden. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR-Codes werden auf diesem Gerät verarbeitet. Kein Konto, keine Werbung und keine Analysen. Der Verlauf ist optional. WLAN-Passwörter werden nicht automatisch gespeichert; beim manuellen Speichern eines WLAN-Codes wird auch das Passwort gespeichert. Externe Aktionen geben Daten nur weiter, wenn du sie auswählst. Du kannst den Verlauf in den Einstellungen löschen; Thema und Sprache bleiben gespeichert. Kontakt: brendigo.com.</string>
     <string name="about">Über die App</string>
     <string name="developed_by">Entwickelt von Brendigo</string>
-    <string name="confirm_delete">Alle Daten löschen?</string>
-    <string name="delete_warning">Verlauf, gespeicherte Codes und Einstellungen werden dauerhaft gelöscht.</string>
+    <string name="confirm_delete">Diesen QR-Code löschen?</string>
     <string name="language">Sprache</string>
     <string name="system">Gerätesprache verwenden</string>
     <string name="history_local">Deine QR-Sammlung</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Nutzungsbedingungen</string>
     <string name="terms_summary">Prüfe QR-Ziele vor dem Öffnen. Teile oder exportiere nur Codes, für die du eine Berechtigung hast. ZIP-Dateien können WLAN-Passwörter enthalten. QREX wird ohne Gewährleistung bereitgestellt, soweit gesetzlich zulässig. Hilfe: brendigo.com.</string>
     <string name="read_full_policy">Vollständige Erklärung lesen</string>
+    <string name="tagline">Scannen. Erstellen. Teilen.</string>
+    <string name="event">Termin</string>
+    <string name="event_title">Titel des Termins</string>
+    <string name="event_start">Beginn</string>
+    <string name="event_end">Ende</string>
+    <string name="event_location">Ort</string>
+    <string name="event_details">Details</string>
+    <string name="generate_qr">QR-Code erstellen</string>
+    <string name="save_to_device">Auf Gerät speichern</string>
+    <string name="add_to_calendar">Zum Kalender hinzufügen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="add_favorite">Zu Favoriten hinzufügen</string>
+    <string name="remove_favorite">Aus Favoriten entfernen</string>
+    <string name="clear_history">Verlauf löschen</string>
+    <string name="confirm_clear_history">Verlauf löschen?</string>
+    <string name="clear_history_warning">Alle Verlaufseinträge und gespeicherten QR-Codes werden dauerhaft gelöscht. Thema und Sprache bleiben gespeichert.</string>
 </resources>

@@ -60,13 +60,11 @@
     <string name="light_theme">Temă luminoasă</string>
     <string name="theme">Temă</string>
     <string name="dark_theme">Temă întunecată</string>
-    <string name="delete_all">Șterge toate datele</string>
     <string name="privacy">Confidențialitate</string>
-    <string name="privacy_summary">Codurile QR sunt procesate pe dispozitiv. Fără cont, reclame sau analiză. Istoricul este opțional. Parolele Wi-Fi nu sunt salvate automat; salvarea manuală a unui cod Wi-Fi salvează și parola. Acțiunile externe pot trimite date către alte aplicații. Poți șterge datele locale din Setări. Contact: brendigo.com.</string>
+    <string name="privacy_summary">Codurile QR sunt procesate pe acest dispozitiv. Fără cont, reclame sau analiză. Istoricul este opțional. Parolele Wi-Fi nu sunt salvate automat; salvarea manuală a unui cod Wi-Fi salvează și parola. Datele sunt partajate cu altă aplicație numai când alegi o acțiune externă. Poți șterge istoricul din Setări; tema și limba rămân salvate. Contact: brendigo.com.</string>
     <string name="about">Despre</string>
     <string name="developed_by">Dezvoltat de Brendigo</string>
-    <string name="confirm_delete">Ștergi toate datele?</string>
-    <string name="delete_warning">Istoricul, codurile și setările vor fi șterse definitiv.</string>
+    <string name="confirm_delete">Ștergi acest cod QR?</string>
     <string name="language">Limbă</string>
     <string name="system">Limba dispozitivului</string>
     <string name="history_local">Colecția ta QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Termeni de utilizare</string>
     <string name="terms_summary">Verifică destinațiile QR înainte de a deschide linkuri. Distribuie doar codurile pentru care ai permisiune. ZIP-urile pot conține parole Wi-Fi. QREX este oferit fără garanții în limitele legii. Suport: brendigo.com.</string>
     <string name="read_full_policy">Citește politica integrală</string>
+    <string name="tagline">Scanează. Creează. Distribuie.</string>
+    <string name="event">Eveniment</string>
+    <string name="event_title">Titlul evenimentului</string>
+    <string name="event_start">Început</string>
+    <string name="event_end">Sfârșit</string>
+    <string name="event_location">Locație</string>
+    <string name="event_details">Detalii</string>
+    <string name="generate_qr">Generează cod QR</string>
+    <string name="save_to_device">Salvează pe dispozitiv</string>
+    <string name="add_to_calendar">Adaugă în calendar</string>
+    <string name="edit">Editează</string>
+    <string name="add_favorite">Adaugă la favorite</string>
+    <string name="remove_favorite">Elimină din favorite</string>
+    <string name="clear_history">Șterge istoricul</string>
+    <string name="confirm_clear_history">Ștergi istoricul?</string>
+    <string name="clear_history_warning">Toate înregistrările din istoric și codurile QR salvate vor fi șterse definitiv. Tema și limba vor rămâne salvate.</string>
 </resources>

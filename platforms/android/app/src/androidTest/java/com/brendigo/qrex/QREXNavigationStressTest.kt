@@ -237,3 +237,4 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-tab-0").assertIsSelected()
     }
 }
+

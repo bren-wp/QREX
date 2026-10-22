@@ -60,13 +60,11 @@
     <string name="light_theme">Light theme</string>
     <string name="theme">Theme</string>
     <string name="dark_theme">Dark theme</string>
-    <string name="delete_all">Delete all data</string>
     <string name="privacy">Privacy</string>
-    <string name="privacy_summary">QR codes are processed on this device. No account, ads or analytics. Scan history is optional. Wi-Fi passwords are never saved automatically; saving a Wi-Fi code manually also saves its password. External actions may share data with another app. You can erase all local data in Settings. Contact: brendigo.com.</string>
+    <string name="privacy_summary">QR codes are processed on this device. No account, ads or analytics. History is optional. Wi-Fi passwords are never saved automatically; manually saving a Wi-Fi code also saves its password. External actions share data only when you choose them. Clear history in Settings; theme and language choices stay saved. Contact: brendigo.com.</string>
     <string name="about">About</string>
     <string name="developed_by">Developed by Brendigo</string>
-    <string name="confirm_delete">Delete all data?</string>
-    <string name="delete_warning">History, saved QR codes and settings will be permanently erased.</string>
+    <string name="confirm_delete">Delete this QR code?</string>
     <string name="language">Language</string>
     <string name="system">Follow device language</string>
     <string name="history_local">Your collection</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Terms of Use</string>
     <string name="terms_summary">Check QR destinations before opening links. Share or export only codes you have permission to disclose. ZIP exports may include saved Wi-Fi passwords. QREX is provided without warranties to the extent allowed by law. Support: brendigo.com.</string>
     <string name="read_full_policy">Read full policy</string>
+    <string name="tagline">Scan. Create. Share.</string>
+    <string name="event">Event</string>
+    <string name="event_title">Event title</string>
+    <string name="event_start">Start</string>
+    <string name="event_end">End</string>
+    <string name="event_location">Location</string>
+    <string name="event_details">Details</string>
+    <string name="generate_qr">Generate QR code</string>
+    <string name="save_to_device">Save to device</string>
+    <string name="add_to_calendar">Add to calendar</string>
+    <string name="edit">Edit</string>
+    <string name="add_favorite">Add to favorites</string>
+    <string name="remove_favorite">Remove from favorites</string>
+    <string name="clear_history">Clear history</string>
+    <string name="confirm_clear_history">Clear history?</string>
+    <string name="clear_history_warning">All history entries and saved QR codes will be permanently erased. Theme and language choices will stay saved.</string>
 </resources>

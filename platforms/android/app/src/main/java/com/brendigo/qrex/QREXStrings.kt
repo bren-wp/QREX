@@ -69,13 +69,11 @@ object QREXStrings {
         "light_theme" -> R.string.light_theme
         "theme" -> R.string.theme
         "dark_theme" -> R.string.dark_theme
-        "delete_all" -> R.string.delete_all
         "privacy" -> R.string.privacy
         "privacy_summary" -> R.string.privacy_summary
         "about" -> R.string.about
         "developed_by" -> R.string.developed_by
         "confirm_delete" -> R.string.confirm_delete
-        "delete_warning" -> R.string.delete_warning
         "language" -> R.string.language
         "system" -> R.string.system
         "history_local" -> R.string.history_local
@@ -92,6 +90,22 @@ object QREXStrings {
         "terms_of_use" -> R.string.terms_of_use
         "terms_summary" -> R.string.terms_summary
         "read_full_policy" -> R.string.read_full_policy
+        "tagline" -> R.string.tagline
+        "event" -> R.string.event
+        "event_title" -> R.string.event_title
+        "event_start" -> R.string.event_start
+        "event_end" -> R.string.event_end
+        "event_location" -> R.string.event_location
+        "event_details" -> R.string.event_details
+        "generate_qr" -> R.string.generate_qr
+        "save_to_device" -> R.string.save_to_device
+        "add_to_calendar" -> R.string.add_to_calendar
+        "edit" -> R.string.edit
+        "add_favorite" -> R.string.add_favorite
+        "remove_favorite" -> R.string.remove_favorite
+        "clear_history" -> R.string.clear_history
+        "confirm_clear_history" -> R.string.confirm_clear_history
+        "clear_history_warning" -> R.string.clear_history_warning
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

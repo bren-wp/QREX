@@ -47,3 +47,4 @@ jobs:
         run: |
           python3 tool/generate_localizations.py --check
           python3 tool/check_translation_usage.py
+

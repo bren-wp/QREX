@@ -128,7 +128,7 @@ internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
 }
 
 @Composable
-fun ScanScreen(onRead: (String) -> Unit) {
+fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
@@ -257,7 +257,7 @@ fun ScanScreen(onRead: (String) -> Unit) {
         }
     }
     Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        QrexBrandHeader(tr("scan_qr"), tr("point_camera"))
+        QrexBrandHeader(onMore = onMore)
         Spacer(Modifier.height(8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }

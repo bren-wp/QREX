@@ -75,9 +75,11 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("gradle -p platforms/android", body)
         self.assertIn("python3 tool/check_android_screen.py", body)
         self.assertIn("python3 tool/verify_screenshots.py", body)
+        self.assertIn("--es qrex_language hr", body)
         self.assertIn("adb exec-out screencap -p", body)
         self.assertIn("exit 1", body)
 
 
 if __name__ == "__main__":
     unittest.main()
+

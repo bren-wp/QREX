@@ -60,13 +60,11 @@
     <string name="light_theme">Світла тема</string>
     <string name="theme">Тема</string>
     <string name="dark_theme">Темна тема</string>
-    <string name="delete_all">Видалити всі дані</string>
     <string name="privacy">Конфіденційність</string>
-    <string name="privacy_summary">QR-коди обробляються на пристрої. Без облікового запису, реклами й аналітики. Історія необов’язкова. Паролі Wi-Fi не зберігаються автоматично; ручне збереження коду Wi-Fi зберігає і пароль. Зовнішні дії можуть передати дані іншим застосункам. Локальні дані можна видалити в Налаштуваннях. Контакт: brendigo.com.</string>
+    <string name="privacy_summary">QR-коди обробляються на цьому пристрої. Без облікового запису, реклами чи аналітики. Історія необов’язкова. Паролі Wi-Fi не зберігаються автоматично; ручне збереження коду Wi-Fi також зберігає пароль. Дані передаються іншому застосунку лише після вибору зовнішньої дії. Історію можна очистити в Налаштуваннях; тема й мова залишаються збереженими. Контакт: brendigo.com.</string>
     <string name="about">Про застосунок</string>
     <string name="developed_by">Розроблено Brendigo</string>
-    <string name="confirm_delete">Видалити всі дані?</string>
-    <string name="delete_warning">Історію, коди й налаштування буде видалено назавжди.</string>
+    <string name="confirm_delete">Видалити цей QR-код?</string>
     <string name="language">Мова</string>
     <string name="system">Мова пристрою</string>
     <string name="history_local">Ваша QR-колекція</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Умови використання</string>
     <string name="terms_summary">Перевіряйте адреси QR перед відкриттям посилань. Діліться лише кодами, на які маєте дозвіл. ZIP може містити паролі Wi-Fi. QREX надається без гарантій у межах закону. Підтримка: brendigo.com.</string>
     <string name="read_full_policy">Прочитати повну політику</string>
+    <string name="tagline">Скануй. Створи. Поділися.</string>
+    <string name="event">Подія</string>
+    <string name="event_title">Назва події</string>
+    <string name="event_start">Початок</string>
+    <string name="event_end">Кінець</string>
+    <string name="event_location">Місце</string>
+    <string name="event_details">Деталі</string>
+    <string name="generate_qr">Створити QR-код</string>
+    <string name="save_to_device">Зберегти на пристрій</string>
+    <string name="add_to_calendar">Додати до календаря</string>
+    <string name="edit">Редагувати</string>
+    <string name="add_favorite">Додати до обраного</string>
+    <string name="remove_favorite">Видалити з обраного</string>
+    <string name="clear_history">Очистити історію</string>
+    <string name="confirm_clear_history">Очистити історію?</string>
+    <string name="clear_history_warning">Усі записи історії та збережені QR-коди буде видалено назавжди. Налаштування теми й мови залишаться.</string>
 </resources>

@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,7 +44,10 @@ internal fun QrexSplashScreen(
     subtitle: String = "Scan. Create. Share.",
     modifier: Modifier = Modifier
 ) {
-    Box(modifier.fillMaxSize().background(QrexDesign.backgroundDeep)) {
+    Box(
+        modifier.fillMaxSize().background(QrexDesign.backgroundDeep)
+            .semantics { contentDescription = "QREX splash: $subtitle" }
+    ) {
         Canvas(Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
@@ -132,3 +137,4 @@ internal fun QrexSplashScreen(
         }
     }
 }
+

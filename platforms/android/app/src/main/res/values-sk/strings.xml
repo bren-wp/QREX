@@ -60,13 +60,11 @@
     <string name="light_theme">Svetlý vzhľad</string>
     <string name="theme">Motív</string>
     <string name="dark_theme">Tmavý motív</string>
-    <string name="delete_all">Odstrániť všetky údaje</string>
     <string name="privacy">Súkromie</string>
-    <string name="privacy_summary">QR kódy sa spracúvajú v zariadení. Bez účtu, reklám a analytiky. História je voliteľná. Heslá Wi-Fi sa automaticky neukladajú; ručné uloženie Wi-Fi kódu uloží aj heslo. Externé akcie môžu údaje poskytnúť inej aplikácii. Miestne údaje vymažete v Nastaveniach. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR kódy sa spracúvajú v tomto zariadení. Bez účtu, reklám a analytiky. História je voliteľná. Heslá Wi-Fi sa neukladajú automaticky; pri ručnom uložení Wi-Fi kódu sa uloží aj heslo. Údaje sa inej aplikácii odovzdajú iba po zvolení externej akcie. Históriu možno vymazať v Nastaveniach; téma a jazyk zostanú uložené. Kontakt: brendigo.com.</string>
     <string name="about">O aplikácii</string>
     <string name="developed_by">Vyvinul Brendigo</string>
-    <string name="confirm_delete">Odstrániť všetky údaje?</string>
-    <string name="delete_warning">História, uložené kódy a nastavenia sa natrvalo odstránia.</string>
+    <string name="confirm_delete">Odstrániť tento QR kód?</string>
     <string name="language">Jazyk</string>
     <string name="system">Jazyk zariadenia</string>
     <string name="history_local">Vaša zbierka QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Podmienky používania</string>
     <string name="terms_summary">Pred otvorením odkazu skontrolujte cieľ QR kódu. Zdieľajte len kódy, na ktoré máte oprávnenie. ZIP môže obsahovať heslá Wi-Fi. QREX je poskytovaný bez záruk v rozsahu povolenom zákonom. Podpora: brendigo.com.</string>
     <string name="read_full_policy">Prečítať celé zásady</string>
+    <string name="tagline">Skenuj. Vytváraj. Zdieľaj.</string>
+    <string name="event">Udalosť</string>
+    <string name="event_title">Názov udalosti</string>
+    <string name="event_start">Začiatok</string>
+    <string name="event_end">Koniec</string>
+    <string name="event_location">Miesto</string>
+    <string name="event_details">Podrobnosti</string>
+    <string name="generate_qr">Vygenerovať QR kód</string>
+    <string name="save_to_device">Uložiť do zariadenia</string>
+    <string name="add_to_calendar">Pridať do kalendára</string>
+    <string name="edit">Upraviť</string>
+    <string name="add_favorite">Pridať k obľúbeným</string>
+    <string name="remove_favorite">Odstrániť z obľúbených</string>
+    <string name="clear_history">Vymazať históriu</string>
+    <string name="confirm_clear_history">Vymazať históriu?</string>
+    <string name="clear_history_warning">Všetky záznamy histórie a uložené QR kódy sa natrvalo odstránia. Nastavenia témy a jazyka zostanú uložené.</string>
 </resources>

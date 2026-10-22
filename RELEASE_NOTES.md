@@ -2,11 +2,11 @@
 
 ## Latest: v1.0.5 · Android versionCode 105
 
-QREX 1.0.5 puts the **dark navy design first** across Scan, Create, Result, History, Favorites and More. It preserves users' saved light-theme preference, local storage and offline camera scanning, and fixes an obsolete navigation-color test that initially blocked Android/F-Droid CI after the design update.
+QREX 1.0.5 puts the **dark navy design first** across Scan, Create, Result, History, Favorites and More. It preserves the saved light-theme preference and local data, adds calendar event QR codes, and aligns compact layouts with the supplied Android reference.
 
-[Release details](docs/releases/v1.0.5.md) · [Latest downloads](https://github.com/bren-wp/QREX/releases/latest) · [F-Droid status](docs/FDROID_DISTRIBUTION.md)
+[Release details](docs/releases/v1.0.5.md) · [Latest downloads](https://github.com/bren-wp/QREX/releases/latest)
 
-**Distribution notice:** Public GitHub APKs use disposable certificates and cannot update differently signed installations. Uninstalling can erase local history and Wi-Fi QR codes. Unsigned QA candidates for Google Play and F-Droid still need the authorized store build/signing process; GitHub publication alone does not mean Play/F-Droid approval.
+**Distribution notice:** Public GitHub APKs use disposable certificates and cannot update differently signed installations. Uninstalling can erase local history and Wi-Fi QR codes. The public GitHub AAB is not a Google Play upload artifact.
 
 ## Historical releases
 

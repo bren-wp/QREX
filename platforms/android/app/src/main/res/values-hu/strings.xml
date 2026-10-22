@@ -60,13 +60,11 @@
     <string name="light_theme">Világos téma</string>
     <string name="theme">Téma</string>
     <string name="dark_theme">Sötét téma</string>
-    <string name="delete_all">Összes adat törlése</string>
     <string name="privacy">Adatvédelem</string>
-    <string name="privacy_summary">A QR-kódok feldolgozása az eszközön történik. Nincs fiók, reklám vagy analitika. Az előzmények opcionálisak. A Wi-Fi jelszavakat a rendszer nem menti automatikusan; a Wi-Fi kód kézi mentése a jelszót is menti. Külső műveletek más alkalmazásoknak adhatnak át adatokat. A helyi adatokat a Beállításokban törölheted. Kapcsolat: brendigo.com.</string>
+    <string name="privacy_summary">A QR-kódok feldolgozása ezen az eszközön történik. Nincs fiók, hirdetés vagy analitika. Az előzmények használata nem kötelező. A Wi-Fi-jelszavak nem mentődnek automatikusan; Wi-Fi-kód kézi mentésekor a jelszó is mentésre kerül. Az adatok csak választott külső művelet esetén kerülnek másik alkalmazáshoz. Az előzmények a Beállításokban törölhetők; a téma és a nyelv beállítása megmarad. Kapcsolat: brendigo.com.</string>
     <string name="about">Névjegy</string>
     <string name="developed_by">Fejlesztő: Brendigo</string>
-    <string name="confirm_delete">Minden adat törlése?</string>
-    <string name="delete_warning">Az előzmények, kódok és beállítások végleg törlődnek.</string>
+    <string name="confirm_delete">Törlöd ezt a QR-kódot?</string>
     <string name="language">Nyelv</string>
     <string name="system">Eszköz nyelve</string>
     <string name="history_local">Saját QR-gyűjtemény</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Felhasználási feltételek</string>
     <string name="terms_summary">A hivatkozások megnyitása előtt ellenőrizd a QR-célcímet. Csak engedélyezett kódokat ossz meg. A ZIP Wi-Fi-jelszavakat tartalmazhat. A QREX jogszabály szerint megengedett mértékig garancia nélkül érhető el. Támogatás: brendigo.com.</string>
     <string name="read_full_policy">Teljes szabályzat</string>
+    <string name="tagline">Olvass be. Hozz létre. Ossz meg.</string>
+    <string name="event">Esemény</string>
+    <string name="event_title">Esemény címe</string>
+    <string name="event_start">Kezdés</string>
+    <string name="event_end">Befejezés</string>
+    <string name="event_location">Helyszín</string>
+    <string name="event_details">Részletek</string>
+    <string name="generate_qr">QR-kód létrehozása</string>
+    <string name="save_to_device">Mentés az eszközre</string>
+    <string name="add_to_calendar">Hozzáadás a naptárhoz</string>
+    <string name="edit">Szerkesztés</string>
+    <string name="add_favorite">Hozzáadás a kedvencekhez</string>
+    <string name="remove_favorite">Eltávolítás a kedvencekből</string>
+    <string name="clear_history">Előzmények törlése</string>
+    <string name="confirm_clear_history">Töröljük az előzményeket?</string>
+    <string name="clear_history_warning">Az összes előzményelem és mentett QR-kód végleg törlődik. A téma és a nyelv beállítása megmarad.</string>
 </resources>

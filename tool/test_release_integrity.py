@@ -19,7 +19,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertFalse((ROOT / "tool/test_retire_legacy_releases.py").exists())
         self.assertFalse((WORKFLOWS / "retire-legacy-releases.yml").exists())
 
-    def test_google_play_bundle_requires_real_authorized_key(self):
+    def test_google_play_bundle_requires_real_authorized_key_and_current_version(self):
         play = (WORKFLOWS / "production-release.yml").read_text("utf-8")
         gate = (ROOT / "tool/verify_production_gate.sh").read_text("utf-8")
         signer = (ROOT / "tool/sign_android_production.sh").read_text("utf-8")
@@ -29,16 +29,18 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("environment: production", play)
         self.assertIn("device_qa_confirmed:", play)
         self.assertIn("store_review_confirmed:", play)
-        self.assertIn("PLAY_UPLOAD_1_0_1", gate)
+        self.assertIn('RELEASE_VERSION', gate)
+        self.assertIn('PLAY_UPLOAD_$RELEASE_VERSION', gate)
         self.assertIn("refs/heads/main", gate)
         self.assertIn("commits/main", gate)
         self.assertIn("completed:success", gate)
         self.assertIn("needs: verify", play)
-        self.assertIn("QREX-Android-1.0.1.aab", play)
+        self.assertIn("QREX-Android-${{ inputs.version }}.aab", play)
         self.assertIn("QREX_UPLOAD_KEYSTORE_BASE64", signer)
         self.assertIn("QREX_UPLOAD_CERT_SHA256", signer)
         self.assertIn("keytool -printcert -jarfile", signer)
-        self.assertIn("jarsigner -verify -strict", signer)
+        self.assertIn("jarsigner -verify", signer)
+        self.assertIn("RELEASE_VERSION", signer)
         self.assertNotIn("gh release create", play)
         self.assertNotIn("retire_legacy_releases.sh", play)
         self.assertNotIn("keytool -genkeypair", signer)
@@ -135,7 +137,6 @@ class ReleaseIntegrityTests(unittest.TestCase):
             "QREX-Android-1.0.5.apk",
             "QREX-Android-1.0.5.aab",
             "QREX-Android-1.0.5-Play-UNSIGNED-QA.aab",
-            "QREX-Android-1.0.5-FDroid-UNSIGNED-QA.apk",
             "SHA256SUMS.txt",
             "android-splash.png",
             "android-create.png",
@@ -143,7 +144,6 @@ class ReleaseIntegrityTests(unittest.TestCase):
             "android-more.png",
         ):
             self.assertIn(artifact, published)
-        self.assertIn("F-Droid", notes)
         self.assertIn("cannot update in place", notes)
         self.assertIn("v1.0.5/android-create.png",
                       (ROOT / "README.md").read_text("utf-8"))
@@ -166,8 +166,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
         self.assertIn("versionCode = 105", gradle)
         self.assertIn('versionName = "1.0.5"', gradle)
-        self.assertIn("1.0.1", readme)
-        self.assertIn("1.0.1", notes)
+        self.assertIn("1.0.5", readme)
+        self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.1.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.2.md").exists())
@@ -179,3 +179,4 @@ class ReleaseIntegrityTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -2,7 +2,7 @@
 """Verify the actual Android accessibility hierarchy, not merely PNG validity.
 
 A black screen or a System UI ANR may still be a well-formed PNG. Android
-screenshots must depict the real, interactive QREX create view in English.
+screenshots must depict the real, interactive QREX screen in Croatian.
 No OCR, third-party dependencies, test payload uploads, or fabricated images.
 """
 from __future__ import annotations
@@ -32,14 +32,14 @@ def validate(xml_content: str, screen: str = "create") -> None:
     # Require screen-specific actual app text and control markers. These
     # are screenshots of production Compose UI with *debug-only* neutral data.
     expected = {
-        "splash": ("qrex", "scan. create. share."),
-        "create": ("create qr code", "https://brendigo.com", "wi-fi"),
-        "wifi": ("create qr code", "qrex-demo", "wi-fi"),
-        "result": ("scan complete", "https://brendigo.com", "close"),
-        "history": ("history", "brendigo.com", "saved"),
-        "saved": ("history", "brendigo.com", "saved"),
-        "more": ("settings", "pdf", "language"),
-        "scan": ("scan qr code", "from gallery", "point your camera"),
+        "splash": ("qrex splash", "skener. stvara. dijeli."),
+        "create": ("stvori qr kod", "https://brendigo.com", "wi-fi"),
+        "wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
+        "result": ("rezultat", "https://brendigo.com", "zatvori"),
+        "history": ("povijest", "brendigo.com", "pretraži kodove"),
+        "saved": ("favoriti", "brendigo.com", "spremljeno"),
+        "more": ("postavke", "pdf", "jezik"),
+        "scan": ("skener. stvara. dijeli.", "iz galerije", "usmjeri kameru prema qr kodu"),
     }
     if screen not in expected:
         raise ValueError("Unsupported screenshot screen")
@@ -63,3 +63,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

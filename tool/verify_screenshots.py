@@ -48,3 +48,4 @@ if __name__ == "__main__":
         path = Path(arg)
         w, h = verify(path)
         print(f"Verified genuine PNG structure: {path} ({w} x {h})")
+

@@ -60,13 +60,11 @@
     <string name="light_theme">Tema claro</string>
     <string name="theme">Tema</string>
     <string name="dark_theme">Tema escuro</string>
-    <string name="delete_all">Eliminar todos os dados</string>
     <string name="privacy">Privacidade</string>
-    <string name="privacy_summary">Os códigos QR são processados no dispositivo. Sem conta, anúncios ou análise. O histórico é opcional. As palavras-passe Wi-Fi nunca são guardadas automaticamente; guardar manualmente um código Wi-Fi também guarda a palavra-passe. Ações externas podem enviar dados a outras aplicações. Pode eliminar os dados locais nas Definições. Contacto: brendigo.com.</string>
+    <string name="privacy_summary">Os códigos QR são processados neste dispositivo. Sem conta, anúncios ou análise. O histórico é opcional. As palavras-passe Wi-Fi nunca são guardadas automaticamente; guardar manualmente um código Wi-Fi também guarda a palavra-passe. Os dados só são partilhados com outra aplicação quando escolhe uma ação externa. Pode limpar o histórico nas Definições; o tema e o idioma ficam guardados. Contacto: brendigo.com.</string>
     <string name="about">Sobre</string>
     <string name="developed_by">Desenvolvido pela Brendigo</string>
-    <string name="confirm_delete">Eliminar todos os dados?</string>
-    <string name="delete_warning">O histórico, códigos e definições serão eliminados permanentemente.</string>
+    <string name="confirm_delete">Eliminar este código QR?</string>
     <string name="language">Idioma</string>
     <string name="system">Idioma do dispositivo</string>
     <string name="history_local">A sua coleção QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Termos de utilização</string>
     <string name="terms_summary">Verifique os destinos QR antes de abrir ligações. Partilhe ou exporte apenas códigos autorizados. Os ZIP podem incluir palavras-passe Wi-Fi. O QREX é fornecido sem garantias nos limites legais. Apoio: brendigo.com.</string>
     <string name="read_full_policy">Ler a política completa</string>
+    <string name="tagline">Digitalize. Crie. Partilhe.</string>
+    <string name="event">Evento</string>
+    <string name="event_title">Título do evento</string>
+    <string name="event_start">Início</string>
+    <string name="event_end">Fim</string>
+    <string name="event_location">Localização</string>
+    <string name="event_details">Detalhes</string>
+    <string name="generate_qr">Gerar código QR</string>
+    <string name="save_to_device">Guardar no dispositivo</string>
+    <string name="add_to_calendar">Adicionar ao calendário</string>
+    <string name="edit">Editar</string>
+    <string name="add_favorite">Adicionar aos favoritos</string>
+    <string name="remove_favorite">Remover dos favoritos</string>
+    <string name="clear_history">Limpar histórico</string>
+    <string name="confirm_clear_history">Limpar o histórico?</string>
+    <string name="clear_history_warning">Todo o histórico e os códigos QR guardados serão eliminados permanentemente. O tema e o idioma continuarão guardados.</string>
 </resources>

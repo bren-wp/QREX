@@ -60,13 +60,11 @@
     <string name="light_theme">Svetla tema</string>
     <string name="theme">Tema</string>
     <string name="dark_theme">Temna tema</string>
-    <string name="delete_all">Izbriši vse podatke</string>
     <string name="privacy">Zasebnost</string>
-    <string name="privacy_summary">Kode QR se obdelujejo v napravi. Brez računa, oglasov ali analitike. Zgodovina je neobvezna. Gesla Wi-Fi se ne shranijo samodejno; ročno shranjena koda Wi-Fi vsebuje tudi geslo. Zunanja dejanja lahko podatke posredujejo drugim aplikacijam. Lokalne podatke izbrišeš v nastavitvah. Stik: brendigo.com.</string>
+    <string name="privacy_summary">Kode QR obdelamo v tej napravi. Brez računa, oglasov ali analitike. Zgodovina je neobvezna. Gesla za Wi-Fi se ne shranijo samodejno; pri ročnem shranjevanju kode Wi-Fi se shrani tudi geslo. Podatki se drugi aplikaciji posredujejo le, ko izberete zunanje dejanje. Zgodovino lahko izbrišete v Nastavitvah; tema in jezik ostaneta shranjena. Kontakt: brendigo.com.</string>
     <string name="about">O aplikaciji</string>
     <string name="developed_by">Razvil Brendigo</string>
-    <string name="confirm_delete">Izbrisati vse podatke?</string>
-    <string name="delete_warning">Zgodovina, kode in nastavitve bodo trajno izbrisane.</string>
+    <string name="confirm_delete">Izbrišem to kodo QR?</string>
     <string name="language">Jezik</string>
     <string name="system">Jezik naprave</string>
     <string name="history_local">Vaša zbirka QR</string>
@@ -83,4 +81,20 @@
     <string name="terms_of_use">Pogoji uporabe</string>
     <string name="terms_summary">Pred odpiranjem povezav preverite cilj kode QR. Delite ali izvažajte le dovoljene kode. ZIP lahko vsebuje gesla Wi-Fi. QREX je na voljo brez jamstev v zakonsko dovoljenem obsegu. Podpora: brendigo.com.</string>
     <string name="read_full_policy">Preberi celoten pravilnik</string>
+    <string name="tagline">Skeniraj. Ustvari. Deli.</string>
+    <string name="event">Dogodek</string>
+    <string name="event_title">Naslov dogodka</string>
+    <string name="event_start">Začetek</string>
+    <string name="event_end">Konec</string>
+    <string name="event_location">Lokacija</string>
+    <string name="event_details">Podrobnosti</string>
+    <string name="generate_qr">Ustvari kodo QR</string>
+    <string name="save_to_device">Shrani v napravo</string>
+    <string name="add_to_calendar">Dodaj v koledar</string>
+    <string name="edit">Uredi</string>
+    <string name="add_favorite">Dodaj med priljubljene</string>
+    <string name="remove_favorite">Odstrani iz priljubljenih</string>
+    <string name="clear_history">Počisti zgodovino</string>
+    <string name="confirm_clear_history">Počistim zgodovino?</string>
+    <string name="clear_history_warning">Vsi zapisi zgodovine in shranjene kode QR bodo trajno izbrisani. Nastavitve teme in jezika bodo ostale shranjene.</string>
 </resources>
