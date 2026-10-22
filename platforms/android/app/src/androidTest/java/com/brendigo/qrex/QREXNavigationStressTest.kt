@@ -226,6 +226,30 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun languageAndExportScreensFollowReferenceAndNavigateBack() {
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        requireScreenTag("qrex-more-screen", 0, "open More")
+        rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-language-screen", 0, "open full Language screen")
+        rule.onNodeWithTag("qrex-language-option-hr", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-detail-back", useUnmergedTree = true)
+            .performClick()
+        requireScreenTag("qrex-more-screen", 0, "return from Language")
+        rule.onNodeWithTag("qrex-more-export", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-export-screen", 0, "open full Export screen")
+        rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-export-zip", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-detail-back", useUnmergedTree = true)
+            .performClick()
+        requireScreenTag("qrex-more-screen", 0, "return from Export")
+    }
+
+    @Test
     fun activityRecreationKeepsNonSensitiveTabSelection() {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
