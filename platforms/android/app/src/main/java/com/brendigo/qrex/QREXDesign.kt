@@ -78,7 +78,7 @@ internal fun QrexBrandHeader(
             }
         }
         Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -167,11 +167,11 @@ internal fun QrexSettingsListRow(
                 Text(label, fontWeight = FontWeight.SemiBold,
                     color = if (destructive) accent
                         else MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    maxLines = 2, overflow = TextOverflow.Ellipsis)
                 if (subtitle != null) {
                     Text(subtitle, fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
             Icon(Icons.Default.ChevronRight, contentDescription = null,
@@ -233,7 +233,7 @@ internal fun QrexResultAction(
             Spacer(Modifier.width(12.dp))
             Text(label, modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium, maxLines = 1,
+                fontWeight = FontWeight.Medium, maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
             Icon(Icons.Default.ChevronRight, contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
