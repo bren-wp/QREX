@@ -24,16 +24,16 @@ These are **real Android emulator captures of the running QREX app**, generated 
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.6/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.7/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
 </table>
 
@@ -68,7 +68,7 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-Latest GitHub distribution: **v1.0.6** (Android `com.brendigo.qrex`, code 106). **The launcher and splash now use the new Q/QR reference mark. Dark navy remains the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), eight real Android screenshots and checksums.
+Next Android QA candidate: **v1.0.7** (`com.brendigo.qrex`, versionCode 107). The actual latest published release remains available under GitHub Releases until all v1.0.7 gates succeed. **The launcher and splash now use the new Q/QR reference mark. Dark navy remains the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), eight real Android screenshots and checksums.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
