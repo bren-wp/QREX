@@ -48,9 +48,9 @@ class QREXCoreTest {
     }
 
     @Test fun contactNameNewlinesCannotInjectVcardFields() {
-        val name = "Ana\\nBEGIN:VCARD"
+        val name = "Ana\nBEGIN:VCARD"
         val card = QRContent.contact(name)!!
-        assertEquals(1, "BEGIN:VCARD".toRegex().findAll(card).count())
+        assertEquals(1, card.lines().count { it == "BEGIN:VCARD" })
         assertEquals(name, QRContent.contactField(card, "FN"))
     }
 
