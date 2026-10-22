@@ -11,7 +11,8 @@ class QREXQrDecoderTest {
     private fun qr(value: String, width: Int = 251, height: Int = 197): ByteArray {
         val matrix = QRCodeWriter().encode(
             value, BarcodeFormat.QR_CODE, width, height,
-            mapOf(EncodeHintType.MARGIN to 4)
+            mapOf(EncodeHintType.MARGIN to 4,
+                EncodeHintType.CHARACTER_SET to "UTF-8")
         )
         return ByteArray(width * height) { i ->
             if (matrix[i % width, i / width]) 0 else 255.toByte()
