@@ -18,6 +18,15 @@ import java.util.Locale
 
 data class QRRecord(val raw: String, val timestamp: Long, val saved: Boolean)
 
+/** Keep the chosen time while changing calendar date. DatePicker already
+ * validates the new day/month; never apply the year or month to the old date
+ * first (31 January -> February can throw DateTimeException).
+ */
+internal fun eventDateTimeWithDate(
+    current: LocalDateTime, year: Int, monthZeroBased: Int, day: Int
+): LocalDateTime = java.time.LocalDate.of(year, monthZeroBased + 1, day)
+    .atTime(current.toLocalTime())
+
 /** Search saved QR information without exposing Wi-Fi secrets through keyword matches. */
 object QRHistory {
     fun matches(record: QRRecord, query: String, savedOnly: Boolean): Boolean {
