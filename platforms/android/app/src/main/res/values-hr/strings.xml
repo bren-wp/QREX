@@ -35,7 +35,7 @@
     <string name="share_failed">Dijeljenje nije dostupno.</string>
     <string name="link_failed">Poveznicu nije moguće otvoriti.</string>
     <string name="create_qr">Stvori QR kod</string>
-    <string name="enter_details">Odaberi vrstu i unesi podatke.</string>
+    <string name="enter_details">Vaši QR kodovi ostaju na vašem uređaju.</string>
     <string name="url">Poveznica</string>
     <string name="text">Tekst</string>
     <string name="wifi">Wi-Fi</string>
@@ -51,11 +51,11 @@
     <string name="invalid_content">Unesi valjan QR sadržaj.</string>
     <string name="show_qr">Prikaži QR kod</string>
     <string name="create_share">Prikaži i podijeli</string>
-    <string name="search_qr">Pretraži kodove</string>
+    <string name="search_qr">Pretraži povijest...</string>
     <string name="no_saved">Nema spremljenih kodova</string>
     <string name="clear">Očisti</string>
     <string name="delete">Izbriši</string>
-    <string name="settings">Postavke</string>
+    <string name="settings">Postavke, pravne informacije i više.</string>
     <string name="save_history">Spremanje povijesti</string>
     <string name="light_theme">Svijetli izgled</string>
     <string name="theme">Tema</string>
@@ -67,7 +67,7 @@
     <string name="confirm_delete">Izbrisati ovaj QR kod?</string>
     <string name="language">Jezik</string>
     <string name="system">Jezik uređaja</string>
-    <string name="history_local">Vaša zbirka</string>
+    <string name="history_local">Vaši prethodno skenirani i stvoreni QR kodovi.</string>
     <string name="export_png">Izvezi PNG</string>
     <string name="png_save_failed">PNG sliku nije moguće spremiti.</string>
     <string name="operation_failed">Radnja nije uspjela. Pokušajte ponovno.</string>
