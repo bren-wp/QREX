@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Safe-zone launcher foreground reproduces the same Q / QR / cyan scanner
+         motif used by qrex_icon.xml on Splash. Avoid a second color tile in the
+         foreground: Android applies its own circle/squircle launcher mask. -->
+    <group android:scaleX="0.91" android:scaleY="0.91"
+        android:pivotX="54" android:pivotY="54">
+        <path android:fillColor="#00000000"
+            android:strokeColor="#E5F9FF" android:strokeWidth="5.6"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M22,37 V30 Q22,23 29,23 H35"/>
+        <path android:fillColor="#00000000"
+            android:strokeColor="#41C9FF" android:strokeWidth="5.6"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M74,23 H80 Q86,23 86,30 V37"/>
+        <path android:fillColor="#00000000"
+            android:strokeColor="#3FD0FF" android:strokeWidth="5.6"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M22,72 V80 Q22,86 29,86 H36"/>
+        <path android:fillColor="#00000000"
+            android:strokeColor="#13E3F1" android:strokeWidth="5.6"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M74,86 H80 Q86,86 86,80 V73"/>
+        <path android:fillColor="#00000000"
+            android:strokeColor="#FFFFFF" android:strokeWidth="10"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M44,39 C34.1,39 26,47.1 26,57 C26,66.9 34.1,75 44,75 C53.9,75 62,66.9 62,57 C62,47.1 53.9,39 44,39 Z"/>
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M51,64 L59,57 L76,77 L68,84 Z"/>
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M68,36 H83 V51 H68 Z"/>
+        <path android:fillColor="#1151BA"
+            android:pathData="M72,40 H79 V47 H72 Z"/>
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M69,57 H76 V64 H69 Z"/>
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M80,57 H87 V64 H80 Z"/>
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M69,68 H76 V75 H69 Z"/>
+    </group>
+</vector>
