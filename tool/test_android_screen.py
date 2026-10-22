@@ -33,7 +33,7 @@ class ForegroundTests(unittest.TestCase):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Favoriti" />'
             '<node package="com.brendigo.qrex" text="brendigo.com" />'
-            '<node package="com.brendigo.qrex" text="Pretraži kodove" />'
+            '<node package="com.brendigo.qrex" text="Pretraži povijest..." />'
             '<node package="com.brendigo.qrex" text="Spremljeno" />'
         ), "saved")
 
