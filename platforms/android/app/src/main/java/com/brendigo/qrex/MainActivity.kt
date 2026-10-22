@@ -1546,7 +1546,7 @@ private fun MoreScreen(
             // The midnight-navy variant keeps its separate 2-column tiles.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 QrexSettingsListRow(tr("theme"), Icons.Default.Brightness4,
-                    subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
+                    subtitle = if (lightTheme) tr("light_theme") else tr("dark_theme"),
                     onClick = { store.updateLightMode(!store.lightMode) },
                     modifier = Modifier.testTag("qrex-more-theme"))
                 QrexSettingsListRow(tr("language"), Icons.Default.Translate,
