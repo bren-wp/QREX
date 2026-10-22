@@ -8,6 +8,37 @@ import org.junit.runner.RunWith
 
 /** Device-backed regression tests: never write Wi-Fi credentials to plaintext preferences. */
 @RunWith(AndroidJUnit4::class)
+
+/**
+ * Device-test fixture reset. Production history deletion intentionally preserves
+ * theme and language; this helper restores an isolated empty app state between
+ * storage tests without exposing a wipe-all action in the application API.
+ */
+private fun QREXStore.clearAll(): Boolean {
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
+    if (!clearHistory()) return false
+    val legacyCleared = context.getSharedPreferences(
+        "FlutterSharedPreferences", android.content.Context.MODE_PRIVATE
+    ).edit().clear().commit()
+    val preferencesCleared = context.getSharedPreferences(
+        "qrex.user", android.content.Context.MODE_PRIVATE
+    ).edit().clear().commit()
+    if (!legacyCleared || !preferencesCleared) return false
+    resetDelegate("historyEnabled", true)
+    resetDelegate("lightMode", false)
+    resetDelegate("language", "system")
+    return true
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun QREXStore.resetDelegate(name: String, value: Any?) {
+    val field = javaClass.getDeclaredField("${name}\$delegate").apply {
+        isAccessible = true
+    }
+    val state = field.get(this) as androidx.compose.runtime.MutableState<Any?>
+    state.value = value
+}
+
 class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
