@@ -123,7 +123,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('testTag("qrex-result-close")', self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
-        self.assertIn("Icon(typeIcons[index]", self.main)
+        self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)
+        self.assertIn("Icon(icon, contentDescription = null", self.main)
+        self.assertIn("layout.stackTypeChoices", self.main)
         self.assertIn("listOf(0, 1, 2, 6)", self.main)
         self.assertIn('testTag("qrex-create-show")', self.main)
         self.assertIn('testTag("qrex-create-save")', self.main)
