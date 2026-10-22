@@ -3,25 +3,48 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- Real launcher source: blue-to-cyan brand gradient, not a generated image. -->
+    <!-- QREX approved 2026-10-22 icon: white Q, white QR modules,
+         cyan scanner brackets and a blue-to-navy rounded-square badge.
+         The vector is intentionally kept sharp at every Android density. -->
     <path android:pathData="M0,0H108V108H0Z">
         <aapt:attr name="android:fillColor">
-            <gradient android:type="linear"
-                android:startX="0" android:startY="0"
-                android:endX="108" android:endY="108"
-                android:startColor="#1BCDF7"
-                android:centerColor="#087BFA"
-                android:endColor="#0732AB"/>
+            <gradient android:type="linear" android:startX="13" android:startY="9"
+                android:endX="93" android:endY="109"
+                android:startColor="#19CAFF" android:centerColor="#0868EE"
+                android:endColor="#07187E"/>
         </aapt:attr>
     </path>
+    <!-- Subtle illumination at the upper edge, deep blue at the bottom. -->
     <path android:fillColor="#00000000"
-        android:strokeColor="#F8FCFF" android:strokeWidth="5.5"
+        android:strokeColor="#54E9FF" android:strokeWidth="0.9"
+        android:pathData="M25,5 H83 C95,5 103,14 103,26 V82 C103,95 95,103 82,103 H26 C13,103 5,95 5,82 V26 C5,14 13,5 25,5 Z"/>
+    <path android:fillColor="#00000000"
+        android:strokeColor="#E5F9FF" android:strokeWidth="5.6"
         android:strokeLineCap="round" android:strokeLineJoin="round"
-        android:pathData="M22,42V30Q22,22 30,22H42 M66,22H78Q86,22 86,30V42 M22,66V78Q22,86 30,86H42 M66,86H78Q86,86 86,78V66"/>
+        android:pathData="M22,37 V30 Q22,23 29,23 H35"/>
     <path android:fillColor="#00000000"
-        android:strokeColor="#FFFFFF" android:strokeWidth="6.5"
-        android:strokeLineCap="round"
-        android:pathData="M46,40 C38.3,40 32,46.3 32,54 C32,61.7 38.3,68 46,68 C53.7,68 60,61.7 60,54 C60,46.3 53.7,40 46,40 Z M55,63L65,74"/>
-    <path android:fillColor="#F8FCFF" android:pathData="M67,42H80V55H67Z M67,62H73V68H67Z M77,62H82V67H77Z M77,71H82V76H77Z"/>
-    <path android:fillColor="#1056BF" android:pathData="M71,46H76V51H71Z"/>
+        android:strokeColor="#41C9FF" android:strokeWidth="5.6"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M74,23 H80 Q86,23 86,30 V37"/>
+    <path android:fillColor="#00000000"
+        android:strokeColor="#3FD0FF" android:strokeWidth="5.6"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M22,72 V80 Q22,86 29,86 H36"/>
+    <path android:fillColor="#00000000"
+        android:strokeColor="#13E3F1" android:strokeWidth="5.6"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M74,86 H80 Q86,86 86,80 V73"/>
+    <!-- Oversized white Q and diagonal tail match the dominant reference mark. -->
+    <path android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF" android:strokeWidth="10"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M44,39 C34.1,39 26,47.1 26,57 C26,66.9 34.1,75 44,75 C53.9,75 62,66.9 62,57 C62,47.1 53.9,39 44,39 Z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M51,64 L59,57 L76,77 L68,84 Z"/>
+    <!-- The distinctive QR cells sit above and to the right of the Q. -->
+    <path android:fillColor="#FFFFFF" android:pathData="M68,36 H83 V51 H68 Z"/>
+    <path android:fillColor="#1151BA" android:pathData="M72,40 H79 V47 H72 Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M69,57 H76 V64 H69 Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M80,57 H87 V64 H80 Z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M69,68 H76 V75 H69 Z"/>
 </vector>
