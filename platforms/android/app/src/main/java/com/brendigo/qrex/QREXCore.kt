@@ -307,14 +307,23 @@ class QREXStore(context: Context) {
      * until that commit succeeds, so a killed process can safely retry.
      */
     private fun migrateFlutterV1() {
-        if (preferences.getBoolean("flutterMigrationV1", false)) {
+        // A wrongly typed migration marker must never crash startup or be
+        // replaced by a new migration. Leave the original record recoverable.
+        val migrationDone = runCatching {
+            preferences.getBoolean("flutterMigrationV1", false)
+        }.getOrNull() ?: return
+        if (migrationDone) {
             // A process may have died after the native commit and before cleanup.
             // Only the exact migrated legacy history key is eligible for cleanup.
             legacyPreferences.edit().remove("flutter.qrex_history_v1").commit()
             return
         }
         val old = legacyPreferences
-        val oldEntries = old.getString("flutter.qrex_history_v1", null)
+        // A malformed legacy preference type is not an absent history key.
+        // Abort migration without touching or deleting the legacy payload.
+        val oldEntries = runCatching {
+            old.getString("flutter.qrex_history_v1", null)
+        }.getOrElse { return }
         if (oldEntries == null) {
             // A Flutter install can contain preferences without any saved QR.
             // Import them in the same durable commit as the migration marker.
