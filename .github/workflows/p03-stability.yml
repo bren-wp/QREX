@@ -90,9 +90,12 @@ jobs:
           disable-animations: true
           disable-spellchecker: true
           emulator-boot-timeout: 600
-          # Explicit SwiftShader backend avoids intermittent GLES context
-          # restore failures on unaccelerated Android 12 emulator guests.
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
+          # Keep the emulator's supported software renderer consistent with
+          # the real screenshot pipeline. Recent emulator 37 builds can exit
+          # before ADB TCP 5554 is available with deprecated
+          # swiftshader_indirect (seen on API 31). Boot failures never count
+          # as app crashes or passing stress tests.
+          emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -memory ${{ matrix.memory }} -cores 2
           script: bash tool/run_p03_emulator.sh ${{ matrix.api }}
       - name: Upload redacted crash-only summary, never raw logcat
         if: always()
