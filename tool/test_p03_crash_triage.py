@@ -26,9 +26,12 @@ class P03CrashLogTests(unittest.TestCase):
                     ".github/workflows/p03-stability.yml").read_text("utf-8")
         self.assertIn("test -r /dev/kvm && test -w /dev/kvm", workflow)
         self.assertIn("sudo udevadm trigger --name-match=kvm", workflow)
-        self.assertIn("-gpu swiftshader_indirect", workflow)
+        options = next(line.strip() for line in workflow.splitlines()
+                       if line.strip().startswith("emulator-options:"))
+        self.assertIn("-gpu software", options)
+        self.assertNotIn("-gpu swiftshader_indirect", options)
+        self.assertIn("-no-snapshot", options)
         self.assertIn("disable-spellchecker: true", workflow)
-        self.assertNotIn("-gpu software", workflow)
 
     def test_p03_changes_run_full_android_release_quality_workflows(self):
         from pathlib import Path
