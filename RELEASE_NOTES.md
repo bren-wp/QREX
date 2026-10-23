@@ -1,4 +1,12 @@
-## Next QA candidate: v1.0.8 · Android versionCode 108
+## Next QA candidate: v1.0.9 · Android versionCode 109
+
+QREX 1.0.9 protects startup against wrong-type saved preferences and legacy Flutter migration values; preserves unreadable data rather than silently overwriting it. Deletion now uses the stable QR payload even after a favorite changes. Instrumented regressions cover corrupted settings, corrupt migration markers, wrong-type legacy entries and stale deletions. The same dark/light reference screens and twelve genuine emulator screenshots remain intact.
+
+[Version 1.0.9 changes](docs/releases/v1.0.9.md)
+
+## Published: v1.0.8 · Android versionCode 108
+
+## Previous development: v1.0.8 · Android versionCode 108
 
 QREX 1.0.8 refines the dark Create QR preview and reference-aligned light Settings list. QA now validates both colour modes with twelve genuine emulator screen captures, including Light Create and Light More, without changing persisted user preferences. Exact-commit Android CI, screenshot and lifecycle tests must pass before merging or publishing.
 
