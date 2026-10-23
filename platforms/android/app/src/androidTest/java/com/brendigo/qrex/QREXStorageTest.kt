@@ -94,6 +94,88 @@ class QREXStorageTest {
     }
 
     @Test
+    fun malformedSettingsCannotCrashLaunchOrEraseEncryptedHistory() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val wifi = QRContent.wifi("Office-Šibenik", "sensitive-test-password")
+        assertTrue(initial.save(wifi))
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val originalHistory = prefs.getString("history", null)
+        assertNotNull(originalHistory)
+        assertFalse(originalHistory!!.contains("sensitive-test-password"))
+        assertTrue(prefs.edit()
+            .putString("lightMode", "not-a-boolean")
+            .putString("historyEnabled", "not-a-boolean")
+            .putBoolean("language", true)
+            .commit())
+
+        // SharedPreferences typed getters throw ClassCastException by default;
+        // QREX must still open, show its encrypted records and avoid rewriting
+        // any malformed preference until the user explicitly changes it.
+        val reopened = QREXStore(context)
+        assertFalse(reopened.lightMode)
+        assertTrue(reopened.historyEnabled)
+        assertEquals("system", reopened.language)
+        assertEquals(wifi, reopened.items.single().raw)
+        assertEquals(originalHistory, prefs.getString("history", null))
+        assertEquals("not-a-boolean", prefs.getString("lightMode", null))
+        assertEquals("not-a-boolean", prefs.getString("historyEnabled", null))
+        assertTrue(prefs.getBoolean("language", false))
+        assertTrue(reopened.clearAll())
+    }
+
+    @Test
+    fun deletingStaleFavoriteUsesStableQrIdentityAndRejectsMissingRecords() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val raw = "https://example.org/favorite-delete"
+        assertTrue(store.save(raw))
+        val previouslySaved = store.items.single()
+        assertTrue(previouslySaved.saved)
+        assertTrue(store.setSaved(previouslySaved, false))
+        assertFalse(store.items.single().saved)
+        // The still-open Result may retain the previous QRRecord snapshot.
+        assertTrue(store.remove(previouslySaved))
+        assertTrue(store.items.isEmpty())
+        assertTrue(QREXStore(context).items.isEmpty())
+        assertFalse(store.remove(previouslySaved))
+        assertTrue(store.clearAll())
+    }
+
+    @Test
+    fun invalidMigrationMarkerCannotCrashOrOverwriteExistingHistory() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val raw = "https://example.org/keep-before-repair"
+        assertTrue(initial.save(raw))
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val stored = prefs.getString("history", null)
+        assertTrue(prefs.edit()
+            .putString("flutterMigrationV1", "wrong-type")
+            .commit())
+
+        val restarted = QREXStore(context)
+        assertEquals(raw, restarted.items.single().raw)
+        assertEquals(stored, prefs.getString("history", null))
+        assertEquals("wrong-type", prefs.getString("flutterMigrationV1", null))
+        assertTrue(restarted.clearAll())
+    }
+
+    @Test
+    fun invalidFlutterHistoryTypeNeverMarksMigrationOrDeletesLegacyData() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(flutter.edit().putBoolean("flutter.qrex_history_v1", true).commit())
+        val reopened = QREXStore(context)
+        assertTrue(reopened.items.isEmpty())
+        assertFalse(prefs.getBoolean("flutterMigrationV1", false))
+        assertTrue(flutter.getBoolean("flutter.qrex_history_v1", false))
+        assertTrue(reopened.clearAll())
+    }
+
+    @Test
     fun savedWifiPasswordIsEncryptedAndCanBeRestored() {
         val store = QREXStore(context)
         store.clearAll()
