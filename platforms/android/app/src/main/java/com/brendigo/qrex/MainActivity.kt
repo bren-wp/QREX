@@ -723,7 +723,7 @@ private fun QrexCreateTypeChoice(
     selected: Boolean,
     modifier: Modifier = Modifier,
     lightReference: Boolean = false,
-    accent: Color = MaterialTheme.colorScheme.primary,
+    accent: Color = QrexDesign.accentBright,
     onClick: () -> Unit
 ) {
     val theme = MaterialTheme.colorScheme
