@@ -217,11 +217,22 @@ class QREXStore(context: Context) {
     // edits instead of performing up to 250 Keystore encryptions per tap.
     private val protectedWifi = mutableMapOf<String, String>()
     val items = mutableStateListOf<QRRecord>()
-    var historyEnabled by mutableStateOf(preferences.getBoolean("historyEnabled", true))
+    // SharedPreferences can contain a value of the wrong type after an
+    // interrupted old migration or an external restore. Android getters throw
+    // ClassCastException in this case. Use safe in-memory defaults, but NEVER
+    // silently overwrite or delete the original preferences/history.
+    private fun readBoolean(key: String, fallback: Boolean): Boolean =
+        runCatching { preferences.getBoolean(key, fallback) }.getOrDefault(fallback)
+
+    private fun readLanguage(): String =
+        runCatching { preferences.getString("language", "system") }.getOrNull()
+            ?.takeIf { it == "system" || it in QREXStrings.languages } ?: "system"
+
+    var historyEnabled by mutableStateOf(readBoolean("historyEnabled", true))
         private set
-    var lightMode by mutableStateOf(preferences.getBoolean("lightMode", false))
+    var lightMode by mutableStateOf(readBoolean("lightMode", false))
         private set
-    var language by mutableStateOf(preferences.getString("language", "system") ?: "system")
+    var language by mutableStateOf(readLanguage())
         private set
 
     init {
@@ -439,7 +450,11 @@ class QREXStore(context: Context) {
     }
 
     fun remove(item: QRRecord): Boolean {
-        val next = items.filterNot { it == item }
+        // History rows can become stale after a favorite toggle or scan
+        // refresh. Identity is the raw QR payload, not the old saved flag or
+        // timestamp. A missing record is NOT a successful deletion.
+        if (items.none { it.raw == item.raw }) return false
+        val next = items.filterNot { it.raw == item.raw }
         if (!persist(next)) return false
         items.clear()
         items.addAll(next)
