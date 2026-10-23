@@ -1,4 +1,12 @@
-## Next QA candidate: v1.0.9 · Android versionCode 109
+## Next QA candidate: v1.0.10 · Android versionCode 110
+
+Light Create now exposes all seven reference QR types in a real 3-column responsive grid (2-column on compact phones and with large font), with pale-blue selection, accessible coloured icons and working content forms. Dark mode retains its distinct 4-choice design. A complete index of historical v1.0.0–v1.0.9 APK/AAB releases is added; all original GitHub release tags/assets are preserved.
+
+[Version 1.0.10 changes](docs/releases/v1.0.10.md) · [Historical release archive](docs/releases/INDEX.md)
+
+## Published: v1.0.9 · Android versionCode 109
+
+## Previous development: v1.0.9 · Android versionCode 109
 
 QREX 1.0.9 protects startup against wrong-type saved preferences and legacy Flutter migration values; preserves unreadable data rather than silently overwriting it. Deletion now uses the stable QR payload even after a favorite changes. Instrumented regressions cover corrupted settings, corrupt migration markers, wrong-type legacy entries and stale deletions. The same dark/light reference screens and twelve genuine emulator screenshots remain intact.
 

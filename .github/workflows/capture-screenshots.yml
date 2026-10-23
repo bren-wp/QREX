@@ -101,9 +101,9 @@ jobs:
       - name: Verify compact, reference and large-font device captures
         run: |
           for image in \
-            compact-create compact-scan compact-more \
-            reference-create reference-more \
-            largefont-create largefont-more; do
+            compact-create compact-scan compact-more compact-light-create \
+            reference-create reference-more reference-light-create \
+            largefont-create largefont-more largefont-light-create; do
             test -s "docs/screenshots/responsive/${image}.png"
           done
           python3 tool/verify_screenshots.py docs/screenshots/responsive/*.png

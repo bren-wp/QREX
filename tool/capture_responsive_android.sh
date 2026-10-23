@@ -15,9 +15,9 @@ trap restore_device EXIT
 # profile | actual pixel width x height | density DPI | Android font scale |
 # screens: 320dp compact, ~393dp reference handset, enlarged text handset
 profiles=(
-  "compact|720x1280|360|1.0|create,scan,more"
-  "reference|1080x2340|440|1.0|create,more"
-  "largefont|1080x2340|440|1.6|create,more"
+  "compact|720x1280|360|1.0|create,scan,more,light-create"
+  "reference|1080x2340|440|1.0|create,more,light-create"
+  "largefont|1080x2340|440|1.6|create,more,light-create"
 )
 
 for spec in "${profiles[@]}"; do
@@ -27,13 +27,19 @@ for spec in "${profiles[@]}"; do
   timeout -k 2s 12s adb shell settings put system font_scale "$scale"
   IFS=',' read -r -a targets <<< "$screens"
   for screen in "${targets[@]}"; do
+    fixture="$screen"
+    theme_args=()
+    if [[ "$screen" == light-* ]]; then
+      fixture="${screen#light-}"
+      theme_args=(--ez qrex_light true)
+    fi
     file="docs/screenshots/responsive/${profile}-${screen}.png"
     hierarchy="docs/screenshots/responsive/${profile}-${screen}.xml"
     rm -f "$file" "$hierarchy"
     for attempt in 1 2 3; do
       timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
       timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
-        --es qrex_screenshot "$screen" --es qrex_language hr
+        --es qrex_screenshot "$fixture" --es qrex_language hr "${theme_args[@]}"
       sleep 5
       if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-responsive.xml >/dev/null 2>&1 \
         && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-responsive.xml > "$hierarchy" \
@@ -62,4 +68,4 @@ if actual != expected[sys.argv[1]]:
 PY
   done
 done
-echo "Verified 7 genuine responsive screenshots: 320dp, 393dp and 1.6x font."
+echo "Verified 10 genuine responsive screenshots: 320dp, 393dp and 1.6x font including light Create."

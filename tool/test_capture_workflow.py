@@ -91,6 +91,9 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("trap restore_device EXIT", responsive)
         self.assertIn('qrex-responsive-android', WORKFLOW.read_text("utf-8"))
         self.assertIn("capture_responsive_android.sh", body)
+        self.assertIn("light-create", responsive)
+        self.assertIn("theme_args=(--ez qrex_light true)", responsive)
+        self.assertIn("compact-light-create", WORKFLOW.read_text("utf-8"))
         self.assertIn("exit 1", body)
 
 

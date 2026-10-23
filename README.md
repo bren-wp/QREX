@@ -75,7 +75,9 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-Currently published: **v1.0.8** (`com.brendigo.qrex`, versionCode 108). The next QA candidate is **v1.0.9** (`versionCode 109`), which hardens startup against damaged settings and prevents stale QR deletion errors; it is not published until all CI gates succeed. **The launcher and splash now use the new Q/QR reference mark. Dark navy remains the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), twelve real Android screenshots and checksums.
+[**All historical QREX releases (v1.0.0–v1.0.9) →**](docs/releases/INDEX.md)
+
+Latest published release: **v1.0.9** (`com.brendigo.qrex`, versionCode 109). Next Android QA candidate: **v1.0.10** (`versionCode 110`), extending the real light-mode Create QR screen to the supplied seven-type grid while retaining dark-mode layouts. v1.0.10 is not published until all CI gates succeed. **The launcher and splash now use the new Q/QR reference mark. Dark navy remains the primary theme**, with an optional light mode that respects existing user settings. The release includes a signed standalone GitHub APK, a GitHub-signed AAB for analysis (**not a Google Play upload artifact**), twelve real Android screenshots and checksums.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 

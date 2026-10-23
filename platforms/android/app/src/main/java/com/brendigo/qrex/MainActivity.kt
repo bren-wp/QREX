@@ -722,26 +722,48 @@ private fun QrexCreateTypeChoice(
     icon: ImageVector,
     selected: Boolean,
     modifier: Modifier = Modifier,
+    lightReference: Boolean = false,
+    accent: Color = QrexDesign.accentBright,
     onClick: () -> Unit
 ) {
+    val theme = MaterialTheme.colorScheme
+    val ink = if (lightReference) theme.onSurface else theme.onSurfaceVariant
     Surface(
         onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
+        modifier = modifier.heightIn(min = if (lightReference) 58.dp else 48.dp),
         shape = RoundedCornerShape(11.dp),
-        color = if (selected) QrexDesign.accent else MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        color = when {
+            lightReference && selected -> theme.primaryContainer
+            selected -> QrexDesign.accent
+            else -> theme.surface
+        },
+        border = BorderStroke(1.dp, when {
+            lightReference && selected -> theme.primary
+            else -> theme.outlineVariant
+        })
     ) {
         Row(Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null,
-                modifier = Modifier.size(15.dp),
-                tint = if (selected) Color.White else MaterialTheme.colorScheme.primary)
+            if (lightReference) {
+                Surface(shape = RoundedCornerShape(30.dp),
+                    color = accent.copy(alpha = .12f)) {
+                    Box(Modifier.size(28.dp), contentAlignment = Alignment.Center) {
+                        Icon(icon, contentDescription = null,
+                            modifier = Modifier.size(17.dp), tint = accent)
+                    }
+                }
+            } else {
+                Icon(icon, contentDescription = null,
+                    modifier = Modifier.size(15.dp),
+                    tint = if (selected) Color.White else theme.primary)
+            }
             Spacer(Modifier.width(4.dp))
             Text(label, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.SemiBold, fontSize = 10.sp,
-                color = if (selected) Color.White
-                    else MaterialTheme.colorScheme.onSurfaceVariant)
+                fontWeight = FontWeight.SemiBold,
+                fontSize = if (lightReference) 11.sp else 10.sp,
+                color = if (lightReference) ink else
+                    if (selected) Color.White else theme.onSurfaceVariant)
         }
     }
 }
@@ -955,14 +977,51 @@ private fun CreateScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
 
             val quickTypes = listOf(0, 1, 2, 6)
+            // Light reference uses all seven primary QR types as visible
+            // cards. Events stay in More, as in the supplied phone concepts.
+            val referenceTypes = listOf(0, 1, 2, 6, 3, 4, 5)
+            val referenceAccents = mapOf(
+                0 to Color(0xFF086BEE), 1 to Color(0xFF8D55D9),
+                2 to Color(0xFF14A968), 6 to Color(0xFFDF8119),
+                3 to Color(0xFF0874D8), 4 to Color(0xFFDB3754),
+                5 to Color(0xFF086BEE)
+            )
             val selectType: (Int) -> Unit = { index ->
                 kind = index
                 content = ""
                 password = ""
                 contactPhone = ""
                 contactEmail = ""
+                eventLocation = ""
+                eventDescription = ""
             }
-            if (layout.stackTypeChoices) {
+            if (lightTheme) {
+                // Standard phone: 3-column reference grid; 320dp phones or
+                // larger text: 2 columns. Stable fixed rows avoid the Android
+                // 8 SubcomposeLayout regression observed in older builds.
+                val columns = if (layout.stackTypeChoices) 2 else 3
+                Column(Modifier.fillMaxWidth()
+                    .testTag("qrex-light-types-grid"),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    referenceTypes.chunked(columns).forEach { group ->
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            group.forEach { index ->
+                                QrexCreateTypeChoice(
+                                    types[index], typeIcons[index],
+                                    selected = kind == index,
+                                    modifier = Modifier.weight(1f)
+                                        .testTag("qrex-create-type-$index"),
+                                    lightReference = true,
+                                    accent = referenceAccents[index] ?: MaterialTheme.colorScheme.primary,
+                                    onClick = { selectType(index) })
+                            }
+                            // Preserve exact card widths in the final partial row.
+                            repeat(columns - group.size) { Spacer(Modifier.weight(1f)) }
+                        }
+                    }
+                }
+            } else if (layout.stackTypeChoices) {
                 // 320dp phones and large accessibility fonts: 2 × 2 prevents
                 // truncated type names and overlapping selectable tiles.
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
