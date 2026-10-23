@@ -22,7 +22,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
-        self.assertIn(".size(104.dp).background(Color.White).padding(7.dp)", self.main)
+        self.assertIn(".size(qrSize).background(Color.White).padding(7.dp)", self.main)
+        self.assertIn("qrexLayoutProfile(", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
     def test_dark_theme_is_default_and_navigation_contrast_is_adaptive(self):
@@ -33,7 +34,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.backgroundDeep", self.main)
         self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
         self.assertIn(
-            "if (store.lightMode) Color(0xFF1156AE) else QrexDesign.accentBright",
+            "if (lightTheme) Color(0xFF1156AE) else QrexDesign.accentBright",
             self.main,
         )
         self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
@@ -62,7 +63,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("else QrexDesign.accentBright", self.main)
         self.assertIn("else QrexDesign.backgroundDeep", self.main)
-        self.assertIn("indicatorColor = if (store.lightMode)", self.main)
+        self.assertIn("indicatorColor = if (lightTheme)", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 48.dp)", design)
@@ -88,6 +89,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
         self.assertIn("heightIn(min = 84.dp)", design)
         self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
+        self.assertIn("QrexSettingsListRow(", self.main)
         self.assertIn('store.updateLanguage(code)', self.details)
         self.assertIn('"language" -> QrexLanguageDetails(store,', self.main)
         self.assertIn('"export" -> QrexExportDetails(', self.main)
@@ -121,7 +123,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('testTag("qrex-result-close")', self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
-        self.assertIn("Icon(typeIcons[index]", self.main)
+        self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)
+        self.assertIn("Icon(icon, contentDescription = null", self.main)
+        self.assertIn("layout.stackTypeChoices", self.main)
         self.assertIn("listOf(0, 1, 2, 6)", self.main)
         self.assertIn('testTag("qrex-create-show")', self.main)
         self.assertIn('testTag("qrex-create-save")', self.main)

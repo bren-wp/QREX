@@ -1,3 +1,10 @@
+## Next QA candidate: v1.0.8 · Android versionCode 108
+
+QREX 1.0.8 refines the dark Create QR preview and reference-aligned light Settings list. QA now validates both colour modes with twelve genuine emulator screen captures, including Light Create and Light More, without changing persisted user preferences. Exact-commit Android CI, screenshot and lifecycle tests must pass before merging or publishing.
+
+[Version 1.0.8 changes](docs/releases/v1.0.8.md)
+
+## Published: v1.0.7 · Android versionCode 107
 # QREX — Scan. Create. Share.
 
 ## Latest candidate: v1.0.7 · Android versionCode 107

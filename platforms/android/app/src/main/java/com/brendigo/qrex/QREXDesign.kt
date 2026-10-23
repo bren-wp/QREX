@@ -78,7 +78,7 @@ internal fun QrexBrandHeader(
             }
         }
         Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -131,6 +131,82 @@ internal fun QrexSettingsTile(
     }
 }
 
+/** Reference light-mode More page uses compact *rows* rather than the
+ * dark design's two-column tiles. A single real surface is the touch target;
+ * no nested decorative clickable elements or fake menu controls.
+ */
+@Composable
+internal fun QrexSettingsListRow(
+    label: String,
+    icon: ImageVector,
+    subtitle: String? = null,
+    destructive: Boolean = false,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val accent = if (destructive) MaterialTheme.colorScheme.error
+        else MaterialTheme.colorScheme.primary
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth().heightIn(min = 58.dp),
+        shape = RoundedCornerShape(13.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Surface(shape = RoundedCornerShape(11.dp),
+                color = accent.copy(alpha = .10f)) {
+                Box(Modifier.size(34.dp), contentAlignment = Alignment.Center) {
+                    Icon(icon, contentDescription = null, tint = accent,
+                        modifier = Modifier.size(19.dp))
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(label, fontWeight = FontWeight.SemiBold,
+                    color = if (destructive) accent
+                        else MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (subtitle != null) {
+                    Text(subtitle, fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2, overflow = TextOverflow.Ellipsis)
+                }
+            }
+            Icon(Icons.Default.ChevronRight, contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp))
+        }
+    }
+}
+
+/** Window-class layout rules for phones: source of truth for responsive
+ * Compose sizing. Width/height refer to the available content viewport in dp,
+ * not a particular physical handset, density or marketing mockup.
+ */
+internal data class QrexLayoutProfile(
+    val stackTypeChoices: Boolean,
+    val showQrPreview: Boolean,
+    val lightQrSizeDp: Int,
+    val darkQrSizeDp: Int,
+    val horizontalPaddingDp: Int
+)
+
+internal fun qrexLayoutProfile(
+    widthDp: Int, heightDp: Int, fontScale: Float
+): QrexLayoutProfile {
+    val narrow = widthDp < 360 || fontScale >= 1.30f
+    val short = heightDp < 620 || fontScale >= 1.45f
+    return QrexLayoutProfile(
+        stackTypeChoices = narrow,
+        showQrPreview = heightDp >= 420 && fontScale < 1.70f,
+        lightQrSizeDp = if (narrow || short) 80 else 104,
+        darkQrSizeDp = if (narrow || short) 104 else 156,
+        horizontalPaddingDp = if (widthDp < 350) 12 else 16
+    )
+}
+
 /** Reference-style result action: real full-width button with a touch target
  * >= 52dp, clear icon, legible label and chevron. Never an inert decorative card.
  */
@@ -157,7 +233,7 @@ internal fun QrexResultAction(
             Spacer(Modifier.width(12.dp))
             Text(label, modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium, maxLines = 1,
+                fontWeight = FontWeight.Medium, maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
             Icon(Icons.Default.ChevronRight, contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,

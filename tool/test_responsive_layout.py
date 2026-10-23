@@ -18,9 +18,11 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
         # Fixed aspect-ratio, capped-width QR images fit narrow devices
         # without SubcomposeLayout, whose repeated disposal crashed API 26.
         self.assertNotIn("BoxWithConstraints(", main)
+        self.assertIn("val layout = qrexLayoutProfile(", main)
+        self.assertIn("window.screenWidthDp", main)
         self.assertIn("Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)", main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", main)
-        self.assertIn(".size(104.dp).background(Color.White).padding(7.dp)", main)
+        self.assertIn(".size(qrSize).background(Color.White).padding(7.dp)", main)
         self.assertNotIn("Modifier.size(230.dp).background(white)", main)
         self.assertNotIn("Modifier.size(238.dp).background(white)", main)
 
@@ -35,6 +37,8 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
         self.assertIn(".fillMaxWidth().weight(1f)", android)
         self.assertIn("PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)", android)
         self.assertIn("if (allowed) {", android)
+        self.assertNotIn("BoxWithConstraints(", android)
+        self.assertIn("val compactScan = window.screenWidthDp < 360", android)
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ on:
       - "tool/verify_screenshots.py"
       - "tool/check_android_screen.py"
       - "tool/capture_android_screen.sh"
+      - "tool/capture_responsive_android.sh"
       - "tool/test_capture_workflow.py"
       - "tool/verify_production_gate.sh"
       - ".github/workflows/production-release.yml"
@@ -84,10 +85,10 @@ jobs:
           # capture_android_screen.sh already runs connectedDebugAndroidTest
           # with hard deadlines; keep ONE shell to avoid duplicate runs.
           script: bash tool/capture_android_screen.sh
-      - name: Verify all ten actual emulator screenshots
+      - name: Verify all twelve actual emulator screenshots
         run: |
           test -s docs/screenshots/android-create.png
-          for screen in splash create scan wifi result history saved more language export; do
+          for screen in splash create scan wifi result history saved more language export light-create light-more; do
             test -s "docs/screenshots/android-${screen}.png"
           done
           python3 tool/verify_screenshots.py docs/screenshots/android-*.png
@@ -97,6 +98,20 @@ jobs:
           for image in Path("docs/screenshots").glob("android-*.png"):
               assert verify(image) == (1080, 1920), f"Google Play screenshot has invalid dimensions: {image}"
           PY
+      - name: Verify compact, reference and large-font device captures
+        run: |
+          for image in \
+            compact-create compact-scan compact-more \
+            reference-create reference-more \
+            largefont-create largefont-more; do
+            test -s "docs/screenshots/responsive/${image}.png"
+          done
+          python3 tool/verify_screenshots.py docs/screenshots/responsive/*.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qrex-responsive-android
+          path: docs/screenshots/responsive/*.png
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
           name: qrex-actual-android

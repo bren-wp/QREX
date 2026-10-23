@@ -145,7 +145,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         ):
             self.assertIn(artifact, published)
         self.assertIn("cannot update in place", notes)
-        self.assertIn("v1.0.7/android-create.png",
+        self.assertIn("v1.0.8/android-create.png",
                       (ROOT / "README.md").read_text("utf-8"))
         self.assertIn("1.0.5", notes)
 
@@ -179,6 +179,20 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("107", notes)
         self.assertIn("cannot upgrade differently signed", notes)
 
+    def test_108_reference_light_dark_release_requires_twelve_real_screens(self):
+        release = (WORKFLOWS / "github-release-1.0.8.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.8.md").read_text("utf-8")
+        self.assertIn("gh release create v1.0.8", release)
+        self.assertIn("com.brendigo.qrex 108 1.0.8", release)
+        self.assertIn("assert len(screens) == 12", release)
+        for gate in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml", "SHA256SUMS.txt", "apksigner",
+                     "android-light-create.png", "android-light-more.png"):
+            self.assertIn(gate, release)
+        self.assertIn("keytool -genkeypair", release)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", release)
+        self.assertIn("108", notes)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
@@ -195,8 +209,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 107", gradle)
-        self.assertIn('versionName = "1.0.7"', gradle)
+        self.assertIn("versionCode = 108", gradle)
+        self.assertIn('versionName = "1.0.8"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -207,6 +221,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.5.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.6.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.7.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.8.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
