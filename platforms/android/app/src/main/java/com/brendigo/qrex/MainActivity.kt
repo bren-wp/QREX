@@ -979,13 +979,37 @@ private fun CreateScreen(
                     }
                 }
             } else {
+                // Preserve the stable, previously API-26-tested Compose
+                // hierarchy for regular phone windows. Only compact devices
+                // use the separate responsive button implementation.
                 Row(Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     quickTypes.forEach { index ->
-                        QrexCreateTypeChoice(types[index], typeIcons[index],
-                            selected = kind == index,
-                            modifier = Modifier.weight(1f),
-                            onClick = { selectType(index) })
+                        Surface(
+                            onClick = { selectType(index) },
+                            modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+                            shape = RoundedCornerShape(11.dp),
+                            color = if (kind == index) QrexDesign.accent
+                                else MaterialTheme.colorScheme.surface,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                        ) {
+                            Row(
+                                Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(typeIcons[index], contentDescription = null,
+                                    modifier = Modifier.size(15.dp),
+                                    tint = if (kind == index) Color.White
+                                        else MaterialTheme.colorScheme.primary)
+                                Spacer(Modifier.width(4.dp))
+                                Text(types[index], maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.SemiBold, fontSize = 10.sp,
+                                    color = if (kind == index) Color.White
+                                        else MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
                     }
                 }
             }
