@@ -143,6 +143,39 @@ class QREXStorageTest {
     }
 
     @Test
+    fun invalidMigrationMarkerCannotCrashOrOverwriteExistingHistory() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val raw = "https://example.org/keep-before-repair"
+        assertTrue(initial.save(raw))
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val stored = prefs.getString("history", null)
+        assertTrue(prefs.edit()
+            .putString("flutterMigrationV1", "wrong-type")
+            .commit())
+
+        val restarted = QREXStore(context)
+        assertEquals(raw, restarted.items.single().raw)
+        assertEquals(stored, prefs.getString("history", null))
+        assertEquals("wrong-type", prefs.getString("flutterMigrationV1", null))
+        assertTrue(restarted.clearAll())
+    }
+
+    @Test
+    fun invalidFlutterHistoryTypeNeverMarksMigrationOrDeletesLegacyData() {
+        val initial = QREXStore(context)
+        assertTrue(initial.clearAll())
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        assertTrue(flutter.edit().putBoolean("flutter.qrex_history_v1", true).commit())
+        val reopened = QREXStore(context)
+        assertTrue(reopened.items.isEmpty())
+        assertFalse(prefs.getBoolean("flutterMigrationV1", false))
+        assertTrue(flutter.getBoolean("flutter.qrex_history_v1", false))
+        assertTrue(reopened.clearAll())
+    }
+
+    @Test
     fun savedWifiPasswordIsEncryptedAndCanBeRestored() {
         val store = QREXStore(context)
         store.clearAll()
