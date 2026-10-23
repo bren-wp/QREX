@@ -250,6 +250,39 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun lightReferenceGridShowsSevenRealQrTypeActions() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        val alreadyLight = rule.onAllNodesWithTag(
+            "qrex-light-types-grid", useUnmergedTree = true
+        ).fetchSemanticsNodes().isNotEmpty()
+        if (!alreadyLight) {
+            rule.onNodeWithTag("qrex-tab-4").performClick()
+            rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
+                .performClick()
+            rule.onNodeWithTag("qrex-tab-1").performClick()
+        }
+        try {
+            requireScreenTag("qrex-light-types-grid", 0, "light Create options")
+            for (kind in listOf(0, 1, 2, 6, 3, 4, 5)) {
+                rule.onNodeWithTag("qrex-create-type-$kind", useUnmergedTree = true)
+                    .performScrollTo().assertIsDisplayed()
+            }
+            for (kind in listOf(3, 4, 5, 0)) {
+                rule.onNodeWithTag("qrex-create-type-$kind", useUnmergedTree = true)
+                    .performScrollTo().performClick()
+                rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+                    .assertIsDisplayed()
+            }
+        } finally {
+            if (!alreadyLight) {
+                rule.onNodeWithTag("qrex-tab-4").performClick()
+                rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
+                    .performClick()
+            }
+        }
+    }
+
+    @Test
     fun bothThemeSettingsLayoutsPreserveClickableActions() {
         rule.onNodeWithTag("qrex-tab-4").performClick()
         requireScreenTag("qrex-more-screen", 0, "More before theme switch")
