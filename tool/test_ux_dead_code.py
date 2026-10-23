@@ -29,7 +29,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_dark_theme_is_default_and_navigation_contrast_is_adaptive(self):
         # Dark is the persisted fresh-install default, but an existing user's
         # explicit light-mode choice must continue to be respected.
-        self.assertIn('getBoolean("lightMode", false)', self.core)
+        self.assertIn('readBoolean("lightMode", false)', self.core)
+        self.assertIn('runCatching { preferences.getBoolean(key, fallback) }', self.core)
+        self.assertIn('fun readLanguage()', self.core)
         self.assertIn(") else darkColorScheme(", self.main)
         self.assertIn("QrexDesign.backgroundDeep", self.main)
         self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
