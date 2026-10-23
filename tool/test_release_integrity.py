@@ -208,6 +208,25 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("wrong-type", notes)
         self.assertIn("109", notes)
 
+    def test_110_reference_grid_release_preserves_all_historical_versions(self):
+        workflow = (WORKFLOWS / "github-release-1.0.10.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.10.md").read_text("utf-8")
+        archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
+        activity = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
+        self.assertIn("gh release create v1.0.10", workflow)
+        self.assertIn("com.brendigo.qrex 110 1.0.10", workflow)
+        self.assertIn("assert len(screens) == 12", workflow)
+        for name in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml", "SHA256SUMS.txt",
+                     "apksigner", "android-light-create.png"):
+            self.assertIn(name, workflow)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", workflow)
+        for version in range(10):
+            self.assertIn(f"releases/tag/v1.0.{version}", archive)
+        self.assertIn("qrex-light-types-grid", activity)
+        self.assertIn("referenceTypes.chunked(columns)", activity)
+        self.assertIn("110", notes)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
@@ -224,8 +243,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 109", gradle)
-        self.assertIn('versionName = "1.0.9"', gradle)
+        self.assertIn("versionCode = 110", gradle)
+        self.assertIn('versionName = "1.0.10"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -238,6 +257,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.7.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.8.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.9.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.10.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
