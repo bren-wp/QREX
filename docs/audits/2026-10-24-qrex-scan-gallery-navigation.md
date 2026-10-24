@@ -14,3 +14,8 @@ Source base: v1.0.12 `main` (`94a1c714b27d1d0afc3a63e8d88b730805df27d4`).
 Kotlin unit tests include gallery-camera priority, handled-result exclusion and frame throttle; Python checks verify the actual Compose/CameraX source contracts. GitHub CI must compile, run unit tests, lint, build R8 release variants, validate all locales and capture real emulator screens. Manual device checks are still required for photo picker cancellation, TalkBack, rapid repeated scans, landscape layout, API 26 and OEM camera behavior.
 
 No user history, Keystore alias, storage schema, package ID, permission manifest, signing identity or published APK/AAB is changed. This source audit does not claim universal zero-crash certification.
+
+
+## Follow-up: compact Create screen regression
+
+Source inspection found an unreachable two-column quick-type layout: `if (layout.stackTypeChoices) { } else if (layout.stackTypeChoices)` made the compact branch empty. On narrow phones or at large font scales this hid every pinned QR type choice. Replaced it with a single active `if (layout.stackTypeChoices)` branch, added stable semantic test tags to the four actual quick-type surfaces in both layouts, a static regression check for the malformed condition, and an Android Compose instrumentation test that opens Create and taps the Wi-Fi type. This change does not alter data persistence, encoder output or QR types.

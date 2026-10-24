@@ -214,6 +214,19 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun createQuickTypesAreReachableAndWorkOnRealComposeUi() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create quick choices")
+        for (type in listOf(0, 1, 2, 6)) {
+            rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
+                .assertIsDisplayed()
+        }
+        // Choosing Wi-Fi must render its actual form, not a dead tile.
+        rule.onNodeWithTag("qrex-create-type-2", useUnmergedTree = true).performClick()
+        rule.onNodeWithTag("qrex-create-screen").assertIsDisplayed()
+    }
+
+    @Test
     fun scanFirstKeepsGalleryAndTorchAsSingleClearActions() {
         rule.onNodeWithTag("qrex-tab-0").assertIsSelected()
         rule.onNodeWithTag("qrex-scan-gallery", useUnmergedTree = true)

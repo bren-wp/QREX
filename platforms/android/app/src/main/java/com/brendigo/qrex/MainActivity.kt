@@ -920,7 +920,7 @@ private fun CreateScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
 
             val quickTypes = listOf(0, 1, 2, 6)
-             val selectType: (Int) -> Unit = { index ->
+            val selectType: (Int) -> Unit = { index ->
                 kind = index
                 content = ""
                 password = ""
@@ -929,7 +929,7 @@ private fun CreateScreen(
                 eventLocation = ""
                 eventDescription = ""
             }
-            if (layout.stackTypeChoices) {            } else if (layout.stackTypeChoices) {
+            if (layout.stackTypeChoices) {
                 // 320dp phones and large accessibility fonts: 2 × 2 prevents
                 // truncated type names and overlapping selectable tiles.
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -939,7 +939,7 @@ private fun CreateScreen(
                             pair.forEach { index ->
                                 QrexCreateTypeChoice(types[index], typeIcons[index],
                                     selected = kind == index,
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(1f).testTag("qrex-create-type-$index"),
                                     onClick = { selectType(index) })
                             }
                         }
@@ -954,7 +954,8 @@ private fun CreateScreen(
                     quickTypes.forEach { index ->
                         Surface(
                             onClick = { selectType(index) },
-                            modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                                .testTag("qrex-create-type-$index"),
                             shape = RoundedCornerShape(11.dp),
                             color = if (kind == index) QrexDesign.accent
                                 else MaterialTheme.colorScheme.surface,

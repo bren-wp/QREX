@@ -135,6 +135,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("showResultMenu", self.main)
         self.assertIn('testTag("qrex-result-close")', self.main)
 
+    def test_compact_create_quick_types_are_not_hidden_by_unreachable_branch(self):
+        # Before this fix, an empty if swallowed the entire compact layout,
+        # making the 2x2 type grid unreachable on narrow phones.
+        self.assertNotIn("if (layout.stackTypeChoices) {            }", self.main)
+        self.assertNotIn("else if (layout.stackTypeChoices)", self.main)
+        self.assertEqual(self.main.count("if (layout.stackTypeChoices) {"), 1)
+        self.assertIn('modifier = Modifier.weight(1f).testTag("qrex-create-type-$index")',
+                      self.main)
+        self.assertIn('.testTag("qrex-create-type-$index")', self.main)
+
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
         self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)
         self.assertIn("Icon(icon, contentDescription = null", self.main)
