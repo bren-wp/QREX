@@ -29,6 +29,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_gallery_picker_excludes_camera_and_compact_nav_keeps_labels(self):
         self.assertIn("galleryActive.compareAndSet(false, true)", self.scanner)
         self.assertIn("enabled = !galleryBusy", self.scanner)
+        self.assertIn("if (galleryBusy) {", self.scanner)
+        self.assertIn("CircularProgressIndicator(", self.scanner)
         self.assertIn("cameraFrameAllowed(", self.scanner)
         self.assertIn("!disposed.get() && !galleryActive.get()", self.scanner)
         self.assertIn("finally {", self.scanner)

@@ -464,8 +464,16 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 )
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.PhotoLibrary, contentDescription = null,
-                        tint = Color.White, modifier = Modifier.size(22.dp))
+                    if (galleryBusy) {
+                        // Visible work feedback while an image is being decoded.
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(22.dp), strokeWidth = 2.dp,
+                            color = Color.White
+                        )
+                    } else {
+                        Icon(Icons.Default.PhotoLibrary, contentDescription = null,
+                            tint = Color.White, modifier = Modifier.size(22.dp))
+                    }
                     Spacer(Modifier.height(4.dp))
                     Text(tr("from_gallery"), maxLines = 2,
                         textAlign = TextAlign.Center)
