@@ -3,6 +3,9 @@
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <!-- Android themed icon: same QREX symbol, without color background. -->
+    <!-- Themed symbol uses the same adaptive-launcher safe-zone transform. -->
+    <group android:scaleX="0.91" android:scaleY="0.91"
+        android:pivotX="54" android:pivotY="54">
     <path android:fillColor="#00000000"
         android:strokeColor="#FFFFFFFF" android:strokeWidth="5.6"
         android:strokeLineCap="round" android:strokeLineJoin="round"
@@ -18,4 +21,5 @@
         android:pathData="M68,36 H83 V51 H68 Z M72,40 H79 V47 H72 Z"/>
     <path android:fillColor="#FFFFFFFF"
         android:pathData="M69,57 H76 V64 H69 Z M80,57 H87 V64 H80 Z M69,68 H76 V75 H69 Z"/>
+    </group>
 </vector>
