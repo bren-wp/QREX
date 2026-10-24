@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Arrangement
@@ -138,7 +139,9 @@ internal fun QrexSettingsTile(
 ) {
     val foreground = if (destructive) MaterialTheme.colorScheme.error
         else MaterialTheme.colorScheme.primary
-    QrexPanel(modifier = modifier.clickable(enabled = enabled, onClick = onClick)) {
+    QrexPanel(modifier = modifier.clickable(
+        enabled = enabled, role = Role.Button, onClick = onClick
+    )) {
         Column(Modifier.fillMaxWidth().heightIn(min = 96.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Surface(shape = RoundedCornerShape(12.dp),

@@ -154,6 +154,13 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("this.selected = kind == index", self.main)
         self.assertIn("heightIn(min = 54.dp)", self.main)
         self.assertIn("fontSize = 12.sp, fontWeight = FontWeight.SemiBold", self.main)
+        self.assertIn("Text(label, maxLines = 2,", self.main)
+        self.assertIn("softWrap = true, overflow = TextOverflow.Ellipsis", self.main)
+        self.assertIn("icon = { Icon(icons[index], contentDescription = null) }", self.main)
+        self.assertIn('role = Role.Button, onClick = onClick', design)
+        self.assertIn('if (wifiPassword.isNotEmpty()) {', self.main)
+        self.assertIn('IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp))',
+                      self.main)
         self.assertIn("private fun openCalendarEvent(context: Context, raw: String): Boolean", self.main)
         self.assertIn("if (end <= start) return false", self.main)
         self.assertIn("if (!openCalendarEvent(context, raw))", self.main)

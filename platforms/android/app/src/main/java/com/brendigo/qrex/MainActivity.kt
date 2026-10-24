@@ -276,12 +276,14 @@ private fun QREXApp(
                             editPayload = null
                             resultShowsQr = false
                         },
-                        icon = { Icon(icons[index], contentDescription = label) },
+                        // The adjacent text label is the accessible name;
+                        // repeating it on the icon causes double announcements.
+                        icon = { Icon(icons[index], contentDescription = null) },
                         // Do not hide every tab label on narrow screens or larger fonts.
                         alwaysShowLabel = true,
                         label = {
-                            Text(label, maxLines = 1,
-                                softWrap = false, overflow = TextOverflow.Ellipsis,
+                            Text(label, maxLines = 2,
+                                softWrap = true, overflow = TextOverflow.Ellipsis,
                                 textAlign = TextAlign.Center,
                                 fontSize = if (compactNavigation) 11.sp else 12.sp)
                         },
@@ -533,11 +535,16 @@ private fun ResultScreen(
                 if (wifi) {
                     Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
                         fontWeight = FontWeight.Bold)
-                    Text(if (showPassword)
-                        "${tr("password")}: ${QRContent.wifiField(raw, "P") ?: ""}" else "${tr("password")}: ••••••••",
-                        softWrap = true)
-                    TextButton(onClick = { showPassword = !showPassword }) {
-                        Text(if (showPassword) tr("hide") else tr("show"))
+                    // Open Wi-Fi networks have no credential to reveal; do not
+                    // render a fake hidden password and a meaningless toggle.
+                    val wifiPassword = QRContent.wifiField(raw, "P").orEmpty()
+                    if (wifiPassword.isNotEmpty()) {
+                        Text(if (showPassword)
+                            "${tr("password")}: $wifiPassword" else "${tr("password")}: ••••••••",
+                            softWrap = true)
+                        TextButton(onClick = { showPassword = !showPassword }) {
+                            Text(if (showPassword) tr("hide") else tr("show"))
+                        }
                     }
                 } else {
                     Text(raw, color = MaterialTheme.colorScheme.onSurface,
@@ -901,7 +908,7 @@ private fun CreateScreen(
                 Icon(Icons.Default.Shield, contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Box {
-                    IconButton(onClick = { createMenu = true }, modifier = Modifier.size(40.dp)) {
+                    IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp)) {
                         Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
