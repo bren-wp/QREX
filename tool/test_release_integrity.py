@@ -266,8 +266,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         workflow = (WORKFLOWS / "github-release-1.0.13.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.13.md").read_text("utf-8")
         android = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        self.assertIn("versionCode = 113", android)
-        self.assertIn('versionName = "1.0.13"', android)
+        # This historic release's version is immutable in its own workflow;
+        # the currently developed app correctly advances beyond build 113.
         self.assertIn("gh release create v1.0.13", workflow)
         self.assertIn("com.brendigo.qrex 113 1.0.13", workflow)
         self.assertIn("github.event.workflow_run.head_sha", workflow)
