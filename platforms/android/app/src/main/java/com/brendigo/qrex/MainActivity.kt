@@ -1301,7 +1301,7 @@ private fun HistoryScreen(
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
-        QRHistory.matches(it, search, savedOnly || favoritesPage)
+        QRHistory.matches(it, search, savedOnly)
     }
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)
