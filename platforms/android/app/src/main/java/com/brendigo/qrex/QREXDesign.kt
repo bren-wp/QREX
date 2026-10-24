@@ -1,8 +1,11 @@
 package com.brendigo.qrex
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +34,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.TextUnit
 
 /**
  * QREX's dark-first production design system.
@@ -58,6 +63,28 @@ internal object QrexDesign {
     )
 }
 
+/** One branded mark for actual camera/header/Create surfaces.
+ * Uses exactly the vector logo carried by the real splash, not a placeholder.
+ */
+@Composable
+internal fun QrexBrandMark(
+    logoSize: Dp = 36.dp,
+    textSize: TextUnit = 21.sp
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painter = painterResource(R.drawable.qrex_icon),
+            contentDescription = null,
+            modifier = Modifier.size(logoSize).clip(RoundedCornerShape(10.dp))
+        )
+        Spacer(Modifier.width(8.dp))
+        Text("QRE", fontWeight = FontWeight.Black, fontSize = textSize,
+            color = MaterialTheme.colorScheme.onBackground)
+        Text("X", fontWeight = FontWeight.Black, fontSize = textSize,
+            color = MaterialTheme.colorScheme.primary)
+    }
+}
+
 @Composable
 internal fun QrexBrandHeader(
     modifier: Modifier = Modifier,
@@ -65,10 +92,7 @@ internal fun QrexBrandHeader(
 ) {
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("QRE", fontWeight = FontWeight.Black, fontSize = 21.sp,
-                color = MaterialTheme.colorScheme.onBackground)
-            Text("X", fontWeight = FontWeight.Black, fontSize = 21.sp,
-                color = MaterialTheme.colorScheme.primary)
+            QrexBrandMark()
             Spacer(Modifier.weight(1f))
             Icon(Icons.Default.Shield, contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(19.dp))
