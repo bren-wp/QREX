@@ -198,6 +198,11 @@ private fun QREXApp(
             else -> 0
         })
     }
+    // Recover legacy in-memory saved page 3 (old Favorites tab) after an
+    // Activity recreation/update. No QR history or preferences are migrated.
+    LaunchedEffect(selected) {
+        if (selected == 3) selected = 2
+    }
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
     }
