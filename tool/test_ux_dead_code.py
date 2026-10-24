@@ -121,6 +121,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         # navigation arrow before the brand.
         self.assertNotIn('testTag("qrex-create-back")', self.main)
         self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
+        self.assertIn("painter = painterResource(R.drawable.qrex_icon)", self.main)
+        self.assertIn("val overflowTypes = if (lightTheme) listOf(7)", self.main)
+        self.assertIn("else listOf(3, 4, 5, 7)", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("painterResource(R.drawable.qrex_icon)", design)
         self.assertIn('Text("X"', design)
