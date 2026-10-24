@@ -1,3 +1,9 @@
+## QREX v1.0.14 — release candidate · Android versionCode 114
+
+Launcher/background parity, a correct monochrome QR finder cutout, accessible icon/button hit areas across all app screens, responsive QR quick-type grids, and 23-language dark UI refinements. GitHub APK/AAB publishing uses exact-main-SHA automated validation and independent disposable signing; it cannot upgrade a differently signed installation.
+
+[QREX v1.0.14 changes](docs/releases/v1.0.14.md) · [GitHub releases](https://github.com/bren-wp/QREX/releases)
+
 ## Published: v1.0.13 · Android versionCode 113
 
 QREX 1.0.13 packages the merged premium accessibility and stability upgrades: WCAG AA-contrast action blue, larger and clearer responsive navigation and QR forms, accessible selected options, live gallery decoding progress, cancellation-safe photo processing, safer calendar event handling and preserved 23-language dark-mode design. APK, AAB, ten real Android emulator screenshots and SHA256 checksums were published after exact-commit Android CI, release validation and package signature checks succeeded.
