@@ -4,6 +4,9 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.unit.dp
+import org.junit.Assert.assertTrue
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -231,6 +234,69 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-wifi-password", useUnmergedTree = true)
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-create-screen").assertIsDisplayed()
+    }
+
+    /**
+     * Measure real Compose semantic bounds in density-independent pixels,
+     * not visual guesses based on screenshots. Log only constant UI tag
+     * names and dp dimensions; never scan result/secret content.
+     */
+    private fun assertTouchTarget(tag: String, minWidthDp: Int = 48, minHeightDp: Int = 48) {
+        val interaction = rule.onNodeWithTag(tag, useUnmergedTree = true)
+            .assertIsDisplayed()
+        val area = interaction.getUnclippedBoundsInRoot()
+        val measuredWidth = area.right - area.left
+        val measuredHeight = area.bottom - area.top
+        assertTrue("$tag width $measuredWidth must be >= ${minWidthDp}dp",
+            measuredWidth >= minWidthDp.dp)
+        assertTrue("$tag height $measuredHeight must be >= ${minHeightDp}dp",
+            measuredHeight >= minHeightDp.dp)
+    }
+
+    @Test
+    fun allFourRootTabsAndScannerActionsHaveMeasuredTouchTargets() {
+        for (index in 0..3) assertTouchTarget("qrex-tab-$index")
+        assertTouchTarget("qrex-scan-gallery")
+        assertTouchTarget("qrex-scan-torch")
+    }
+
+    @Test
+    fun createAndResultControlsHaveMeasuredTouchTargets() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "touch target Create")
+        for (type in listOf(0, 1, 2, 6)) {
+            assertTouchTarget("qrex-create-type-$type")
+        }
+        assertTouchTarget("qrex-create-show")
+        assertTouchTarget("qrex-create-save")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/qrex/touch-check")
+        awaitCreateAction(0, "touch target Result")
+        rule.onNodeWithTag("qrex-create-show").performClick()
+        requireScreenTag("qrex-result-close", 0, "touch target Result back")
+        assertTouchTarget("qrex-result-close")
+    }
+
+    @Test
+    fun historySettingsLanguageAndExportControlsHaveMeasuredTouchTargets() {
+        rule.onNodeWithTag("qrex-tab-2").performClick()
+        requireScreenTag("qrex-history-screen", 0, "touch target History")
+        assertTouchTarget("qrex-history-all")
+        assertTouchTarget("qrex-history-saved")
+        rule.onNodeWithTag("qrex-tab-3").performClick()
+        requireScreenTag("qrex-more-screen", 0, "touch target Settings")
+        assertTouchTarget("qrex-more-language")
+        assertTouchTarget("qrex-more-export")
+        rule.onNodeWithTag("qrex-more-language").performClick()
+        requireScreenTag("qrex-language-screen", 0, "touch target Language")
+        assertTouchTarget("qrex-language-option-hr")
+        assertTouchTarget("qrex-detail-back")
+        rule.onNodeWithTag("qrex-detail-back").performClick()
+        requireScreenTag("qrex-more-screen", 0, "touch target More return")
+        rule.onNodeWithTag("qrex-more-export").performClick()
+        requireScreenTag("qrex-export-screen", 0, "touch target Export")
+        assertTouchTarget("qrex-export-pdf")
+        assertTouchTarget("qrex-detail-back")
     }
 
     @Test

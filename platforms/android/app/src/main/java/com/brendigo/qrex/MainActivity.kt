@@ -479,7 +479,8 @@ private fun ResultScreen(
             Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onClose, modifier = Modifier.testTag("qrex-result-close")) {
+            IconButton(onClick = onClose,
+                modifier = Modifier.size(52.dp).testTag("qrex-result-close")) {
                 Icon(Icons.Default.ArrowBack, contentDescription = tr("close"),
                     tint = MaterialTheme.colorScheme.onSurface)
             }
@@ -487,7 +488,8 @@ private fun ResultScreen(
                 textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold,
                 fontSize = 21.sp, color = MaterialTheme.colorScheme.onSurface)
             Box {
-                IconButton(onClick = { showResultMenu = true }) {
+                IconButton(onClick = { showResultMenu = true },
+                    modifier = Modifier.size(48.dp)) {
                     Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                         tint = MaterialTheme.colorScheme.onSurface)
                 }
@@ -1215,7 +1217,7 @@ private fun HistoryScreen(
                     Icon(Icons.Default.History, contentDescription = null,
                         modifier = Modifier.size(17.dp))
                 },
-                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
                     .testTag("qrex-history-all")
             )
             FilterChip(
@@ -1227,7 +1229,7 @@ private fun HistoryScreen(
                         contentDescription = null, modifier = Modifier.size(17.dp)
                     )
                 },
-                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
                     .testTag("qrex-history-saved")
             )
         }
