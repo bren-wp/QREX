@@ -8,8 +8,6 @@ import android.graphics.RectF
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import java.io.OutputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 /**
  * Streams exported PDFs directly into a user-selected SAF destination.
@@ -32,24 +30,7 @@ object QREXDocuments {
         }.getOrDefault(false)
     }
 
-    fun exportSavedPdfZip(context: Context, records: List<QRRecord>, destination: Uri): Boolean {
-        if (!valid(records)) return false
-        return runCatching {
-            val output = context.contentResolver.openOutputStream(destination, "w")
-                ?: error("Cannot open selected ZIP destination")
-            output.use { stream ->
-                ZipOutputStream(stream.buffered()).use { archive ->
-                    archive.putNextEntry(ZipEntry("QREX-Saved-Codes.pdf"))
-                    writePdf(records, archive)
-                    archive.closeEntry()
-                    archive.finish()
-                }
-            }
-            true
-        }.getOrDefault(false)
-    }
-
-    /** Keep each generated bitmap in memory only for the duration of its PDF page. */
+     /** Keep each generated bitmap in memory only for the duration of its PDF page. */
     private fun writePdf(records: List<QRRecord>, output: OutputStream) {
         val pdf = PdfDocument()
         try {

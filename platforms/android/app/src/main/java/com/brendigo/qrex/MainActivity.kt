@@ -32,7 +32,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -50,7 +49,6 @@ import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
@@ -157,15 +155,10 @@ class MainActivity : ComponentActivity() {
                     "saved", "more", "wifi", "language", "export")
             }
         else null
-        // Only an already enabled debug screenshot can override the palette.
-        // Production intents cannot force a theme or inject fixture data.
-        val screenshotLight = isDebug && screenshotMode != null &&
-            intent.getBooleanExtra("qrex_light", false)
         val screenshotLanguage = if (isDebug && screenshotMode != null)
             intent.getStringExtra("qrex_language")?.takeIf { it in QREXStrings.languages }
         else null
-        setContent { QREXApp(store, screenshotMode, screenshotLanguage,
-            screenshotLight = screenshotLight) }
+        setContent { QREXApp(store, screenshotMode, screenshotLanguage) }
     }
 }
 
@@ -173,15 +166,12 @@ class MainActivity : ComponentActivity() {
 private fun QREXApp(
     store: QREXStore,
     screenshotMode: String? = null,
-    screenshotLanguage: String? = null,
-    screenshotLight: Boolean = false
+    screenshotLanguage: String? = null
 ) {
     val context = LocalContext.current
     // Compose observes locale/configuration changes without stale Resources reads.
     val systemLanguage = LocalConfiguration.current.locales[0].language
     val appLanguage = screenshotLanguage ?: store.language
-    val lightTheme = if (screenshotMode != null && screenshotLight)
-        true else store.lightMode
     // Four root destinations: Favorites belongs in History, not a fifth tab.
     // Preserve internal page IDs so scan/result/edit paths remain unchanged.
     val navTargets = listOf(0, 1, 2, 4)
@@ -243,43 +233,24 @@ private fun QREXApp(
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
-    // Explicit reference palettes: the light phone concepts use white cards,
-    // navy text, pale-blue containers and subtle blue-grey strokes. Relying on
-    // Material defaults here previously introduced unrelated purple/grey hues.
-    val colors = if (lightTheme) lightColorScheme(
-        primary = Color(0xFF086BEE),
-        onPrimary = Color.White,
-        secondary = Color(0xFF7855E9),
-        background = Color(0xFFF7FAFF),
-        onBackground = Color(0xFF0A1940),
-        surface = Color.White,
-        onSurface = Color(0xFF0A1940),
-        surfaceVariant = Color(0xFFEDF5FF),
-        onSurfaceVariant = Color(0xFF546984),
-        outline = Color(0xFFBBD0EC),
-        outlineVariant = Color(0xFFDCE7F6),
-        primaryContainer = Color(0xFFE7F2FF),
-        onPrimaryContainer = Color(0xFF0853B9),
-        error = Color(0xFFC62148)
-    ) else darkColorScheme(
+    // A single, polished midnight/cyan brand theme. Existing deprecated
+    // light preferences remain untouched on disk; no theme selector exists.
+    val colors = darkColorScheme(
         primary = QrexDesign.accentBright, secondary = purple,
         background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
         error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
-    // Match Android system-bar icon contrast to the *actual selected theme*.
-    // Dark first, while existing explicit light preferences remain respected.
     val hostActivity = context as? ComponentActivity
     SideEffect {
         hostActivity?.let { activity ->
             WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
-                isAppearanceLightStatusBars = lightTheme
-                isAppearanceLightNavigationBars = lightTheme
+                isAppearanceLightStatusBars = false
+                isAppearanceLightNavigationBars = false
             }
         }
     }
-    // White/light navigation surfaces need darker selected labels for contrast.
-    val selectedNavigationColor = if (lightTheme) Color(0xFF1156AE) else QrexDesign.accentBright
+    val selectedNavigationColor = QrexDesign.accentBright
     val compactNavigation = LocalConfiguration.current.screenWidthDp < 350 ||
         LocalDensity.current.fontScale >= 1.5f
     MaterialTheme(colorScheme = colors) {
@@ -296,7 +267,7 @@ private fun QREXApp(
         } else {
         Scaffold(containerColor = colors.background, bottomBar = {
             if (currentCode == null) {
-            NavigationBar(containerColor = if (lightTheme) Color.White else QrexDesign.backgroundDeep,
+            NavigationBar(containerColor = QrexDesign.backgroundDeep,
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     val target = navTargets[index]
@@ -320,16 +291,12 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = if (lightTheme)
-                                Color(0xFFE7F2FF) else QrexDesign.surfaceRaised))
+                            indicatorColor = QrexDesign.surfaceRaised))
                 }
             }
             }
         }) { padding ->
-            Box(Modifier.fillMaxSize().background(
-                if (lightTheme) androidx.compose.ui.graphics.Brush.verticalGradient(
-                    listOf(colors.background, colors.background)) else QrexDesign.heroBrush
-            ).padding(padding)) {
+            Box(Modifier.fillMaxSize().background(QrexDesign.heroBrush).padding(padding)) {
                 if (currentCode != null) {
                     ResultScreen(
                         raw = currentCode!!,
@@ -352,7 +319,6 @@ private fun QREXApp(
                             currentCode = raw
                         })
                         1 -> CreateScreen(screenshotMode = screenshotMode,
-                            lightTheme = lightTheme,
                             initialValue = editPayload,
                             onResult = {
                                 store.record(it)
@@ -366,8 +332,7 @@ private fun QREXApp(
                             favoritesPage = screenshotMode == "saved")
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
-                                screenshotMode == "export") screenshotMode else "root",
-                            lightTheme = lightTheme)
+                                screenshotMode == "export") screenshotMode else "root")
                     }
                 }
             }
@@ -730,57 +695,27 @@ fun generateQR(raw: String): Bitmap? {
     }.getOrNull()
 }
 
-/** Real adaptive type selector shared by the reference's 4-column phones
- * and the 2×2 compact phone layout. Every tile has a full touch target.
- */
+/** Accessible QR type choice shared by compact Android layouts. */
 @Composable
 private fun QrexCreateTypeChoice(
-    label: String,
-    icon: ImageVector,
-    selected: Boolean,
-    modifier: Modifier = Modifier,
-    lightReference: Boolean = false,
-    accent: Color = QrexDesign.accentBright,
-    onClick: () -> Unit
+    label: String, icon: ImageVector, selected: Boolean,
+    modifier: Modifier = Modifier, onClick: () -> Unit
 ) {
-    val theme = MaterialTheme.colorScheme
-    val ink = if (lightReference) theme.onSurface else theme.onSurfaceVariant
     Surface(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = if (lightReference) 58.dp else 48.dp),
+        onClick = onClick, modifier = modifier.heightIn(min = 48.dp),
         shape = RoundedCornerShape(11.dp),
-        color = when {
-            lightReference && selected -> theme.primaryContainer
-            selected -> QrexDesign.accent
-            else -> theme.surface
-        },
-        border = BorderStroke(1.dp, when {
-            lightReference && selected -> theme.primary
-            else -> theme.outlineVariant
-        })
+        color = if (selected) QrexDesign.accent else MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
-            if (lightReference) {
-                Surface(shape = RoundedCornerShape(30.dp),
-                    color = accent.copy(alpha = .12f)) {
-                    Box(Modifier.size(28.dp), contentAlignment = Alignment.Center) {
-                        Icon(icon, contentDescription = null,
-                            modifier = Modifier.size(17.dp), tint = accent)
-                    }
-                }
-            } else {
-                Icon(icon, contentDescription = null,
-                    modifier = Modifier.size(15.dp),
-                    tint = if (selected) Color.White else theme.primary)
-            }
+            Icon(icon, contentDescription = null, modifier = Modifier.size(15.dp),
+                tint = if (selected) Color.White else MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(4.dp))
             Text(label, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = if (lightReference) 11.sp else 10.sp,
-                color = if (lightReference) ink else
-                    if (selected) Color.White else theme.onSurfaceVariant)
+                fontSize = 10.sp, fontWeight = FontWeight.SemiBold,
+                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -788,7 +723,6 @@ private fun QrexCreateTypeChoice(
 @Composable
 private fun CreateScreen(
     screenshotMode: String? = null,
-    lightTheme: Boolean = false,
     initialValue: String? = null,
     onResult: (String) -> Unit
 ) {
@@ -942,8 +876,7 @@ private fun CreateScreen(
         LocalDensity.current.fontScale
     )
     val horizontalPadding = layout.horizontalPaddingDp.dp
-    val qrSize = (if (lightTheme) layout.lightQrSizeDp
-        else layout.darkQrSizeDp).dp
+    val qrSize = layout.darkQrSizeDp.dp
     Column(Modifier.fillMaxSize().imePadding().testTag("qrex-create-screen")) {
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
@@ -969,8 +902,7 @@ private fun CreateScreen(
                     DropdownMenu(expanded = createMenu, onDismissRequest = { createMenu = false }) {
                         // Only advanced/unpinned types belong in the
                         // overflow; never duplicate the visible quick choices.
-                        val overflowTypes = if (lightTheme) listOf(7)
-                            else listOf(3, 4, 5, 7)
+                        val overflowTypes = listOf(3, 4, 5, 7)
                         overflowTypes.forEach { type ->
                             DropdownMenuItem(text = { Text(types[type]) }, onClick = {
                                 kind = type
@@ -993,16 +925,7 @@ private fun CreateScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
 
             val quickTypes = listOf(0, 1, 2, 6)
-            // Light reference uses all seven primary QR types as visible
-            // cards. Events stay in More, as in the supplied phone concepts.
-            val referenceTypes = listOf(0, 1, 2, 6, 3, 4, 5)
-            val referenceAccents = mapOf(
-                0 to Color(0xFF086BEE), 1 to Color(0xFF8D55D9),
-                2 to Color(0xFF14A968), 6 to Color(0xFFDF8119),
-                3 to Color(0xFF0874D8), 4 to Color(0xFFDB3754),
-                5 to Color(0xFF086BEE)
-            )
-            val selectType: (Int) -> Unit = { index ->
+             val selectType: (Int) -> Unit = { index ->
                 kind = index
                 content = ""
                 password = ""
@@ -1011,33 +934,7 @@ private fun CreateScreen(
                 eventLocation = ""
                 eventDescription = ""
             }
-            if (lightTheme) {
-                // Standard phone: 3-column reference grid; 320dp phones or
-                // larger text: 2 columns. Stable fixed rows avoid the Android
-                // 8 SubcomposeLayout regression observed in older builds.
-                val columns = if (layout.stackTypeChoices) 2 else 3
-                Column(Modifier.fillMaxWidth()
-                    .testTag("qrex-light-types-grid"),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    referenceTypes.chunked(columns).forEach { group ->
-                        Row(Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            group.forEach { index ->
-                                QrexCreateTypeChoice(
-                                    types[index], typeIcons[index],
-                                    selected = kind == index,
-                                    modifier = Modifier.weight(1f)
-                                        .testTag("qrex-create-type-$index"),
-                                    lightReference = true,
-                                    accent = referenceAccents[index] ?: MaterialTheme.colorScheme.primary,
-                                    onClick = { selectType(index) })
-                            }
-                            // Preserve exact card widths in the final partial row.
-                            repeat(columns - group.size) { Spacer(Modifier.weight(1f)) }
-                        }
-                    }
-                }
-            } else if (layout.stackTypeChoices) {
+            if (layout.stackTypeChoices) {            } else if (layout.stackTypeChoices) {
                 // 320dp phones and large accessibility fonts: 2 × 2 prevents
                 // truncated type names and overlapping selectable tiles.
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -1192,45 +1089,9 @@ private fun CreateScreen(
         if (!imeVisible && layout.showQrPreview) {
             QrexPanel(Modifier.fillMaxWidth()
                 .padding(horizontal = horizontalPadding, vertical = 4.dp)) {
-                if (lightTheme) {
-                Row(
-                    Modifier.fillMaxWidth().padding(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                        Text(tr("qr_preview"), fontWeight = FontWeight.SemiBold, fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface)
-                        Text(
-                            if (payload.isBlank()) tr("invalid_content") else QRContent.label(payload),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    if (qr != null) {
-                        Image(
-                            qr.asImageBitmap(),
-                            contentDescription = tr("qr_preview"),
-                            modifier = Modifier.testTag("qrex-create-preview-ready")
-                                .size(qrSize).background(Color.White).padding(7.dp)
-                        )
-                    } else {
-                        Box(
-                            Modifier.size(qrSize).background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(10.dp)
-                            ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Default.QrCode, contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(30.dp))
-                        }
-                    }
-                }
+                // Single high-contrast centered QR preview.
                 } else {
-                    // The dark design board gives the generated QR much more
-                    // visual weight than the compact white/light form card.
+                    // The QR occupies the central preview panel.
                     Column(Modifier.fillMaxWidth().padding(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1257,7 +1118,6 @@ private fun CreateScreen(
                             fontSize = 11.sp, maxLines = 1,
                             overflow = TextOverflow.Ellipsis)
                     }
-                }
             }
         }
         PrimaryAction(tr("generate_qr"), enabled = canGenerate,
@@ -1585,35 +1445,16 @@ private fun HistoryScreen(
 @Composable
 private fun MoreScreen(
     store: QREXStore,
-    initialDetailPage: String = "root",
-    lightTheme: Boolean = store.lightMode
+    initialDetailPage: String = "root"
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
-    var confirmExport by remember { mutableStateOf(false) }
     var confirmPdfExport by remember { mutableStateOf(false) }
     val archiveScope = rememberCoroutineScope()
-    val exportFailed = tr("archive_failed")
-    val exportReady = tr("archive_ready")
     val trSaved = tr("saved")
-    val exportZip = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/zip")
-    ) { destination ->
-        if (destination != null) {
-            // Snapshot chosen at user confirmation, never read while writing.
-            val records = store.items.filter { it.saved }.toList()
-            archiveScope.launch {
-                val exported = withContext(Dispatchers.IO) {
-                    QREXDocuments.exportSavedPdfZip(context, records, destination)
-                }
-                Toast.makeText(context, if (exported) exportReady else exportFailed,
-                    Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
     val exportPdf = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/pdf")
     ) { destination ->
@@ -1647,28 +1488,23 @@ private fun MoreScreen(
     "export" -> QrexExportDetails(
         hasSaved = store.items.any { it.saved },
         onBack = { detailPage = "root" },
-        onPdf = { confirmPdfExport = true },
-        onZip = { confirmExport = true }
+        onPdf = { confirmPdfExport = true }
     )
     else -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(horizontal = 16.dp, vertical = 18.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
-        if (lightTheme || compactSettings) {
+        if (compactSettings) {
             // Compact dark phones use accessible rows too, avoiding squeezed
             // two-column tiles. Reference two-column cards remain on wide phones.
             // The midnight-navy variant keeps its separate 2-column tiles.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                QrexSettingsListRow(tr("theme"), Icons.Default.Brightness4,
-                    subtitle = if (lightTheme) tr("light_theme") else tr("dark_theme"),
-                    onClick = { store.updateLightMode(!store.lightMode) },
-                    modifier = Modifier.testTag("qrex-more-theme"))
                 QrexSettingsListRow(tr("language"), Icons.Default.Translate,
                     subtitle = languageName,
                     onClick = { detailPage = "language" },
                     modifier = Modifier.testTag("qrex-more-language"))
                 QrexSettingsListRow(tr("export_archive"), Icons.Default.Archive,
-                    subtitle = "PDF · ZIP",
+                    subtitle = "PDF",
                     onClick = { detailPage = "export" },
                     modifier = Modifier.testTag("qrex-more-export"))
                 QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Shield,
@@ -1685,54 +1521,34 @@ private fun MoreScreen(
                     destructive = true, onClick = { showDelete = true })
             }
         } else {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            QrexSettingsTile(
-                label = tr("theme"), icon = Icons.Default.Brightness4,
-                onClick = { store.updateLightMode(!store.lightMode) },
-                subtitle = if (store.lightMode) tr("light_theme") else tr("dark_theme"),
-                modifier = Modifier.weight(1f).testTag("qrex-more-theme")
-            )
-            QrexSettingsTile(
-                label = tr("language"), icon = Icons.Default.Translate,
-                onClick = { detailPage = "language" }, subtitle = languageName,
-                modifier = Modifier.weight(1f).testTag("qrex-more-language")
-            )
-        }
-        Spacer(Modifier.height(10.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            QrexSettingsTile(
-                label = tr("export_archive"), icon = Icons.Default.Archive,
-                onClick = { detailPage = "export" },
-                subtitle = "PDF · ZIP",
-                modifier = Modifier.weight(1f).testTag("qrex-more-export")
-            )
-            QrexSettingsTile(
-                label = tr("privacy_policy"), icon = Icons.Default.Shield,
-                onClick = { showPrivacy = true }, modifier = Modifier.weight(1f)
-            )
-        }
-        Spacer(Modifier.height(10.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            QrexSettingsTile(
-                label = tr("terms_of_use"), icon = Icons.Default.Description,
-                onClick = { showTerms = true }, modifier = Modifier.weight(1f)
-            )
-            QrexSettingsTile(
-                label = tr("about"), icon = Icons.Default.Info,
-                onClick = { openLink(context, Uri.parse("https://brendigo.com")) },
-                subtitle = tr("developed_by"), modifier = Modifier.weight(1f)
-            )
-        }
-        Spacer(Modifier.height(12.dp))
-        OutlinedButton(onClick = { showDelete = true },
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.error)) {
-            Icon(Icons.Default.DeleteForever, contentDescription = null,
-                modifier = Modifier.size(20.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(tr("clear_history"))
-        }
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    QrexSettingsTile(label = tr("language"), icon = Icons.Default.Translate,
+                        subtitle = languageName, onClick = { detailPage = "language" },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-language"))
+                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.PictureAsPdf,
+                        subtitle = "PDF", onClick = { detailPage = "export" },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-export"))
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Shield,
+                        onClick = { showPrivacy = true }, modifier = Modifier.weight(1f))
+                    QrexSettingsTile(label = tr("terms_of_use"), icon = Icons.Default.Description,
+                        onClick = { showTerms = true }, modifier = Modifier.weight(1f))
+                }
+                QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
+                    subtitle = tr("developed_by"),
+                    onClick = { openLink(context, Uri.parse("https://brendigo.com")) })
+                OutlinedButton(onClick = { showDelete = true },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error)) {
+                    Icon(Icons.Default.DeleteForever, contentDescription = null,
+                        modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(tr("clear_history"))
+                }
+            }
         }
         Spacer(Modifier.height(20.dp))
     }
@@ -1749,16 +1565,6 @@ private fun MoreScreen(
             Text(tr("cancel"))
         } }
     )
-    if (confirmExport) AlertDialog(onDismissRequest = { confirmExport = false },
-        title = { Text(tr("export_archive")) },
-        text = { Text(tr("export_archive_warning")) },
-        confirmButton = { TextButton(onClick = {
-            confirmExport = false
-            exportZip.launch("QREX-Saved-Codes.zip")
-        }) { Text(tr("export_archive")) } },
-        dismissButton = { TextButton(onClick = { confirmExport = false }) {
-            Text(tr("cancel"))
-        } })
     if (showDelete) AlertDialog(onDismissRequest = { showDelete = false },
         title = { Text(tr("confirm_clear_history")) },
         text = { Text(tr("clear_history_warning")) },
