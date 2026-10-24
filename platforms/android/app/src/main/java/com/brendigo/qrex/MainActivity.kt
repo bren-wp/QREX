@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.QrCodeScanner
