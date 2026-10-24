@@ -322,10 +322,15 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                                         )) {
                                         lastCameraDecodeMs.set(now)
                                         val decoded = QREXQrDecoder.decodeFrame(frame)
-                                        if (!decoded.isNullOrEmpty() && !galleryActive.get() &&
-                                            handled.compareAndSet(false, true)) {
+                                        if (!decoded.isNullOrEmpty()) {
                                             ContextCompat.getMainExecutor(context).execute {
-                                                if (!disposed.get() && !galleryActive.get()) onRead(decoded)
+                                                // Claim the result only at delivery time. If the
+                                                // gallery opens while this callback is queued,
+                                                // it must not consume the one-shot scan token.
+                                                if (!disposed.get() && !galleryActive.get() &&
+                                                    handled.compareAndSet(false, true)) {
+                                                    onRead(decoded)
+                                                }
                                             }
                                         }
                                     }
