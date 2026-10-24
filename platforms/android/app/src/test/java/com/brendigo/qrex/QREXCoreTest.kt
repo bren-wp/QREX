@@ -23,9 +23,11 @@ class QREXCoreTest {
         assertTrue(veryShort.stackTypeChoices)
 
         val normal = qrexLayoutProfile(393, 852, 1.0f)
-        assertFalse(normal.stackTypeChoices)
+        assertTrue(normal.stackTypeChoices)
         assertEquals(156, normal.darkQrSizeDp)
 
+        assertEquals(156, normal.darkQrSizeDp)
+        assertFalse(qrexLayoutProfile(420, 852, 1.0f).stackTypeChoices)
         val largeText = qrexLayoutProfile(393, 852, 1.6f)
         assertTrue(largeText.stackTypeChoices)
         assertEquals(104, largeText.darkQrSizeDp)

@@ -13,6 +13,9 @@
         android:pathData="M44,39 C34.1,39 26,47.1 26,57 C26,66.9 34.1,75 44,75 C53.9,75 62,66.9 62,57 C62,47.1 53.9,39 44,39 Z"/>
     <path android:fillColor="#FFFFFFFF"
         android:pathData="M51,64 L59,57 L76,77 L68,84 Z"/>
+    <!-- Punched-out finder center matches the full-color QR finder module. -->
+    <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd"
+        android:pathData="M68,36 H83 V51 H68 Z M72,40 H79 V47 H72 Z"/>
     <path android:fillColor="#FFFFFFFF"
-        android:pathData="M68,36 H83 V51 H68 Z M69,57 H76 V64 H69 Z M80,57 H87 V64 H80 Z M69,68 H76 V75 H69 Z"/>
+        android:pathData="M69,57 H76 V64 H69 Z M80,57 H87 V64 H80 Z M69,68 H76 V75 H69 Z"/>
 </vector>

@@ -74,7 +74,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("indicatorColor = QrexDesign.surfaceRaised", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
-        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 48.dp)", design)
+        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)", design)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
         self.assertIn("QRContent.label(item.raw),\n                                maxLines = 1", self.main)
@@ -95,7 +95,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexSettingsTile(", self.main)
         self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
-        self.assertIn("heightIn(min = 96.dp)", design)
+        self.assertIn("heightIn(min = 104.dp)", design)
         self.assertNotIn("store.updateLightMode(", self.main)
         self.assertIn("QrexSettingsListRow(", self.main)
         self.assertIn('store.updateLanguage(code)', self.details)
@@ -167,7 +167,28 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("if (end <= start) return false", self.main)
         self.assertIn("if (!openCalendarEvent(context, raw))", self.main)
         self.assertIn("Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()", self.main)
-        self.assertIn("heightIn(min = 96.dp)", design)
+        self.assertIn("heightIn(min = 104.dp)", design)
+
+    def test_pixel_audit_icons_buttons_compact_options_and_language(self):
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        details = (NATIVE / "QREXMoreDetails.kt").read_text("utf-8")
+        vectors = ROOT / "platforms/android/app/src/main/res/drawable"
+        background = (vectors / "qrex_launcher_background.xml").read_text("utf-8")
+        splash_icon = (vectors / "qrex_icon.xml").read_text("utf-8")
+        monochrome = (vectors / "qrex_icon_monochrome.xml").read_text("utf-8")
+        for color in ("#19CAFF", "#0868EE", "#07187E"):
+            self.assertIn(color, splash_icon)
+            self.assertIn(color, background)
+        self.assertIn('android:fillType="evenOdd"', monochrome)
+        self.assertIn("M72,40 H79 V47 H72 Z", monochrome)
+        self.assertIn("val stackChoices = widthDp < 420", design)
+        self.assertIn("heightIn(min = 104.dp)", design)
+        self.assertIn("heightIn(min = 56.dp)", design)
+        self.assertIn('testTag("qrex-history-menu").size(48.dp)', self.main)
+        self.assertIn('Modifier.size(48.dp).testTag("qrex-history-favorite")', self.main)
+        self.assertIn("heightIn(min = 60.dp)", self.main)
+        self.assertIn("heightIn(min = 64.dp)", details)
+        self.assertIn("Text(types[index], maxLines = 2", self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
         self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)
