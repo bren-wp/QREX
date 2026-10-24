@@ -219,7 +219,6 @@ internal fun QrexSettingsListRow(
 internal data class QrexLayoutProfile(
     val stackTypeChoices: Boolean,
     val showQrPreview: Boolean,
-    val lightQrSizeDp: Int,
     val darkQrSizeDp: Int,
     val horizontalPaddingDp: Int
 )
@@ -232,7 +231,6 @@ internal fun qrexLayoutProfile(
     return QrexLayoutProfile(
         stackTypeChoices = narrow,
         showQrPreview = heightDp >= 420 && fontScale < 1.70f,
-        lightQrSizeDp = if (narrow || short) 80 else 104,
         darkQrSizeDp = if (narrow || short) 104 else 156,
         horizontalPaddingDp = if (widthDp < 350) 12 else 16
     )

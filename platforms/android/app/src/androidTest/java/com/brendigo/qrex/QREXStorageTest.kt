@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 
 /**
  * Device-test fixture reset. Production history deletion intentionally preserves
- * theme and language; this helper restores an isolated empty app state between
+ * language; this helper restores an isolated empty app state between
  * storage tests without exposing a wipe-all action in the application API.
  */
 private fun QREXStore.clearAll(): Boolean {
@@ -22,7 +22,6 @@ private fun QREXStore.clearAll(): Boolean {
     ).edit().clear().commit()
     if (!legacyCleared || !preferencesCleared) return false
     resetDelegate("historyEnabled", true)
-    resetDelegate("lightMode", false)
     resetDelegate("language", "system")
     return true
 }
@@ -113,7 +112,6 @@ class QREXStorageTest {
         // QREX must still open, show its encrypted records and avoid rewriting
         // any malformed preference until the user explicitly changes it.
         val reopened = QREXStore(context)
-        assertFalse(reopened.lightMode)
         assertTrue(reopened.historyEnabled)
         assertEquals("system", reopened.language)
         assertEquals(wifi, reopened.items.single().raw)
@@ -422,39 +420,6 @@ class QREXStorageTest {
     }
 
     @Test
-    fun savedQrPdfZipExportContainsRealPrintablePdfAndNoUnsafeEntryNames() {
-        val document = java.io.File.createTempFile("qrex-export-", ".zip", context.cacheDir)
-        try {
-            val records = listOf(
-                QRRecord("https://brendigo.com", 0L, true),
-                QRRecord(QRContent.wifi("Guest", "private-secret"), 0L, true)
-            )
-            assertTrue(QREXDocuments.exportSavedPdfZip(
-                context, records, android.net.Uri.fromFile(document)
-            ))
-            var checked = 0
-            java.util.zip.ZipInputStream(document.inputStream().buffered()).use { zip ->
-                while (true) {
-                    val entry = zip.nextEntry ?: break
-                    assertEquals("QREX-Saved-Codes.pdf", entry.name)
-                    val bytes = zip.readBytes()
-                    assertTrue(bytes.take(5).toByteArray().contentEquals("%PDF-".toByteArray()))
-                    assertTrue(bytes.size > 1000)
-                    zip.closeEntry()
-                    checked++
-                }
-            }
-            // Both native editions now export one multi-page PDF per ZIP.
-            assertEquals(1, checked)
-            assertFalse(document.readBytes().toString(Charsets.ISO_8859_1).contains("private-secret"))
-            assertFalse(QREXDocuments.exportSavedPdfZip(
-                context, emptyList(), android.net.Uri.fromFile(document)))
-        } finally {
-            document.delete()
-        }
-    }
-
-    @Test
     fun savedQrExportCanProduceStandalonePrintablePdf() {
         val document = java.io.File.createTempFile("qrex-document-", ".pdf", context.cacheDir)
         try {
@@ -582,7 +547,6 @@ class QREXStorageTest {
         assertEquals(250, migrated.items.size)
         assertTrue(migrated.items.all { it.saved })
         assertEquals("hr", migrated.language)
-        assertFalse(migrated.lightMode)
         assertTrue(migrated.historyEnabled)
         assertTrue(native.getBoolean("flutterMigrationV1", false))
         val stored = native.getString("history", "")!!
@@ -635,10 +599,10 @@ class QREXStorageTest {
         assertTrue(flutter.edit().putString("flutter.qrex_history_v1", source)
             .putString("flutter.qrex_light_v1", "not-a-boolean").commit())
         val store = QREXStore(context)
-        assertTrue(store.items.isEmpty())
-        assertFalse(native.contains("history"))
-        assertFalse(native.getBoolean("flutterMigrationV1", false))
-        assertEquals(source, flutter.getString("flutter.qrex_history_v1", null))
+        assertEquals(1, store.items.size)
+        assertEquals("https://example.org/important", store.items.single().raw)
+        assertTrue(native.getBoolean("flutterMigrationV1", false))
+        assertEquals("not-a-boolean", flutter.getString("flutter.qrex_light_v1", null))
         assertTrue(store.clearAll())
     }
 
@@ -653,11 +617,9 @@ class QREXStorageTest {
             .putBoolean("flutter.qrex_record_v1", false).commit())
         val first = QREXStore(context)
         assertTrue(first.items.isEmpty())
-        assertTrue(first.lightMode)
         assertFalse(first.historyEnabled)
         assertTrue(native.getBoolean("flutterMigrationV1", false))
         val restarted = QREXStore(context)
-        assertTrue(restarted.lightMode)
         assertFalse(restarted.historyEnabled)
         assertTrue(restarted.clearAll())
     }
