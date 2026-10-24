@@ -304,8 +304,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 112", gradle)
-        self.assertIn('versionName = "1.0.12"', gradle)
+        self.assertIn("versionCode = 113", gradle)
+        self.assertIn('versionName = "1.0.13"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -321,6 +321,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.10.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.11.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.12.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.13.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
