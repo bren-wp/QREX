@@ -31,7 +31,7 @@ class QREXPrivacyStabilityTests(unittest.TestCase):
         scanner = (ANDROID / "QREXScanner.kt").read_text("utf-8")
         reader = (ANDROID / "QREXQrDecoder.kt").read_text("utf-8")
         self.assertIn("bitmap?.recycle()", scanner)
-        self.assertIn("finally {\n                            bitmap.recycle()", scanner)
+        self.assertRegex(scanner, r"finally\s*\{\s*bitmap\.recycle\(\)")
         self.assertIn("frame.close()", scanner)
         self.assertIn("QREXQrDecoder.decodeBitmap(bitmap)", scanner)
         self.assertIn("QREXQrDecoder.decodeFrame(frame)", scanner)
