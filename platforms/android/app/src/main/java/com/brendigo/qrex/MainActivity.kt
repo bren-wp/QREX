@@ -181,17 +181,20 @@ private fun QREXApp(
     val appLanguage = screenshotLanguage ?: store.language
     val lightTheme = if (screenshotMode != null && screenshotLight)
         true else store.lightMode
-    val pages = listOf("scan", "create", "history", "favorites", "more")
+    // Four root destinations: Favorites belongs in History, not a fifth tab.
+    // Preserve internal page IDs so scan/result/edit paths remain unchanged.
+    val navTargets = listOf(0, 1, 2, 4)
+    val pages = listOf("scan", "create", "history", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
     val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
             "history" -> 2
-            "saved" -> 3
+            "saved" -> 2
             "more", "language", "export" -> 4
             else -> 0
         })
@@ -290,16 +293,16 @@ private fun QREXApp(
             NavigationBar(containerColor = if (lightTheme) Color.White else QrexDesign.backgroundDeep,
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
+                    val target = navTargets[index]
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
-                        selected = selected == index,
+                        selected = selected == target,
                         onClick = {
-                            selected = index
+                            selected = target
                             currentCode = null
                             editPayload = null
                             resultShowsQr = false
                         },
-                        icon = { Icon(if (index == 3 && selected == 3) Icons.Default.Favorite
-                             else icons[index], contentDescription = label) },
+                        icon = { Icon(icons[index], contentDescription = label) },
                          alwaysShowLabel = !compactNavigation,
                         label = {
                              if (!compactNavigation) Text(label, maxLines = 1,
@@ -352,10 +355,9 @@ private fun QREXApp(
                                 currentCode = it
                             })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
-                            screenshotItems = screenshotItems)
-                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
-                            initiallySavedOnly = true, favoritesPage = true)
+                            initiallySavedOnly = screenshotMode == "saved",
+                            favoritesPage = screenshotMode == "saved")
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root",
@@ -1315,24 +1317,38 @@ private fun HistoryScreen(
             if (favoritesPage) tr("favorites") else tr("history"),
             if (favoritesPage) tr("saved") else tr("history_local")
         )
+        // Two visible, accessible filters replace a hidden heart-only switch.
+        Row(Modifier.fillMaxWidth().testTag("qrex-history-segments"),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = !savedOnly, onClick = { savedOnly = false },
+                label = { Text(tr("history"), maxLines = 1) },
+                leadingIcon = {
+                    Icon(Icons.Default.History, contentDescription = null,
+                        modifier = Modifier.size(17.dp))
+                },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    .testTag("qrex-history-all")
+            )
+            FilterChip(
+                selected = savedOnly, onClick = { savedOnly = true },
+                label = { Text(tr("favorites"), maxLines = 1) },
+                leadingIcon = {
+                    Icon(
+                        if (savedOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = null, modifier = Modifier.size(17.dp)
+                    )
+                },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    .testTag("qrex-history-saved")
+            )
+        }
+        Spacer(Modifier.height(4.dp))
         OutlinedTextField(
             value = search,
             onValueChange = { search = it.take(120) },
             label = { Text(tr("search_qr")) },
             leadingIcon = { Icon(Icons.Default.History, contentDescription = null) },
-            trailingIcon = if (favoritesPage) null else ({
-                IconButton(
-                    onClick = { savedOnly = !savedOnly },
-                    modifier = Modifier.testTag("qrex-history-filter")
-                ) {
-                    Icon(
-                        Icons.Default.FilterList,
-                        contentDescription = tr("favorites"),
-                        tint = if (savedOnly) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }),
             singleLine = true,
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
