@@ -1,6 +1,6 @@
-## Upcoming verified GitHub release: v1.0.13 · Android versionCode 113
+## Published: v1.0.13 · Android versionCode 113
 
-QREX 1.0.13 packages the merged premium accessibility and stability upgrades: WCAG AA-contrast action blue, larger and clearer responsive navigation and QR forms, accessible selected options, live gallery decoding progress, cancellation-safe photo processing, safer calendar event handling and preserved 23-language dark-mode design. APK, AAB, real screenshots and SHA256 checksums are distributed only after exact-commit Android CI and release validation succeed.
+QREX 1.0.13 packages the merged premium accessibility and stability upgrades: WCAG AA-contrast action blue, larger and clearer responsive navigation and QR forms, accessible selected options, live gallery decoding progress, cancellation-safe photo processing, safer calendar event handling and preserved 23-language dark-mode design. APK, AAB, ten real Android emulator screenshots and SHA256 checksums were published after exact-commit Android CI, release validation and package signature checks succeeded.
 
 [Version 1.0.13 changes](docs/releases/v1.0.13.md) · [Published GitHub releases](https://github.com/bren-wp/QREX/releases)
 
