@@ -74,20 +74,14 @@ fi
 # Capture each screen from the *installed QREX debug APK*. The intent extra
 # chooses a screen and injects only in-memory, non-sensitive demo records.
 # Debug routing is forbidden by MainActivity in production builds.
-for screen in splash scan wifi result history saved more language export light-create light-more; do
+for screen in splash scan wifi result history saved more language export; do
   screenshot="docs/screenshots/android-${screen}.png"
   hierarchy="docs/screenshots/android-${screen}-hierarchy.xml"
   rm -f "$screenshot" "$hierarchy"
-  fixture="$screen"
-  theme_args=()
-  if [[ "$screen" == light-* ]]; then
-    fixture="${screen#light-}"
-    theme_args=(--ez qrex_light true)
-  fi
   for attempt in 1 2 3 4; do
     timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
     timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
-      --es qrex_screenshot "$fixture" --es qrex_language hr "${theme_args[@]}"
+      --es qrex_screenshot "$screen" --es qrex_language hr
     sleep 5
     if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-window.xml >/dev/null 2>&1 \
       && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-window.xml > "$hierarchy" \
@@ -109,4 +103,4 @@ python3 tool/verify_screenshots.py docs/screenshots/android-*.png
 # Capture separate real phone-size screenshots. These do not enter the
 # Play-sized public release screenshot list or alter user settings.
 bash tool/capture_responsive_android.sh
-echo "Twelve real QREX Android screens (including light Create and light More) captured and verified."
+echo "Ten real QREX Android screens (dark only) captured and verified."

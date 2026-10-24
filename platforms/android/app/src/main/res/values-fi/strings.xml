@@ -5,7 +5,6 @@
     <string name="history">Historia</string>
     <string name="favorites">Suosikit</string>
     <string name="more">Lisää</string>
-    <string name="scan_qr">Skannaa QR-koodi</string>
     <string name="point_camera">Osoita kamera QR-koodiin</string>
     <string name="allow_camera">Salli kameran käyttö skannausta varten.</string>
     <string name="enable_camera">Ota kamera käyttöön</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopioi</string>
     <string name="share">Jaa</string>
     <string name="saved">Tallennettu</string>
-    <string name="save_qr">Tallenna koodi</string>
     <string name="close">Sulje</string>
     <string name="wifi_save_title">Tallenna Wi-Fi-koodi</string>
     <string name="wifi_save_warning">Wi-Fi-salasana tallennetaan laitteelle.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Puhelin</string>
     <string name="location">Sijainti</string>
     <string name="contact">Yhteystieto</string>
-    <string name="fewer_options">Vähemmän vaihtoehtoja</string>
-    <string name="more_options">Lisää vaihtoehtoja</string>
     <string name="optional_password">Salasana (valinnainen)</string>
     <string name="wifi_warning">Wi-Fi-QR-koodi voi sisältää salasanan.</string>
     <string name="qr_preview">Koodin esikatselu</string>
     <string name="invalid_content">Anna kelvollinen QR-sisältö.</string>
     <string name="show_qr">Näytä QR-koodi</string>
-    <string name="create_share">Näytä ja jaa</string>
     <string name="search_qr">Hae koodeja</string>
     <string name="no_saved">Ei tallennettuja koodeja</string>
-    <string name="clear">Tyhjennä</string>
     <string name="delete">Poista</string>
     <string name="settings">Asetukset</string>
     <string name="save_history">Tallenna skannaushistoria</string>
-    <string name="light_theme">Vaalea teema</string>
-    <string name="theme">Teema</string>
-    <string name="dark_theme">Tumma teema</string>
-    <string name="privacy">Tietosuoja</string>
-    <string name="privacy_summary">QR-koodit käsitellään tällä laitteella. Ei tiliä, mainoksia tai analytiikkaa. Historia on valinnainen. Wi-Fi-salasanoja ei tallenneta automaattisesti; Wi-Fi-koodin manuaalinen tallennus tallentaa myös salasanan. Tietoja jaetaan toiseen sovellukseen vain, kun valitset ulkoisen toiminnon. Tyhjennä historia Asetuksissa; teema- ja kieliasetukset säilyvät. Yhteys: brendigo.com.</string>
+    <string name="privacy_summary">QR-koodit käsitellään tällä laitteella. Ei tiliä, mainoksia tai analytiikkaa. Historia on valinnainen. Wi-Fi-salasanoja ei tallenneta automaattisesti; Wi-Fi-koodin manuaalinen tallennus tallentaa myös salasanan. Tietoja jaetaan toiseen sovellukseen vain, kun valitset ulkoisen toiminnon. Tyhjennä historia Asetuksissa; kieliasetus säilyy. Yhteys: brendigo.com.</string>
     <string name="about">Tietoja</string>
     <string name="developed_by">Kehittäjä Brendigo</string>
     <string name="confirm_delete">Poistetaanko tämä QR-koodi?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Vie PNG</string>
     <string name="png_save_failed">PNG-kuvaa ei voitu tallentaa.</string>
     <string name="operation_failed">Toiminto epäonnistui. Yritä uudelleen.</string>
-    <string name="data_tools">Koodisi ja tiedostosi</string>
     <string name="export_archive">Vie tallennetut QR-koodit PDF · ZIP -muodossa</string>
-    <string name="export_archive_hint">Tallenna suosikkikoodisi tulostettavaan PDF-arkistoon.</string>
-    <string name="export_archive_warning">Viedyt PDF-tiedostot voivat sisältää tallennettuja Wi-Fi-salasanoja. Jaa ZIP vain luotettaville henkilöille.</string>
-    <string name="archive_failed">ZIP-arkistoa ei voitu luoda.</string>
-    <string name="archive_ready">ZIP-arkisto tallennettu.</string>
+    <string name="export_archive_warning">Viedyt PDF-tiedostot voivat sisältää tallennettuja Wi-Fi-salasanoja. Jaa tämä PDF vain luotettaville henkilöille.</string>
     <string name="privacy_policy">Tietosuojakäytäntö</string>
     <string name="terms_of_use">Käyttöehdot</string>
-    <string name="terms_summary">Tarkista QR-kohteet ennen linkkien avaamista. Jaa tai vie vain koodeja, joihin sinulla on lupa. ZIP voi sisältää Wi-Fi-salasanoja. QREX tarjotaan ilman takuita lain sallimissa rajoissa. Tuki: brendigo.com.</string>
+    <string name="terms_summary">Tarkista QR-kohteet ennen linkkien avaamista. Jaa tai vie vain koodeja, joihin sinulla on lupa. Viedyt PDF-tiedostot voivat sisältää tallennettuja Wi-Fi-salasanoja. QREX tarjotaan ilman takuita lain sallimissa rajoissa. Tuki: brendigo.com.</string>
     <string name="read_full_policy">Lue koko käytäntö</string>
     <string name="tagline">Skannaa. Luo. Jaa.</string>
     <string name="event">Tapahtuma</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Tyhjennä historia</string>
     <string name="confirm_clear_history">Tyhjennetäänkö historia?</string>
     <string name="clear_history_warning">Kaikki historiatiedot ja tallennetut QR-koodit poistetaan pysyvästi. Teema- ja kieliasetukset säilyvät.</string>
+    <string name="pdf_saved_code">Tallennettu koodi %1$d / %2$d</string>
+    <string name="splash_message">Kaikki QR-koodeihin — helposti, nopeasti ja ilman tiliä.</string>
 </resources>

@@ -5,7 +5,6 @@
     <string name="history">History</string>
     <string name="favorites">Favorites</string>
     <string name="more">More</string>
-    <string name="scan_qr">Scan QR code</string>
     <string name="point_camera">Point your camera at a QR code</string>
     <string name="allow_camera">Allow camera access to scan QR codes.</string>
     <string name="enable_camera">Enable camera</string>
@@ -25,7 +24,6 @@
     <string name="copy">Copy</string>
     <string name="share">Share</string>
     <string name="saved">Saved</string>
-    <string name="save_qr">Save code</string>
     <string name="close">Close</string>
     <string name="wifi_save_title">Save Wi-Fi code</string>
     <string name="wifi_save_warning">This will store the Wi-Fi password on your device.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Phone</string>
     <string name="location">Location</string>
     <string name="contact">Contact</string>
-    <string name="fewer_options">Fewer options</string>
-    <string name="more_options">More options</string>
     <string name="optional_password">Password (optional)</string>
     <string name="wifi_warning">Wi-Fi QR codes may contain a password.</string>
     <string name="qr_preview">Code preview</string>
     <string name="invalid_content">Enter valid QR content.</string>
     <string name="show_qr">Show QR code</string>
-    <string name="create_share">View and share</string>
     <string name="search_qr">Search history...</string>
     <string name="no_saved">No saved codes</string>
-    <string name="clear">Clear</string>
     <string name="delete">Delete</string>
     <string name="settings">Settings, legal information and more.</string>
     <string name="save_history">Save scan history</string>
-    <string name="light_theme">Light theme</string>
-    <string name="theme">Theme</string>
-    <string name="dark_theme">Dark theme</string>
-    <string name="privacy">Privacy</string>
-    <string name="privacy_summary">QR codes are processed on this device. No account, ads or analytics. History is optional. Wi-Fi passwords are never saved automatically; manually saving a Wi-Fi code also saves its password. External actions share data only when you choose them. Clear history in Settings; theme and language choices stay saved. Contact: brendigo.com.</string>
+    <string name="privacy_summary">QR codes are processed on this device. No account, ads or analytics. History is optional. Wi-Fi passwords are never saved automatically; manually saving a Wi-Fi code also saves its password. External actions share data only when you choose them. Clear history in Settings; language choice stays saved. Contact: brendigo.com.</string>
     <string name="about">About</string>
     <string name="developed_by">Developed by Brendigo</string>
     <string name="confirm_delete">Delete this QR code?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Export PNG</string>
     <string name="png_save_failed">Unable to save PNG image.</string>
     <string name="operation_failed">Action failed. Please try again.</string>
-    <string name="data_tools">Your codes &amp; files</string>
     <string name="export_archive">Archive export</string>
-    <string name="export_archive_hint">Keep your favorite QR codes in a printable PDF archive.</string>
-    <string name="export_archive_warning">Exported PDFs may contain saved Wi-Fi passwords. Only share this ZIP with people you trust.</string>
-    <string name="archive_failed">Could not create the ZIP archive.</string>
-    <string name="archive_ready">ZIP archive saved.</string>
+    <string name="export_archive_warning">Exported PDFs may contain saved Wi-Fi passwords. Only share this PDF with people you trust.</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
-    <string name="terms_summary">Check QR destinations before opening links. Share or export only codes you have permission to disclose. ZIP exports may include saved Wi-Fi passwords. QREX is provided without warranties to the extent allowed by law. Support: brendigo.com.</string>
+    <string name="terms_summary">Check QR destinations before opening links. Share or export only codes you have permission to disclose. PDF exports may include saved Wi-Fi passwords. QREX is provided without warranties to the extent allowed by law. Support: brendigo.com.</string>
     <string name="read_full_policy">Read full policy</string>
     <string name="tagline">Scan. Create. Share.</string>
     <string name="event">Event</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Clear history</string>
     <string name="confirm_clear_history">Clear history?</string>
     <string name="clear_history_warning">All history entries and saved QR codes will be permanently erased. Theme and language choices will stay saved.</string>
+    <string name="pdf_saved_code">Saved code %1$d of %2$d</string>
+    <string name="splash_message">Everything QR — simple, fast and without an account.</string>
 </resources>

@@ -14,7 +14,6 @@ object QREXStrings {
         "history" -> R.string.history
         "favorites" -> R.string.favorites
         "more" -> R.string.more
-        "scan_qr" -> R.string.scan_qr
         "point_camera" -> R.string.point_camera
         "allow_camera" -> R.string.allow_camera
         "enable_camera" -> R.string.enable_camera
@@ -34,7 +33,6 @@ object QREXStrings {
         "copy" -> R.string.copy
         "share" -> R.string.share
         "saved" -> R.string.saved
-        "save_qr" -> R.string.save_qr
         "close" -> R.string.close
         "wifi_save_title" -> R.string.wifi_save_title
         "wifi_save_warning" -> R.string.wifi_save_warning
@@ -52,24 +50,16 @@ object QREXStrings {
         "phone" -> R.string.phone
         "location" -> R.string.location
         "contact" -> R.string.contact
-        "fewer_options" -> R.string.fewer_options
-        "more_options" -> R.string.more_options
         "optional_password" -> R.string.optional_password
         "wifi_warning" -> R.string.wifi_warning
         "qr_preview" -> R.string.qr_preview
         "invalid_content" -> R.string.invalid_content
         "show_qr" -> R.string.show_qr
-        "create_share" -> R.string.create_share
         "search_qr" -> R.string.search_qr
         "no_saved" -> R.string.no_saved
-        "clear" -> R.string.clear
         "delete" -> R.string.delete
         "settings" -> R.string.settings
         "save_history" -> R.string.save_history
-        "light_theme" -> R.string.light_theme
-        "theme" -> R.string.theme
-        "dark_theme" -> R.string.dark_theme
-        "privacy" -> R.string.privacy
         "privacy_summary" -> R.string.privacy_summary
         "about" -> R.string.about
         "developed_by" -> R.string.developed_by
@@ -80,12 +70,8 @@ object QREXStrings {
         "export_png" -> R.string.export_png
         "png_save_failed" -> R.string.png_save_failed
         "operation_failed" -> R.string.operation_failed
-        "data_tools" -> R.string.data_tools
         "export_archive" -> R.string.export_archive
-        "export_archive_hint" -> R.string.export_archive_hint
         "export_archive_warning" -> R.string.export_archive_warning
-        "archive_failed" -> R.string.archive_failed
-        "archive_ready" -> R.string.archive_ready
         "privacy_policy" -> R.string.privacy_policy
         "terms_of_use" -> R.string.terms_of_use
         "terms_summary" -> R.string.terms_summary
@@ -106,6 +92,8 @@ object QREXStrings {
         "clear_history" -> R.string.clear_history
         "confirm_clear_history" -> R.string.confirm_clear_history
         "clear_history_warning" -> R.string.clear_history_warning
+        "pdf_saved_code" -> R.string.pdf_saved_code
+        "splash_message" -> R.string.splash_message
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

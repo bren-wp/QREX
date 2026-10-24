@@ -5,7 +5,6 @@
     <string name="history">Geschiedenis</string>
     <string name="favorites">Favorieten</string>
     <string name="more">Meer</string>
-    <string name="scan_qr">QR-code scannen</string>
     <string name="point_camera">Richt de camera op een QR-code</string>
     <string name="allow_camera">Geef cameratoegang om te scannen.</string>
     <string name="enable_camera">Camera inschakelen</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopiëren</string>
     <string name="share">Delen</string>
     <string name="saved">Opgeslagen</string>
-    <string name="save_qr">Code opslaan</string>
     <string name="close">Sluiten</string>
     <string name="wifi_save_title">Wifi-code opslaan</string>
     <string name="wifi_save_warning">Het wifiwachtwoord wordt op dit apparaat opgeslagen.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Telefoon</string>
     <string name="location">Locatie</string>
     <string name="contact">Contact</string>
-    <string name="fewer_options">Minder opties</string>
-    <string name="more_options">Meer opties</string>
     <string name="optional_password">Wachtwoord (optioneel)</string>
     <string name="wifi_warning">Een wifi-QR-code kan een wachtwoord bevatten.</string>
     <string name="qr_preview">Voorbeeld</string>
     <string name="invalid_content">Voer geldige QR-inhoud in.</string>
     <string name="show_qr">QR-code tonen</string>
-    <string name="create_share">Bekijken en delen</string>
     <string name="search_qr">Codes zoeken</string>
     <string name="no_saved">Geen opgeslagen codes</string>
-    <string name="clear">Wissen</string>
     <string name="delete">Verwijderen</string>
     <string name="settings">Instellingen</string>
     <string name="save_history">Scangeschiedenis opslaan</string>
-    <string name="light_theme">Licht thema</string>
-    <string name="theme">Thema</string>
-    <string name="dark_theme">Donker thema</string>
-    <string name="privacy">Privacy</string>
-    <string name="privacy_summary">QR-codes worden op dit apparaat verwerkt. Geen account, advertenties of analyses. Geschiedenis is optioneel. Wifiwachtwoorden worden nooit automatisch opgeslagen; als je een wifi-code handmatig opslaat, wordt ook het wachtwoord bewaard. Gegevens worden alleen met een andere app gedeeld wanneer je een externe actie kiest. Wis de geschiedenis in Instellingen; thema en taal blijven bewaard. Contact: brendigo.com.</string>
+    <string name="privacy_summary">QR-codes worden op dit apparaat verwerkt. Geen account, advertenties of analyses. Geschiedenis is optioneel. Wifiwachtwoorden worden nooit automatisch opgeslagen; als je een wifi-code handmatig opslaat, wordt ook het wachtwoord bewaard. Gegevens worden alleen met een andere app gedeeld wanneer je een externe actie kiest. Wis de geschiedenis in Instellingen; de taal blijft bewaard. Contact: brendigo.com.</string>
     <string name="about">Over</string>
     <string name="developed_by">Ontwikkeld door Brendigo</string>
     <string name="confirm_delete">Deze QR-code verwijderen?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">PNG exporteren</string>
     <string name="png_save_failed">PNG-afbeelding kan niet worden opgeslagen.</string>
     <string name="operation_failed">Actie mislukt. Probeer het opnieuw.</string>
-    <string name="data_tools">Jouw codes en bestanden</string>
     <string name="export_archive">Opgeslagen QR-codes exporteren als PDF · ZIP</string>
-    <string name="export_archive_hint">Bewaar je favoriete codes in een afdrukbaar PDF-archief.</string>
-    <string name="export_archive_warning">Geëxporteerde PDF\'s kunnen opgeslagen wifiwachtwoorden bevatten. Deel de ZIP alleen met vertrouwde personen.</string>
-    <string name="archive_failed">ZIP-archief kon niet worden gemaakt.</string>
-    <string name="archive_ready">ZIP-archief opgeslagen.</string>
+    <string name="export_archive_warning">Geëxporteerde PDF\'s kunnen opgeslagen wifiwachtwoorden bevatten. Deel deze PDF alleen met vertrouwde personen.</string>
     <string name="privacy_policy">Privacybeleid</string>
     <string name="terms_of_use">Gebruiksvoorwaarden</string>
-    <string name="terms_summary">Controleer QR-bestemmingen voordat je links opent. Deel of exporteer alleen codes waarvoor je toestemming hebt. ZIP-bestanden kunnen wifiwachtwoorden bevatten. QREX wordt zonder garanties geleverd voor zover wettelijk toegestaan. Hulp: brendigo.com.</string>
+    <string name="terms_summary">Controleer QR-bestemmingen voordat je links opent. Deel of exporteer alleen codes waarvoor je toestemming hebt. Geëxporteerde PDF\'s kunnen opgeslagen wifiwachtwoorden bevatten. QREX wordt zonder garanties geleverd voor zover wettelijk toegestaan. Hulp: brendigo.com.</string>
     <string name="read_full_policy">Volledig beleid lezen</string>
     <string name="tagline">Scan. Maak. Deel.</string>
     <string name="event">Gebeurtenis</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Geschiedenis wissen</string>
     <string name="confirm_clear_history">Geschiedenis wissen?</string>
     <string name="clear_history_warning">Alle geschiedenisitems en opgeslagen QR-codes worden permanent verwijderd. Thema en taal blijven bewaard.</string>
+    <string name="pdf_saved_code">Opgeslagen code %1$d van %2$d</string>
+    <string name="splash_message">Alles voor QR — eenvoudig, snel en zonder account.</string>
 </resources>

@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Shield
@@ -92,15 +91,14 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
     }
 }
 
-/** PDF and ZIP export choices correspond to the real SAF-backed actions.
+/** PDF export uses the system Storage Access Framework.
  * Empty history never exposes a clickable export that will silently fail.
  */
 @Composable
 internal fun QrexExportDetails(
     hasSaved: Boolean,
     onBack: () -> Unit,
-    onPdf: () -> Unit,
-    onZip: () -> Unit
+    onPdf: () -> Unit
 ) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(horizontal = 16.dp).testTag("qrex-export-screen")) {
@@ -110,13 +108,6 @@ internal fun QrexExportDetails(
             enabled = hasSaved,
             modifier = Modifier.testTag("qrex-export-pdf"),
             onClick = onPdf
-        )
-        Spacer(Modifier.height(8.dp))
-        QrexResultAction(
-            label = "ZIP", icon = Icons.Default.Archive,
-            enabled = hasSaved,
-            modifier = Modifier.testTag("qrex-export-zip"),
-            onClick = onZip
         )
         Spacer(Modifier.height(12.dp))
         Text(tr("export_archive_warning"), fontSize = 12.sp,

@@ -1,4 +1,12 @@
-## Next QA candidate: v1.0.11 · Android versionCode 111
+## Next QA candidate: v1.0.12 · Android versionCode 112
+
+QREX 1.0.12 retains only the QREX dark brand appearance, removes the ZIP export option and unused writer, and keeps functional PDF/PNG exports. All 23 offline locales have updated PDF warnings, terms and privacy copy. The live-camera QR scanner, four-tab navigation, saved codes, encrypted Wi-Fi and adaptive Q/QR launcher icon are retained. Ten real dark Android captures and seven responsive QA captures replace obsolete light-mode fixtures.
+
+[Version 1.0.12 changes](docs/releases/v1.0.12.md) · [Archived releases](docs/releases/INDEX.md)
+
+## Published: v1.0.11 · Android versionCode 111
+
+## Previous release candidate: v1.0.11 · Android versionCode 111
 
 QREX 1.0.11 simplifies bottom navigation to Scan, Create, History and More. Favorites is a visible one-tap filter within History rather than a fifth destination. Scanner controls are decluttered, Gallery is visually primary and the flashlight remains a single working CameraX action. The actual QREX blue Q/QR logo is shared by the scanner and Create headers. The existing seven-type light Create layout, 23 languages, QR formats, encrypted history and saved items are preserved.
 

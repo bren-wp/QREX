@@ -5,7 +5,6 @@
     <string name="history">История</string>
     <string name="favorites">Любими</string>
     <string name="more">Още</string>
-    <string name="scan_qr">Сканирай QR код</string>
     <string name="point_camera">Насочи камерата към QR код</string>
     <string name="allow_camera">Разреши достъп до камерата.</string>
     <string name="enable_camera">Включи камерата</string>
@@ -25,7 +24,6 @@
     <string name="copy">Копирай</string>
     <string name="share">Сподели</string>
     <string name="saved">Запазено</string>
-    <string name="save_qr">Запази кода</string>
     <string name="close">Затвори</string>
     <string name="wifi_save_title">Запази Wi-Fi кода</string>
     <string name="wifi_save_warning">Wi-Fi паролата ще се запази на устройството.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Телефон</string>
     <string name="location">Местоположение</string>
     <string name="contact">Контакт</string>
-    <string name="fewer_options">По-малко опции</string>
-    <string name="more_options">Още опции</string>
     <string name="optional_password">Парола (незадължително)</string>
     <string name="wifi_warning">Wi-Fi QR кодът може да съдържа парола.</string>
     <string name="qr_preview">Преглед на кода</string>
     <string name="invalid_content">Въведи валидно QR съдържание.</string>
     <string name="show_qr">Покажи QR кода</string>
-    <string name="create_share">Преглед и споделяне</string>
     <string name="search_qr">Търси кодове</string>
     <string name="no_saved">Няма запазени кодове</string>
-    <string name="clear">Изчисти</string>
     <string name="delete">Изтрий</string>
     <string name="settings">Настройки</string>
     <string name="save_history">Запазвай историята</string>
-    <string name="light_theme">Светла тема</string>
-    <string name="theme">Тема</string>
-    <string name="dark_theme">Тъмна тема</string>
-    <string name="privacy">Поверителност</string>
-    <string name="privacy_summary">QR кодовете се обработват на това устройство. Без профил, реклами или анализи. Историята е по избор. Паролите за Wi-Fi не се запазват автоматично; ръчното запазване на Wi-Fi код запазва и паролата. Данните се споделят с друго приложение само когато изберете външно действие. Историята може да се изчисти от Настройки; темата и езикът остават запазени. Контакт: brendigo.com.</string>
+    <string name="privacy_summary">QR кодовете се обработват на това устройство. Без профил, реклами или анализи. Историята е по избор. Паролите за Wi-Fi не се запазват автоматично; ръчното запазване на Wi-Fi код запазва и паролата. Данните се споделят с друго приложение само когато изберете външно действие. Историята може да се изчисти от Настройки; езикът остава запазен. Контакт: brendigo.com.</string>
     <string name="about">За приложението</string>
     <string name="developed_by">Разработено от Brendigo</string>
     <string name="confirm_delete">Да изтрия ли този QR код?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Експортирай PNG</string>
     <string name="png_save_failed">PNG изображението не може да се запази.</string>
     <string name="operation_failed">Действието е неуспешно. Опитайте отново.</string>
-    <string name="data_tools">Вашите кодове и файлове</string>
     <string name="export_archive">Експорт на запазени QR кодове в PDF · ZIP</string>
-    <string name="export_archive_hint">Запазете любимите си кодове в PDF архив за печат.</string>
-    <string name="export_archive_warning">Експортираните PDF файлове може да съдържат Wi-Fi пароли. Споделяйте ZIP само с доверени лица.</string>
-    <string name="archive_failed">ZIP архивът не може да бъде създаден.</string>
-    <string name="archive_ready">ZIP архивът е запазен.</string>
+    <string name="export_archive_warning">Експортираните PDF файлове може да съдържат Wi-Fi пароли. Споделяйте този PDF само с доверени лица.</string>
     <string name="privacy_policy">Политика за поверителност</string>
     <string name="terms_of_use">Условия за ползване</string>
-    <string name="terms_summary">Проверявайте QR адресите преди отваряне. Споделяйте само кодове, за които имате разрешение. ZIP архивите може да съдържат Wi-Fi пароли. QREX се предоставя без гаранции в законовите граници. Поддръжка: brendigo.com.</string>
+    <string name="terms_summary">Проверявайте QR адресите преди отваряне. Споделяйте само кодове, за които имате разрешение. Експортираните PDF файлове може да съдържат запазени Wi-Fi пароли. QREX се предоставя без гаранции в законовите граници. Поддръжка: brendigo.com.</string>
     <string name="read_full_policy">Прочетете пълната политика</string>
     <string name="tagline">Сканирай. Създай. Сподели.</string>
     <string name="event">Събитие</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Изчисти историята</string>
     <string name="confirm_clear_history">Да изчистя ли историята?</string>
     <string name="clear_history_warning">Всички записи в историята и запазени QR кодове ще бъдат изтрити окончателно. Настройките за тема и език ще останат запазени.</string>
+    <string name="pdf_saved_code">Запазен код %1$d от %2$d</string>
+    <string name="splash_message">Всичко за QR — лесно, бързо и без профил.</string>
 </resources>

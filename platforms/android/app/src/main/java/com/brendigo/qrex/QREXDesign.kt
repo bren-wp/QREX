@@ -57,7 +57,6 @@ internal object QrexDesign {
     val accentBright = Color(0xFF22C7FF)
     val cyan = Color(0xFF19E3F5)
     val purple = Color(0xFF9866FF)
-    val onDark = Color(0xFFF8FBFF)
     val muted = Color(0xFFA9BAD2)
     val danger = Color(0xFFFF657B)
     val heroBrush = Brush.verticalGradient(
@@ -219,7 +218,6 @@ internal fun QrexSettingsListRow(
 internal data class QrexLayoutProfile(
     val stackTypeChoices: Boolean,
     val showQrPreview: Boolean,
-    val lightQrSizeDp: Int,
     val darkQrSizeDp: Int,
     val horizontalPaddingDp: Int
 )
@@ -232,7 +230,6 @@ internal fun qrexLayoutProfile(
     return QrexLayoutProfile(
         stackTypeChoices = narrow,
         showQrPreview = heightDp >= 420 && fontScale < 1.70f,
-        lightQrSizeDp = if (narrow || short) 80 else 104,
         darkQrSizeDp = if (narrow || short) 104 else 156,
         horizontalPaddingDp = if (widthDp < 350) 12 else 16
     )

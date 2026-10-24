@@ -9,12 +9,13 @@ JAVA = ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex"
 
 
 class AndroidCodeAuditTests(unittest.TestCase):
-    def test_pdf_zip_export_streams_without_full_document_copy(self):
+    def test_pdf_export_streams_without_full_document_copy(self):
         src = (JAVA / "QREXDocuments.kt").read_text("utf-8")
         self.assertNotIn("ByteArrayOutputStream", src)
         self.assertNotIn("bytes.toByteArray()", src)
-        self.assertIn("ZipOutputStream(stream.buffered())", src)
-        self.assertIn("writePdf(records, archive)", src)
+        self.assertNotIn("ZipOutputStream", src)
+        self.assertNotIn("ZipEntry", src)
+        self.assertNotIn("exportSavedPdfZip", src)
         self.assertIn("pdf.writeTo(output)", src)
         self.assertIn("bitmap.recycle()", src)
         self.assertIn("QRContent.canRender(it.raw)", src)
@@ -42,7 +43,7 @@ class AndroidCodeAuditTests(unittest.TestCase):
         self.assertIn("verticalScroll(rememberScrollState())", scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", scanner)
 
-    def test_history_clear_preserves_theme_language_and_encrypted_data_rules(self):
+    def test_history_clear_preserves_language_and_encrypted_data_rules(self):
         core = (JAVA / "QREXCore.kt").read_text("utf-8")
         self.assertIn("fun clearHistory(): Boolean", core)
         self.assertNotIn("fun clearAll()", core)

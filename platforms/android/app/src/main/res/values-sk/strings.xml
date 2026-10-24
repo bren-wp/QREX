@@ -5,7 +5,6 @@
     <string name="history">História</string>
     <string name="favorites">Obľúbené</string>
     <string name="more">Viac</string>
-    <string name="scan_qr">Skenovať QR kód</string>
     <string name="point_camera">Namierte fotoaparát na QR kód</string>
     <string name="allow_camera">Povoľte prístup k fotoaparátu.</string>
     <string name="enable_camera">Zapnúť fotoaparát</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopírovať</string>
     <string name="share">Zdieľať</string>
     <string name="saved">Uložené</string>
-    <string name="save_qr">Uložiť kód</string>
     <string name="close">Zavrieť</string>
     <string name="wifi_save_title">Uložiť Wi-Fi kód</string>
     <string name="wifi_save_warning">Heslo Wi-Fi sa uloží do zariadenia.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Telefón</string>
     <string name="location">Poloha</string>
     <string name="contact">Kontakt</string>
-    <string name="fewer_options">Menej možností</string>
-    <string name="more_options">Viac možností</string>
     <string name="optional_password">Heslo (voliteľné)</string>
     <string name="wifi_warning">Wi-Fi QR kód môže obsahovať heslo.</string>
     <string name="qr_preview">Ukážka kódu</string>
     <string name="invalid_content">Zadajte platný QR obsah.</string>
     <string name="show_qr">Zobraziť QR kód</string>
-    <string name="create_share">Zobraziť a zdieľať</string>
     <string name="search_qr">Hľadať kódy</string>
     <string name="no_saved">Žiadne uložené kódy</string>
-    <string name="clear">Vymazať</string>
     <string name="delete">Odstrániť</string>
     <string name="settings">Nastavenia</string>
     <string name="save_history">Ukladať históriu</string>
-    <string name="light_theme">Svetlý vzhľad</string>
-    <string name="theme">Motív</string>
-    <string name="dark_theme">Tmavý motív</string>
-    <string name="privacy">Súkromie</string>
-    <string name="privacy_summary">QR kódy sa spracúvajú v tomto zariadení. Bez účtu, reklám a analytiky. História je voliteľná. Heslá Wi-Fi sa neukladajú automaticky; pri ručnom uložení Wi-Fi kódu sa uloží aj heslo. Údaje sa inej aplikácii odovzdajú iba po zvolení externej akcie. Históriu možno vymazať v Nastaveniach; téma a jazyk zostanú uložené. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR kódy sa spracúvajú v tomto zariadení. Bez účtu, reklám a analytiky. História je voliteľná. Heslá Wi-Fi sa neukladajú automaticky; pri ručnom uložení Wi-Fi kódu sa uloží aj heslo. Údaje sa inej aplikácii odovzdajú iba po zvolení externej akcie. Históriu možno vymazať v Nastaveniach; jazyk zostane uložený. Kontakt: brendigo.com.</string>
     <string name="about">O aplikácii</string>
     <string name="developed_by">Vyvinul Brendigo</string>
     <string name="confirm_delete">Odstrániť tento QR kód?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Exportovať PNG</string>
     <string name="png_save_failed">Obrázok PNG sa nedá uložiť.</string>
     <string name="operation_failed">Akcia zlyhala. Skúste to znova.</string>
-    <string name="data_tools">Vaše kódy a súbory</string>
     <string name="export_archive">Exportovať uložené QR kódy do PDF · ZIP</string>
-    <string name="export_archive_hint">Uložte si obľúbené kódy do PDF archívu vhodného na tlač.</string>
-    <string name="export_archive_warning">Exportované PDF môžu obsahovať uložené heslá Wi-Fi. ZIP zdieľajte len s dôveryhodnými osobami.</string>
-    <string name="archive_failed">Archív ZIP sa nepodarilo vytvoriť.</string>
-    <string name="archive_ready">Archív ZIP uložený.</string>
+    <string name="export_archive_warning">Exportované PDF môžu obsahovať uložené heslá Wi-Fi. PDF zdieľajte len s dôveryhodnými osobami.</string>
     <string name="privacy_policy">Zásady ochrany osobných údajov</string>
     <string name="terms_of_use">Podmienky používania</string>
-    <string name="terms_summary">Pred otvorením odkazu skontrolujte cieľ QR kódu. Zdieľajte len kódy, na ktoré máte oprávnenie. ZIP môže obsahovať heslá Wi-Fi. QREX je poskytovaný bez záruk v rozsahu povolenom zákonom. Podpora: brendigo.com.</string>
+    <string name="terms_summary">Pred otvorením odkazu skontrolujte cieľ QR kódu. Zdieľajte len kódy, na ktoré máte oprávnenie. Exportované PDF môžu obsahovať uložené heslá Wi-Fi. QREX je poskytovaný bez záruk v rozsahu povolenom zákonom. Podpora: brendigo.com.</string>
     <string name="read_full_policy">Prečítať celé zásady</string>
     <string name="tagline">Skenuj. Vytváraj. Zdieľaj.</string>
     <string name="event">Udalosť</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Vymazať históriu</string>
     <string name="confirm_clear_history">Vymazať históriu?</string>
     <string name="clear_history_warning">Všetky záznamy histórie a uložené QR kódy sa natrvalo odstránia. Nastavenia témy a jazyka zostanú uložené.</string>
+    <string name="pdf_saved_code">Uložený kód %1$d z %2$d</string>
+    <string name="splash_message">Všetko pre QR — jednoducho, rýchlo a bez účtu.</string>
 </resources>

@@ -230,8 +230,6 @@ class QREXStore(context: Context) {
 
     var historyEnabled by mutableStateOf(readBoolean("historyEnabled", true))
         private set
-    var lightMode by mutableStateOf(readBoolean("lightMode", false))
-        private set
     var language by mutableStateOf(readLanguage())
         private set
 
@@ -327,20 +325,15 @@ class QREXStore(context: Context) {
         if (oldEntries == null) {
             // A Flutter install can contain preferences without any saved QR.
             // Import them in the same durable commit as the migration marker.
-            val legacySettings = runCatching {
-                old.getBoolean("flutter.qrex_light_v1", false) to
-                    old.getBoolean("flutter.qrex_record_v1", true)
+            val legacyHistoryEnabled = runCatching {
+                old.getBoolean("flutter.qrex_record_v1", true)
             }.getOrNull() ?: return
-            val importLight = !preferences.contains("lightMode") &&
-                old.contains("flutter.qrex_light_v1")
             val importHistory = !preferences.contains("historyEnabled") &&
                 old.contains("flutter.qrex_record_v1")
             val editor = preferences.edit().putBoolean("flutterMigrationV1", true)
-            if (importLight) editor.putBoolean("lightMode", legacySettings.first)
-            if (importHistory) editor.putBoolean("historyEnabled", legacySettings.second)
+            if (importHistory) editor.putBoolean("historyEnabled", legacyHistoryEnabled)
             if (!editor.commit()) return
-            if (importLight) lightMode = legacySettings.first
-            if (importHistory) historyEnabled = legacySettings.second
+            if (importHistory) historyEnabled = legacyHistoryEnabled
             return
         }
         val migrated = runCatching {
@@ -378,9 +371,8 @@ class QREXStore(context: Context) {
             }
         }
         // Malformed preference types must not trigger a partial migration.
-        val legacySettings = runCatching {
-            old.getBoolean("flutter.qrex_light_v1", false) to
-                old.getBoolean("flutter.qrex_record_v1", true)
+        val legacyHistoryEnabled = runCatching {
+            old.getBoolean("flutter.qrex_record_v1", true)
         }.getOrNull() ?: return
         val ciphertexts = mutableMapOf<String, String>()
         val serialized = JSONArray()
@@ -400,17 +392,14 @@ class QREXStore(context: Context) {
         val editor = preferences.edit()
             .putString("history", serialized.toString())
             .putBoolean("flutterMigrationV1", true)
-        val importLight = !preferences.contains("lightMode")
         val importHistory = !preferences.contains("historyEnabled")
-        if (importLight) editor.putBoolean("lightMode", legacySettings.first)
-        if (importHistory) editor.putBoolean("historyEnabled", legacySettings.second)
+        if (importHistory) editor.putBoolean("historyEnabled", legacyHistoryEnabled)
         if (!editor.commit()) return
         protectedWifi.clear()
         protectedWifi.putAll(ciphertexts)
         items.clear()
         items.addAll(merged)
-        if (importLight) lightMode = legacySettings.first
-        if (importHistory) historyEnabled = legacySettings.second
+        if (importHistory) historyEnabled = legacyHistoryEnabled
         // A crash here is harmless: the next launch sees the committed marker.
         old.edit().remove("flutter.qrex_history_v1").commit()
     }
@@ -494,11 +483,6 @@ class QREXStore(context: Context) {
     fun updateHistoryEnabled(value: Boolean) {
         historyEnabled = value
         preferences.edit().putBoolean("historyEnabled", value).apply()
-    }
-
-    fun updateLightMode(value: Boolean) {
-        lightMode = value
-        preferences.edit().putBoolean("lightMode", value).apply()
     }
 
     private fun persist(records: List<QRRecord> = items): Boolean {

@@ -5,7 +5,6 @@
     <string name="history">Ιστορικό</string>
     <string name="favorites">Αγαπημένα</string>
     <string name="more">Περισσότερα</string>
-    <string name="scan_qr">Σάρωση κωδικού QR</string>
     <string name="point_camera">Στρέψτε την κάμερα προς έναν κωδικό QR</string>
     <string name="allow_camera">Επιτρέψτε πρόσβαση στην κάμερα.</string>
     <string name="enable_camera">Ενεργοποίηση κάμερας</string>
@@ -25,7 +24,6 @@
     <string name="copy">Αντιγραφή</string>
     <string name="share">Κοινοποίηση</string>
     <string name="saved">Αποθηκεύτηκε</string>
-    <string name="save_qr">Αποθήκευση κωδικού</string>
     <string name="close">Κλείσιμο</string>
     <string name="wifi_save_title">Αποθήκευση Wi-Fi</string>
     <string name="wifi_save_warning">Ο κωδικός Wi-Fi θα αποθηκευτεί στη συσκευή.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Τηλέφωνο</string>
     <string name="location">Τοποθεσία</string>
     <string name="contact">Επαφή</string>
-    <string name="fewer_options">Λιγότερες επιλογές</string>
-    <string name="more_options">Περισσότερες επιλογές</string>
     <string name="optional_password">Κωδικός (προαιρετικά)</string>
     <string name="wifi_warning">Το QR Wi-Fi μπορεί να περιέχει κωδικό.</string>
     <string name="qr_preview">Προεπισκόπηση</string>
     <string name="invalid_content">Εισαγάγετε έγκυρο περιεχόμενο QR.</string>
     <string name="show_qr">Εμφάνιση QR</string>
-    <string name="create_share">Προβολή και κοινοποίηση</string>
     <string name="search_qr">Αναζήτηση κωδικών</string>
     <string name="no_saved">Δεν υπάρχουν αποθηκευμένοι κωδικοί</string>
-    <string name="clear">Εκκαθάριση</string>
     <string name="delete">Διαγραφή</string>
     <string name="settings">Ρυθμίσεις</string>
     <string name="save_history">Αποθήκευση ιστορικού</string>
-    <string name="light_theme">Φωτεινό θέμα</string>
-    <string name="theme">Θέμα</string>
-    <string name="dark_theme">Σκούρο θέμα</string>
-    <string name="privacy">Απόρρητο</string>
-    <string name="privacy_summary">Οι κωδικοί QR υποβάλλονται σε επεξεργασία σε αυτήν τη συσκευή. Χωρίς λογαριασμό, διαφημίσεις ή αναλυτικά στοιχεία. Το ιστορικό είναι προαιρετικό. Οι κωδικοί Wi-Fi δεν αποθηκεύονται αυτόματα· η χειροκίνητη αποθήκευση κωδικού Wi-Fi αποθηκεύει και τον κωδικό πρόσβασης. Τα δεδομένα κοινοποιούνται σε άλλη εφαρμογή μόνο όταν επιλέγετε εξωτερική ενέργεια. Μπορείτε να διαγράψετε το ιστορικό από τις Ρυθμίσεις· το θέμα και η γλώσσα παραμένουν αποθηκευμένα. Επικοινωνία: brendigo.com.</string>
+    <string name="privacy_summary">Οι κωδικοί QR υποβάλλονται σε επεξεργασία σε αυτήν τη συσκευή. Χωρίς λογαριασμό, διαφημίσεις ή αναλυτικά στοιχεία. Το ιστορικό είναι προαιρετικό. Οι κωδικοί Wi-Fi δεν αποθηκεύονται αυτόματα· η χειροκίνητη αποθήκευση κωδικού Wi-Fi αποθηκεύει και τον κωδικό πρόσβασης. Τα δεδομένα κοινοποιούνται σε άλλη εφαρμογή μόνο όταν επιλέγετε εξωτερική ενέργεια. Μπορείτε να διαγράψετε το ιστορικό από τις Ρυθμίσεις· η γλώσσα παραμένει αποθηκευμένη. Επικοινωνία: brendigo.com.</string>
     <string name="about">Σχετικά</string>
     <string name="developed_by">Ανάπτυξη από Brendigo</string>
     <string name="confirm_delete">Να διαγραφεί αυτός ο κωδικός QR;</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Εξαγωγή PNG</string>
     <string name="png_save_failed">Δεν ήταν δυνατή η αποθήκευση της εικόνας PNG.</string>
     <string name="operation_failed">Η ενέργεια απέτυχε. Δοκιμάστε ξανά.</string>
-    <string name="data_tools">Οι κωδικοί και τα αρχεία σας</string>
     <string name="export_archive">Εξαγωγή αποθηκευμένων QR σε PDF · ZIP</string>
-    <string name="export_archive_hint">Διατηρήστε τους αγαπημένους κωδικούς σε εκτυπώσιμο αρχείο PDF.</string>
-    <string name="export_archive_warning">Τα PDF μπορεί να περιέχουν αποθηκευμένους κωδικούς Wi-Fi. Μοιραστείτε το ZIP μόνο με έμπιστα άτομα.</string>
-    <string name="archive_failed">Δεν ήταν δυνατή η δημιουργία του ZIP.</string>
-    <string name="archive_ready">Το αρχείο ZIP αποθηκεύτηκε.</string>
+    <string name="export_archive_warning">Τα PDF μπορεί να περιέχουν αποθηκευμένους κωδικούς Wi-Fi. Μοιραστείτε αυτό το PDF μόνο με έμπιστα άτομα.</string>
     <string name="privacy_policy">Πολιτική απορρήτου</string>
     <string name="terms_of_use">Όροι χρήσης</string>
-    <string name="terms_summary">Ελέγχετε τους προορισμούς QR πριν ανοίξετε συνδέσμους. Μοιραστείτε μόνο κωδικούς που επιτρέπεται. Τα ZIP μπορεί να περιέχουν κωδικούς Wi-Fi. Το QREX παρέχεται χωρίς εγγυήσεις στον βαθμό που επιτρέπει ο νόμος. Υποστήριξη: brendigo.com.</string>
+    <string name="terms_summary">Ελέγχετε τους προορισμούς QR πριν ανοίξετε συνδέσμους. Μοιραστείτε μόνο κωδικούς που επιτρέπεται. Τα εξαγόμενα PDF μπορεί να περιέχουν αποθηκευμένους κωδικούς Wi-Fi. Το QREX παρέχεται χωρίς εγγυήσεις στον βαθμό που επιτρέπει ο νόμος. Υποστήριξη: brendigo.com.</string>
     <string name="read_full_policy">Διαβάστε όλη την πολιτική</string>
     <string name="tagline">Σάρωση. Δημιουργία. Κοινοποίηση.</string>
     <string name="event">Εκδήλωση</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Εκκαθάριση ιστορικού</string>
     <string name="confirm_clear_history">Να διαγραφεί το ιστορικό;</string>
     <string name="clear_history_warning">Όλο το ιστορικό και οι αποθηκευμένοι κωδικοί QR θα διαγραφούν οριστικά. Οι ρυθμίσεις θέματος και γλώσσας θα παραμείνουν αποθηκευμένες.</string>
+    <string name="pdf_saved_code">Αποθηκευμένος κωδικός %1$d από %2$d</string>
+    <string name="splash_message">Όλα για τα QR — απλά, γρήγορα και χωρίς λογαριασμό.</string>
 </resources>

@@ -5,7 +5,6 @@
     <string name="history">Historial</string>
     <string name="favorites">Favoritos</string>
     <string name="more">Más</string>
-    <string name="scan_qr">Escanear código QR</string>
     <string name="point_camera">Apunta la cámara a un código QR</string>
     <string name="allow_camera">Permite el acceso a la cámara para escanear.</string>
     <string name="enable_camera">Activar cámara</string>
@@ -25,7 +24,6 @@
     <string name="copy">Copiar</string>
     <string name="share">Compartir</string>
     <string name="saved">Guardado</string>
-    <string name="save_qr">Guardar código</string>
     <string name="close">Cerrar</string>
     <string name="wifi_save_title">Guardar código Wi-Fi</string>
     <string name="wifi_save_warning">La contraseña Wi-Fi se guardará en este dispositivo.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Teléfono</string>
     <string name="location">Ubicación</string>
     <string name="contact">Contacto</string>
-    <string name="fewer_options">Menos opciones</string>
-    <string name="more_options">Más opciones</string>
     <string name="optional_password">Contraseña (opcional)</string>
     <string name="wifi_warning">Los QR Wi-Fi pueden contener contraseñas.</string>
     <string name="qr_preview">Vista previa</string>
     <string name="invalid_content">Introduce contenido QR válido.</string>
     <string name="show_qr">Mostrar código QR</string>
-    <string name="create_share">Ver y compartir</string>
     <string name="search_qr">Buscar códigos</string>
     <string name="no_saved">No hay códigos guardados</string>
-    <string name="clear">Limpiar</string>
     <string name="delete">Eliminar</string>
     <string name="settings">Ajustes</string>
     <string name="save_history">Guardar historial</string>
-    <string name="light_theme">Tema claro</string>
-    <string name="theme">Tema</string>
-    <string name="dark_theme">Tema oscuro</string>
-    <string name="privacy">Privacidad</string>
-    <string name="privacy_summary">Los códigos QR se procesan en este dispositivo. Sin cuenta, anuncios ni analítica. El historial es opcional. Las contraseñas Wi-Fi no se guardan automáticamente; al guardar manualmente un código Wi-Fi también se guarda su contraseña. Los datos solo se comparten con otra aplicación cuando eliges una acción externa. Puedes borrar el historial en Ajustes; el tema y el idioma se conservan. Contacto: brendigo.com.</string>
+    <string name="privacy_summary">Los códigos QR se procesan en este dispositivo. Sin cuenta, anuncios ni analítica. El historial es opcional. Las contraseñas Wi-Fi no se guardan automáticamente; al guardar manualmente un código Wi-Fi también se guarda su contraseña. Los datos solo se comparten con otra aplicación cuando eliges una acción externa. Puedes borrar el historial en Ajustes; el idioma se conserva. Contacto: brendigo.com.</string>
     <string name="about">Acerca de</string>
     <string name="developed_by">Desarrollado por Brendigo</string>
     <string name="confirm_delete">¿Eliminar este código QR?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Exportar PNG</string>
     <string name="png_save_failed">No se pudo guardar la imagen PNG.</string>
     <string name="operation_failed">La acción falló. Inténtalo de nuevo.</string>
-    <string name="data_tools">Tus códigos y archivos</string>
     <string name="export_archive">Exportar códigos guardados como PDF · ZIP</string>
-    <string name="export_archive_hint">Guarda tus códigos favoritos en un archivo PDF listo para imprimir.</string>
-    <string name="export_archive_warning">Los PDF exportados pueden contener contraseñas Wi-Fi guardadas. Comparte el ZIP solo con personas de confianza.</string>
-    <string name="archive_failed">No se pudo crear el archivo ZIP.</string>
-    <string name="archive_ready">Archivo ZIP guardado.</string>
+    <string name="export_archive_warning">Los PDF exportados pueden contener contraseñas Wi-Fi guardadas. Comparte este PDF solo con personas de confianza.</string>
     <string name="privacy_policy">Política de privacidad</string>
     <string name="terms_of_use">Condiciones de uso</string>
-    <string name="terms_summary">Comprueba los destinos QR antes de abrir enlaces. Comparte o exporta solo códigos que tengas permiso para divulgar. Los ZIP pueden incluir contraseñas Wi-Fi. QREX se ofrece sin garantías en la medida permitida por la ley. Ayuda: brendigo.com.</string>
+    <string name="terms_summary">Comprueba los destinos QR antes de abrir enlaces. Comparte o exporta solo códigos que tengas permiso para divulgar. Los PDF exportados pueden incluir contraseñas Wi-Fi guardadas. QREX se ofrece sin garantías en la medida permitida por la ley. Ayuda: brendigo.com.</string>
     <string name="read_full_policy">Leer la política completa</string>
     <string name="tagline">Escanea. Crea. Comparte.</string>
     <string name="event">Evento</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Borrar historial</string>
     <string name="confirm_clear_history">¿Borrar el historial?</string>
     <string name="clear_history_warning">Todo el historial y los códigos QR guardados se borrarán permanentemente. Se conservarán el tema y el idioma.</string>
+    <string name="pdf_saved_code">Código guardado %1$d de %2$d</string>
+    <string name="splash_message">Todo sobre QR — fácil, rápido y sin cuenta.</string>
 </resources>

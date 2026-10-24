@@ -5,7 +5,6 @@
     <string name="history">Historik</string>
     <string name="favorites">Favoriter</string>
     <string name="more">Mer</string>
-    <string name="scan_qr">Skanna QR-kod</string>
     <string name="point_camera">Rikta kameran mot en QR-kod</string>
     <string name="allow_camera">Tillåt kameran för skanning.</string>
     <string name="enable_camera">Aktivera kamera</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopiera</string>
     <string name="share">Dela</string>
     <string name="saved">Sparad</string>
-    <string name="save_qr">Spara kod</string>
     <string name="close">Stäng</string>
     <string name="wifi_save_title">Spara Wi-Fi-kod</string>
     <string name="wifi_save_warning">Wi-Fi-lösenordet sparas på enheten.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Telefon</string>
     <string name="location">Plats</string>
     <string name="contact">Kontakt</string>
-    <string name="fewer_options">Färre alternativ</string>
-    <string name="more_options">Fler alternativ</string>
     <string name="optional_password">Lösenord (valfritt)</string>
     <string name="wifi_warning">En Wi-Fi-QR-kod kan innehålla lösenord.</string>
     <string name="qr_preview">Förhandsgranskning</string>
     <string name="invalid_content">Ange giltigt QR-innehåll.</string>
     <string name="show_qr">Visa QR-kod</string>
-    <string name="create_share">Visa och dela</string>
     <string name="search_qr">Sök koder</string>
     <string name="no_saved">Inga sparade koder</string>
-    <string name="clear">Rensa</string>
     <string name="delete">Ta bort</string>
     <string name="settings">Inställningar</string>
     <string name="save_history">Spara historik</string>
-    <string name="light_theme">Ljust tema</string>
-    <string name="theme">Tema</string>
-    <string name="dark_theme">Mörkt tema</string>
-    <string name="privacy">Integritet</string>
-    <string name="privacy_summary">QR-koder behandlas på den här enheten. Inget konto, inga annonser eller analyser. Historik är valfri. Wi-Fi-lösenord sparas inte automatiskt; om du sparar en Wi-Fi-kod manuellt sparas även lösenordet. Data delas med en annan app endast när du väljer en extern åtgärd. Rensa historiken i Inställningar; tema och språkval sparas. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR-koder behandlas på den här enheten. Inget konto, inga annonser eller analyser. Historik är valfri. Wi-Fi-lösenord sparas inte automatiskt; om du sparar en Wi-Fi-kod manuellt sparas även lösenordet. Data delas med en annan app endast när du väljer en extern åtgärd. Rensa historiken i Inställningar; språkvalet sparas. Kontakt: brendigo.com.</string>
     <string name="about">Om appen</string>
     <string name="developed_by">Utvecklad av Brendigo</string>
     <string name="confirm_delete">Ta bort den här QR-koden?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">Exportera PNG</string>
     <string name="png_save_failed">Det gick inte att spara PNG-bilden.</string>
     <string name="operation_failed">Åtgärden misslyckades. Försök igen.</string>
-    <string name="data_tools">Dina koder och filer</string>
     <string name="export_archive">Exportera sparade QR-koder som PDF · ZIP</string>
-    <string name="export_archive_hint">Spara favoritkoder i ett utskrivbart PDF-arkiv.</string>
-    <string name="export_archive_warning">Exporterade PDF-filer kan innehålla sparade wifi-lösenord. Dela ZIP endast med betrodda personer.</string>
-    <string name="archive_failed">Det gick inte att skapa ZIP-arkivet.</string>
-    <string name="archive_ready">ZIP-arkivet har sparats.</string>
+    <string name="export_archive_warning">Exporterade PDF-filer kan innehålla sparade wifi-lösenord. Dela denna PDF endast med betrodda personer.</string>
     <string name="privacy_policy">Integritetspolicy</string>
     <string name="terms_of_use">Användarvillkor</string>
-    <string name="terms_summary">Kontrollera QR-mål innan du öppnar länkar. Dela eller exportera endast koder du har tillstånd att dela. ZIP kan innehålla wifi-lösenord. QREX erbjuds utan garantier i den mån lagen tillåter. Support: brendigo.com.</string>
+    <string name="terms_summary">Kontrollera QR-mål innan du öppnar länkar. Dela eller exportera endast koder du har tillstånd att dela. Exporterade PDF-filer kan innehålla sparade wifi-lösenord. QREX erbjuds utan garantier i den mån lagen tillåter. Support: brendigo.com.</string>
     <string name="read_full_policy">Läs hela policyn</string>
     <string name="tagline">Skanna. Skapa. Dela.</string>
     <string name="event">Händelse</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Rensa historik</string>
     <string name="confirm_clear_history">Rensa historiken?</string>
     <string name="clear_history_warning">Alla historikposter och sparade QR-koder raderas permanent. Tema och språkval sparas.</string>
+    <string name="pdf_saved_code">Sparad kod %1$d av %2$d</string>
+    <string name="splash_message">Allt för QR — enkelt, snabbt och utan konto.</string>
 </resources>

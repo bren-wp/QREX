@@ -5,7 +5,6 @@
     <string name="history">Előzmények</string>
     <string name="favorites">Kedvencek</string>
     <string name="more">Továbbiak</string>
-    <string name="scan_qr">QR-kód beolvasása</string>
     <string name="point_camera">Irányítsd a kamerát a QR-kódra</string>
     <string name="allow_camera">Engedélyezd a kamerát a beolvasáshoz.</string>
     <string name="enable_camera">Kamera engedélyezése</string>
@@ -25,7 +24,6 @@
     <string name="copy">Másolás</string>
     <string name="share">Megosztás</string>
     <string name="saved">Mentve</string>
-    <string name="save_qr">Kód mentése</string>
     <string name="close">Bezárás</string>
     <string name="wifi_save_title">Wi-Fi kód mentése</string>
     <string name="wifi_save_warning">A Wi-Fi jelszó az eszközre lesz mentve.</string>
@@ -43,25 +41,17 @@
     <string name="phone">Telefon</string>
     <string name="location">Hely</string>
     <string name="contact">Kapcsolat</string>
-    <string name="fewer_options">Kevesebb lehetőség</string>
-    <string name="more_options">Több lehetőség</string>
     <string name="optional_password">Jelszó (nem kötelező)</string>
     <string name="wifi_warning">A Wi-Fi QR-kód jelszót is tartalmazhat.</string>
     <string name="qr_preview">Kód előnézete</string>
     <string name="invalid_content">Adj meg érvényes QR-tartalmat.</string>
     <string name="show_qr">QR-kód megjelenítése</string>
-    <string name="create_share">Megtekintés és megosztás</string>
     <string name="search_qr">Kódok keresése</string>
     <string name="no_saved">Nincsenek mentett kódok</string>
-    <string name="clear">Törlés</string>
     <string name="delete">Eltávolítás</string>
     <string name="settings">Beállítások</string>
     <string name="save_history">Előzmények mentése</string>
-    <string name="light_theme">Világos téma</string>
-    <string name="theme">Téma</string>
-    <string name="dark_theme">Sötét téma</string>
-    <string name="privacy">Adatvédelem</string>
-    <string name="privacy_summary">A QR-kódok feldolgozása ezen az eszközön történik. Nincs fiók, hirdetés vagy analitika. Az előzmények használata nem kötelező. A Wi-Fi-jelszavak nem mentődnek automatikusan; Wi-Fi-kód kézi mentésekor a jelszó is mentésre kerül. Az adatok csak választott külső művelet esetén kerülnek másik alkalmazáshoz. Az előzmények a Beállításokban törölhetők; a téma és a nyelv beállítása megmarad. Kapcsolat: brendigo.com.</string>
+    <string name="privacy_summary">A QR-kódok feldolgozása ezen az eszközön történik. Nincs fiók, hirdetés vagy analitika. Az előzmények használata nem kötelező. A Wi-Fi-jelszavak nem mentődnek automatikusan; Wi-Fi-kód kézi mentésekor a jelszó is mentésre kerül. Az adatok csak választott külső művelet esetén kerülnek másik alkalmazáshoz. Az előzmények a Beállításokban törölhetők; a nyelvi beállítás megmarad. Kapcsolat: brendigo.com.</string>
     <string name="about">Névjegy</string>
     <string name="developed_by">Fejlesztő: Brendigo</string>
     <string name="confirm_delete">Törlöd ezt a QR-kódot?</string>
@@ -71,15 +61,11 @@
     <string name="export_png">PNG exportálása</string>
     <string name="png_save_failed">A PNG-kép nem menthető.</string>
     <string name="operation_failed">A művelet sikertelen. Próbálja újra.</string>
-    <string name="data_tools">Kódok és fájlok</string>
     <string name="export_archive">Mentett QR-kódok exportálása PDF · ZIP formátumban</string>
-    <string name="export_archive_hint">Kedvenc kódjaid nyomtatható PDF-archívumban tárolhatod.</string>
-    <string name="export_archive_warning">Az exportált PDF-ek mentett Wi-Fi-jelszavakat tartalmazhatnak. A ZIP-et csak megbízható személyekkel oszd meg.</string>
-    <string name="archive_failed">Nem sikerült létrehozni a ZIP-archívumot.</string>
-    <string name="archive_ready">ZIP-archívum mentve.</string>
+    <string name="export_archive_warning">Az exportált PDF-ek mentett Wi-Fi-jelszavakat tartalmazhatnak. A PDF-et csak megbízható személyekkel oszd meg.</string>
     <string name="privacy_policy">Adatvédelmi szabályzat</string>
     <string name="terms_of_use">Felhasználási feltételek</string>
-    <string name="terms_summary">A hivatkozások megnyitása előtt ellenőrizd a QR-célcímet. Csak engedélyezett kódokat ossz meg. A ZIP Wi-Fi-jelszavakat tartalmazhat. A QREX jogszabály szerint megengedett mértékig garancia nélkül érhető el. Támogatás: brendigo.com.</string>
+    <string name="terms_summary">A hivatkozások megnyitása előtt ellenőrizd a QR-célcímet. Csak engedélyezett kódokat ossz meg. Az exportált PDF-ek mentett Wi-Fi-jelszavakat tartalmazhatnak. A QREX jogszabály szerint megengedett mértékig garancia nélkül érhető el. Támogatás: brendigo.com.</string>
     <string name="read_full_policy">Teljes szabályzat</string>
     <string name="tagline">Olvass be. Hozz létre. Ossz meg.</string>
     <string name="event">Esemény</string>
@@ -97,4 +83,6 @@
     <string name="clear_history">Előzmények törlése</string>
     <string name="confirm_clear_history">Töröljük az előzményeket?</string>
     <string name="clear_history_warning">Az összes előzményelem és mentett QR-kód végleg törlődik. A téma és a nyelv beállítása megmarad.</string>
+    <string name="pdf_saved_code">Mentett kód: %1$d / %2$d</string>
+    <string name="splash_message">Minden QR-hez — egyszerűen, gyorsan, fiók nélkül.</string>
 </resources>
