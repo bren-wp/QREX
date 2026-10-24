@@ -48,8 +48,14 @@ def validate(xml_content: str, screen: str = "create") -> None:
     }
     if screen not in expected:
         raise ValueError("Unsupported screenshot screen")
-    if not all(value in texts for value in expected[screen]):
-        raise ValueError(f"QREX {screen} screen not fully visible")
+    missing = tuple(value for value in expected[screen] if value not in texts)
+    if missing:
+        # Log ONLY static fixture marker names, never captured accessibility
+        # text: scanned QR/Keystore contents must not leak to CI logs.
+        raise ValueError(
+            f"QREX {screen} screen not fully visible; absent expected markers: "
+            + ", ".join(missing)
+        )
 
 
 def main() -> int:
