@@ -1,6 +1,6 @@
-# QREX — Google Play 1.0.11 readiness checklist
+# QREX — Google Play 1.0.12 readiness checklist
 
-**Package:** `com.brendigo.qrex` · **versionName:** `1.0.11` · **versionCode:** `111` · **target/compile SDK:** 36 · **minSdk:** 26.
+**Package:** `com.brendigo.qrex` · **versionName:** `1.0.12` · **versionCode:** `112` · **target/compile SDK:** 36 · **minSdk:** 26.
 
 ## Repository and automated checks
 
@@ -10,7 +10,7 @@
 - [ ] Android JUnit, instrumentation, lint, R8, bundle and screenshot CI all pass at the **exact final main commit**.
 - [ ] Actual merged manifest and dependencies have been audited for accidental permissions, remote SDK traffic and third-party data sharing.
 - [ ] Review and validate edge-to-edge, compact phones, tablets, foldables, TalkBack and 200% display fonts.
-- [ ] Test gallery/permission/camera lifecycle, password storage, PDF/ZIP export and app data migration on physical Android devices.
+- [ ] Test gallery/permission/camera lifecycle, password storage, PDF export and app data migration on physical Android devices.
 
 ## Google Play authorization
 
@@ -19,7 +19,7 @@
 - [ ] Compare `QREX_UPLOAD_CERT_SHA256` against Play Console's registered **upload** certificate.
 - [ ] From `.github/workflows/production-release.yml`, choose the version set in Gradle and confirm `PLAY_UPLOAD_<version>` only after real QA and required Play declarations.
 - [ ] Download the matching **separately, correctly signed** Google Play AAB artifact and verify `SHA256SUMS-PLAY.txt`.
-- [ ] Confirm `versionCode 111` is unused in the existing Play application; if already used, raise it before submission.
+- [ ] Confirm `versionCode 112` is unused in the existing Play application; if already used, raise it before submission.
 - [ ] Complete Play Console privacy policy URL, Data safety, app access, ads, audience, content rating, listing and store screenshots.
 - [ ] Verify 16-KiB page compatibility of native SDK libraries using actual final Play bundle and supported devices.
 - [ ] Complete any applicable new-personal-account closed testing requirements.

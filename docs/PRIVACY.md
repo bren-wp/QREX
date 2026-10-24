@@ -13,7 +13,7 @@ QREX scans and creates QR codes on your Android device. It does not require regi
 - **QR contents:** scanned and generated URLs, text, Wi-Fi details, contacts, locations and calendar events are processed locally. URLs are not opened automatically. If you tap a recognized web link, QREX hands it to an app you choose; any network activity then takes place outside QREX.
 - **Optional history:** up to 250 items can be stored locally if enabled; Wi-Fi QR codes are **never automatically recorded**.
 - **Favorites:** manually saved Wi-Fi QR codes can contain passwords. Their contents are encrypted with AES-GCM using an Android Keystore key. Existing Flutter Android history is migrated locally, only after a durable protected save.
-- **Preferences:** language, theme and history settings are held on your device.
+- **Preferences:** language and history settings are held on your device.
 
 QREX does not operate a cloud backend that receives QR scans or history. Android backup is disabled in the app manifest. No internet, contact, location or broad storage permission is requested.
 
@@ -23,13 +23,13 @@ When you tap **Share**, QREX sends the selected QR text to the app you choose; Q
 
 Calendar-event QR content is processed on device. If you tap **Add to calendar**, QREX passes the event title, start/end time and any location or details you entered to the calendar app selected on your device using Android's standard event-insert action. QREX does not request calendar read or write permission. The selected calendar app controls its own storage and privacy practices.
 
-## PDF/ZIP and PNG exports
+## PDF and PNG exports
 
-Exports are created after you choose to export. A PDF/ZIP archive contains only your manually saved codes and **is not encrypted**. Cloud providers or recipients selected by you may store it separately. Deleting data in QREX does **not** erase already-exported copies.
+Exports are created after you choose to export. A PDF archive contains only your manually saved codes and **is not encrypted**. Cloud providers or recipients selected by you may store it separately. Deleting data in QREX does **not** erase already-exported copies.
 
 ## Rights and deletion
 
-Settings allows disabling history and deleting local history and saved QR codes. Clearing history also removes its legacy QR records so deleted information does not reappear; theme and language choices remain saved. If protected records cannot be decrypted, QREX avoids silently overwriting them. You may revoke camera permission in Android Settings.
+Settings allows disabling history and deleting local history and saved QR codes. Clearing history also removes its legacy QR records so deleted information does not reappear; language choice remains saved. If protected records cannot be decrypted, QREX avoids silently overwriting them. You may revoke camera permission in Android Settings.
 
 ## Support and updates
 

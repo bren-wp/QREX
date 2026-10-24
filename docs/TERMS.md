@@ -11,7 +11,7 @@ QR codes can point to external websites and services controlled by third parties
 
 ## Exports and backups
 
-The optional PDF/ZIP export contains readable QR codes you manually saved. If a saved QR code includes a Wi-Fi password, contact details, or other private information, **the exported PDF/ZIP contains that information and is not encrypted**. Protect the document, choose a trusted destination, and share it only with authorized recipients. The operating system or a storage provider may retain a copy after export. Removing QREX history does not remove previously exported files.
+The optional PDF export contains readable QR codes you manually saved. If a saved QR code includes a Wi-Fi password, contact details, or other private information, **the exported PDF contains that information and is not encrypted**. Protect the document, choose a trusted destination, and share it only with authorized recipients. The operating system or a storage provider may retain a copy after export. Removing QREX history does not remove previously exported files.
 
 ## Availability
 
