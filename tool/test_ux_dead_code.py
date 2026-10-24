@@ -123,7 +123,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("painterResource(R.drawable.qrex_icon)", design)
-        self.assertIn('Text("X"', self.main)
+        self.assertIn('Text("X"', design)
         self.assertIn("Icons.Default.Shield", self.main)
         self.assertIn('contentDescription = tr("more")', self.main)
         self.assertIn("showResultMenu", self.main)
