@@ -33,7 +33,7 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
 
     @classmethod
     def color(cls, name):
-        pattern = rf"val {re.escape(name)} = Color\\(0xFF([A-Fa-f0-9]{{6}})\\)"
+        pattern = rf"val {re.escape(name)} = Color\(0xFF([A-Fa-f0-9]{{6}})\)"
         match = re.search(pattern, cls.design)
         if match is None:
             raise AssertionError(f"Missing Kotlin color token {name}")
