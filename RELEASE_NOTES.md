@@ -1,4 +1,4 @@
-## QREX v1.0.14 — release candidate · Android versionCode 114
+## Published: v1.0.14 · Android versionCode 114
 
 Launcher/background parity, a correct monochrome QR finder cutout, accessible icon/button hit areas across all app screens, responsive QR quick-type grids, and 23-language dark UI refinements. GitHub APK/AAB publishing uses exact-main-SHA automated validation and independent disposable signing; it cannot upgrade a differently signed installation.
 
