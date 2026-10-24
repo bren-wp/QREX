@@ -387,25 +387,8 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         )
                     }
                 }
-                if (camera?.cameraInfo?.hasFlashUnit() == true) {
-                    Surface(
-                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        color = QrexDesign.backgroundDeep.copy(alpha = .88f),
-                        border = BorderStroke(1.dp, QrexDesign.stroke)
-                    ) {
-                        IconButton(
-                            onClick = toggleTorch, enabled = allowed && !torchBusy,
-                            modifier = Modifier.size(46.dp)
-                        ) {
-                            Icon(
-                                if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                                contentDescription = tr("flashlight"),
-                                tint = if (torchOn) QrexDesign.accentBright else Color.White
-                            )
-                        }
-                    }
-                }
+                // One torch control lives below the camera. Avoid a second
+                // button on top of the live scanner viewport.
                 Text(
                     tr("point_camera"),
                     modifier = Modifier.align(Alignment.BottomCenter)
@@ -442,21 +425,24 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
         Spacer(Modifier.height(if (compactScan) 7.dp else 12.dp))
         Row(Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)) {
-            OutlinedButton(
+            Button(
                 onClick = {
                     photoPicker.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
                 },
-                modifier = Modifier.weight(1f).heightIn(min = if (compactScan) 52.dp else 66.dp),
+                modifier = Modifier.weight(1f)
+                    .heightIn(min = if (compactScan) 52.dp else 66.dp)
+                    .testTag("qrex-scan-gallery"),
                 shape = RoundedCornerShape(15.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = QrexDesign.surface
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1677FF),
+                    contentColor = Color.White
                 )
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.PhotoLibrary, contentDescription = null,
-                        tint = QrexDesign.accentBright, modifier = Modifier.size(22.dp))
+                        tint = Color.White, modifier = Modifier.size(22.dp))
                     Spacer(Modifier.height(4.dp))
                     Text(tr("from_gallery"), maxLines = 2,
                         textAlign = TextAlign.Center)
@@ -466,10 +452,13 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 onClick = toggleTorch,
                 enabled = allowed && !torchBusy &&
                     camera?.cameraInfo?.hasFlashUnit() == true,
-                modifier = Modifier.weight(1f).heightIn(min = if (compactScan) 52.dp else 66.dp),
+                modifier = Modifier.weight(1f)
+                    .heightIn(min = if (compactScan) 52.dp else 66.dp)
+                    .testTag("qrex-scan-torch"),
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = QrexDesign.surface
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
