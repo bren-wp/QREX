@@ -37,7 +37,6 @@ These are **real Android emulator captures of the running QREX app**, generated 
 </tr>
 <tr>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.14/android-language.png" width="210" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.14/android-export.png" width="210" alt="Actual QREX PDF export screen"><br><b>PDF export</b></td>
 </tr>
 </table>
 
@@ -74,7 +73,7 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**All historical QREX releases (v1.0.0–v1.0.14) →**](docs/releases/INDEX.md)
 
-Latest published release: **[v1.0.14](https://github.com/bren-wp/QREX/releases/tag/v1.0.14)** (`com.brendigo.qrex`, versionCode 114), with a premium midnight-blue UI, consistent adaptive QREX iconography, larger action controls across all screens, responsive QR choices, PDF-only saved-code collection export, and all 23 offline languages. The screenshots above are real Android emulator captures attached to the published v1.0.14. Subsequent commits are development work until separately verified and released.
+Latest published release: **[v1.0.14](https://github.com/bren-wp/QREX/releases/tag/v1.0.14)** (`com.brendigo.qrex`, versionCode 114), with matching adaptive and splash icons, clearer QR-type controls, accessible buttons across screens, improved scanning/gallery feedback, PDF-only saved-code collection export, and all 23 offline languages. The screenshots above are real Android emulator captures attached to the published v1.0.14. Subsequent commits are development work until separately verified and released.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 

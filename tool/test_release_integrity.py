@@ -309,18 +309,20 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("cannot update", notes)
         self.assertIn("23", notes)
 
-    def test_published_114_marketing_links_and_archive_refer_to_real_release(self):
+    def test_historical_113_and_current_published_114_links_are_grounded(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
+        # Historical 1.0.13 remains in the release archive, not advertised
+        # as the latest version after publishing 1.0.14.
+        self.assertIn("| 1.0.13 | [v1.0.13]", archive)
+        self.assertIn("## Published: v1.0.13 · Android versionCode 113", notes)
         self.assertIn("Latest published release: **[v1.0.14]", readme)
         self.assertIn("versionCode 114", readme)
         self.assertIn("/releases/download/v1.0.14/android-create.png", readme)
-        self.assertIn("/releases/download/v1.0.14/android-export.png", readme)
         self.assertNotIn("/releases/download/v1.0.13/android-create.png", readme)
-        self.assertIn("| 1.0.13 | [v1.0.13]", archive)
         self.assertIn("| 1.0.14 | [v1.0.14]", archive)
-        self.assertIn("## Published: QREX v1.0.14 · Android versionCode 114", notes)
+        self.assertIn("## Published: v1.0.14 · Android versionCode 114", notes)
 
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
