@@ -1090,8 +1090,6 @@ private fun CreateScreen(
             QrexPanel(Modifier.fillMaxWidth()
                 .padding(horizontal = horizontalPadding, vertical = 4.dp)) {
                 // Single high-contrast centered QR preview.
-                } else {
-                    // The QR occupies the central preview panel.
                     Column(Modifier.fillMaxWidth().padding(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)) {
