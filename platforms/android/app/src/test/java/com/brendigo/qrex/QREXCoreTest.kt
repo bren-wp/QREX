@@ -57,9 +57,9 @@ class QREXCoreTest {
         val end = start.plusHours(2)
         val title = "Sastanak, Šime"
         val location = "Rijeka; Croatia"
-        val description = "Prva linija\\nDruga, linija"
+        val description = "Prva linija\nDruga, linija"
         val encoded = QRContent.event(title, start, end, location, description)!!
-        assertTrue(encoded.contains("\\r\\nDTSTART:"))
+        assertTrue(encoded.contains("\r\nDTSTART:"))
         assertEquals(title, QRContent.eventField(encoded, "SUMMARY"))
         assertEquals(location, QRContent.eventField(encoded, "LOCATION"))
         assertEquals(description, QRContent.eventField(encoded, "DESCRIPTION"))
