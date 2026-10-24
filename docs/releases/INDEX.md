@@ -14,8 +14,9 @@ Every entry below is an **existing, verified GitHub Release** with an immutable 
 | 1.0.7 | [v1.0.7](https://github.com/bren-wp/QREX/releases/tag/v1.0.7) | APK · AAB · Play-unsigned QA AAB · 10 screenshots |
 | 1.0.8 | [v1.0.8](https://github.com/bren-wp/QREX/releases/tag/v1.0.8) | APK · AAB · Play-unsigned QA AAB · 12 screenshots |
 | 1.0.9 | [v1.0.9](https://github.com/bren-wp/QREX/releases/tag/v1.0.9) | APK · AAB · Play-unsigned QA AAB · 12 screenshots |
+| 1.0.10 | [v1.0.10](https://github.com/bren-wp/QREX/releases/tag/v1.0.10) | APK · AAB · Play-unsigned QA AAB · 12 screenshots |
 
-All ten archive tags and all original APK/AAB assets above were checked through GitHub's release/tag API on 2026-10-23. Version `1.0.10` is **not** included until it is actually published.
+All eleven archive tags and all original APK/AAB assets above were checked through GitHub's release/tag API on 2026-10-23. Version `1.0.11` is **not** included until it is actually published.
 
 ## Preserve old app installations and signing identity
 

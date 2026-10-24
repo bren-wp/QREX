@@ -1,4 +1,12 @@
-## Next QA candidate: v1.0.10 · Android versionCode 110
+## Next QA candidate: v1.0.11 · Android versionCode 111
+
+QREX 1.0.11 simplifies bottom navigation to Scan, Create, History and More. Favorites is a visible one-tap filter within History rather than a fifth destination. Scanner controls are decluttered, Gallery is visually primary and the flashlight remains a single working CameraX action. The actual QREX blue Q/QR logo is shared by the scanner and Create headers. The existing seven-type light Create layout, 23 languages, QR formats, encrypted history and saved items are preserved.
+
+[Version 1.0.11 changes](docs/releases/v1.0.11.md) · [All prior releases](docs/releases/INDEX.md)
+
+## Published: v1.0.10 · Android versionCode 110
+
+## Previous development: v1.0.10 · Android versionCode 110
 
 Light Create now exposes all seven reference QR types in a real 3-column responsive grid (2-column on compact phones and with large font), with pale-blue selection, accessible coloured icons and working content forms. Dark mode retains its distinct 4-choice design. A complete index of historical v1.0.0–v1.0.9 APK/AAB releases is added; all original GitHub release tags/assets are preserved.
 

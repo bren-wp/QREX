@@ -25,6 +25,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -61,7 +63,6 @@ import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -181,20 +182,28 @@ private fun QREXApp(
     val appLanguage = screenshotLanguage ?: store.language
     val lightTheme = if (screenshotMode != null && screenshotLight)
         true else store.lightMode
-    val pages = listOf("scan", "create", "history", "favorites", "more")
+    // Four root destinations: Favorites belongs in History, not a fifth tab.
+    // Preserve internal page IDs so scan/result/edit paths remain unchanged.
+    val navTargets = listOf(0, 1, 2, 4)
+    val pages = listOf("scan", "create", "history", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
     val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
             "history" -> 2
-            "saved" -> 3
+            "saved" -> 2
             "more", "language", "export" -> 4
             else -> 0
         })
+    }
+    // Recover legacy in-memory saved page 3 (old Favorites tab) after an
+    // Activity recreation/update. No QR history or preferences are migrated.
+    LaunchedEffect(selected) {
+        if (selected == 3) selected = 2
     }
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
@@ -290,16 +299,16 @@ private fun QREXApp(
             NavigationBar(containerColor = if (lightTheme) Color.White else QrexDesign.backgroundDeep,
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
+                    val target = navTargets[index]
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
-                        selected = selected == index,
+                        selected = selected == target,
                         onClick = {
-                            selected = index
+                            selected = target
                             currentCode = null
                             editPayload = null
                             resultShowsQr = false
                         },
-                        icon = { Icon(if (index == 3 && selected == 3) Icons.Default.Favorite
-                             else icons[index], contentDescription = label) },
+                        icon = { Icon(icons[index], contentDescription = label) },
                          alwaysShowLabel = !compactNavigation,
                         label = {
                              if (!compactNavigation) Text(label, maxLines = 1,
@@ -352,10 +361,9 @@ private fun QREXApp(
                                 currentCode = it
                             })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
-                            screenshotItems = screenshotItems)
-                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
-                            initiallySavedOnly = true, favoritesPage = true)
+                            initiallySavedOnly = screenshotMode == "saved",
+                            favoritesPage = screenshotMode == "saved")
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root",
@@ -373,8 +381,17 @@ private fun QREXApp(
 private fun AppHeader(title: String, subtitle: String) {
     Column(Modifier.fillMaxWidth().padding(bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 21.sp,
-            color = MaterialTheme.colorScheme.onBackground)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(R.drawable.qrex_icon),
+                contentDescription = null,
+                modifier = Modifier.size(30.dp).clip(RoundedCornerShape(9.dp))
+            )
+            Spacer(Modifier.width(9.dp))
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 21.sp,
+                maxLines = 2, overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onBackground)
+        }
         Text(subtitle, fontSize = 11.sp, maxLines = 2,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
@@ -938,12 +955,7 @@ private fun CreateScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("QRE", fontWeight = FontWeight.Black, fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground)
-                        Text("X", fontWeight = FontWeight.Black, fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.primary)
-                    }
+                    QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)
                     Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
@@ -955,7 +967,11 @@ private fun CreateScreen(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     DropdownMenu(expanded = createMenu, onDismissRequest = { createMenu = false }) {
-                        listOf(0, 1, 2, 6, 3, 4, 5, 7).forEach { type ->
+                        // Only advanced/unpinned types belong in the
+                        // overflow; never duplicate the visible quick choices.
+                        val overflowTypes = if (lightTheme) listOf(7)
+                            else listOf(3, 4, 5, 7)
+                        overflowTypes.forEach { type ->
                             DropdownMenuItem(text = { Text(types[type]) }, onClick = {
                                 kind = type
                                 content = ""
@@ -1305,7 +1321,7 @@ private fun HistoryScreen(
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
-        QRHistory.matches(it, search, savedOnly || favoritesPage)
+        QRHistory.matches(it, search, savedOnly)
     }
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)
@@ -1315,24 +1331,38 @@ private fun HistoryScreen(
             if (favoritesPage) tr("favorites") else tr("history"),
             if (favoritesPage) tr("saved") else tr("history_local")
         )
+        // Two visible, accessible filters replace a hidden heart-only switch.
+        Row(Modifier.fillMaxWidth().testTag("qrex-history-segments"),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = !savedOnly, onClick = { savedOnly = false },
+                label = { Text(tr("history"), maxLines = 1) },
+                leadingIcon = {
+                    Icon(Icons.Default.History, contentDescription = null,
+                        modifier = Modifier.size(17.dp))
+                },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    .testTag("qrex-history-all")
+            )
+            FilterChip(
+                selected = savedOnly, onClick = { savedOnly = true },
+                label = { Text(tr("favorites"), maxLines = 1) },
+                leadingIcon = {
+                    Icon(
+                        if (savedOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = null, modifier = Modifier.size(17.dp)
+                    )
+                },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                    .testTag("qrex-history-saved")
+            )
+        }
+        Spacer(Modifier.height(4.dp))
         OutlinedTextField(
             value = search,
             onValueChange = { search = it.take(120) },
             label = { Text(tr("search_qr")) },
             leadingIcon = { Icon(Icons.Default.History, contentDescription = null) },
-            trailingIcon = if (favoritesPage) null else ({
-                IconButton(
-                    onClick = { savedOnly = !savedOnly },
-                    modifier = Modifier.testTag("qrex-history-filter")
-                ) {
-                    Icon(
-                        Icons.Default.FilterList,
-                        contentDescription = tr("favorites"),
-                        tint = if (savedOnly) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }),
             singleLine = true,
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)

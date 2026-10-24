@@ -227,6 +227,19 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("referenceTypes.chunked(columns)", activity)
         self.assertIn("110", notes)
 
+    def test_111_scan_first_release_keeps_all_security_gates(self):
+        release = (WORKFLOWS / "github-release-1.0.11.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.11.md").read_text("utf-8")
+        self.assertIn("gh release create v1.0.11", release)
+        self.assertIn("com.brendigo.qrex 111 1.0.11", release)
+        self.assertIn("assert len(screens) == 12", release)
+        for gate in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml", "SHA256SUMS.txt",
+                     "keytool -genkeypair", "apksigner"):
+            self.assertIn(gate, release)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", release)
+        self.assertIn("111", notes)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
@@ -243,8 +256,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 110", gradle)
-        self.assertIn('versionName = "1.0.10"', gradle)
+        self.assertIn("versionCode = 111", gradle)
+        self.assertIn('versionName = "1.0.11"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -258,6 +271,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.8.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.9.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.10.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.11.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
