@@ -92,4 +92,6 @@
     <string name="clear_history">Ryd historik</string>
     <string name="confirm_clear_history">Ryd historikken?</string>
     <string name="clear_history_warning">Alle historikposter og gemte QR-koder slettes permanent. Tema- og sprogvalg gemmes.</string>
+    <string name="pdf_saved_code">Gemt kode %1$d af %2$d</string>
+    <string name="splash_message">Alt til QR — nemt, hurtigt og uden konto.</string>
 </resources>

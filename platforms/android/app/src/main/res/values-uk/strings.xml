@@ -92,4 +92,6 @@
     <string name="clear_history">Очистити історію</string>
     <string name="confirm_clear_history">Очистити історію?</string>
     <string name="clear_history_warning">Усі записи історії та збережені QR-коди буде видалено назавжди. Налаштування теми й мови залишаться.</string>
+    <string name="pdf_saved_code">Збережений код %1$d із %2$d</string>
+    <string name="splash_message">Усе для QR — просто, швидко та без облікового запису.</string>
 </resources>

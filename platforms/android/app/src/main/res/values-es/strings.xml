@@ -92,4 +92,6 @@
     <string name="clear_history">Borrar historial</string>
     <string name="confirm_clear_history">¿Borrar el historial?</string>
     <string name="clear_history_warning">Todo el historial y los códigos QR guardados se borrarán permanentemente. Se conservarán el tema y el idioma.</string>
+    <string name="pdf_saved_code">Código guardado %1$d de %2$d</string>
+    <string name="splash_message">Todo sobre QR — fácil, rápido y sin cuenta.</string>
 </resources>

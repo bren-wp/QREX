@@ -107,9 +107,7 @@ internal fun QrexSplashScreen(
                 fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
             Spacer(Modifier.height(12.dp))
             Text(
-                if (subtitle.startsWith("Skener."))
-                    "Sve što može QR — jednostavno, brzo i bez prijave."
-                else "Everything QR — simple, fast and without an account.",
+                tr("splash_message"),
                 color = QrexDesign.muted,
                 fontSize = 13.sp,
                 lineHeight = 19.sp,

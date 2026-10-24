@@ -171,7 +171,6 @@ private fun QREXApp(
 ) {
     val context = LocalContext.current
     // Compose observes locale/configuration changes without stale Resources reads.
-    val systemLanguage = LocalConfiguration.current.locales[0].language
     val appLanguage = screenshotLanguage ?: store.language
     // Four root destinations: Favorites belongs in History, not a fifth tab.
     // Preserve internal page IDs so scan/result/edit paths remain unchanged.
@@ -257,14 +256,7 @@ private fun QREXApp(
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides appLanguage) {
         if (showSplash) {
-            QrexSplashScreen(
-                subtitle = if (
-                    (if (appLanguage == "system")
-                        systemLanguage
-                    else appLanguage) == "hr"
-                ) "Skener. Stvara. Dijeli."
-                else "Scan. Create. Share."
-            )
+            QrexSplashScreen(subtitle = tr("tagline"))
         } else {
         Scaffold(containerColor = colors.background, bottomBar = {
             if (currentCode == null) {

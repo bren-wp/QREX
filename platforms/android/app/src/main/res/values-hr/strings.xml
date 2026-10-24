@@ -92,4 +92,6 @@
     <string name="clear_history">Obriši povijest</string>
     <string name="confirm_clear_history">Obrisati povijest?</string>
     <string name="clear_history_warning">Svi zapisi i spremljeni QR kodovi trajno će se izbrisati. Postavke teme i jezika ostat će spremljene.</string>
+    <string name="pdf_saved_code">Spremljeni kod %1$d od %2$d</string>
+    <string name="splash_message">Sve što može QR — jednostavno, brzo i bez prijave.</string>
 </resources>

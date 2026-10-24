@@ -92,4 +92,6 @@
     <string name="clear_history">Rensa historik</string>
     <string name="confirm_clear_history">Rensa historiken?</string>
     <string name="clear_history_warning">Alla historikposter och sparade QR-koder raderas permanent. Tema och språkval sparas.</string>
+    <string name="pdf_saved_code">Sparad kod %1$d av %2$d</string>
+    <string name="splash_message">Allt för QR — enkelt, snabbt och utan konto.</string>
 </resources>

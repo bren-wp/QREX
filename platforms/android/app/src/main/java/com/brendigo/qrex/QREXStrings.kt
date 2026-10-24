@@ -101,6 +101,8 @@ object QREXStrings {
         "clear_history" -> R.string.clear_history
         "confirm_clear_history" -> R.string.confirm_clear_history
         "clear_history_warning" -> R.string.clear_history_warning
+        "pdf_saved_code" -> R.string.pdf_saved_code
+        "splash_message" -> R.string.splash_message
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

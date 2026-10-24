@@ -92,4 +92,6 @@
     <string name="clear_history">Verlauf löschen</string>
     <string name="confirm_clear_history">Verlauf löschen?</string>
     <string name="clear_history_warning">Alle Verlaufseinträge und gespeicherten QR-Codes werden dauerhaft gelöscht. Thema und Sprache bleiben gespeichert.</string>
+    <string name="pdf_saved_code">Gespeicherter Code %1$d von %2$d</string>
+    <string name="splash_message">QR leicht gemacht — einfach, schnell und ohne Konto.</string>
 </resources>

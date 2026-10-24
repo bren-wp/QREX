@@ -95,7 +95,9 @@
         "remove_favorite": "Remove from favorites",
         "clear_history": "Clear history",
         "confirm_clear_history": "Clear history?",
-        "clear_history_warning": "All history entries and saved QR codes will be permanently erased. Theme and language choices will stay saved."
+        "clear_history_warning": "All history entries and saved QR codes will be permanently erased. Theme and language choices will stay saved.",
+        "pdf_saved_code": "Saved code %1$d of %2$d",
+        "splash_message": "Everything QR — simple, fast and without an account."
       }
     },
     "hr": {
@@ -192,7 +194,9 @@
         "remove_favorite": "Ukloni iz favorita",
         "clear_history": "Obriši povijest",
         "confirm_clear_history": "Obrisati povijest?",
-        "clear_history_warning": "Svi zapisi i spremljeni QR kodovi trajno će se izbrisati. Postavke teme i jezika ostat će spremljene."
+        "clear_history_warning": "Svi zapisi i spremljeni QR kodovi trajno će se izbrisati. Postavke teme i jezika ostat će spremljene.",
+        "pdf_saved_code": "Spremljeni kod %1$d od %2$d",
+        "splash_message": "Sve što može QR — jednostavno, brzo i bez prijave."
       }
     },
     "de": {
@@ -289,7 +293,9 @@
         "remove_favorite": "Aus Favoriten entfernen",
         "clear_history": "Verlauf löschen",
         "confirm_clear_history": "Verlauf löschen?",
-        "clear_history_warning": "Alle Verlaufseinträge und gespeicherten QR-Codes werden dauerhaft gelöscht. Thema und Sprache bleiben gespeichert."
+        "clear_history_warning": "Alle Verlaufseinträge und gespeicherten QR-Codes werden dauerhaft gelöscht. Thema und Sprache bleiben gespeichert.",
+        "pdf_saved_code": "Gespeicherter Code %1$d von %2$d",
+        "splash_message": "QR leicht gemacht — einfach, schnell und ohne Konto."
       }
     },
     "fr": {
@@ -386,7 +392,9 @@
         "remove_favorite": "Retirer des favoris",
         "clear_history": "Effacer l’historique",
         "confirm_clear_history": "Effacer l’historique ?",
-        "clear_history_warning": "Tous les éléments de l’historique et les codes QR enregistrés seront supprimés définitivement. Le thème et la langue resteront enregistrés."
+        "clear_history_warning": "Tous les éléments de l’historique et les codes QR enregistrés seront supprimés définitivement. Le thème et la langue resteront enregistrés.",
+        "pdf_saved_code": "Code enregistré %1$d sur %2$d",
+        "splash_message": "Tout pour les QR — simplement, rapidement et sans compte."
       }
     },
     "es": {
@@ -483,7 +491,9 @@
         "remove_favorite": "Quitar de favoritos",
         "clear_history": "Borrar historial",
         "confirm_clear_history": "¿Borrar el historial?",
-        "clear_history_warning": "Todo el historial y los códigos QR guardados se borrarán permanentemente. Se conservarán el tema y el idioma."
+        "clear_history_warning": "Todo el historial y los códigos QR guardados se borrarán permanentemente. Se conservarán el tema y el idioma.",
+        "pdf_saved_code": "Código guardado %1$d de %2$d",
+        "splash_message": "Todo sobre QR — fácil, rápido y sin cuenta."
       }
     },
     "it": {
@@ -580,7 +590,9 @@
         "remove_favorite": "Rimuovi dai preferiti",
         "clear_history": "Cancella cronologia",
         "confirm_clear_history": "Cancellare la cronologia?",
-        "clear_history_warning": "Tutte le voci della cronologia e i codici QR salvati verranno eliminati definitivamente. Tema e lingua resteranno salvati."
+        "clear_history_warning": "Tutte le voci della cronologia e i codici QR salvati verranno eliminati definitivamente. Tema e lingua resteranno salvati.",
+        "pdf_saved_code": "Codice salvato %1$d di %2$d",
+        "splash_message": "Tutto per i QR — semplice, veloce e senza account."
       }
     },
     "pt": {
@@ -677,7 +689,9 @@
         "remove_favorite": "Remover dos favoritos",
         "clear_history": "Limpar histórico",
         "confirm_clear_history": "Limpar o histórico?",
-        "clear_history_warning": "Todo o histórico e os códigos QR guardados serão eliminados permanentemente. O tema e o idioma continuarão guardados."
+        "clear_history_warning": "Todo o histórico e os códigos QR guardados serão eliminados permanentemente. O tema e o idioma continuarão guardados.",
+        "pdf_saved_code": "Código guardado %1$d de %2$d",
+        "splash_message": "Tudo sobre QR — simples, rápido e sem conta."
       }
     },
     "nl": {
@@ -774,7 +788,9 @@
         "remove_favorite": "Verwijderen uit favorieten",
         "clear_history": "Geschiedenis wissen",
         "confirm_clear_history": "Geschiedenis wissen?",
-        "clear_history_warning": "Alle geschiedenisitems en opgeslagen QR-codes worden permanent verwijderd. Thema en taal blijven bewaard."
+        "clear_history_warning": "Alle geschiedenisitems en opgeslagen QR-codes worden permanent verwijderd. Thema en taal blijven bewaard.",
+        "pdf_saved_code": "Opgeslagen code %1$d van %2$d",
+        "splash_message": "Alles voor QR — eenvoudig, snel en zonder account."
       }
     },
     "pl": {
@@ -871,7 +887,9 @@
         "remove_favorite": "Usuń z ulubionych",
         "clear_history": "Wyczyść historię",
         "confirm_clear_history": "Wyczyścić historię?",
-        "clear_history_warning": "Wszystkie wpisy historii i zapisane kody QR zostaną trwale usunięte. Ustawienia motywu i języka pozostaną zapisane."
+        "clear_history_warning": "Wszystkie wpisy historii i zapisane kody QR zostaną trwale usunięte. Ustawienia motywu i języka pozostaną zapisane.",
+        "pdf_saved_code": "Zapisany kod %1$d z %2$d",
+        "splash_message": "Wszystko o QR — prosto, szybko i bez konta."
       }
     },
     "cs": {
@@ -968,7 +986,9 @@
         "remove_favorite": "Odebrat z oblíbených",
         "clear_history": "Vymazat historii",
         "confirm_clear_history": "Vymazat historii?",
-        "clear_history_warning": "Všechny položky historie a uložené QR kódy budou trvale odstraněny. Nastavení motivu a jazyka zůstane uloženo."
+        "clear_history_warning": "Všechny položky historie a uložené QR kódy budou trvale odstraněny. Nastavení motivu a jazyka zůstane uloženo.",
+        "pdf_saved_code": "Uložený kód %1$d z %2$d",
+        "splash_message": "Vše pro QR — jednoduše, rychle a bez účtu."
       }
     },
     "sk": {
@@ -1065,7 +1085,9 @@
         "remove_favorite": "Odstrániť z obľúbených",
         "clear_history": "Vymazať históriu",
         "confirm_clear_history": "Vymazať históriu?",
-        "clear_history_warning": "Všetky záznamy histórie a uložené QR kódy sa natrvalo odstránia. Nastavenia témy a jazyka zostanú uložené."
+        "clear_history_warning": "Všetky záznamy histórie a uložené QR kódy sa natrvalo odstránia. Nastavenia témy a jazyka zostanú uložené.",
+        "pdf_saved_code": "Uložený kód %1$d z %2$d",
+        "splash_message": "Všetko pre QR — jednoducho, rýchlo a bez účtu."
       }
     },
     "sl": {
@@ -1162,7 +1184,9 @@
         "remove_favorite": "Odstrani iz priljubljenih",
         "clear_history": "Počisti zgodovino",
         "confirm_clear_history": "Počistim zgodovino?",
-        "clear_history_warning": "Vsi zapisi zgodovine in shranjene kode QR bodo trajno izbrisani. Nastavitve teme in jezika bodo ostale shranjene."
+        "clear_history_warning": "Vsi zapisi zgodovine in shranjene kode QR bodo trajno izbrisani. Nastavitve teme in jezika bodo ostale shranjene.",
+        "pdf_saved_code": "Shranjena koda %1$d od %2$d",
+        "splash_message": "Vse za QR — preprosto, hitro in brez računa."
       }
     },
     "hu": {
@@ -1259,7 +1283,9 @@
         "remove_favorite": "Eltávolítás a kedvencekből",
         "clear_history": "Előzmények törlése",
         "confirm_clear_history": "Töröljük az előzményeket?",
-        "clear_history_warning": "Az összes előzményelem és mentett QR-kód végleg törlődik. A téma és a nyelv beállítása megmarad."
+        "clear_history_warning": "Az összes előzményelem és mentett QR-kód végleg törlődik. A téma és a nyelv beállítása megmarad.",
+        "pdf_saved_code": "Mentett kód: %1$d / %2$d",
+        "splash_message": "Minden QR-hez — egyszerűen, gyorsan, fiók nélkül."
       }
     },
     "ro": {
@@ -1356,7 +1382,9 @@
         "remove_favorite": "Elimină din favorite",
         "clear_history": "Șterge istoricul",
         "confirm_clear_history": "Ștergi istoricul?",
-        "clear_history_warning": "Toate înregistrările din istoric și codurile QR salvate vor fi șterse definitiv. Tema și limba vor rămâne salvate."
+        "clear_history_warning": "Toate înregistrările din istoric și codurile QR salvate vor fi șterse definitiv. Tema și limba vor rămâne salvate.",
+        "pdf_saved_code": "Cod salvat %1$d din %2$d",
+        "splash_message": "Totul pentru QR — simplu, rapid și fără cont."
       }
     },
     "bg": {
@@ -1453,7 +1481,9 @@
         "remove_favorite": "Премахни от фаворити",
         "clear_history": "Изчисти историята",
         "confirm_clear_history": "Да изчистя ли историята?",
-        "clear_history_warning": "Всички записи в историята и запазени QR кодове ще бъдат изтрити окончателно. Настройките за тема и език ще останат запазени."
+        "clear_history_warning": "Всички записи в историята и запазени QR кодове ще бъдат изтрити окончателно. Настройките за тема и език ще останат запазени.",
+        "pdf_saved_code": "Запазен код %1$d от %2$d",
+        "splash_message": "Всичко за QR — лесно, бързо и без профил."
       }
     },
     "el": {
@@ -1550,7 +1580,9 @@
         "remove_favorite": "Αφαίρεση από τα αγαπημένα",
         "clear_history": "Εκκαθάριση ιστορικού",
         "confirm_clear_history": "Να διαγραφεί το ιστορικό;",
-        "clear_history_warning": "Όλο το ιστορικό και οι αποθηκευμένοι κωδικοί QR θα διαγραφούν οριστικά. Οι ρυθμίσεις θέματος και γλώσσας θα παραμείνουν αποθηκευμένες."
+        "clear_history_warning": "Όλο το ιστορικό και οι αποθηκευμένοι κωδικοί QR θα διαγραφούν οριστικά. Οι ρυθμίσεις θέματος και γλώσσας θα παραμείνουν αποθηκευμένες.",
+        "pdf_saved_code": "Αποθηκευμένος κωδικός %1$d από %2$d",
+        "splash_message": "Όλα για τα QR — απλά, γρήγορα και χωρίς λογαριασμό."
       }
     },
     "tr": {
@@ -1647,7 +1679,9 @@
         "remove_favorite": "Favorilerden kaldır",
         "clear_history": "Geçmişi temizle",
         "confirm_clear_history": "Geçmiş temizlensin mi?",
-        "clear_history_warning": "Tüm geçmiş kayıtları ve kaydedilen QR kodları kalıcı olarak silinecek. Tema ve dil seçimleri kayıtlı kalacak."
+        "clear_history_warning": "Tüm geçmiş kayıtları ve kaydedilen QR kodları kalıcı olarak silinecek. Tema ve dil seçimleri kayıtlı kalacak.",
+        "pdf_saved_code": "Kayıtlı kod %1$d / %2$d",
+        "splash_message": "QR için her şey — basit, hızlı ve hesapsız."
       }
     },
     "uk": {
@@ -1744,7 +1778,9 @@
         "remove_favorite": "Видалити з обраного",
         "clear_history": "Очистити історію",
         "confirm_clear_history": "Очистити історію?",
-        "clear_history_warning": "Усі записи історії та збережені QR-коди буде видалено назавжди. Налаштування теми й мови залишаться."
+        "clear_history_warning": "Усі записи історії та збережені QR-коди буде видалено назавжди. Налаштування теми й мови залишаться.",
+        "pdf_saved_code": "Збережений код %1$d із %2$d",
+        "splash_message": "Усе для QR — просто, швидко та без облікового запису."
       }
     },
     "ru": {
@@ -1841,7 +1877,9 @@
         "remove_favorite": "Удалить из избранного",
         "clear_history": "Очистить историю",
         "confirm_clear_history": "Очистить историю?",
-        "clear_history_warning": "Вся история и сохранённые QR-коды будут удалены без возможности восстановления. Настройки темы и языка останутся сохранёнными."
+        "clear_history_warning": "Вся история и сохранённые QR-коды будут удалены без возможности восстановления. Настройки темы и языка останутся сохранёнными.",
+        "pdf_saved_code": "Сохранённый код %1$d из %2$d",
+        "splash_message": "Всё для QR — просто, быстро и без аккаунта."
       }
     },
     "sv": {
@@ -1938,7 +1976,9 @@
         "remove_favorite": "Ta bort från favoriter",
         "clear_history": "Rensa historik",
         "confirm_clear_history": "Rensa historiken?",
-        "clear_history_warning": "Alla historikposter och sparade QR-koder raderas permanent. Tema och språkval sparas."
+        "clear_history_warning": "Alla historikposter och sparade QR-koder raderas permanent. Tema och språkval sparas.",
+        "pdf_saved_code": "Sparad kod %1$d av %2$d",
+        "splash_message": "Allt för QR — enkelt, snabbt och utan konto."
       }
     },
     "da": {
@@ -2035,7 +2075,9 @@
         "remove_favorite": "Fjern fra favoritter",
         "clear_history": "Ryd historik",
         "confirm_clear_history": "Ryd historikken?",
-        "clear_history_warning": "Alle historikposter og gemte QR-koder slettes permanent. Tema- og sprogvalg gemmes."
+        "clear_history_warning": "Alle historikposter og gemte QR-koder slettes permanent. Tema- og sprogvalg gemmes.",
+        "pdf_saved_code": "Gemt kode %1$d af %2$d",
+        "splash_message": "Alt til QR — nemt, hurtigt og uden konto."
       }
     },
     "fi": {
@@ -2132,7 +2174,9 @@
         "remove_favorite": "Poista suosikeista",
         "clear_history": "Tyhjennä historia",
         "confirm_clear_history": "Tyhjennetäänkö historia?",
-        "clear_history_warning": "Kaikki historiatiedot ja tallennetut QR-koodit poistetaan pysyvästi. Teema- ja kieliasetukset säilyvät."
+        "clear_history_warning": "Kaikki historiatiedot ja tallennetut QR-koodit poistetaan pysyvästi. Teema- ja kieliasetukset säilyvät.",
+        "pdf_saved_code": "Tallennettu koodi %1$d / %2$d",
+        "splash_message": "Kaikki QR-koodeihin — helposti, nopeasti ja ilman tiliä."
       }
     },
     "nb": {
@@ -2229,7 +2273,9 @@
         "remove_favorite": "Fjern fra favoritter",
         "clear_history": "Tøm historikk",
         "confirm_clear_history": "Tømme historikken?",
-        "clear_history_warning": "Alle historikkoppføringer og lagrede QR-koder slettes permanent. Tema- og språkvalgene beholdes."
+        "clear_history_warning": "Alle historikkoppføringer og lagrede QR-koder slettes permanent. Tema- og språkvalgene beholdes.",
+        "pdf_saved_code": "Lagret kode %1$d av %2$d",
+        "splash_message": "Alt for QR — enkelt, raskt og uten konto."
       }
     }
   }

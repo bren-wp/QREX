@@ -92,4 +92,6 @@
     <string name="clear_history">Előzmények törlése</string>
     <string name="confirm_clear_history">Töröljük az előzményeket?</string>
     <string name="clear_history_warning">Az összes előzményelem és mentett QR-kód végleg törlődik. A téma és a nyelv beállítása megmarad.</string>
+    <string name="pdf_saved_code">Mentett kód: %1$d / %2$d</string>
+    <string name="splash_message">Minden QR-hez — egyszerűen, gyorsan, fiók nélkül.</string>
 </resources>

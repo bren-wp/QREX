@@ -92,4 +92,6 @@
     <string name="clear_history">Șterge istoricul</string>
     <string name="confirm_clear_history">Ștergi istoricul?</string>
     <string name="clear_history_warning">Toate înregistrările din istoric și codurile QR salvate vor fi șterse definitiv. Tema și limba vor rămâne salvate.</string>
+    <string name="pdf_saved_code">Cod salvat %1$d din %2$d</string>
+    <string name="splash_message">Totul pentru QR — simplu, rapid și fără cont.</string>
 </resources>

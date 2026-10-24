@@ -92,4 +92,6 @@
     <string name="clear_history">Εκκαθάριση ιστορικού</string>
     <string name="confirm_clear_history">Να διαγραφεί το ιστορικό;</string>
     <string name="clear_history_warning">Όλο το ιστορικό και οι αποθηκευμένοι κωδικοί QR θα διαγραφούν οριστικά. Οι ρυθμίσεις θέματος και γλώσσας θα παραμείνουν αποθηκευμένες.</string>
+    <string name="pdf_saved_code">Αποθηκευμένος κωδικός %1$d από %2$d</string>
+    <string name="splash_message">Όλα για τα QR — απλά, γρήγορα και χωρίς λογαριασμό.</string>
 </resources>

@@ -92,4 +92,6 @@
     <string name="clear_history">Geschiedenis wissen</string>
     <string name="confirm_clear_history">Geschiedenis wissen?</string>
     <string name="clear_history_warning">Alle geschiedenisitems en opgeslagen QR-codes worden permanent verwijderd. Thema en taal blijven bewaard.</string>
+    <string name="pdf_saved_code">Opgeslagen code %1$d van %2$d</string>
+    <string name="splash_message">Alles voor QR — eenvoudig, snel en zonder account.</string>
 </resources>

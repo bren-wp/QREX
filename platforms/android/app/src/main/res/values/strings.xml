@@ -92,4 +92,6 @@
     <string name="clear_history">Clear history</string>
     <string name="confirm_clear_history">Clear history?</string>
     <string name="clear_history_warning">All history entries and saved QR codes will be permanently erased. Theme and language choices will stay saved.</string>
+    <string name="pdf_saved_code">Saved code %1$d of %2$d</string>
+    <string name="splash_message">Everything QR — simple, fast and without an account.</string>
 </resources>
