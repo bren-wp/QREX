@@ -57,7 +57,6 @@ internal object QrexDesign {
     val accentBright = Color(0xFF22C7FF)
     val cyan = Color(0xFF19E3F5)
     val purple = Color(0xFF9866FF)
-    val onDark = Color(0xFFF8FBFF)
     val muted = Color(0xFFA9BAD2)
     val danger = Color(0xFFFF657B)
     val heroBrush = Brush.verticalGradient(
