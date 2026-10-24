@@ -261,6 +261,33 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn('CreateDocument("application/zip")', main)
         self.assertIn("PDF", notes)
 
+
+    def test_113_premium_github_release_requires_exact_main_sha_and_proves_artifacts(self):
+        workflow = (WORKFLOWS / "github-release-1.0.13.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.13.md").read_text("utf-8")
+        android = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
+        self.assertIn("versionCode = 113", android)
+        self.assertIn('versionName = "1.0.13"', android)
+        self.assertIn("gh release create v1.0.13", workflow)
+        self.assertIn("com.brendigo.qrex 113 1.0.13", workflow)
+        self.assertIn("github.event.workflow_run.head_sha", workflow)
+        self.assertIn("commits/main", workflow)
+        self.assertIn("assert len(screens) == 10", workflow)
+        self.assertIn("sha256sum --check SHA256SUMS.txt", workflow)
+        self.assertIn("jarsigner -verify", workflow)
+        self.assertIn("apksigner", workflow)
+        self.assertIn("keytool -genkeypair", workflow)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", workflow)
+        for gate in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml", "SHA256SUMS.txt",
+                     "tool/verify_screenshots.py", "QREX-Android-1.0.13.apk",
+                     "QREX-Android-1.0.13.aab",
+                     "QREX-Android-1.0.13-Play-UNSIGNED-QA.aab"):
+            self.assertIn(gate, workflow)
+        self.assertIn("disposable", notes)
+        self.assertIn("cannot update", notes)
+        self.assertIn("23", notes)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
