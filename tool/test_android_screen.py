@@ -71,6 +71,18 @@ class ForegroundTests(unittest.TestCase):
                 '<node package="com.android.systemui" text="Wait" />'
             ))
 
+    def test_missing_expected_markers_report_only_fixed_fixture_strings(self):
+        wrong = screen(
+            '<node package="com.brendigo.qrex" text="Stvori QR kod" />'
+            '<node package="com.brendigo.qrex" text="private_user_data_do_not_log" />'
+        )
+        with self.assertRaisesRegex(ValueError, "absent expected markers:"):
+            validate(wrong, "create")
+        try:
+            validate(wrong, "create")
+        except ValueError as failure:
+            self.assertNotIn("private_user_data_do_not_log", str(failure))
+
     def test_empty_black_screen_is_rejected(self):
         with self.assertRaises(ValueError):
             validate(screen('<node package="com.android.systemui" text="" />'))
