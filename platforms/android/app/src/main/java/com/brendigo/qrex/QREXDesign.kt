@@ -73,7 +73,12 @@ internal fun QrexBrandMark(
     logoSize: Dp = 36.dp,
     textSize: TextUnit = 21.sp
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.semantics(mergeDescendants = true) {
+            contentDescription = "QREX"
+        },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Image(
             painter = painterResource(R.drawable.qrex_icon),
             contentDescription = null,
