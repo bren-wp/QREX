@@ -940,12 +940,7 @@ private fun CreateScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("QRE", fontWeight = FontWeight.Black, fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onBackground)
-                        Text("X", fontWeight = FontWeight.Black, fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.primary)
-                    }
+                    QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)
                     Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
