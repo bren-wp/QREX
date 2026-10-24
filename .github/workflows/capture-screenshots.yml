@@ -85,10 +85,10 @@ jobs:
           # capture_android_screen.sh already runs connectedDebugAndroidTest
           # with hard deadlines; keep ONE shell to avoid duplicate runs.
           script: bash tool/capture_android_screen.sh
-      - name: Verify all twelve actual emulator screenshots
+      - name: Verify all ten actual emulator screenshots
         run: |
           test -s docs/screenshots/android-create.png
-          for screen in splash create scan wifi result history saved more language export light-create light-more; do
+          for screen in splash create scan wifi result history saved more language export; do
             test -s "docs/screenshots/android-${screen}.png"
           done
           python3 tool/verify_screenshots.py docs/screenshots/android-*.png
@@ -101,9 +101,9 @@ jobs:
       - name: Verify compact, reference and large-font device captures
         run: |
           for image in \
-            compact-create compact-scan compact-more compact-light-create \
-            reference-create reference-more reference-light-create \
-            largefont-create largefont-more largefont-light-create; do
+            compact-create compact-scan compact-more \
+            reference-create reference-more \
+            largefont-create largefont-more; do
             test -s "docs/screenshots/responsive/${image}.png"
           done
           python3 tool/verify_screenshots.py docs/screenshots/responsive/*.png

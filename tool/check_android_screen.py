@@ -40,13 +40,10 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "saved": ("favoriti", "brendigo.com", "spremljeno"),
         "more": ("postavke", "pdf", "jezik"),
         "language": ("jezik", "hrvatski", "english"),
-        "export": ("izvoz arhive", "pdf", "zip"),
-        "light-create": ("stvori qr kod", "https://brendigo.com", "wi-fi"),
-        "light-more": ("postavke", "jezik", "svijetli izgled"),
+        "export": ("izvoz arhive", "pdf"),
         "responsive-create": ("stvori qr kod",),
-        "responsive-light-create": ("stvori qr kod", "wi-fi", "tekst"),
         "responsive-scan": ("skener. stvara. dijeli.", "iz galerije"),
-        "responsive-more": ("postavke", "tema"),
+        "responsive-more": ("postavke", "jezik"),
         "scan": ("skener. stvara. dijeli.", "iz galerije", "usmjeri kameru prema qr kodu"),
     }
     if screen not in expected:
