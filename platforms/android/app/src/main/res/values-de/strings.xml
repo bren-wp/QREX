@@ -57,11 +57,8 @@
     <string name="delete">Löschen</string>
     <string name="settings">Einstellungen</string>
     <string name="save_history">Scanverlauf speichern</string>
-    <string name="light_theme">Helles Design</string>
-    <string name="theme">Design</string>
-    <string name="dark_theme">Dunkles Design</string>
     <string name="privacy">Datenschutz</string>
-    <string name="privacy_summary">QR-Codes werden auf diesem Gerät verarbeitet. Kein Konto, keine Werbung und keine Analysen. Der Verlauf ist optional. WLAN-Passwörter werden nicht automatisch gespeichert; beim manuellen Speichern eines WLAN-Codes wird auch das Passwort gespeichert. Externe Aktionen geben Daten nur weiter, wenn du sie auswählst. Du kannst den Verlauf in den Einstellungen löschen; Thema und Sprache bleiben gespeichert. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR-Codes werden auf diesem Gerät verarbeitet. Kein Konto, keine Werbung und keine Analysen. Der Verlauf ist optional. WLAN-Passwörter werden nicht automatisch gespeichert; beim manuellen Speichern eines WLAN-Codes wird auch das Passwort gespeichert. Externe Aktionen geben Daten nur weiter, wenn du sie auswählst. Du kannst den Verlauf in den Einstellungen löschen; Die Sprache bleibt gespeichert. Kontakt: brendigo.com.</string>
     <string name="about">Über die App</string>
     <string name="developed_by">Entwickelt von Brendigo</string>
     <string name="confirm_delete">Diesen QR-Code löschen?</string>
@@ -74,12 +71,10 @@
     <string name="data_tools">Deine Codes und Dateien</string>
     <string name="export_archive">Gespeicherte QR-Codes als PDF · ZIP exportieren</string>
     <string name="export_archive_hint">Deine Lieblingscodes in einem druckbaren PDF-Archiv sichern.</string>
-    <string name="export_archive_warning">Exportierte PDFs können gespeicherte WLAN-Passwörter enthalten. Teile ZIP-Dateien nur mit Vertrauenspersonen.</string>
-    <string name="archive_failed">ZIP-Archiv konnte nicht erstellt werden.</string>
-    <string name="archive_ready">ZIP-Archiv gespeichert.</string>
+    <string name="export_archive_warning">Exportierte PDFs können gespeicherte WLAN-Passwörter enthalten. Teile dieses PDF nur mit Vertrauenspersonen.</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="terms_of_use">Nutzungsbedingungen</string>
-    <string name="terms_summary">Prüfe QR-Ziele vor dem Öffnen. Teile oder exportiere nur Codes, für die du eine Berechtigung hast. ZIP-Dateien können WLAN-Passwörter enthalten. QREX wird ohne Gewährleistung bereitgestellt, soweit gesetzlich zulässig. Hilfe: brendigo.com.</string>
+    <string name="terms_summary">Prüfe QR-Ziele vor dem Öffnen. Teile oder exportiere nur Codes, für die du eine Berechtigung hast. Exportierte PDFs können gespeicherte WLAN-Passwörter enthalten. QREX wird ohne Gewährleistung bereitgestellt, soweit gesetzlich zulässig. Hilfe: brendigo.com.</string>
     <string name="read_full_policy">Vollständige Erklärung lesen</string>
     <string name="tagline">Scannen. Erstellen. Teilen.</string>
     <string name="event">Termin</string>

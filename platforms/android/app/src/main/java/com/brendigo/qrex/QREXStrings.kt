@@ -66,9 +66,6 @@ object QREXStrings {
         "delete" -> R.string.delete
         "settings" -> R.string.settings
         "save_history" -> R.string.save_history
-        "light_theme" -> R.string.light_theme
-        "theme" -> R.string.theme
-        "dark_theme" -> R.string.dark_theme
         "privacy" -> R.string.privacy
         "privacy_summary" -> R.string.privacy_summary
         "about" -> R.string.about
@@ -84,8 +81,6 @@ object QREXStrings {
         "export_archive" -> R.string.export_archive
         "export_archive_hint" -> R.string.export_archive_hint
         "export_archive_warning" -> R.string.export_archive_warning
-        "archive_failed" -> R.string.archive_failed
-        "archive_ready" -> R.string.archive_ready
         "privacy_policy" -> R.string.privacy_policy
         "terms_of_use" -> R.string.terms_of_use
         "terms_summary" -> R.string.terms_summary

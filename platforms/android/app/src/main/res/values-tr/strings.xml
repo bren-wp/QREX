@@ -57,11 +57,8 @@
     <string name="delete">Sil</string>
     <string name="settings">Ayarlar</string>
     <string name="save_history">Tarama geçmişini kaydet</string>
-    <string name="light_theme">Açık tema</string>
-    <string name="theme">Tema</string>
-    <string name="dark_theme">Koyu tema</string>
     <string name="privacy">Gizlilik</string>
-    <string name="privacy_summary">QR kodları bu cihazda işlenir. Hesap, reklam veya analiz yoktur. Geçmiş isteğe bağlıdır. Wi-Fi parolaları otomatik olarak kaydedilmez; bir Wi-Fi kodunu elle kaydetmek parolayı da kaydeder. Veriler başka bir uygulamayla yalnızca bir dış işlemi seçtiğinizde paylaşılır. Geçmişi Ayarlar\'dan temizleyebilirsiniz; tema ve dil tercihleri kayıtlı kalır. İletişim: brendigo.com.</string>
+    <string name="privacy_summary">QR kodları bu cihazda işlenir. Hesap, reklam veya analiz yoktur. Geçmiş isteğe bağlıdır. Wi-Fi parolaları otomatik olarak kaydedilmez; bir Wi-Fi kodunu elle kaydetmek parolayı da kaydeder. Veriler başka bir uygulamayla yalnızca bir dış işlemi seçtiğinizde paylaşılır. Geçmişi Ayarlar\'dan temizleyebilirsiniz; dil tercihi kayıtlı kalır. İletişim: brendigo.com.</string>
     <string name="about">Hakkında</string>
     <string name="developed_by">Brendigo tarafından geliştirildi</string>
     <string name="confirm_delete">Bu QR kodu silinsin mi?</string>
@@ -74,12 +71,10 @@
     <string name="data_tools">Kodların ve dosyaların</string>
     <string name="export_archive">Kaydedilen QR kodlarını PDF · ZIP olarak dışa aktar</string>
     <string name="export_archive_hint">Favori kodlarını yazdırılabilir bir PDF arşivinde sakla.</string>
-    <string name="export_archive_warning">Dışa aktarılan PDF\'ler kayıtlı Wi-Fi parolaları içerebilir. ZIP\'i yalnızca güvendiğin kişilerle paylaş.</string>
-    <string name="archive_failed">ZIP arşivi oluşturulamadı.</string>
-    <string name="archive_ready">ZIP arşivi kaydedildi.</string>
+    <string name="export_archive_warning">Dışa aktarılan PDF\'ler kayıtlı Wi-Fi parolaları içerebilir. Bu PDF\'yi yalnızca güvendiğin kişilerle paylaş.</string>
     <string name="privacy_policy">Gizlilik Politikası</string>
     <string name="terms_of_use">Kullanım Koşulları</string>
-    <string name="terms_summary">Bağlantıları açmadan önce QR hedeflerini kontrol et. Yalnızca izinli kodları paylaş veya dışa aktar. ZIP dosyaları Wi-Fi parolaları içerebilir. QREX yasanın izin verdiği ölçüde garantisiz sunulur. Destek: brendigo.com.</string>
+    <string name="terms_summary">Bağlantıları açmadan önce QR hedeflerini kontrol et. Yalnızca izinli kodları paylaş veya dışa aktar. Dışa aktarılan PDF\'ler kayıtlı Wi-Fi parolaları içerebilir. QREX yasanın izin verdiği ölçüde garantisiz sunulur. Destek: brendigo.com.</string>
     <string name="read_full_policy">Politikanın tamamını oku</string>
     <string name="tagline">Tara. Oluştur. Paylaş.</string>
     <string name="event">Etkinlik</string>

@@ -57,11 +57,8 @@
     <string name="delete">Usuń</string>
     <string name="settings">Ustawienia</string>
     <string name="save_history">Zapisuj historię</string>
-    <string name="light_theme">Jasny motyw</string>
-    <string name="theme">Motyw</string>
-    <string name="dark_theme">Ciemny motyw</string>
     <string name="privacy">Prywatność</string>
-    <string name="privacy_summary">Kody QR są przetwarzane na tym urządzeniu. Bez konta, reklam i analityki. Historia jest opcjonalna. Hasła Wi-Fi nie są zapisywane automatycznie; ręczne zapisanie kodu Wi-Fi zapisuje również hasło. Dane są udostępniane innej aplikacji tylko po wybraniu działania zewnętrznego. Historię można wyczyścić w Ustawieniach; motyw i język pozostają zapisane. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">Kody QR są przetwarzane na tym urządzeniu. Bez konta, reklam i analityki. Historia jest opcjonalna. Hasła Wi-Fi nie są zapisywane automatycznie; ręczne zapisanie kodu Wi-Fi zapisuje również hasło. Dane są udostępniane innej aplikacji tylko po wybraniu działania zewnętrznego. Historię można wyczyścić w Ustawieniach; język pozostaje zapisany. Kontakt: brendigo.com.</string>
     <string name="about">Informacje</string>
     <string name="developed_by">Opracowano przez Brendigo</string>
     <string name="confirm_delete">Usunąć ten kod QR?</string>
@@ -74,12 +71,10 @@
     <string name="data_tools">Twoje kody i pliki</string>
     <string name="export_archive">Eksportuj zapisane kody QR jako PDF · ZIP</string>
     <string name="export_archive_hint">Zachowaj ulubione kody w archiwum PDF gotowym do druku.</string>
-    <string name="export_archive_warning">Wyeksportowane pliki PDF mogą zawierać zapisane hasła Wi-Fi. Udostępniaj ZIP tylko zaufanym osobom.</string>
-    <string name="archive_failed">Nie można utworzyć archiwum ZIP.</string>
-    <string name="archive_ready">Archiwum ZIP zapisane.</string>
+    <string name="export_archive_warning">Wyeksportowane pliki PDF mogą zawierać zapisane hasła Wi-Fi. Udostępniaj ten plik PDF tylko zaufanym osobom.</string>
     <string name="privacy_policy">Polityka prywatności</string>
     <string name="terms_of_use">Warunki korzystania</string>
-    <string name="terms_summary">Sprawdzaj adresy QR przed otwarciem. Udostępniaj lub eksportuj tylko kody, do których masz prawa. Archiwa ZIP mogą zawierać hasła Wi-Fi. QREX jest udostępniany bez gwarancji w zakresie dozwolonym prawem. Pomoc: brendigo.com.</string>
+    <string name="terms_summary">Sprawdzaj adresy QR przed otwarciem. Udostępniaj lub eksportuj tylko kody, do których masz prawa. Wyeksportowane pliki PDF mogą zawierać zapisane hasła Wi-Fi. QREX jest udostępniany bez gwarancji w zakresie dozwolonym prawem. Pomoc: brendigo.com.</string>
     <string name="read_full_policy">Przeczytaj pełną politykę</string>
     <string name="tagline">Skanuj. Twórz. Udostępniaj.</string>
     <string name="event">Wydarzenie</string>

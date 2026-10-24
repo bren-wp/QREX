@@ -57,11 +57,8 @@
     <string name="delete">Slet</string>
     <string name="settings">Indstillinger</string>
     <string name="save_history">Gem scanhistorik</string>
-    <string name="light_theme">Lyst tema</string>
-    <string name="theme">Tema</string>
-    <string name="dark_theme">Mørkt tema</string>
     <string name="privacy">Privatliv</string>
-    <string name="privacy_summary">QR-koder behandles på denne enhed. Ingen konto, annoncer eller analyse. Historik er valgfri. Wi-Fi-adgangskoder gemmes ikke automatisk; når du gemmer en Wi-Fi-kode manuelt, gemmes adgangskoden også. Data deles kun med en anden app, når du vælger en ekstern handling. Ryd historikken i Indstillinger; tema og sprogvalg gemmes. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">QR-koder behandles på denne enhed. Ingen konto, annoncer eller analyse. Historik er valgfri. Wi-Fi-adgangskoder gemmes ikke automatisk; når du gemmer en Wi-Fi-kode manuelt, gemmes adgangskoden også. Data deles kun med en anden app, når du vælger en ekstern handling. Ryd historikken i Indstillinger; sprogvalget gemmes. Kontakt: brendigo.com.</string>
     <string name="about">Om</string>
     <string name="developed_by">Udviklet af Brendigo</string>
     <string name="confirm_delete">Slet denne QR-kode?</string>
@@ -74,12 +71,10 @@
     <string name="data_tools">Dine koder og filer</string>
     <string name="export_archive">Eksportér gemte QR-koder som PDF · ZIP</string>
     <string name="export_archive_hint">Gem favoritkoder i et PDF-arkiv klar til udskrivning.</string>
-    <string name="export_archive_warning">Eksporterede PDF-filer kan indeholde gemte Wi-Fi-adgangskoder. Del kun ZIP med personer, du stoler på.</string>
-    <string name="archive_failed">ZIP-arkivet kunne ikke oprettes.</string>
-    <string name="archive_ready">ZIP-arkivet er gemt.</string>
+    <string name="export_archive_warning">Eksporterede PDF-filer kan indeholde gemte Wi-Fi-adgangskoder. Del kun denne PDF med personer, du stoler på.</string>
     <string name="privacy_policy">Privatlivspolitik</string>
     <string name="terms_of_use">Brugsvilkår</string>
-    <string name="terms_summary">Kontrollér QR-mål, før du åbner links. Del kun koder, du har tilladelse til at dele. ZIP kan indeholde Wi-Fi-adgangskoder. QREX leveres uden garantier i lovens omfang. Support: brendigo.com.</string>
+    <string name="terms_summary">Kontrollér QR-mål, før du åbner links. Del kun koder, du har tilladelse til at dele. Eksporterede PDF-filer kan indeholde gemte Wi-Fi-adgangskoder. QREX leveres uden garantier i lovens omfang. Support: brendigo.com.</string>
     <string name="read_full_policy">Læs hele politikken</string>
     <string name="tagline">Scan. Opret. Del.</string>
     <string name="event">Begivenhed</string>

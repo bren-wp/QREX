@@ -57,11 +57,8 @@
     <string name="delete">Izbriši</string>
     <string name="settings">Nastavitve</string>
     <string name="save_history">Shrani zgodovino</string>
-    <string name="light_theme">Svetla tema</string>
-    <string name="theme">Tema</string>
-    <string name="dark_theme">Temna tema</string>
     <string name="privacy">Zasebnost</string>
-    <string name="privacy_summary">Kode QR obdelamo v tej napravi. Brez računa, oglasov ali analitike. Zgodovina je neobvezna. Gesla za Wi-Fi se ne shranijo samodejno; pri ročnem shranjevanju kode Wi-Fi se shrani tudi geslo. Podatki se drugi aplikaciji posredujejo le, ko izberete zunanje dejanje. Zgodovino lahko izbrišete v Nastavitvah; tema in jezik ostaneta shranjena. Kontakt: brendigo.com.</string>
+    <string name="privacy_summary">Kode QR obdelamo v tej napravi. Brez računa, oglasov ali analitike. Zgodovina je neobvezna. Gesla za Wi-Fi se ne shranijo samodejno; pri ročnem shranjevanju kode Wi-Fi se shrani tudi geslo. Podatki se drugi aplikaciji posredujejo le, ko izberete zunanje dejanje. Zgodovino lahko izbrišete v Nastavitvah; jezik ostane shranjen. Kontakt: brendigo.com.</string>
     <string name="about">O aplikaciji</string>
     <string name="developed_by">Razvil Brendigo</string>
     <string name="confirm_delete">Izbrišem to kodo QR?</string>
@@ -74,12 +71,10 @@
     <string name="data_tools">Vaše kode in datoteke</string>
     <string name="export_archive">Izvozi shranjene kode QR v PDF · ZIP</string>
     <string name="export_archive_hint">Najljubše kode shranite v arhiv PDF za tiskanje.</string>
-    <string name="export_archive_warning">Izvoženi PDF-ji lahko vsebujejo shranjena gesla Wi-Fi. ZIP delite le z osebami, ki jim zaupate.</string>
-    <string name="archive_failed">Arhiva ZIP ni bilo mogoče ustvariti.</string>
-    <string name="archive_ready">Arhiv ZIP shranjen.</string>
+    <string name="export_archive_warning">Izvoženi PDF-ji lahko vsebujejo shranjena gesla Wi-Fi. PDF delite le z osebami, ki jim zaupate.</string>
     <string name="privacy_policy">Pravilnik o zasebnosti</string>
     <string name="terms_of_use">Pogoji uporabe</string>
-    <string name="terms_summary">Pred odpiranjem povezav preverite cilj kode QR. Delite ali izvažajte le dovoljene kode. ZIP lahko vsebuje gesla Wi-Fi. QREX je na voljo brez jamstev v zakonsko dovoljenem obsegu. Podpora: brendigo.com.</string>
+    <string name="terms_summary">Pred odpiranjem povezav preverite cilj kode QR. Delite ali izvažajte le dovoljene kode. Izvoženi PDF-ji lahko vsebujejo shranjena gesla za Wi-Fi. QREX je na voljo brez jamstev v zakonsko dovoljenem obsegu. Podpora: brendigo.com.</string>
     <string name="read_full_policy">Preberi celoten pravilnik</string>
     <string name="tagline">Skeniraj. Ustvari. Deli.</string>
     <string name="event">Dogodek</string>

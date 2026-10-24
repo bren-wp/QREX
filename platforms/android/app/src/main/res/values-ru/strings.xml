@@ -57,11 +57,8 @@
     <string name="delete">Удалить</string>
     <string name="settings">Настройки</string>
     <string name="save_history">Сохранять историю</string>
-    <string name="light_theme">Светлая тема</string>
-    <string name="theme">Тема</string>
-    <string name="dark_theme">Тёмная тема</string>
     <string name="privacy">Конфиденциальность</string>
-    <string name="privacy_summary">QR-коды обрабатываются на этом устройстве. Без аккаунта, рекламы и аналитики. История необязательна. Пароли Wi-Fi не сохраняются автоматически; ручное сохранение QR-кода Wi-Fi сохраняет и пароль. Данные передаются другим приложениям только при выборе внешнего действия. Историю можно очистить в настройках; тема и язык останутся сохранёнными. Контакт: brendigo.com.</string>
+    <string name="privacy_summary">QR-коды обрабатываются на этом устройстве. Без аккаунта, рекламы и аналитики. История необязательна. Пароли Wi-Fi не сохраняются автоматически; ручное сохранение QR-кода Wi-Fi сохраняет и пароль. Данные передаются другим приложениям только при выборе внешнего действия. Историю можно очистить в настройках; язык останется сохранённым. Контакт: brendigo.com.</string>
     <string name="about">О приложении</string>
     <string name="developed_by">Разработано Brendigo</string>
     <string name="confirm_delete">Удалить этот QR-код?</string>
@@ -74,12 +71,10 @@
     <string name="data_tools">Ваши коды и файлы</string>
     <string name="export_archive">Экспортировать сохранённые QR в PDF · ZIP</string>
     <string name="export_archive_hint">Сохраните избранные коды в PDF-архиве для печати.</string>
-    <string name="export_archive_warning">Экспортированные PDF могут содержать пароли Wi-Fi. Делитесь ZIP только с доверенными людьми.</string>
-    <string name="archive_failed">Не удалось создать ZIP-архив.</string>
-    <string name="archive_ready">ZIP-архив сохранён.</string>
+    <string name="export_archive_warning">Экспортированные PDF могут содержать пароли Wi-Fi. Делитесь этим PDF только с доверенными людьми.</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="terms_of_use">Условия использования</string>
-    <string name="terms_summary">Проверяйте QR-адреса перед открытием ссылок. Делитесь только разрешёнными кодами. ZIP может содержать пароли Wi-Fi. QREX предоставляется без гарантий в пределах закона. Поддержка: brendigo.com.</string>
+    <string name="terms_summary">Проверяйте QR-адреса перед открытием ссылок. Делитесь только разрешёнными кодами. Экспортированные PDF могут содержать сохранённые пароли Wi-Fi. QREX предоставляется без гарантий в пределах закона. Поддержка: brendigo.com.</string>
     <string name="read_full_policy">Читать политику полностью</string>
     <string name="tagline">Сканируй. Создавай. Делись.</string>
     <string name="event">Событие</string>
