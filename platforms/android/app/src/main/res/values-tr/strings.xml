@@ -5,7 +5,6 @@
     <string name="history">Geçmiş</string>
     <string name="favorites">Favoriler</string>
     <string name="more">Diğer</string>
-    <string name="scan_qr">QR kodu tara</string>
     <string name="point_camera">Kamerayı QR koduna doğrult</string>
     <string name="allow_camera">Taramak için kamera erişimine izin ver.</string>
     <string name="enable_camera">Kamerayı etkinleştir</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopyala</string>
     <string name="share">Paylaş</string>
     <string name="saved">Kaydedildi</string>
-    <string name="save_qr">Kodu kaydet</string>
     <string name="close">Kapat</string>
     <string name="wifi_save_title">Wi-Fi kodunu kaydet</string>
     <string name="wifi_save_warning">Wi-Fi şifresi cihaza kaydedilecek.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Konum</string>
     <string name="contact">Kişi</string>
-    <string name="fewer_options">Daha az seçenek</string>
-    <string name="more_options">Daha fazla seçenek</string>
     <string name="optional_password">Şifre (isteğe bağlı)</string>
     <string name="wifi_warning">Wi-Fi QR kodu şifre içerebilir.</string>
     <string name="qr_preview">Kod önizlemesi</string>
     <string name="invalid_content">Geçerli QR içeriği girin.</string>
     <string name="show_qr">QR kodunu göster</string>
-    <string name="create_share">Görüntüle ve paylaş</string>
     <string name="search_qr">Kodları ara</string>
     <string name="no_saved">Kayıtlı kod yok</string>
-    <string name="clear">Temizle</string>
     <string name="delete">Sil</string>
     <string name="settings">Ayarlar</string>
     <string name="save_history">Tarama geçmişini kaydet</string>
-    <string name="privacy">Gizlilik</string>
     <string name="privacy_summary">QR kodları bu cihazda işlenir. Hesap, reklam veya analiz yoktur. Geçmiş isteğe bağlıdır. Wi-Fi parolaları otomatik olarak kaydedilmez; bir Wi-Fi kodunu elle kaydetmek parolayı da kaydeder. Veriler başka bir uygulamayla yalnızca bir dış işlemi seçtiğinizde paylaşılır. Geçmişi Ayarlar\'dan temizleyebilirsiniz; dil tercihi kayıtlı kalır. İletişim: brendigo.com.</string>
     <string name="about">Hakkında</string>
     <string name="developed_by">Brendigo tarafından geliştirildi</string>
@@ -68,9 +61,7 @@
     <string name="export_png">PNG dışa aktar</string>
     <string name="png_save_failed">PNG görüntüsü kaydedilemedi.</string>
     <string name="operation_failed">İşlem başarısız oldu. Tekrar deneyin.</string>
-    <string name="data_tools">Kodların ve dosyaların</string>
     <string name="export_archive">Kaydedilen QR kodlarını PDF · ZIP olarak dışa aktar</string>
-    <string name="export_archive_hint">Favori kodlarını yazdırılabilir bir PDF arşivinde sakla.</string>
     <string name="export_archive_warning">Dışa aktarılan PDF\'ler kayıtlı Wi-Fi parolaları içerebilir. Bu PDF\'yi yalnızca güvendiğin kişilerle paylaş.</string>
     <string name="privacy_policy">Gizlilik Politikası</string>
     <string name="terms_of_use">Kullanım Koşulları</string>

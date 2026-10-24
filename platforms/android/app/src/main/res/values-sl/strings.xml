@@ -5,7 +5,6 @@
     <string name="history">Zgodovina</string>
     <string name="favorites">Priljubljeno</string>
     <string name="more">Več</string>
-    <string name="scan_qr">Skeniraj kodo QR</string>
     <string name="point_camera">Usmeri kamero proti kodi QR</string>
     <string name="allow_camera">Dovoli dostop do kamere.</string>
     <string name="enable_camera">Omogoči kamero</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopiraj</string>
     <string name="share">Deli</string>
     <string name="saved">Shranjeno</string>
-    <string name="save_qr">Shrani kodo</string>
     <string name="close">Zapri</string>
     <string name="wifi_save_title">Shrani Wi-Fi kodo</string>
     <string name="wifi_save_warning">Geslo Wi-Fi bo shranjeno v napravo.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Lokacija</string>
     <string name="contact">Stik</string>
-    <string name="fewer_options">Manj možnosti</string>
-    <string name="more_options">Več možnosti</string>
     <string name="optional_password">Geslo (neobvezno)</string>
     <string name="wifi_warning">Koda QR za Wi-Fi lahko vsebuje geslo.</string>
     <string name="qr_preview">Predogled kode</string>
     <string name="invalid_content">Vnesi veljavno vsebino QR.</string>
     <string name="show_qr">Prikaži kodo QR</string>
-    <string name="create_share">Prikaži in deli</string>
     <string name="search_qr">Poišči kode</string>
     <string name="no_saved">Ni shranjenih kod</string>
-    <string name="clear">Počisti</string>
     <string name="delete">Izbriši</string>
     <string name="settings">Nastavitve</string>
     <string name="save_history">Shrani zgodovino</string>
-    <string name="privacy">Zasebnost</string>
     <string name="privacy_summary">Kode QR obdelamo v tej napravi. Brez računa, oglasov ali analitike. Zgodovina je neobvezna. Gesla za Wi-Fi se ne shranijo samodejno; pri ročnem shranjevanju kode Wi-Fi se shrani tudi geslo. Podatki se drugi aplikaciji posredujejo le, ko izberete zunanje dejanje. Zgodovino lahko izbrišete v Nastavitvah; jezik ostane shranjen. Kontakt: brendigo.com.</string>
     <string name="about">O aplikaciji</string>
     <string name="developed_by">Razvil Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Izvozi PNG</string>
     <string name="png_save_failed">Slike PNG ni mogoče shraniti.</string>
     <string name="operation_failed">Dejanje ni uspelo. Poskusite znova.</string>
-    <string name="data_tools">Vaše kode in datoteke</string>
     <string name="export_archive">Izvozi shranjene kode QR v PDF · ZIP</string>
-    <string name="export_archive_hint">Najljubše kode shranite v arhiv PDF za tiskanje.</string>
     <string name="export_archive_warning">Izvoženi PDF-ji lahko vsebujejo shranjena gesla Wi-Fi. PDF delite le z osebami, ki jim zaupate.</string>
     <string name="privacy_policy">Pravilnik o zasebnosti</string>
     <string name="terms_of_use">Pogoji uporabe</string>

@@ -5,7 +5,6 @@
     <string name="history">Povijest</string>
     <string name="favorites">Favoriti</string>
     <string name="more">Više</string>
-    <string name="scan_qr">Skeniraj QR kod</string>
     <string name="point_camera">Usmjeri kameru prema QR kodu</string>
     <string name="allow_camera">Dopusti pristup kameri za skeniranje QR kodova.</string>
     <string name="enable_camera">Omogući kameru</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopiraj</string>
     <string name="share">Podijeli</string>
     <string name="saved">Spremljeno</string>
-    <string name="save_qr">Spremi kod</string>
     <string name="close">Zatvori</string>
     <string name="wifi_save_title">Spremi Wi-Fi kod</string>
     <string name="wifi_save_warning">Time će se Wi-Fi lozinka spremiti na uređaj.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Lokacija</string>
     <string name="contact">Kontakt</string>
-    <string name="fewer_options">Manje opcija</string>
-    <string name="more_options">Više opcija</string>
     <string name="optional_password">Lozinka (neobavezno)</string>
     <string name="wifi_warning">Wi-Fi QR kod može sadržavati lozinku.</string>
     <string name="qr_preview">Pregled koda</string>
     <string name="invalid_content">Unesi valjan QR sadržaj.</string>
     <string name="show_qr">Prikaži QR kod</string>
-    <string name="create_share">Prikaži i podijeli</string>
     <string name="search_qr">Pretraži povijest...</string>
     <string name="no_saved">Nema spremljenih kodova</string>
-    <string name="clear">Očisti</string>
     <string name="delete">Izbriši</string>
     <string name="settings">Postavke, pravne informacije i više.</string>
     <string name="save_history">Spremanje povijesti</string>
-    <string name="privacy">Privatnost</string>
     <string name="privacy_summary">QR kodovi obrađuju se na uređaju. Bez računa, oglasa i analitike. Povijest je neobavezna. Wi-Fi lozinke ne spremaju se automatski; ručno spremljeni Wi-Fi kod sadrži i lozinku. Vanjske radnje predaju podatke drugoj aplikaciji samo kada ih odabereš. Povijest možeš izbrisati u postavkama; odabir jezika ostaje spremljen. Kontakt: brendigo.com.</string>
     <string name="about">O aplikaciji</string>
     <string name="developed_by">Razvio Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Izvezi PNG</string>
     <string name="png_save_failed">PNG sliku nije moguće spremiti.</string>
     <string name="operation_failed">Radnja nije uspjela. Pokušajte ponovno.</string>
-    <string name="data_tools">Vaši kodovi i datoteke</string>
     <string name="export_archive">Izvoz arhive</string>
-    <string name="export_archive_hint">Svoje omiljene QR kodove spremite u PDF arhivu spremnu za ispis.</string>
     <string name="export_archive_warning">Izvezeni PDF dokumenti mogu sadržavati spremljene Wi-Fi lozinke. PDF dijelite samo s osobama kojima vjerujete.</string>
     <string name="privacy_policy">Politika privatnosti</string>
     <string name="terms_of_use">Uvjeti korištenja</string>

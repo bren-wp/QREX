@@ -5,7 +5,6 @@
     <string name="history">Historia</string>
     <string name="favorites">Ulubione</string>
     <string name="more">Więcej</string>
-    <string name="scan_qr">Skanuj kod QR</string>
     <string name="point_camera">Skieruj aparat na kod QR</string>
     <string name="allow_camera">Zezwól na dostęp do aparatu.</string>
     <string name="enable_camera">Włącz aparat</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopiuj</string>
     <string name="share">Udostępnij</string>
     <string name="saved">Zapisano</string>
-    <string name="save_qr">Zapisz kod</string>
     <string name="close">Zamknij</string>
     <string name="wifi_save_title">Zapisz kod Wi-Fi</string>
     <string name="wifi_save_warning">Hasło Wi-Fi zostanie zapisane na urządzeniu.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Lokalizacja</string>
     <string name="contact">Kontakt</string>
-    <string name="fewer_options">Mniej opcji</string>
-    <string name="more_options">Więcej opcji</string>
     <string name="optional_password">Hasło (opcjonalnie)</string>
     <string name="wifi_warning">Kod QR Wi-Fi może zawierać hasło.</string>
     <string name="qr_preview">Podgląd kodu</string>
     <string name="invalid_content">Wprowadź prawidłową treść QR.</string>
     <string name="show_qr">Pokaż kod QR</string>
-    <string name="create_share">Wyświetl i udostępnij</string>
     <string name="search_qr">Szukaj kodów</string>
     <string name="no_saved">Brak zapisanych kodów</string>
-    <string name="clear">Wyczyść</string>
     <string name="delete">Usuń</string>
     <string name="settings">Ustawienia</string>
     <string name="save_history">Zapisuj historię</string>
-    <string name="privacy">Prywatność</string>
     <string name="privacy_summary">Kody QR są przetwarzane na tym urządzeniu. Bez konta, reklam i analityki. Historia jest opcjonalna. Hasła Wi-Fi nie są zapisywane automatycznie; ręczne zapisanie kodu Wi-Fi zapisuje również hasło. Dane są udostępniane innej aplikacji tylko po wybraniu działania zewnętrznego. Historię można wyczyścić w Ustawieniach; język pozostaje zapisany. Kontakt: brendigo.com.</string>
     <string name="about">Informacje</string>
     <string name="developed_by">Opracowano przez Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Eksportuj PNG</string>
     <string name="png_save_failed">Nie można zapisać obrazu PNG.</string>
     <string name="operation_failed">Nie udało się wykonać działania. Spróbuj ponownie.</string>
-    <string name="data_tools">Twoje kody i pliki</string>
     <string name="export_archive">Eksportuj zapisane kody QR jako PDF · ZIP</string>
-    <string name="export_archive_hint">Zachowaj ulubione kody w archiwum PDF gotowym do druku.</string>
     <string name="export_archive_warning">Wyeksportowane pliki PDF mogą zawierać zapisane hasła Wi-Fi. Udostępniaj ten plik PDF tylko zaufanym osobom.</string>
     <string name="privacy_policy">Polityka prywatności</string>
     <string name="terms_of_use">Warunki korzystania</string>

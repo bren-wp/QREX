@@ -5,7 +5,6 @@
     <string name="history">Cronologia</string>
     <string name="favorites">Preferiti</string>
     <string name="more">Altro</string>
-    <string name="scan_qr">Scansiona codice QR</string>
     <string name="point_camera">Inquadra un codice QR con la fotocamera</string>
     <string name="allow_camera">Consenti l\'accesso alla fotocamera.</string>
     <string name="enable_camera">Attiva fotocamera</string>
@@ -25,7 +24,6 @@
     <string name="copy">Copia</string>
     <string name="share">Condividi</string>
     <string name="saved">Salvato</string>
-    <string name="save_qr">Salva codice</string>
     <string name="close">Chiudi</string>
     <string name="wifi_save_title">Salva codice Wi-Fi</string>
     <string name="wifi_save_warning">La password Wi-Fi verrà salvata sul dispositivo.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefono</string>
     <string name="location">Posizione</string>
     <string name="contact">Contatto</string>
-    <string name="fewer_options">Meno opzioni</string>
-    <string name="more_options">Più opzioni</string>
     <string name="optional_password">Password (opzionale)</string>
     <string name="wifi_warning">Un QR Wi-Fi può contenere una password.</string>
     <string name="qr_preview">Anteprima</string>
     <string name="invalid_content">Inserisci contenuto QR valido.</string>
     <string name="show_qr">Mostra codice QR</string>
-    <string name="create_share">Visualizza e condividi</string>
     <string name="search_qr">Cerca codici</string>
     <string name="no_saved">Nessun codice salvato</string>
-    <string name="clear">Svuota</string>
     <string name="delete">Elimina</string>
     <string name="settings">Impostazioni</string>
     <string name="save_history">Salva cronologia</string>
-    <string name="privacy">Privacy</string>
     <string name="privacy_summary">I codici QR vengono elaborati su questo dispositivo. Nessun account, pubblicità o analisi. La cronologia è facoltativa. Le password Wi-Fi non vengono salvate automaticamente; salvare manualmente un codice Wi-Fi salva anche la password. I dati vengono condivisi con altre app solo quando scegli un’azione esterna. Puoi cancellare la cronologia nelle Impostazioni; la lingua resta salvata. Contatto: brendigo.com.</string>
     <string name="about">Informazioni</string>
     <string name="developed_by">Sviluppato da Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Esporta PNG</string>
     <string name="png_save_failed">Impossibile salvare l’immagine PNG.</string>
     <string name="operation_failed">Operazione non riuscita. Riprova.</string>
-    <string name="data_tools">I tuoi codici e file</string>
     <string name="export_archive">Esporta i QR salvati come PDF · ZIP</string>
-    <string name="export_archive_hint">Conserva i tuoi codici preferiti in un archivio PDF stampabile.</string>
     <string name="export_archive_warning">I PDF esportati possono contenere password Wi-Fi salvate. Condividi questo PDF solo con persone fidate.</string>
     <string name="privacy_policy">Informativa sulla privacy</string>
     <string name="terms_of_use">Condizioni d’uso</string>

@@ -5,7 +5,6 @@
     <string name="history">Historique</string>
     <string name="favorites">Favoris</string>
     <string name="more">Plus</string>
-    <string name="scan_qr">Scanner un code QR</string>
     <string name="point_camera">Pointez la caméra vers un code QR</string>
     <string name="allow_camera">Autorisez la caméra pour scanner.</string>
     <string name="enable_camera">Activer la caméra</string>
@@ -25,7 +24,6 @@
     <string name="copy">Copier</string>
     <string name="share">Partager</string>
     <string name="saved">Enregistré</string>
-    <string name="save_qr">Enregistrer le code</string>
     <string name="close">Fermer</string>
     <string name="wifi_save_title">Enregistrer le Wi-Fi</string>
     <string name="wifi_save_warning">Le mot de passe Wi-Fi sera stocké sur cet appareil.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Téléphone</string>
     <string name="location">Position</string>
     <string name="contact">Contact</string>
-    <string name="fewer_options">Moins d\'options</string>
-    <string name="more_options">Plus d\'options</string>
     <string name="optional_password">Mot de passe (facultatif)</string>
     <string name="wifi_warning">Un code QR Wi-Fi peut contenir un mot de passe.</string>
     <string name="qr_preview">Aperçu du code</string>
     <string name="invalid_content">Saisissez un contenu QR valide.</string>
     <string name="show_qr">Afficher le code QR</string>
-    <string name="create_share">Voir et partager</string>
     <string name="search_qr">Rechercher des codes</string>
     <string name="no_saved">Aucun code enregistré</string>
-    <string name="clear">Effacer</string>
     <string name="delete">Supprimer</string>
     <string name="settings">Paramètres</string>
     <string name="save_history">Enregistrer l\'historique</string>
-    <string name="privacy">Confidentialité</string>
     <string name="privacy_summary">Les codes QR sont traités sur cet appareil. Aucun compte, publicité ni analyse. L’historique est facultatif. Les mots de passe Wi-Fi ne sont jamais enregistrés automatiquement ; enregistrer manuellement un code Wi-Fi enregistre aussi son mot de passe. Les données ne sont partagées avec une autre application que lorsque vous choisissez une action externe. Vous pouvez effacer l’historique dans les paramètres ; la langue reste enregistrée. Contact : brendigo.com.</string>
     <string name="about">À propos</string>
     <string name="developed_by">Développé par Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Exporter en PNG</string>
     <string name="png_save_failed">Impossible d’enregistrer l’image PNG.</string>
     <string name="operation_failed">Échec de l’action. Veuillez réessayer.</string>
-    <string name="data_tools">Vos codes et fichiers</string>
     <string name="export_archive">Exporter les QR enregistrés en PDF · ZIP</string>
-    <string name="export_archive_hint">Conservez vos codes favoris dans une archive PDF imprimable.</string>
     <string name="export_archive_warning">Les PDF exportés peuvent contenir des mots de passe Wi-Fi. Partagez ce PDF uniquement avec des personnes de confiance.</string>
     <string name="privacy_policy">Politique de confidentialité</string>
     <string name="terms_of_use">Conditions d’utilisation</string>

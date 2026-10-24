@@ -5,7 +5,6 @@
     <string name="history">Historik</string>
     <string name="favorites">Favoritter</string>
     <string name="more">Mere</string>
-    <string name="scan_qr">Scan QR-kode</string>
     <string name="point_camera">Ret kameraet mod en QR-kode</string>
     <string name="allow_camera">Tillad adgang til kameraet.</string>
     <string name="enable_camera">Aktivér kamera</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopiér</string>
     <string name="share">Del</string>
     <string name="saved">Gemt</string>
-    <string name="save_qr">Gem kode</string>
     <string name="close">Luk</string>
     <string name="wifi_save_title">Gem Wi-Fi-kode</string>
     <string name="wifi_save_warning">Wi-Fi-adgangskoden gemmes på enheden.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Placering</string>
     <string name="contact">Kontakt</string>
-    <string name="fewer_options">Færre muligheder</string>
-    <string name="more_options">Flere muligheder</string>
     <string name="optional_password">Adgangskode (valgfri)</string>
     <string name="wifi_warning">En Wi-Fi-QR-kode kan indeholde en adgangskode.</string>
     <string name="qr_preview">Forhåndsvisning</string>
     <string name="invalid_content">Indtast gyldigt QR-indhold.</string>
     <string name="show_qr">Vis QR-kode</string>
-    <string name="create_share">Vis og del</string>
     <string name="search_qr">Søg i koder</string>
     <string name="no_saved">Ingen gemte koder</string>
-    <string name="clear">Ryd</string>
     <string name="delete">Slet</string>
     <string name="settings">Indstillinger</string>
     <string name="save_history">Gem scanhistorik</string>
-    <string name="privacy">Privatliv</string>
     <string name="privacy_summary">QR-koder behandles på denne enhed. Ingen konto, annoncer eller analyse. Historik er valgfri. Wi-Fi-adgangskoder gemmes ikke automatisk; når du gemmer en Wi-Fi-kode manuelt, gemmes adgangskoden også. Data deles kun med en anden app, når du vælger en ekstern handling. Ryd historikken i Indstillinger; sprogvalget gemmes. Kontakt: brendigo.com.</string>
     <string name="about">Om</string>
     <string name="developed_by">Udviklet af Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Eksportér PNG</string>
     <string name="png_save_failed">PNG-billedet kunne ikke gemmes.</string>
     <string name="operation_failed">Handlingen mislykkedes. Prøv igen.</string>
-    <string name="data_tools">Dine koder og filer</string>
     <string name="export_archive">Eksportér gemte QR-koder som PDF · ZIP</string>
-    <string name="export_archive_hint">Gem favoritkoder i et PDF-arkiv klar til udskrivning.</string>
     <string name="export_archive_warning">Eksporterede PDF-filer kan indeholde gemte Wi-Fi-adgangskoder. Del kun denne PDF med personer, du stoler på.</string>
     <string name="privacy_policy">Privatlivspolitik</string>
     <string name="terms_of_use">Brugsvilkår</string>

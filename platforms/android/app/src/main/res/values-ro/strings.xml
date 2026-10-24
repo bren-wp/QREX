@@ -5,7 +5,6 @@
     <string name="history">Istoric</string>
     <string name="favorites">Favorite</string>
     <string name="more">Mai mult</string>
-    <string name="scan_qr">Scanează cod QR</string>
     <string name="point_camera">Îndreaptă camera spre un cod QR</string>
     <string name="allow_camera">Permite accesul la cameră.</string>
     <string name="enable_camera">Activează camera</string>
@@ -25,7 +24,6 @@
     <string name="copy">Copiază</string>
     <string name="share">Distribuie</string>
     <string name="saved">Salvat</string>
-    <string name="save_qr">Salvează codul</string>
     <string name="close">Închide</string>
     <string name="wifi_save_title">Salvează cod Wi-Fi</string>
     <string name="wifi_save_warning">Parola Wi-Fi va fi stocată pe dispozitiv.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Locație</string>
     <string name="contact">Contact</string>
-    <string name="fewer_options">Mai puține opțiuni</string>
-    <string name="more_options">Mai multe opțiuni</string>
     <string name="optional_password">Parolă (opțional)</string>
     <string name="wifi_warning">Codul QR Wi-Fi poate conține o parolă.</string>
     <string name="qr_preview">Previzualizare</string>
     <string name="invalid_content">Introdu un conținut QR valid.</string>
     <string name="show_qr">Arată codul QR</string>
-    <string name="create_share">Vezi și distribuie</string>
     <string name="search_qr">Caută coduri</string>
     <string name="no_saved">Nu există coduri salvate</string>
-    <string name="clear">Golește</string>
     <string name="delete">Șterge</string>
     <string name="settings">Setări</string>
     <string name="save_history">Salvează istoricul</string>
-    <string name="privacy">Confidențialitate</string>
     <string name="privacy_summary">Codurile QR sunt procesate pe acest dispozitiv. Fără cont, reclame sau analiză. Istoricul este opțional. Parolele Wi-Fi nu sunt salvate automat; salvarea manuală a unui cod Wi-Fi salvează și parola. Datele sunt partajate cu altă aplicație numai când alegi o acțiune externă. Poți șterge istoricul din Setări; limba rămâne salvată. Contact: brendigo.com.</string>
     <string name="about">Despre</string>
     <string name="developed_by">Dezvoltat de Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Exportă PNG</string>
     <string name="png_save_failed">Imaginea PNG nu poate fi salvată.</string>
     <string name="operation_failed">Acțiunea a eșuat. Încercați din nou.</string>
-    <string name="data_tools">Codurile și fișierele tale</string>
     <string name="export_archive">Exportă codurile QR salvate în PDF · ZIP</string>
-    <string name="export_archive_hint">Păstrează codurile preferate într-o arhivă PDF imprimabilă.</string>
     <string name="export_archive_warning">PDF-urile exportate pot conține parole Wi-Fi salvate. Partajează acest PDF doar cu persoane de încredere.</string>
     <string name="privacy_policy">Politica de confidențialitate</string>
     <string name="terms_of_use">Termeni de utilizare</string>

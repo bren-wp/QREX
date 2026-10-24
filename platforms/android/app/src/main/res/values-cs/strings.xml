@@ -5,7 +5,6 @@
     <string name="history">Historie</string>
     <string name="favorites">Oblíbené</string>
     <string name="more">Více</string>
-    <string name="scan_qr">Skenovat QR kód</string>
     <string name="point_camera">Namiřte fotoaparát na QR kód</string>
     <string name="allow_camera">Povolte přístup k fotoaparátu.</string>
     <string name="enable_camera">Zapnout fotoaparát</string>
@@ -25,7 +24,6 @@
     <string name="copy">Kopírovat</string>
     <string name="share">Sdílet</string>
     <string name="saved">Uloženo</string>
-    <string name="save_qr">Uložit kód</string>
     <string name="close">Zavřít</string>
     <string name="wifi_save_title">Uložit Wi-Fi kód</string>
     <string name="wifi_save_warning">Heslo Wi-Fi se uloží do zařízení.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefon</string>
     <string name="location">Poloha</string>
     <string name="contact">Kontakt</string>
-    <string name="fewer_options">Méně možností</string>
-    <string name="more_options">Více možností</string>
     <string name="optional_password">Heslo (volitelné)</string>
     <string name="wifi_warning">Wi-Fi QR kód může obsahovat heslo.</string>
     <string name="qr_preview">Náhled kódu</string>
     <string name="invalid_content">Zadejte platný obsah QR.</string>
     <string name="show_qr">Zobrazit QR kód</string>
-    <string name="create_share">Zobrazit a sdílet</string>
     <string name="search_qr">Hledat kódy</string>
     <string name="no_saved">Žádné uložené kódy</string>
-    <string name="clear">Vymazat</string>
     <string name="delete">Smazat</string>
     <string name="settings">Nastavení</string>
     <string name="save_history">Ukládat historii</string>
-    <string name="privacy">Soukromí</string>
     <string name="privacy_summary">QR kódy se zpracovávají v tomto zařízení. Bez účtu, reklam a analytiky. Historie je volitelná. Hesla Wi-Fi se neukládají automaticky; při ručním uložení Wi-Fi kódu se uloží i heslo. Data se jiné aplikaci předají pouze po zvolení externí akce. Historii lze vymazat v Nastavení; jazyk zůstane uložený. Kontakt: brendigo.com.</string>
     <string name="about">O aplikaci</string>
     <string name="developed_by">Vyvinul Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Exportovat PNG</string>
     <string name="png_save_failed">Obrázek PNG nelze uložit.</string>
     <string name="operation_failed">Akce se nezdařila. Zkuste to znovu.</string>
-    <string name="data_tools">Vaše kódy a soubory</string>
     <string name="export_archive">Exportovat uložené QR kódy do PDF · ZIP</string>
-    <string name="export_archive_hint">Uložte oblíbené kódy do tisknutelného PDF archivu.</string>
     <string name="export_archive_warning">Exportovaná PDF mohou obsahovat uložená hesla Wi-Fi. PDF sdílejte jen s důvěryhodnými osobami.</string>
     <string name="privacy_policy">Zásady ochrany osobních údajů</string>
     <string name="terms_of_use">Podmínky používání</string>

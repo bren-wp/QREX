@@ -5,7 +5,6 @@
     <string name="history">Історія</string>
     <string name="favorites">Обране</string>
     <string name="more">Більше</string>
-    <string name="scan_qr">Сканувати QR-код</string>
     <string name="point_camera">Наведіть камеру на QR-код</string>
     <string name="allow_camera">Дозвольте доступ до камери.</string>
     <string name="enable_camera">Увімкнути камеру</string>
@@ -25,7 +24,6 @@
     <string name="copy">Копіювати</string>
     <string name="share">Поділитися</string>
     <string name="saved">Збережено</string>
-    <string name="save_qr">Зберегти код</string>
     <string name="close">Закрити</string>
     <string name="wifi_save_title">Зберегти Wi-Fi код</string>
     <string name="wifi_save_warning">Пароль Wi-Fi буде збережено на пристрої.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Телефон</string>
     <string name="location">Розташування</string>
     <string name="contact">Контакт</string>
-    <string name="fewer_options">Менше опцій</string>
-    <string name="more_options">Більше опцій</string>
     <string name="optional_password">Пароль (необов’язково)</string>
     <string name="wifi_warning">QR-код Wi-Fi може містити пароль.</string>
     <string name="qr_preview">Попередній перегляд</string>
     <string name="invalid_content">Введіть дійсний QR-вміст.</string>
     <string name="show_qr">Показати QR-код</string>
-    <string name="create_share">Переглянути й поділитися</string>
     <string name="search_qr">Пошук кодів</string>
     <string name="no_saved">Немає збережених кодів</string>
-    <string name="clear">Очистити</string>
     <string name="delete">Видалити</string>
     <string name="settings">Налаштування</string>
     <string name="save_history">Зберігати історію</string>
-    <string name="privacy">Конфіденційність</string>
     <string name="privacy_summary">QR-коди обробляються на цьому пристрої. Без облікового запису, реклами чи аналітики. Історія необов’язкова. Паролі Wi-Fi не зберігаються автоматично; ручне збереження коду Wi-Fi також зберігає пароль. Дані передаються іншому застосунку лише після вибору зовнішньої дії. Історію можна очистити в Налаштуваннях; мова залишається збереженою. Контакт: brendigo.com.</string>
     <string name="about">Про застосунок</string>
     <string name="developed_by">Розроблено Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Експортувати PNG</string>
     <string name="png_save_failed">Не вдалося зберегти зображення PNG.</string>
     <string name="operation_failed">Не вдалося виконати дію. Спробуйте ще раз.</string>
-    <string name="data_tools">Ваші коди та файли</string>
     <string name="export_archive">Експортувати збережені QR-коди в PDF · ZIP</string>
-    <string name="export_archive_hint">Збережіть улюблені коди в PDF-архіві для друку.</string>
     <string name="export_archive_warning">Експортовані PDF можуть містити паролі Wi-Fi. Діліться цим PDF лише з довіреними особами.</string>
     <string name="privacy_policy">Політика конфіденційності</string>
     <string name="terms_of_use">Умови використання</string>

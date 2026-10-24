@@ -5,7 +5,6 @@
     <string name="history">Histórico</string>
     <string name="favorites">Favoritos</string>
     <string name="more">Mais</string>
-    <string name="scan_qr">Ler código QR</string>
     <string name="point_camera">Aponte a câmara para um código QR</string>
     <string name="allow_camera">Autorize o acesso à câmara.</string>
     <string name="enable_camera">Ativar câmara</string>
@@ -25,7 +24,6 @@
     <string name="copy">Copiar</string>
     <string name="share">Partilhar</string>
     <string name="saved">Guardado</string>
-    <string name="save_qr">Guardar código</string>
     <string name="close">Fechar</string>
     <string name="wifi_save_title">Guardar Wi-Fi</string>
     <string name="wifi_save_warning">A palavra-passe Wi-Fi será guardada neste dispositivo.</string>
@@ -43,21 +41,16 @@
     <string name="phone">Telefone</string>
     <string name="location">Localização</string>
     <string name="contact">Contacto</string>
-    <string name="fewer_options">Menos opções</string>
-    <string name="more_options">Mais opções</string>
     <string name="optional_password">Palavra-passe (opcional)</string>
     <string name="wifi_warning">O QR Wi-Fi pode conter uma palavra-passe.</string>
     <string name="qr_preview">Pré-visualização</string>
     <string name="invalid_content">Introduza um conteúdo QR válido.</string>
     <string name="show_qr">Mostrar código QR</string>
-    <string name="create_share">Ver e partilhar</string>
     <string name="search_qr">Pesquisar códigos</string>
     <string name="no_saved">Sem códigos guardados</string>
-    <string name="clear">Limpar</string>
     <string name="delete">Eliminar</string>
     <string name="settings">Definições</string>
     <string name="save_history">Guardar histórico</string>
-    <string name="privacy">Privacidade</string>
     <string name="privacy_summary">Os códigos QR são processados neste dispositivo. Sem conta, anúncios ou análise. O histórico é opcional. As palavras-passe Wi-Fi nunca são guardadas automaticamente; guardar manualmente um código Wi-Fi também guarda a palavra-passe. Os dados só são partilhados com outra aplicação quando escolhe uma ação externa. Pode limpar o histórico nas Definições; o idioma fica guardado. Contacto: brendigo.com.</string>
     <string name="about">Sobre</string>
     <string name="developed_by">Desenvolvido pela Brendigo</string>
@@ -68,9 +61,7 @@
     <string name="export_png">Exportar PNG</string>
     <string name="png_save_failed">Não foi possível guardar a imagem PNG.</string>
     <string name="operation_failed">A ação falhou. Tente novamente.</string>
-    <string name="data_tools">Os seus códigos e ficheiros</string>
     <string name="export_archive">Exportar códigos guardados em PDF · ZIP</string>
-    <string name="export_archive_hint">Guarde os seus códigos favoritos num arquivo PDF pronto a imprimir.</string>
     <string name="export_archive_warning">Os PDFs exportados podem conter palavras-passe Wi-Fi guardadas. Partilhe este PDF apenas com pessoas de confiança.</string>
     <string name="privacy_policy">Política de privacidade</string>
     <string name="terms_of_use">Termos de utilização</string>
