@@ -24,3 +24,8 @@ Source inspection found an unreachable two-column quick-type layout: `if (layout
 ## Follow-up: event QR CRLF parsing
 
 The iCalendar encoder emits CRLF separators, but `QRContent.eventField` previously preserved the trailing carriage return for each decoded property. `eventTimeMillis` then parsed a timestamp containing a trailing CR and returned null; editable event QR start/end times consequently reverted to fallback values. The parser now strips only the line-ending CR (not user content) before unescaping. A JVM test round-trips localized titles, multi-line descriptions, location delimiters and both start/end timestamps against the system zone. The Compose Create/Wi-Fi instrumentation now explicitly asserts the password input appears after tapping the Wi-Fi quick type.
+
+
+## Follow-up: cancellation-safe bitmap ownership
+
+Previously the selected image bitmap was allocated on `Dispatchers.IO`, returned across a suspend boundary to the Compose coroutine, then decoded/recycled on `Dispatchers.Default`. If navigation or lifecycle teardown cancelled the coroutine while IO was completing, the allocated bitmap could lose its cleanup owner before the later recycle path ran. `decodeGalleryQr` now bounds metadata, decodes sampled pixels, applies EXIF rotation, reads ZXing QR content and unconditionally recycles in a `finally` on one worker. The Compose callback receives only the decoded string/result and remains cancellation-safe. No bitmap or camera frame is persisted.

@@ -30,8 +30,12 @@ class QREXPrivacyStabilityTests(unittest.TestCase):
     def test_android_gallery_bitmap_cleanup_on_all_completion_paths(self):
         scanner = (ANDROID / "QREXScanner.kt").read_text("utf-8")
         reader = (ANDROID / "QREXQrDecoder.kt").read_text("utf-8")
-        self.assertIn("bitmap?.recycle()", scanner)
-        self.assertRegex(scanner, r"finally\s*\{\s*bitmap\.recycle\(\)")
+        # Recycle on the same worker that owns the bitmap, including when
+        # the suspended Compose caller is cancelled before it can resume.
+        self.assertIn("internal fun decodeGalleryQr(context: Context, uri: Uri)", scanner)
+        self.assertIn("withContext(Dispatchers.IO) { decodeGalleryQr(context, uri) }", scanner)
+        self.assertIn("if (!bitmap.isRecycled) bitmap.recycle()", scanner)
+        self.assertNotIn("bitmap?.recycle()", scanner)
         self.assertIn("frame.close()", scanner)
         self.assertIn("QREXQrDecoder.decodeBitmap(bitmap)", scanner)
         self.assertIn("QREXQrDecoder.decodeFrame(frame)", scanner)
