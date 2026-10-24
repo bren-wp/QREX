@@ -273,12 +273,14 @@ private fun QREXApp(
                             resultShowsQr = false
                         },
                         icon = { Icon(icons[index], contentDescription = label) },
-                         alwaysShowLabel = !compactNavigation,
+                        // Do not hide every tab label on narrow screens or larger fonts.
+                        alwaysShowLabel = true,
                         label = {
-                             if (!compactNavigation) Text(label, maxLines = 1,
-                                 softWrap = false, overflow = TextOverflow.Ellipsis,
-                                 textAlign = TextAlign.Center, fontSize = 10.sp)
-                         },
+                            Text(label, maxLines = 1,
+                                softWrap = false, overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                fontSize = if (compactNavigation) 9.sp else 10.sp)
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = selectedNavigationColor,
                             selectedTextColor = selectedNavigationColor,

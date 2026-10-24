@@ -26,6 +26,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("qrexLayoutProfile(", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
+    def test_gallery_picker_excludes_camera_and_compact_nav_keeps_labels(self):
+        self.assertIn("galleryActive.compareAndSet(false, true)", self.scanner)
+        self.assertIn("enabled = !galleryBusy", self.scanner)
+        self.assertIn("cameraFrameAllowed(", self.scanner)
+        self.assertIn("!disposed.get() && !galleryActive.get()", self.scanner)
+        self.assertIn("finally {", self.scanner)
+        self.assertIn("galleryActive.set(false)", self.scanner)
+        self.assertIn("alwaysShowLabel = true", self.main)
+        self.assertIn("fontSize = if (compactNavigation) 9.sp else 10.sp", self.main)
+
     def test_dark_only_palette_and_pdf_export(self):
         self.assertIn("val colors = darkColorScheme(", self.main)
         self.assertNotIn("lightColorScheme(", self.main)

@@ -30,6 +30,15 @@ class QREXQrDecoderTest {
     }
 
     @Test
+    fun gallery_picker_takes_precedence_over_live_camera() {
+        assertTrue(cameraFrameAllowed(12_000L, 0L, false, false))
+        assertFalse(cameraFrameAllowed(12_000L, 0L, true, false))
+        assertFalse(cameraFrameAllowed(12_000L, 0L, false, true))
+        assertFalse(cameraFrameAllowed(12_080L, 12_000L, false, false))
+        assertTrue(cameraFrameAllowed(12_180L, 12_000L, false, false))
+    }
+
+    @Test
     fun scan_standard_qr() {
         val value = "https://brendigo.com/qrex?ref=android"
         assertEquals(value, QREXQrDecoder.decodeLuma(qr(value), 251, 197))

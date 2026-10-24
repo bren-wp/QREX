@@ -114,6 +114,11 @@ internal fun gallerySampleSize(width: Int, height: Int): Int {
 internal fun cameraFrameDue(nowMillis: Long, lastMillis: Long): Boolean =
     lastMillis <= 0L || nowMillis - lastMillis >= 180L
 
+/** The picker has priority over frames from the live CameraX analyzer. */
+internal fun cameraFrameAllowed(
+    nowMillis: Long, lastMillis: Long, galleryActive: Boolean, alreadyHandled: Boolean
+): Boolean = !galleryActive && !alreadyHandled && cameraFrameDue(nowMillis, lastMillis)
+
 /** Apply all eight EXIF orientations, including mirrored JPEGs, after sampling. */
 internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
     val transform = Matrix()
@@ -155,14 +160,21 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val qrNotFound = tr("qr_not_found")
     val cameraFailed = tr("camera_failed")
     val handled = remember { AtomicBoolean(false) }
+    val galleryActive = remember { AtomicBoolean(false) }
+    var galleryBusy by remember { mutableStateOf(false) }
     val lastCameraDecodeMs = remember { AtomicLong(0L) }
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
     var selectedZoom by remember { mutableFloatStateOf(1f) }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
+        if (uri == null) {
+            // Cancelled picker: restore camera scanning without any side effects.
+            galleryActive.set(false)
+            galleryBusy = false
+        } else {
             scope.launch {
+                try {
                 // Bound gallery inputs before allocation. Camera permission is not
                 // required by the system photo picker.
                 val bitmap = withContext(Dispatchers.IO) {
@@ -221,6 +233,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     if (result.isFailure) message = imageFailed
                     else if (raw.isNullOrEmpty()) message = qrNotFound
                     else if (handled.compareAndSet(false, true)) onRead(raw)
+                }
+                } finally {
+                    // Reset even when decode fails or this coroutine is cancelled.
+                    galleryActive.set(false)
+                    galleryBusy = false
                 }
             }
         }
@@ -299,14 +316,16 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                             override fun analyze(frame: ImageProxy) {
                                 try {
                                     val now = SystemClock.elapsedRealtime()
-                                    if (!disposed.get() && !handled.get() &&
-                                        cameraFrameDue(now, lastCameraDecodeMs.get())) {
+                                    if (!disposed.get() && cameraFrameAllowed(
+                                            now, lastCameraDecodeMs.get(),
+                                            galleryActive.get(), handled.get()
+                                        )) {
                                         lastCameraDecodeMs.set(now)
                                         val decoded = QREXQrDecoder.decodeFrame(frame)
-                                        if (!decoded.isNullOrEmpty() &&
+                                        if (!decoded.isNullOrEmpty() && !galleryActive.get() &&
                                             handled.compareAndSet(false, true)) {
                                             ContextCompat.getMainExecutor(context).execute {
-                                                if (!disposed.get()) onRead(decoded)
+                                                if (!disposed.get() && !galleryActive.get()) onRead(decoded)
                                             }
                                         }
                                     }
@@ -427,10 +446,20 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)) {
             Button(
                 onClick = {
-                    photoPicker.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
+                    if (galleryActive.compareAndSet(false, true)) {
+                        galleryBusy = true
+                        runCatching {
+                            photoPicker.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }.onFailure {
+                            galleryActive.set(false)
+                            galleryBusy = false
+                            message = imageFailed
+                        }
+                    }
                 },
+                enabled = !galleryBusy,
                 modifier = Modifier.weight(1f)
                     .heightIn(min = if (compactScan) 52.dp else 66.dp)
                     .testTag("qrex-scan-gallery"),
