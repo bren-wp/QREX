@@ -145,7 +145,7 @@ internal fun QrexSettingsTile(
     QrexPanel(modifier = modifier.clickable(
         enabled = enabled, role = Role.Button, onClick = onClick
     )) {
-        Column(Modifier.fillMaxWidth().heightIn(min = 96.dp).padding(12.dp),
+        Column(Modifier.fillMaxWidth().heightIn(min = 104.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Surface(shape = RoundedCornerShape(12.dp),
                 color = foreground.copy(alpha = 0.14f)) {
@@ -231,10 +231,12 @@ internal data class QrexLayoutProfile(
 internal fun qrexLayoutProfile(
     widthDp: Int, heightDp: Int, fontScale: Float
 ): QrexLayoutProfile {
+    // Localized four-way chips truncate at 360–419dp; stack them at that width.
+    val stackChoices = widthDp < 420 || fontScale >= 1.30f
     val narrow = widthDp < 360 || fontScale >= 1.30f
     val short = heightDp < 620 || fontScale >= 1.45f
     return QrexLayoutProfile(
-        stackTypeChoices = narrow,
+        stackTypeChoices = stackChoices,
         showQrPreview = heightDp >= 420 && fontScale < 1.70f,
         darkQrSizeDp = if (narrow || short) 104 else 156,
         horizontalPaddingDp = if (widthDp < 350) 12 else 16
@@ -255,7 +257,7 @@ internal fun QrexResultAction(
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.fillMaxWidth().heightIn(min = 48.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 56.dp),
         shape = RoundedCornerShape(15.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)

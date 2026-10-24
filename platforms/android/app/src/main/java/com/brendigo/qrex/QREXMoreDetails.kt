@@ -64,7 +64,7 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                 val selected = store.language == code
                 Surface(
                     onClick = { store.updateLanguage(code) },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 58.dp)
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)
                         .testTag("qrex-language-option-$code"),
                     shape = RoundedCornerShape(13.dp),
                     color = if (selected) MaterialTheme.colorScheme.primaryContainer
@@ -110,7 +110,7 @@ internal fun QrexExportDetails(
             onClick = onPdf
         )
         Spacer(Modifier.height(12.dp))
-        Text(tr("export_archive_warning"), fontSize = 12.sp,
+        Text(tr("export_archive_warning"), fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(vertical = 8.dp))
         Surface(
@@ -122,7 +122,7 @@ internal fun QrexExportDetails(
                 Icon(Icons.Default.Shield, contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
                 Spacer(Modifier.width(10.dp))
-                Text(tr("privacy_summary"), fontSize = 12.sp,
+                Text(tr("privacy_summary"), fontSize = 14.sp,
                     maxLines = 4,
                     color = MaterialTheme.colorScheme.onPrimaryContainer)
             }

@@ -389,7 +389,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                             },
                             enabled = available,
                             label = { Text("${ratio}×") },
-                            modifier = Modifier.heightIn(min = 44.dp),
+                            modifier = Modifier.heightIn(min = 48.dp),
                             shape = RoundedCornerShape(18.dp),
                             colors = FilterChipDefaults.filterChipColors(
                                 containerColor = QrexDesign.backgroundDeep.copy(alpha = .88f),
@@ -419,7 +419,10 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
                     .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(tr("allow_camera"), modifier = Modifier.padding(20.dp))
-                    OutlinedButton(onClick = { permission.launch(Manifest.permission.CAMERA) }) {
+                    OutlinedButton(
+                        onClick = { permission.launch(Manifest.permission.CAMERA) },
+                        modifier = Modifier.heightIn(min = 48.dp)
+                    ) {
                         Text(tr("enable_camera"))
                     }
                     TextButton(onClick = {
