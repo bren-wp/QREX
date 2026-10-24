@@ -180,6 +180,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
             self.assertIn(color, splash_icon)
             self.assertIn(color, background)
         self.assertIn('android:fillType="evenOdd"', monochrome)
+        self.assertIn('android:scaleX="0.91"', monochrome)
+        self.assertIn('android:pivotX="54"', monochrome)
         self.assertIn("M72,40 H79 V47 H72 Z", monochrome)
         self.assertIn("val stackChoices = widthDp < 420", design)
         self.assertIn("heightIn(min = 104.dp)", design)
