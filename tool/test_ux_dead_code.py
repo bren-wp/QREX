@@ -106,7 +106,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('favoritesPage = screenshotMode == "saved"', self.main)
         self.assertIn('testTag("qrex-history-segments")', self.main)
         self.assertIn('testTag("qrex-history-saved")', self.main)
-        self.assertIn("QRHistory.matches(it, search, savedOnly || favoritesPage)", self.main)
+        self.assertIn("QRHistory.matches(it, search, savedOnly)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("hasSaved = store.items.any { it.saved }", self.main)
 
