@@ -26,6 +26,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("qrexLayoutProfile(", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
+    def test_gallery_picker_excludes_camera_and_compact_nav_keeps_labels(self):
+        self.assertIn("galleryActive.compareAndSet(false, true)", self.scanner)
+        self.assertIn("enabled = !galleryBusy", self.scanner)
+        self.assertIn("cameraFrameAllowed(", self.scanner)
+        self.assertIn("!disposed.get() && !galleryActive.get()", self.scanner)
+        self.assertIn("finally {", self.scanner)
+        self.assertIn("galleryActive.set(false)", self.scanner)
+        self.assertIn("alwaysShowLabel = true", self.main)
+        self.assertIn("fontSize = if (compactNavigation) 9.sp else 10.sp", self.main)
+
     def test_dark_only_palette_and_pdf_export(self):
         self.assertIn("val colors = darkColorScheme(", self.main)
         self.assertNotIn("lightColorScheme(", self.main)
@@ -124,6 +134,17 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('contentDescription = tr("more")', self.main)
         self.assertIn("showResultMenu", self.main)
         self.assertIn('testTag("qrex-result-close")', self.main)
+
+    def test_compact_create_quick_types_are_not_hidden_by_unreachable_branch(self):
+        # Before this fix, an empty if swallowed the entire compact layout,
+        # making the 2x2 type grid unreachable on narrow phones.
+        self.assertNotIn("if (layout.stackTypeChoices) {            }", self.main)
+        self.assertNotIn("else if (layout.stackTypeChoices)", self.main)
+        self.assertEqual(self.main.count("if (layout.stackTypeChoices) {"), 1)
+        self.assertIn('modifier = Modifier.weight(1f).testTag("qrex-create-type-$index")',
+                      self.main)
+        self.assertIn('.testTag("qrex-create-type-$index")', self.main)
+        self.assertIn('testTag("qrex-create-wifi-password")', self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
         self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)

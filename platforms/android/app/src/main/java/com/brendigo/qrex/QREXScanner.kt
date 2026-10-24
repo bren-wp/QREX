@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -114,6 +115,11 @@ internal fun gallerySampleSize(width: Int, height: Int): Int {
 internal fun cameraFrameDue(nowMillis: Long, lastMillis: Long): Boolean =
     lastMillis <= 0L || nowMillis - lastMillis >= 180L
 
+/** The picker has priority over frames from the live CameraX analyzer. */
+internal fun cameraFrameAllowed(
+    nowMillis: Long, lastMillis: Long, galleryActive: Boolean, alreadyHandled: Boolean
+): Boolean = !galleryActive && !alreadyHandled && cameraFrameDue(nowMillis, lastMillis)
+
 /** Apply all eight EXIF orientations, including mirrored JPEGs, after sampling. */
 internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
     val transform = Matrix()
@@ -138,6 +144,46 @@ internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
     return result
 }
 
+
+/**
+ * Decode a user-selected image entirely on a worker dispatcher. Ownership of
+ * the bitmap never crosses a suspend boundary: even if Compose cancels the
+ * caller during a slow decode, this finally block releases native image memory.
+ */
+internal fun decodeGalleryQr(context: Context, uri: Uri): Result<String?> = runCatching {
+    val resolver = context.contentResolver
+    val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
+    if (size > 20_000_000L) return@runCatching null
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    // Bounds-only decoding intentionally returns null even for valid images.
+    val boundsStream = resolver.openInputStream(uri) ?: return@runCatching null
+    boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
+    val width = bounds.outWidth.toLong()
+    val height = bounds.outHeight.toLong()
+    if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
+        return@runCatching null
+    }
+    val sampled = BitmapFactory.Options().apply {
+        inSampleSize = gallerySampleSize(bounds.outWidth, bounds.outHeight)
+    }
+    var bitmap = resolver.openInputStream(uri)?.use {
+        BitmapFactory.decodeStream(it, null, sampled)
+    } ?: return@runCatching null
+    try {
+        val orientation = runCatching {
+            resolver.openInputStream(uri)?.use {
+                ExifInterface(it).getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                )
+            } ?: ExifInterface.ORIENTATION_NORMAL
+        }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
+        bitmap = orientGalleryBitmap(bitmap, orientation)
+        QREXQrDecoder.decodeBitmap(bitmap)
+    } finally {
+        if (!bitmap.isRecycled) bitmap.recycle()
+    }
+}
+
 @Composable
 fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val context = LocalContext.current
@@ -155,72 +201,32 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val qrNotFound = tr("qr_not_found")
     val cameraFailed = tr("camera_failed")
     val handled = remember { AtomicBoolean(false) }
+    val galleryActive = remember { AtomicBoolean(false) }
+    var galleryBusy by remember { mutableStateOf(false) }
     val lastCameraDecodeMs = remember { AtomicLong(0L) }
     var camera by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
     var selectedZoom by remember { mutableFloatStateOf(1f) }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
+        if (uri == null) {
+            // Cancellation, including Back, resumes normal camera scanning.
+            galleryActive.set(false)
+            galleryBusy = false
+        } else {
             scope.launch {
-                // Bound gallery inputs before allocation. Camera permission is not
-                // required by the system photo picker.
-                val bitmap = withContext(Dispatchers.IO) {
-                    runCatching {
-                        val resolver = context.contentResolver
-                        val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
-                        if (size > 20_000_000L) return@runCatching null
-                        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                        val boundsStream = resolver.openInputStream(uri) ?: return@runCatching null
-                        boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
-                        // inJustDecodeBounds returns a null Bitmap by design:
-                        // validate populated dimensions rather than its return value.
-                        val width = bounds.outWidth.toLong()
-                        val height = bounds.outHeight.toLong()
-                        if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
-                            return@runCatching null
-                        }
-                        val sampled = BitmapFactory.Options().apply {
-                            inSampleSize = gallerySampleSize(bounds.outWidth, bounds.outHeight)
-                        }
-                        val decoded = resolver.openInputStream(uri)?.use {
-                            BitmapFactory.decodeStream(it, null, sampled)
-                        } ?: return@runCatching null
-                        val orientation = runCatching {
-                            resolver.openInputStream(uri)?.use {
-                                ExifInterface(it).getAttributeInt(
-                                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
-                                )
-                            } ?: ExifInterface.ORIENTATION_NORMAL
-                        }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
-                        try {
-                            orientGalleryBitmap(decoded, orientation)
-                        } catch (failure: Exception) {
-                            decoded.recycle()
-                            throw failure
-                        }
-                    }.getOrNull()
-                }
-                if (!scope.coroutineContext.isActive) {
-                    bitmap?.recycle()
-                    return@launch
-                }
-                if (bitmap == null) {
-                    message = imageFailed
-                } else {
-                    // Heavy QR detection runs off main; recycle even on decode errors.
-                    val result = withContext(Dispatchers.Default) {
-                        try {
-                            runCatching { QREXQrDecoder.decodeBitmap(bitmap) }
-                        } finally {
-                            bitmap.recycle()
-                        }
-                    }
+                try {
+                    // Image load, rotation, decoding and bitmap cleanup remain
+                    // together on the worker even if this coroutine is cancelled.
+                    val result = withContext(Dispatchers.IO) { decodeGalleryQr(context, uri) }
                     if (!scope.coroutineContext.isActive) return@launch
                     val raw = result.getOrNull()
                     if (result.isFailure) message = imageFailed
                     else if (raw.isNullOrEmpty()) message = qrNotFound
                     else if (handled.compareAndSet(false, true)) onRead(raw)
+                } finally {
+                    galleryActive.set(false)
+                    galleryBusy = false
                 }
             }
         }
@@ -299,14 +305,21 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                             override fun analyze(frame: ImageProxy) {
                                 try {
                                     val now = SystemClock.elapsedRealtime()
-                                    if (!disposed.get() && !handled.get() &&
-                                        cameraFrameDue(now, lastCameraDecodeMs.get())) {
+                                    if (!disposed.get() && cameraFrameAllowed(
+                                            now, lastCameraDecodeMs.get(),
+                                            galleryActive.get(), handled.get()
+                                        )) {
                                         lastCameraDecodeMs.set(now)
                                         val decoded = QREXQrDecoder.decodeFrame(frame)
-                                        if (!decoded.isNullOrEmpty() &&
-                                            handled.compareAndSet(false, true)) {
+                                        if (!decoded.isNullOrEmpty()) {
                                             ContextCompat.getMainExecutor(context).execute {
-                                                if (!disposed.get()) onRead(decoded)
+                                                // Claim the result only at delivery time. If the
+                                                // gallery opens while this callback is queued,
+                                                // it must not consume the one-shot scan token.
+                                                if (!disposed.get() && !galleryActive.get() &&
+                                                    handled.compareAndSet(false, true)) {
+                                                    onRead(decoded)
+                                                }
                                             }
                                         }
                                     }
@@ -427,10 +440,20 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)) {
             Button(
                 onClick = {
-                    photoPicker.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
+                    if (galleryActive.compareAndSet(false, true)) {
+                        galleryBusy = true
+                        runCatching {
+                            photoPicker.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }.onFailure {
+                            galleryActive.set(false)
+                            galleryBusy = false
+                            message = imageFailed
+                        }
+                    }
                 },
+                enabled = !galleryBusy,
                 modifier = Modifier.weight(1f)
                     .heightIn(min = if (compactScan) 52.dp else 66.dp)
                     .testTag("qrex-scan-gallery"),

@@ -24,23 +24,23 @@ These are **real Android emulator captures of the running QREX app**, generated 
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.8/android-language.png" width="210" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.12/android-language.png" width="210" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
 </tr>
 </table>
 
-[**View historical screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.8)
+[**View current v1.0.12 screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.12)
 
 </div>
 
@@ -71,9 +71,9 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-[**All historical QREX releases (v1.0.0–v1.0.11) →**](docs/releases/INDEX.md)
+[**All historical QREX releases (v1.0.0–v1.0.12) →**](docs/releases/INDEX.md)
 
-Latest published release: **v1.0.11** (`com.brendigo.qrex`, versionCode 111). Next Android QA candidate: **v1.0.12** (versionCode 112), with the only QREX midnight-blue/cyan theme, PDF-only saved-code export, and complete PDF/privacy, splash and PDF-page translations for all 23 supported languages. The candidate is not published until all Android CI and real emulator gates succeed. The Q/QR adaptive launcher icon and splash stay consistent. Historic images above show a previously released design; the new dark-only export screen is verified in the v1.0.12 QA captures.
+Latest published release: **[v1.0.12](https://github.com/bren-wp/QREX/releases/tag/v1.0.12)** (`com.brendigo.qrex`, versionCode 112), with the QREX midnight-blue/cyan theme, PDF-only saved-code collection export, and 23-language localization. The screenshots above are real Android emulator captures attached to v1.0.12. Any later source changes are development work until their own verification and publication.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 

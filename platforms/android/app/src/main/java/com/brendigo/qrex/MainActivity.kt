@@ -273,12 +273,14 @@ private fun QREXApp(
                             resultShowsQr = false
                         },
                         icon = { Icon(icons[index], contentDescription = label) },
-                         alwaysShowLabel = !compactNavigation,
+                        // Do not hide every tab label on narrow screens or larger fonts.
+                        alwaysShowLabel = true,
                         label = {
-                             if (!compactNavigation) Text(label, maxLines = 1,
-                                 softWrap = false, overflow = TextOverflow.Ellipsis,
-                                 textAlign = TextAlign.Center, fontSize = 10.sp)
-                         },
+                            Text(label, maxLines = 1,
+                                softWrap = false, overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                fontSize = if (compactNavigation) 9.sp else 10.sp)
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = selectedNavigationColor,
                             selectedTextColor = selectedNavigationColor,
@@ -918,7 +920,7 @@ private fun CreateScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
 
             val quickTypes = listOf(0, 1, 2, 6)
-             val selectType: (Int) -> Unit = { index ->
+            val selectType: (Int) -> Unit = { index ->
                 kind = index
                 content = ""
                 password = ""
@@ -927,7 +929,7 @@ private fun CreateScreen(
                 eventLocation = ""
                 eventDescription = ""
             }
-            if (layout.stackTypeChoices) {            } else if (layout.stackTypeChoices) {
+            if (layout.stackTypeChoices) {
                 // 320dp phones and large accessibility fonts: 2 × 2 prevents
                 // truncated type names and overlapping selectable tiles.
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -937,7 +939,7 @@ private fun CreateScreen(
                             pair.forEach { index ->
                                 QrexCreateTypeChoice(types[index], typeIcons[index],
                                     selected = kind == index,
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(1f).testTag("qrex-create-type-$index"),
                                     onClick = { selectType(index) })
                             }
                         }
@@ -952,7 +954,8 @@ private fun CreateScreen(
                     quickTypes.forEach { index ->
                         Surface(
                             onClick = { selectType(index) },
-                            modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                                .testTag("qrex-create-type-$index"),
                             shape = RoundedCornerShape(11.dp),
                             color = if (kind == index) QrexDesign.accent
                                 else MaterialTheme.colorScheme.surface,
@@ -996,7 +999,7 @@ private fun CreateScreen(
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it.take(500) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-create-wifi-password"),
                     label = { Text(tr("optional_password")) },
                     singleLine = true,
                     visualTransformation = if (reveal) VisualTransformation.None

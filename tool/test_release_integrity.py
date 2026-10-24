@@ -4,6 +4,7 @@
 No public GitHub release signed with a disposable key is a Play upload artifact.
 """
 from pathlib import Path
+import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -145,8 +146,12 @@ class ReleaseIntegrityTests(unittest.TestCase):
         ):
             self.assertIn(artifact, published)
         self.assertIn("cannot update in place", notes)
-        self.assertIn("v1.0.8/android-create.png",
-                      (ROOT / "README.md").read_text("utf-8"))
+        readme = (ROOT / "README.md").read_text("utf-8")
+        published = re.search(r"Latest published release:.*?\[v([0-9.]+)\]", readme)
+        screenshot = re.search(r"/releases/download/v([0-9.]+)/android-create\.png", readme)
+        self.assertIsNotNone(published, "README must identify its published release")
+        self.assertIsNotNone(screenshot, "README must link a real release screenshot")
+        self.assertEqual(published.group(1), screenshot.group(1))
         self.assertIn("1.0.5", notes)
 
     def test_new_106_publisher_requires_exact_commit_ci_and_avoids_play_keys(self):

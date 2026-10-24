@@ -52,6 +52,28 @@ class QREXCoreTest {
         )
     }
 
+    @Test fun eventQrRoundTripRestoresUtcTimesAndEscapedFields() {
+        val start = java.time.LocalDateTime.of(2026, 10, 25, 9, 30)
+        val end = start.plusHours(2)
+        val title = "Sastanak, Šime"
+        val location = "Rijeka; Croatia"
+        val description = "Prva linija\nDruga, linija"
+        val encoded = QRContent.event(title, start, end, location, description)!!
+        assertTrue(encoded.contains("\r\nDTSTART:"))
+        assertEquals(title, QRContent.eventField(encoded, "SUMMARY"))
+        assertEquals(location, QRContent.eventField(encoded, "LOCATION"))
+        assertEquals(description, QRContent.eventField(encoded, "DESCRIPTION"))
+        assertEquals(
+            start.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            QRContent.eventTimeMillis(encoded, "DTSTART")
+        )
+        assertEquals(
+            end.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            QRContent.eventTimeMillis(encoded, "DTEND")
+        )
+        assertNull(QRContent.eventTimeMillis(encoded, "NOT_A_TIME_FIELD"))
+    }
+
     @Test fun contactVcardRoundTripKeepsCroatianUnicodeAndEscapedDelimiters() {
         val name = "Šime, Željka; Kovačić"
         val phone = "+385 91 123 4567"
