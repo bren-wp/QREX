@@ -636,7 +636,7 @@ class QREXStorageTest {
         assertTrue(legacy.edit().putBoolean("flutter.qrex_light_v1", true)
             .putBoolean("flutter.qrex_record_v1", false).commit())
         val migrated = QREXStore(context)
-        assertFalse(migrated.lightMode)
+        assertFalse(native.getBoolean("lightMode", false))
         assertTrue(migrated.historyEnabled)
         assertEquals("hr", migrated.language)
         assertTrue(migrated.clearAll())
