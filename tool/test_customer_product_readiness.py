@@ -68,7 +68,10 @@ class CustomerProductReadinessTests(unittest.TestCase):
         self.assertEqual(launcher.get(ns + "viewportWidth"), "108")
         self.assertEqual(mono.get(ns + "viewportWidth"), "108")
         paths = launcher.findall("path")
-        mono_paths = mono.findall("path")
+        # Adaptive themed foreground is correctly grouped into the same
+        # 0.91× launcher safe-zone transform as the colored glyph.
+        mono_paths = mono.findall(".//path")
+        self.assertEqual(mono.find("group").get(ns + "scaleX"), "0.91")
         # Q stroke and QR pixel cells must be real vector geometry,
         # not a screenshot of an app UI or a white rectangle placeholder.
         for path_list in (paths, mono_paths):
