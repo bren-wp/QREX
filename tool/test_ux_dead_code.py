@@ -34,7 +34,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("finally {", self.scanner)
         self.assertIn("galleryActive.set(false)", self.scanner)
         self.assertIn("alwaysShowLabel = true", self.main)
-        self.assertIn("fontSize = if (compactNavigation) 9.sp else 10.sp", self.main)
+        self.assertIn("fontSize = if (compactNavigation) 11.sp else 12.sp", self.main)
 
     def test_dark_only_palette_and_pdf_export(self):
         self.assertIn("val colors = darkColorScheme(", self.main)
@@ -93,7 +93,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexSettingsTile(", self.main)
         self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
-        self.assertIn("heightIn(min = 84.dp)", design)
+        self.assertIn("heightIn(min = 96.dp)", design)
         self.assertNotIn("store.updateLightMode(", self.main)
         self.assertIn("QrexSettingsListRow(", self.main)
         self.assertIn('store.updateLanguage(code)', self.details)
@@ -145,6 +145,20 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
                       self.main)
         self.assertIn('.testTag("qrex-create-type-$index")', self.main)
         self.assertIn('testTag("qrex-create-wifi-password")', self.main)
+
+    def test_premium_navigation_accessibility_and_calendar_failure_feedback(self):
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("val focusManager = LocalFocusManager.current", self.main)
+        self.assertIn("focusManager.clearFocus()", self.main)
+        self.assertIn("this.selected = selected", self.main)
+        self.assertIn("this.selected = kind == index", self.main)
+        self.assertIn("heightIn(min = 54.dp)", self.main)
+        self.assertIn("fontSize = 12.sp, fontWeight = FontWeight.SemiBold", self.main)
+        self.assertIn("private fun openCalendarEvent(context: Context, raw: String): Boolean", self.main)
+        self.assertIn("if (end <= start) return false", self.main)
+        self.assertIn("if (!openCalendarEvent(context, raw))", self.main)
+        self.assertIn("Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()", self.main)
+        self.assertIn("heightIn(min = 96.dp)", design)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
         self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)

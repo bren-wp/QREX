@@ -71,6 +71,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -170,6 +172,7 @@ private fun QREXApp(
     screenshotLanguage: String? = null
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     // Compose observes locale/configuration changes without stale Resources reads.
     val appLanguage = screenshotLanguage ?: store.language
     // Four root destinations: Favorites belongs in History, not a fifth tab.
@@ -267,6 +270,7 @@ private fun QREXApp(
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == target,
                         onClick = {
+                            focusManager.clearFocus()
                             selected = target
                             currentCode = null
                             editPayload = null
@@ -279,7 +283,7 @@ private fun QREXApp(
                             Text(label, maxLines = 1,
                                 softWrap = false, overflow = TextOverflow.Ellipsis,
                                 textAlign = TextAlign.Center,
-                                fontSize = if (compactNavigation) 9.sp else 10.sp)
+                                fontSize = if (compactNavigation) 11.sp else 12.sp)
                         },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = selectedNavigationColor,
@@ -365,7 +369,7 @@ private fun PrimaryAction(
     onClick: () -> Unit
 ) {
     Button(onClick = onClick, enabled = enabled,
-        modifier = modifier.fillMaxWidth().heightIn(min = 48.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 54.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF1677FF), contentColor = Color.White)) {
         Text(text, fontWeight = FontWeight.Bold)
@@ -382,16 +386,18 @@ private fun shareQrText(context: Context, raw: String, title: String, failureMes
     }
 }
 
-private fun openCalendarEvent(context: Context, raw: String) {
-    val start = QRContent.eventTimeMillis(raw, "DTSTART") ?: return
-    val end = QRContent.eventTimeMillis(raw, "DTEND") ?: return
+/** External calendar editors may be missing or restricted on some devices. */
+private fun openCalendarEvent(context: Context, raw: String): Boolean {
+    val start = QRContent.eventTimeMillis(raw, "DTSTART") ?: return false
+    val end = QRContent.eventTimeMillis(raw, "DTEND") ?: return false
+    if (end <= start) return false
     val intent = Intent(Intent.ACTION_INSERT).setData(CalendarContract.Events.CONTENT_URI)
         .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start)
         .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end)
         .putExtra(CalendarContract.Events.TITLE, QRContent.eventField(raw, "SUMMARY").orEmpty())
         .putExtra(CalendarContract.Events.EVENT_LOCATION, QRContent.eventField(raw, "LOCATION").orEmpty())
         .putExtra(CalendarContract.Events.DESCRIPTION, QRContent.eventField(raw, "DESCRIPTION").orEmpty())
-    runCatching { context.startActivity(intent) }
+    return runCatching { context.startActivity(intent) }.isSuccess
 }
 
 @Composable
@@ -548,7 +554,11 @@ private fun ResultScreen(
             PrimaryAction(tr("open_link")) { openLink(context, url) }
             Spacer(Modifier.height(10.dp))
         } else if (QRContent.isEvent(raw)) {
-            PrimaryAction(tr("add_to_calendar")) { openCalendarEvent(context, raw) }
+            PrimaryAction(tr("add_to_calendar")) {
+                if (!openCalendarEvent(context, raw)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                }
+            }
             Spacer(Modifier.height(10.dp))
         }
         QrexResultAction(tr("copy"), Icons.Default.ContentCopy) {
@@ -697,7 +707,8 @@ private fun QrexCreateTypeChoice(
     modifier: Modifier = Modifier, onClick: () -> Unit
 ) {
     Surface(
-        onClick = onClick, modifier = modifier.heightIn(min = 48.dp),
+        onClick = onClick,
+        modifier = modifier.heightIn(min = 54.dp).semantics { this.selected = selected },
         shape = RoundedCornerShape(11.dp),
         color = if (selected) QrexDesign.accent else MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
@@ -705,11 +716,11 @@ private fun QrexCreateTypeChoice(
         Row(Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(15.dp),
+            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp),
                 tint = if (selected) Color.White else MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(4.dp))
             Text(label, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                fontSize = 10.sp, fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
                 color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -954,7 +965,8 @@ private fun CreateScreen(
                     quickTypes.forEach { index ->
                         Surface(
                             onClick = { selectType(index) },
-                            modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 54.dp)
+                                .semantics { this.selected = kind == index }
                                 .testTag("qrex-create-type-$index"),
                             shape = RoundedCornerShape(11.dp),
                             color = if (kind == index) QrexDesign.accent
@@ -967,13 +979,13 @@ private fun CreateScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(typeIcons[index], contentDescription = null,
-                                    modifier = Modifier.size(15.dp),
+                                    modifier = Modifier.size(18.dp),
                                     tint = if (kind == index) Color.White
                                         else MaterialTheme.colorScheme.primary)
                                 Spacer(Modifier.width(4.dp))
                                 Text(types[index], maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    fontWeight = FontWeight.SemiBold, fontSize = 10.sp,
+                                    fontWeight = FontWeight.SemiBold, fontSize = 11.sp,
                                     color = if (kind == index) Color.White
                                         else MaterialTheme.colorScheme.onSurfaceVariant)
                             }
@@ -1043,22 +1055,22 @@ private fun CreateScreen(
                                 if (eventEnd <= it) eventEnd = it.plusHours(1)
                             }
                         },
-                        modifier = Modifier.weight(1f).heightIn(min = 44.dp),
+                        modifier = Modifier.weight(1f).heightIn(min = 54.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
-                            Text(tr("event_start"), fontSize = 9.sp, maxLines = 1)
-                            Text(eventStart.format(dateTimeFormat), fontSize = 10.sp, maxLines = 1)
+                            Text(tr("event_start"), fontSize = 11.sp, maxLines = 2)
+                            Text(eventStart.format(dateTimeFormat), fontSize = 12.sp, maxLines = 2)
                         }
                     }
                     OutlinedButton(
                         onClick = { pickEventDateTime(eventEnd) { eventEnd = it } },
-                        modifier = Modifier.weight(1f).heightIn(min = 44.dp),
+                        modifier = Modifier.weight(1f).heightIn(min = 54.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
-                            Text(tr("event_end"), fontSize = 9.sp, maxLines = 1)
-                            Text(eventEnd.format(dateTimeFormat), fontSize = 10.sp, maxLines = 1)
+                            Text(tr("event_end"), fontSize = 11.sp, maxLines = 2)
+                            Text(eventEnd.format(dateTimeFormat), fontSize = 12.sp, maxLines = 2)
                         }
                     }
                 }
@@ -1309,7 +1321,7 @@ private fun HistoryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = 62.dp)
+                        Modifier.fillMaxWidth().heightIn(min = 68.dp)
                             .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -1322,7 +1334,7 @@ private fun HistoryScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 12.sp
+                                fontSize = 14.sp
                             )
                             val subtitle = listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
@@ -1330,7 +1342,7 @@ private fun HistoryScreen(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 9.sp
+                                fontSize = 11.sp
                             )
                         }
                         IconButton(
