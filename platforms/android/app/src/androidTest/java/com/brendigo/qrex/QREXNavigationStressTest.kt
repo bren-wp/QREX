@@ -213,21 +213,29 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun fiveTabsIncludeRealFavoritesAndMoreScreens() {
-        rule.onNodeWithTag("qrex-tab-3").assertIsDisplayed().performClick()
-        rule.onNodeWithTag("qrex-tab-3").assertIsSelected()
-        requireScreenTag("qrex-favorites-screen", 0, "open Favorites")
-        rule.onNodeWithTag("qrex-tab-2").performClick()
+    fun fourMainTabsKeepHistoryFavoritesAndMoreWithinTwoTaps() {
+        rule.onNodeWithTag("qrex-tab-2").assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
         requireScreenTag("qrex-history-screen", 0, "open History")
-        rule.onNodeWithTag("qrex-tab-4").performClick()
-        rule.onNodeWithTag("qrex-tab-4").assertIsSelected()
+        rule.onNodeWithTag("qrex-history-segments", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
+            .assertIsSelected()
+        rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
+            .assertIsSelected()
+        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-3").assertIsSelected()
         requireScreenTag("qrex-more-screen", 0, "open More")
+        rule.onAllNodesWithTag("qrex-tab-4").assertCountEquals(0)
     }
 
     @Test
     fun languageAndExportScreensFollowReferenceAndNavigateBack() {
-        rule.onNodeWithTag("qrex-tab-4").performClick()
+        rule.onNodeWithTag("qrex-tab-3").performClick()
         requireScreenTag("qrex-more-screen", 0, "open More")
         rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
@@ -256,7 +264,7 @@ class QREXNavigationStressTest {
             "qrex-light-types-grid", useUnmergedTree = true
         ).fetchSemanticsNodes().isNotEmpty()
         if (!alreadyLight) {
-            rule.onNodeWithTag("qrex-tab-4").performClick()
+            rule.onNodeWithTag("qrex-tab-3").performClick()
             rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
                 .performClick()
             rule.onNodeWithTag("qrex-tab-1").performClick()
@@ -275,7 +283,7 @@ class QREXNavigationStressTest {
             }
         } finally {
             if (!alreadyLight) {
-                rule.onNodeWithTag("qrex-tab-4").performClick()
+                rule.onNodeWithTag("qrex-tab-3").performClick()
                 rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
                     .performClick()
             }
@@ -284,7 +292,7 @@ class QREXNavigationStressTest {
 
     @Test
     fun bothThemeSettingsLayoutsPreserveClickableActions() {
-        rule.onNodeWithTag("qrex-tab-4").performClick()
+        rule.onNodeWithTag("qrex-tab-3").performClick()
         requireScreenTag("qrex-more-screen", 0, "More before theme switch")
         rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
