@@ -480,7 +480,7 @@ private fun ResultScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onClose,
-                modifier = Modifier.size(48.dp).testTag("qrex-result-close")) {
+                modifier = Modifier.size(52.dp).testTag("qrex-result-close")) {
                 Icon(Icons.Default.ArrowBack, contentDescription = tr("close"),
                     tint = MaterialTheme.colorScheme.onSurface)
             }
