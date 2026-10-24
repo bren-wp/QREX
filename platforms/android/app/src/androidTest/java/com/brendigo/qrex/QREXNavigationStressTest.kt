@@ -223,6 +223,8 @@ class QREXNavigationStressTest {
         }
         // Choosing Wi-Fi must render its actual form, not a dead tile.
         rule.onNodeWithTag("qrex-create-type-2", useUnmergedTree = true).performClick()
+        rule.onNodeWithTag("qrex-create-wifi-password", useUnmergedTree = true)
+            .assertIsDisplayed()
         rule.onNodeWithTag("qrex-create-screen").assertIsDisplayed()
     }
 

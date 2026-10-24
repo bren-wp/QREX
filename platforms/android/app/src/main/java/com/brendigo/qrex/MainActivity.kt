@@ -999,7 +999,7 @@ private fun CreateScreen(
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it.take(500) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-create-wifi-password"),
                     label = { Text(tr("optional_password")) },
                     singleLine = true,
                     visualTransformation = if (reveal) VisualTransformation.None

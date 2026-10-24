@@ -116,7 +116,7 @@ object QRContent {
         if (!isEvent(raw) || name !in setOf("SUMMARY", "DTSTART", "DTEND", "LOCATION", "DESCRIPTION")) return null
         val value = raw.lineSequence().firstOrNull {
             it.startsWith("$name:", ignoreCase = true)
-        }?.substringAfter(':') ?: return null
+        }?.substringAfter(':')?.trimEnd('\r') ?: return null
         val result = StringBuilder()
         var escaped = false
         for (char in value) {

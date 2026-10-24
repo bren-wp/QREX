@@ -19,3 +19,8 @@ No user history, Keystore alias, storage schema, package ID, permission manifest
 ## Follow-up: compact Create screen regression
 
 Source inspection found an unreachable two-column quick-type layout: `if (layout.stackTypeChoices) { } else if (layout.stackTypeChoices)` made the compact branch empty. On narrow phones or at large font scales this hid every pinned QR type choice. Replaced it with a single active `if (layout.stackTypeChoices)` branch, added stable semantic test tags to the four actual quick-type surfaces in both layouts, a static regression check for the malformed condition, and an Android Compose instrumentation test that opens Create and taps the Wi-Fi type. This change does not alter data persistence, encoder output or QR types.
+
+
+## Follow-up: event QR CRLF parsing
+
+The iCalendar encoder emits CRLF separators, but `QRContent.eventField` previously preserved the trailing carriage return for each decoded property. `eventTimeMillis` then parsed a timestamp containing a trailing CR and returned null; editable event QR start/end times consequently reverted to fallback values. The parser now strips only the line-ending CR (not user content) before unescaping. A JVM test round-trips localized titles, multi-line descriptions, location delimiters and both start/end timestamps against the system zone. The Compose Create/Wi-Fi instrumentation now explicitly asserts the password input appears after tapping the Wi-Fi quick type.

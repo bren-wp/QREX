@@ -144,6 +144,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('modifier = Modifier.weight(1f).testTag("qrex-create-type-$index")',
                       self.main)
         self.assertIn('.testTag("qrex-create-type-$index")', self.main)
+        self.assertIn('testTag("qrex-create-wifi-password")', self.main)
 
     def test_reference_create_controls_keep_real_pinned_touch_targets(self):
         self.assertIn("QrexCreateTypeChoice(types[index], typeIcons[index]", self.main)
