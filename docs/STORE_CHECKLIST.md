@@ -1,6 +1,6 @@
-# QREX — Google Play 1.0.10 readiness checklist
+# QREX — Google Play 1.0.11 readiness checklist
 
-**Package:** `com.brendigo.qrex` · **versionName:** `1.0.10` · **versionCode:** `110` · **target/compile SDK:** 36 · **minSdk:** 26.
+**Package:** `com.brendigo.qrex` · **versionName:** `1.0.11` · **versionCode:** `111` · **target/compile SDK:** 36 · **minSdk:** 26.
 
 ## Repository and automated checks
 
@@ -19,7 +19,7 @@
 - [ ] Compare `QREX_UPLOAD_CERT_SHA256` against Play Console's registered **upload** certificate.
 - [ ] From `.github/workflows/production-release.yml`, choose the version set in Gradle and confirm `PLAY_UPLOAD_<version>` only after real QA and required Play declarations.
 - [ ] Download the matching **separately, correctly signed** Google Play AAB artifact and verify `SHA256SUMS-PLAY.txt`.
-- [ ] Confirm `versionCode 110` is unused in the existing Play application; if already used, raise it before submission.
+- [ ] Confirm `versionCode 111` is unused in the existing Play application; if already used, raise it before submission.
 - [ ] Complete Play Console privacy policy URL, Data safety, app access, ads, audience, content rating, listing and store screenshots.
 - [ ] Verify 16-KiB page compatibility of native SDK libraries using actual final Play bundle and supported devices.
 - [ ] Complete any applicable new-personal-account closed testing requirements.
