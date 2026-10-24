@@ -54,7 +54,10 @@ internal object QrexDesign {
     val surface = Color(0xFF111E32)
     val surfaceRaised = Color(0xFF152641)
     val stroke = Color(0xFF27405F)
-    val accent = Color(0xFF087BFA)
+    // Accessible brand-blue for white text on actionable surfaces.
+    // WCAG contrast: white vs #086BD8 = 5.12:1 (AA normal text).
+    val actionBlue = Color(0xFF086BD8)
+    val accent = actionBlue
     val accentBright = Color(0xFF22C7FF)
     val cyan = Color(0xFF19E3F5)
     val purple = Color(0xFF9866FF)

@@ -459,7 +459,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     .testTag("qrex-scan-gallery"),
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1677FF),
+                    containerColor = QrexDesign.actionBlue,
                     contentColor = Color.White
                 )
             ) {

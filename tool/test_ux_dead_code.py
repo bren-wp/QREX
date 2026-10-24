@@ -64,7 +64,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('context.resources.configuration.locales[0].language', self.main)
 
     def test_primary_actions_have_explicit_readable_light_text(self):
-        self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
+        self.assertIn("containerColor = QrexDesign.actionBlue, contentColor = Color.White", self.main)
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("val selectedNavigationColor = QrexDesign.accentBright", self.main)
