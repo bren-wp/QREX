@@ -897,13 +897,13 @@ private fun CreateScreen(
                 .padding(horizontal = horizontalPadding, vertical = 8.dp)
         ) {
             Row(
-                Modifier.fillMaxWidth().heightIn(min = 44.dp),
+                Modifier.fillMaxWidth().heightIn(min = 48.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
                     QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)
                     Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 9.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
                 Icon(Icons.Default.Shield, contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
@@ -972,7 +972,7 @@ private fun CreateScreen(
                     quickTypes.forEach { index ->
                         Surface(
                             onClick = { selectType(index) },
-                            modifier = Modifier.weight(1f).heightIn(min = 54.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 60.dp)
                                 .semantics { this.selected = kind == index }
                                 .testTag("qrex-create-type-$index"),
                             shape = RoundedCornerShape(11.dp),
@@ -990,7 +990,8 @@ private fun CreateScreen(
                                     tint = if (kind == index) Color.White
                                         else MaterialTheme.colorScheme.primary)
                                 Spacer(Modifier.width(4.dp))
-                                Text(types[index], maxLines = 1,
+                                Text(types[index], maxLines = 2,
+                                    textAlign = TextAlign.Center,
                                     overflow = TextOverflow.Ellipsis,
                                     fontWeight = FontWeight.SemiBold, fontSize = 11.sp,
                                     color = if (kind == index) Color.White
@@ -1238,7 +1239,7 @@ private fun HistoryScreen(
             leadingIcon = { Icon(Icons.Default.History, contentDescription = null) },
             singleLine = true,
             shape = RoundedCornerShape(13.dp),
-            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
         )
         Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
@@ -1363,7 +1364,7 @@ private fun HistoryScreen(
                                     ).show()
                                 }
                             },
-                            modifier = Modifier.size(44.dp).testTag("qrex-history-favorite")
+                            modifier = Modifier.size(48.dp).testTag("qrex-history-favorite")
                         ) {
                             Icon(
                                 if (item.saved) Icons.Default.Favorite
@@ -1377,7 +1378,7 @@ private fun HistoryScreen(
                         Box {
                             IconButton(
                                 onClick = { historyMenu = true },
-                                modifier = Modifier.testTag("qrex-history-menu").size(42.dp)
+                                modifier = Modifier.testTag("qrex-history-menu").size(48.dp)
                             ) {
                                 Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant)
