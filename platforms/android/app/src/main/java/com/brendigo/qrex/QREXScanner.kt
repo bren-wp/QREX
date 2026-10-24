@@ -175,65 +175,65 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
         } else {
             scope.launch {
                 try {
-                // Bound gallery inputs before allocation. Camera permission is not
-                // required by the system photo picker.
-                val bitmap = withContext(Dispatchers.IO) {
-                    runCatching {
-                        val resolver = context.contentResolver
-                        val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
-                        if (size > 20_000_000L) return@runCatching null
-                        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                        val boundsStream = resolver.openInputStream(uri) ?: return@runCatching null
-                        boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
-                        // inJustDecodeBounds returns a null Bitmap by design:
-                        // validate populated dimensions rather than its return value.
-                        val width = bounds.outWidth.toLong()
-                        val height = bounds.outHeight.toLong()
-                        if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
-                            return@runCatching null
-                        }
-                        val sampled = BitmapFactory.Options().apply {
-                            inSampleSize = gallerySampleSize(bounds.outWidth, bounds.outHeight)
-                        }
-                        val decoded = resolver.openInputStream(uri)?.use {
-                            BitmapFactory.decodeStream(it, null, sampled)
-                        } ?: return@runCatching null
-                        val orientation = runCatching {
-                            resolver.openInputStream(uri)?.use {
-                                ExifInterface(it).getAttributeInt(
-                                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
-                                )
-                            } ?: ExifInterface.ORIENTATION_NORMAL
-                        }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
-                        try {
-                            orientGalleryBitmap(decoded, orientation)
-                        } catch (failure: Exception) {
-                            decoded.recycle()
-                            throw failure
-                        }
-                    }.getOrNull()
-                }
-                if (!scope.coroutineContext.isActive) {
-                    bitmap?.recycle()
-                    return@launch
-                }
-                if (bitmap == null) {
-                    message = imageFailed
-                } else {
-                    // Heavy QR detection runs off main; recycle even on decode errors.
-                    val result = withContext(Dispatchers.Default) {
-                        try {
-                            runCatching { QREXQrDecoder.decodeBitmap(bitmap) }
-                        } finally {
-                            bitmap.recycle()
-                        }
+                    // Bound gallery inputs before allocation. Camera permission is not
+                    // required by the system photo picker.
+                    val bitmap = withContext(Dispatchers.IO) {
+                        runCatching {
+                            val resolver = context.contentResolver
+                            val size = resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } ?: -1L
+                            if (size > 20_000_000L) return@runCatching null
+                            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                            val boundsStream = resolver.openInputStream(uri) ?: return@runCatching null
+                            boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
+                            // inJustDecodeBounds returns a null Bitmap by design:
+                            // validate populated dimensions rather than its return value.
+                            val width = bounds.outWidth.toLong()
+                            val height = bounds.outHeight.toLong()
+                            if (width <= 0 || height <= 0 || width * height > 24_000_000L) {
+                                return@runCatching null
+                            }
+                            val sampled = BitmapFactory.Options().apply {
+                                inSampleSize = gallerySampleSize(bounds.outWidth, bounds.outHeight)
+                            }
+                            val decoded = resolver.openInputStream(uri)?.use {
+                                BitmapFactory.decodeStream(it, null, sampled)
+                            } ?: return@runCatching null
+                            val orientation = runCatching {
+                                resolver.openInputStream(uri)?.use {
+                                    ExifInterface(it).getAttributeInt(
+                                        ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                                    )
+                                } ?: ExifInterface.ORIENTATION_NORMAL
+                            }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
+                            try {
+                                orientGalleryBitmap(decoded, orientation)
+                            } catch (failure: Exception) {
+                                decoded.recycle()
+                                throw failure
+                            }
+                        }.getOrNull()
                     }
-                    if (!scope.coroutineContext.isActive) return@launch
-                    val raw = result.getOrNull()
-                    if (result.isFailure) message = imageFailed
-                    else if (raw.isNullOrEmpty()) message = qrNotFound
-                    else if (handled.compareAndSet(false, true)) onRead(raw)
-                }
+                    if (!scope.coroutineContext.isActive) {
+                        bitmap?.recycle()
+                        return@launch
+                    }
+                    if (bitmap == null) {
+                        message = imageFailed
+                    } else {
+                        // Heavy QR detection runs off main; recycle even on decode errors.
+                        val result = withContext(Dispatchers.Default) {
+                            try {
+                                runCatching { QREXQrDecoder.decodeBitmap(bitmap) }
+                            } finally {
+                                bitmap.recycle()
+                            }
+                        }
+                        if (!scope.coroutineContext.isActive) return@launch
+                        val raw = result.getOrNull()
+                        if (result.isFailure) message = imageFailed
+                        else if (raw.isNullOrEmpty()) message = qrNotFound
+                        else if (handled.compareAndSet(false, true)) onRead(raw)
+                    }
                 } finally {
                     // Reset even when decode fails or this coroutine is cancelled.
                     galleryActive.set(false)
