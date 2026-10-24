@@ -1,3 +1,9 @@
+## Upcoming verified GitHub release: v1.0.13 · Android versionCode 113
+
+QREX 1.0.13 packages the merged premium accessibility and stability upgrades: WCAG AA-contrast action blue, larger and clearer responsive navigation and QR forms, accessible selected options, live gallery decoding progress, cancellation-safe photo processing, safer calendar event handling and preserved 23-language dark-mode design. APK, AAB, real screenshots and SHA256 checksums are distributed only after exact-commit Android CI and release validation succeed.
+
+[Version 1.0.13 changes](docs/releases/v1.0.13.md) · [Published GitHub releases](https://github.com/bren-wp/QREX/releases)
+
 ## Next QA candidate: v1.0.12 · Android versionCode 112
 
 QREX 1.0.12 retains only the QREX dark brand appearance, removes the ZIP export option and unused writer, and keeps functional PDF/PNG exports. All 23 offline locales have updated PDF warnings, terms and privacy copy. The live-camera QR scanner, four-tab navigation, saved codes, encrypted Wi-Fi and adaptive Q/QR launcher icon are retained. Ten real dark Android captures and seven responsive QA captures replace obsolete light-mode fixtures.
