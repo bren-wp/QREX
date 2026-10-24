@@ -22,7 +22,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
         self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
-        self.assertIn(".size(qrSize).background(Color.White).padding(7.dp)", self.main)
+        self.assertIn(".size(qrSize).background(Color.White).padding(9.dp)", self.main)
         self.assertIn("qrexLayoutProfile(", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
