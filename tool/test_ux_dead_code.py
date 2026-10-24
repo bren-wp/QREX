@@ -99,10 +99,13 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('confirmExport = true', self.main)
         self.assertIn('showDelete = true', self.main)
 
-    def test_dark_first_five_tab_navigation_and_saved_filter(self):
-        self.assertIn('listOf("scan", "create", "history", "favorites", "more")', self.main)
+    def test_four_main_tabs_keep_favorites_one_tap_from_history(self):
+        self.assertIn('listOf("scan", "create", "history", "more")', self.main)
+        self.assertIn("navTargets = listOf(0, 1, 2, 4)", self.main)
         self.assertIn("QrexDesign.heroBrush", self.main)
-        self.assertIn("favoritesPage = true", self.main)
+        self.assertIn('favoritesPage = screenshotMode == "saved"', self.main)
+        self.assertIn('testTag("qrex-history-segments")', self.main)
+        self.assertIn('testTag("qrex-history-saved")', self.main)
         self.assertIn("QRHistory.matches(it, search, savedOnly || favoritesPage)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("hasSaved = store.items.any { it.saved }", self.main)
@@ -117,7 +120,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         # the QREX wordmark, then privacy and overflow actions, with no extra
         # navigation arrow before the brand.
         self.assertNotIn('testTag("qrex-create-back")', self.main)
-        self.assertIn('Text("QRE"', self.main)
+        self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("painterResource(R.drawable.qrex_icon)", design)
         self.assertIn('Text("X"', self.main)
         self.assertIn("Icons.Default.Shield", self.main)
         self.assertIn('contentDescription = tr("more")', self.main)
@@ -141,6 +146,13 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('testTag("qrex-result-toggle-qr")', self.main)
         self.assertIn('if (alreadySaved) tr("remove_favorite") else tr("add_favorite")', self.main)
         self.assertIn("if (currentCode == null)", self.main)
+
+    def test_scan_first_has_one_torch_button_and_a_primary_gallery_action(self):
+        self.assertIn('testTag("qrex-scan-gallery")', self.scanner)
+        self.assertIn('testTag("qrex-scan-torch")', self.scanner)
+        self.assertIn("ButtonDefaults.buttonColors(", self.scanner)
+        self.assertNotIn("modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)", self.scanner)
+        self.assertIn("ActivityResultContracts.PickVisualMedia()", self.scanner)
 
     def test_scanner_torch_waits_for_actual_camerax_completion(self):
         self.assertIn("var torchBusy by remember { mutableStateOf(false) }", self.scanner)
