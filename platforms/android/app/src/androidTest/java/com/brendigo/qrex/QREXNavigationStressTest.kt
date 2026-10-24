@@ -221,8 +221,13 @@ class QREXNavigationStressTest {
             rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
                 .assertIsDisplayed()
         }
+        // Selection is exposed to TalkBack/automation, not color alone.
+        rule.onNodeWithTag("qrex-create-type-0", useUnmergedTree = true)
+            .assertIsSelected()
         // Choosing Wi-Fi must render its actual form, not a dead tile.
         rule.onNodeWithTag("qrex-create-type-2", useUnmergedTree = true).performClick()
+        rule.onNodeWithTag("qrex-create-type-2", useUnmergedTree = true)
+            .assertIsSelected()
         rule.onNodeWithTag("qrex-create-wifi-password", useUnmergedTree = true)
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-create-screen").assertIsDisplayed()

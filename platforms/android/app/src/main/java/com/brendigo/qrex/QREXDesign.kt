@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +54,10 @@ internal object QrexDesign {
     val surface = Color(0xFF111E32)
     val surfaceRaised = Color(0xFF152641)
     val stroke = Color(0xFF27405F)
-    val accent = Color(0xFF087BFA)
+    // Accessible brand-blue for white text on actionable surfaces.
+    // WCAG contrast: white vs #086BD8 = 5.12:1 (AA normal text).
+    val actionBlue = Color(0xFF086BD8)
+    val accent = actionBlue
     val accentBright = Color(0xFF22C7FF)
     val cyan = Color(0xFF19E3F5)
     val purple = Color(0xFF9866FF)
@@ -102,13 +106,13 @@ internal fun QrexBrandHeader(
             Spacer(Modifier.weight(1f))
             Icon(Icons.Default.Shield, contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(19.dp))
-            IconButton(onClick = onMore, modifier = Modifier.size(40.dp)) {
+            IconButton(onClick = onMore, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 10.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -138,8 +142,10 @@ internal fun QrexSettingsTile(
 ) {
     val foreground = if (destructive) MaterialTheme.colorScheme.error
         else MaterialTheme.colorScheme.primary
-    QrexPanel(modifier = modifier.clickable(enabled = enabled, onClick = onClick)) {
-        Column(Modifier.fillMaxWidth().heightIn(min = 84.dp).padding(10.dp),
+    QrexPanel(modifier = modifier.clickable(
+        enabled = enabled, role = Role.Button, onClick = onClick
+    )) {
+        Column(Modifier.fillMaxWidth().heightIn(min = 96.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Surface(shape = RoundedCornerShape(12.dp),
                 color = foreground.copy(alpha = 0.14f)) {
@@ -151,9 +157,9 @@ internal fun QrexSettingsTile(
             Text(label, fontWeight = FontWeight.SemiBold,
                 color = if (!enabled) MaterialTheme.colorScheme.onSurfaceVariant
                     else if (destructive) foreground else MaterialTheme.colorScheme.onSurface,
-                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 11.sp)
+                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 13.sp)
             if (subtitle != null) {
-                Text(subtitle, fontSize = 10.sp,
+                Text(subtitle, fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
@@ -178,7 +184,7 @@ internal fun QrexSettingsListRow(
         else MaterialTheme.colorScheme.primary
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().heightIn(min = 58.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 60.dp),
         shape = RoundedCornerShape(13.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
@@ -199,7 +205,7 @@ internal fun QrexSettingsListRow(
                         else MaterialTheme.colorScheme.onSurface,
                     maxLines = 2, overflow = TextOverflow.Ellipsis)
                 if (subtitle != null) {
-                    Text(subtitle, fontSize = 11.sp,
+                    Text(subtitle, fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
