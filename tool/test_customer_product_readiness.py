@@ -21,7 +21,8 @@ class CustomerProductReadinessTests(unittest.TestCase):
             with self.subTest(locale=locale):
                 self.assertEqual(set(entry["strings"]), keys)
                 for key in ("export_archive", "terms_of_use", "privacy_policy",
-                            "export_archive_warning", "read_full_policy"):
+                            "export_archive_warning", "read_full_policy",
+                            "splash_message", "pdf_saved_code"):
                     self.assertTrue(entry["strings"][key].strip())
                 values = RES / ("values" if locale == "en" else f"values-{locale}") / "strings.xml"
                 self.assertTrue(values.exists())
@@ -104,6 +105,11 @@ class CustomerProductReadinessTests(unittest.TestCase):
             self.assertIn(key, android)
         self.assertNotIn("QREXDocuments.exportSavedPdfZip(", android)
         self.assertIn("QREXDocuments.exportSavedPdf(", android)
+        pdf = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXDocuments.kt").read_text("utf-8")
+        splash = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXSplash.kt").read_text("utf-8")
+        self.assertIn('QREXStrings.get(context, preferred, "pdf_saved_code")', pdf)
+        self.assertIn("String.format(locale, counter, index + 1, records.size)", pdf)
+        self.assertIn('tr("splash_message")', splash)
         self.assertIn('CreateDocument("application/pdf")', android)
         self.assertNotIn('CreateDocument("application/zip")', android)
         self.assertTrue((ROOT / "docs/PRIVACY.md").exists())

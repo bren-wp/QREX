@@ -43,14 +43,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_splash_tagline_and_android_26_window_theme(self):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
         styles = (ROOT / "platforms/android/app/src/main/res/values/styles.xml").read_text("utf-8")
-        self.assertIn('"Sve što može QR — jednostavno, brzo i bez prijave."', splash)
+        self.assertIn('tr("splash_message")', splash)
         self.assertIn('Text("QRE"', splash)
         self.assertIn('Text("X"', splash)
         self.assertIn('android:windowBackground', styles)
         self.assertIn('#030A18', styles)
         # Android API 26 must lint/build without referencing API 27-only attrs.
         self.assertNotIn('android:windowLightNavigationBar', styles)
-        self.assertIn('val systemLanguage = LocalConfiguration.current.locales[0].language', self.main)
+        self.assertIn('val appLanguage = screenshotLanguage ?: store.language', self.main)
         self.assertNotIn('context.resources.configuration.locales[0].language', self.main)
 
     def test_primary_actions_have_explicit_readable_light_text(self):

@@ -73,7 +73,7 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 [**All historical QREX releases (v1.0.0–v1.0.11) →**](docs/releases/INDEX.md)
 
-Latest published release: **v1.0.11** (`com.brendigo.qrex`, versionCode 111). Next Android QA candidate: **v1.0.12** (versionCode 112), with the only QREX midnight-blue/cyan theme, PDF-only saved-code export, and complete PDF/privacy translations for all 23 supported languages. The candidate is not published until all Android CI and real emulator gates succeed. The Q/QR adaptive launcher icon and splash stay consistent. Historic images above show a previously released design; the new dark-only export screen is verified in the v1.0.12 QA captures.
+Latest published release: **v1.0.11** (`com.brendigo.qrex`, versionCode 111). Next Android QA candidate: **v1.0.12** (versionCode 112), with the only QREX midnight-blue/cyan theme, PDF-only saved-code export, and complete PDF/privacy, splash and PDF-page translations for all 23 supported languages. The candidate is not published until all Android CI and real emulator gates succeed. The Q/QR adaptive launcher icon and splash stay consistent. Historic images above show a previously released design; the new dark-only export screen is verified in the v1.0.12 QA captures.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
