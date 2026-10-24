@@ -26,25 +26,19 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("qrexLayoutProfile(", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
 
-    def test_dark_theme_is_default_and_navigation_contrast_is_adaptive(self):
-        # Dark is the persisted fresh-install default, but an existing user's
-        # explicit light-mode choice must continue to be respected.
-        self.assertIn('readBoolean("lightMode", false)', self.core)
-        self.assertIn('runCatching { preferences.getBoolean(key, fallback) }', self.core)
-        self.assertIn('fun readLanguage()', self.core)
-        self.assertIn(") else darkColorScheme(", self.main)
+    def test_dark_only_palette_and_pdf_export(self):
+        self.assertIn("val colors = darkColorScheme(", self.main)
+        self.assertNotIn("lightColorScheme(", self.main)
+        self.assertNotIn("lightTheme", self.main)
+        self.assertNotIn("qrex_light", self.main)
+        self.assertNotIn("updateLightMode(", self.main)
+        self.assertNotIn("updateLightMode(", self.core)
+        self.assertNotIn("exportSavedPdfZip(", self.main)
+        self.assertIn('CreateDocument("application/pdf")', self.main)
+        self.assertNotIn('CreateDocument("application/zip")', self.main)
         self.assertIn("QrexDesign.backgroundDeep", self.main)
         self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
-        self.assertIn(
-            "if (lightTheme) Color(0xFF1156AE) else QrexDesign.accentBright",
-            self.main,
-        )
-        self.assertIn("selectedIconColor = selectedNavigationColor", self.main)
-        self.assertIn("selectedTextColor = selectedNavigationColor", self.main)
         self.assertIn("QrexBrandHeader(onMore = onMore)", self.scanner)
-        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
-        self.assertIn("val accentBright = Color(0xFF22C7FF)", design)
-        self.assertIn("color = MaterialTheme.colorScheme.primary", design)
 
     def test_reference_splash_tagline_and_android_26_window_theme(self):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
@@ -63,9 +57,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("containerColor = Color(0xFF1677FF), contentColor = Color.White", self.main)
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
-        self.assertIn("else QrexDesign.accentBright", self.main)
-        self.assertIn("else QrexDesign.backgroundDeep", self.main)
-        self.assertIn("indicatorColor = if (lightTheme)", self.main)
+        self.assertIn("val selectedNavigationColor = QrexDesign.accentBright", self.main)
+        self.assertIn("NavigationBar(containerColor = QrexDesign.backgroundDeep", self.main)
+        self.assertIn("indicatorColor = QrexDesign.surfaceRaised", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 48.dp)", design)
@@ -90,13 +84,13 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
         self.assertIn("heightIn(min = 84.dp)", design)
-        self.assertIn("store.updateLightMode(!store.lightMode)", self.main)
+        self.assertNotIn("store.updateLightMode(", self.main)
         self.assertIn("QrexSettingsListRow(", self.main)
         self.assertIn('store.updateLanguage(code)', self.details)
         self.assertIn('"language" -> QrexLanguageDetails(store,', self.main)
         self.assertIn('"export" -> QrexExportDetails(', self.main)
         self.assertIn('confirmPdfExport = true', self.main)
-        self.assertIn('confirmExport = true', self.main)
+        self.assertNotIn('confirmExport = true', self.main)
         self.assertIn('showDelete = true', self.main)
 
     def test_four_main_tabs_keep_favorites_one_tap_from_history(self):
@@ -122,8 +116,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('testTag("qrex-create-back")', self.main)
         self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
         self.assertIn("painter = painterResource(R.drawable.qrex_icon)", self.main)
-        self.assertIn("val overflowTypes = if (lightTheme) listOf(7)", self.main)
-        self.assertIn("else listOf(3, 4, 5, 7)", self.main)
+        self.assertIn("val overflowTypes = listOf(3, 4, 5, 7)", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("painterResource(R.drawable.qrex_icon)", design)
         self.assertIn('Text("X"', design)

@@ -87,7 +87,6 @@ class CustomerProductReadinessTests(unittest.TestCase):
             'testTag("qrex-export-screen")',
             'testTag("qrex-language-option-$code")',
             'testTag("qrex-export-pdf")',
-            'testTag("qrex-export-zip")',
             'store.updateLanguage(code)',
             "QrexResultAction(",
         ):
@@ -103,10 +102,10 @@ class CustomerProductReadinessTests(unittest.TestCase):
         android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         for key in ("export_archive", "privacy_policy", "terms_of_use", "developed_by"):
             self.assertIn(key, android)
-        self.assertIn("QREXDocuments.exportSavedPdfZip(", android)
+        self.assertNotIn("QREXDocuments.exportSavedPdfZip(", android)
         self.assertIn("QREXDocuments.exportSavedPdf(", android)
         self.assertIn('CreateDocument("application/pdf")', android)
-        self.assertIn('CreateDocument("application/zip")', android)
+        self.assertNotIn('CreateDocument("application/zip")', android)
         self.assertTrue((ROOT / "docs/PRIVACY.md").exists())
         self.assertTrue((ROOT / "docs/TERMS.md").exists())
 
@@ -125,7 +124,7 @@ class CustomerProductReadinessTests(unittest.TestCase):
         self.assertIn("Actual Android emulator screenshot", screenshots)
         self.assertNotIn("Actual iPhone simulator screenshot", screenshots)
 
-    def test_pdf_zip_exports_dont_require_third_party_storage_permissions(self):
+    def test_pdf_exports_dont_require_third_party_storage_permissions(self):
         text = (ROOT / "platforms/android/app/src/main/AndroidManifest.xml").read_text("utf-8")
         for forbidden in ("READ_EXTERNAL_STORAGE", "MANAGE_EXTERNAL_STORAGE",
                           "WRITE_EXTERNAL_STORAGE", "READ_MEDIA_IMAGES"):

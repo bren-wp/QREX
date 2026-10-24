@@ -260,62 +260,28 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-export-screen", 0, "open full Export screen")
         rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
             .assertIsDisplayed()
-        rule.onNodeWithTag("qrex-export-zip", useUnmergedTree = true)
-            .assertIsDisplayed()
+        rule.onAllNodesWithTag("qrex-export-zip", useUnmergedTree = true)
+            .assertCountEquals(0)
         rule.onNodeWithTag("qrex-detail-back", useUnmergedTree = true)
             .performClick()
         requireScreenTag("qrex-more-screen", 0, "return from Export")
     }
 
     @Test
-    fun lightReferenceGridShowsSevenRealQrTypeActions() {
-        rule.onNodeWithTag("qrex-tab-1").performClick()
-        val alreadyLight = rule.onAllNodesWithTag(
-            "qrex-light-types-grid", useUnmergedTree = true
-        ).fetchSemanticsNodes().isNotEmpty()
-        if (!alreadyLight) {
-            rule.onNodeWithTag("qrex-tab-3").performClick()
-            rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
-                .performClick()
-            rule.onNodeWithTag("qrex-tab-1").performClick()
-        }
-        try {
-            requireScreenTag("qrex-light-types-grid", 0, "light Create options")
-            for (kind in listOf(0, 1, 2, 6, 3, 4, 5)) {
-                rule.onNodeWithTag("qrex-create-type-$kind", useUnmergedTree = true)
-                    .performScrollTo().assertIsDisplayed()
-            }
-            for (kind in listOf(3, 4, 5, 0)) {
-                rule.onNodeWithTag("qrex-create-type-$kind", useUnmergedTree = true)
-                    .performScrollTo().performClick()
-                rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
-                    .assertIsDisplayed()
-            }
-        } finally {
-            if (!alreadyLight) {
-                rule.onNodeWithTag("qrex-tab-3").performClick()
-                rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
-                    .performClick()
-            }
-        }
-    }
-
-    @Test
-    fun bothThemeSettingsLayoutsPreserveClickableActions() {
+    fun darkSettingsHaveLanguagePdfAndNoThemeSwitch() {
         rule.onNodeWithTag("qrex-tab-3").performClick()
-        requireScreenTag("qrex-more-screen", 0, "More before theme switch")
-        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
-            .assertIsDisplayed().performClick()
-        requireScreenTag("qrex-more-screen", 0, "More after theme switch")
+        requireScreenTag("qrex-more-screen", 0, "dark settings")
+        rule.onAllNodesWithTag("qrex-more-theme", useUnmergedTree = true)
+            .assertCountEquals(0)
         rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-more-export", useUnmergedTree = true)
-            .assertIsDisplayed()
-        // Restore the previous preference; other tests must not inherit a
-        // changed persisted theme from this design-regression check.
-        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
-        requireScreenTag("qrex-more-screen", 0, "More theme restored")
+        requireScreenTag("qrex-export-screen", 0, "PDF export")
+        rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onAllNodesWithTag("qrex-export-zip", useUnmergedTree = true)
+            .assertCountEquals(0)
     }
 
     @Test
