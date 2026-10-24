@@ -231,8 +231,8 @@ internal data class QrexLayoutProfile(
 internal fun qrexLayoutProfile(
     widthDp: Int, heightDp: Int, fontScale: Float
 ): QrexLayoutProfile {
-    // Localized four-way chips truncate at 360–419dp; stack them at that width.
-    val stackChoices = widthDp < 420 || fontScale >= 1.30f
+    // Localized four-way chips truncate at 360–399dp; stack them at that width.
+    val stackChoices = widthDp < 400 || fontScale >= 1.30f
     val narrow = widthDp < 360 || fontScale >= 1.30f
     val short = heightDp < 620 || fontScale >= 1.45f
     return QrexLayoutProfile(
