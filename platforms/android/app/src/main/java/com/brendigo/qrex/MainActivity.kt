@@ -25,6 +25,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -379,8 +381,17 @@ private fun QREXApp(
 private fun AppHeader(title: String, subtitle: String) {
     Column(Modifier.fillMaxWidth().padding(bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 21.sp,
-            color = MaterialTheme.colorScheme.onBackground)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(R.drawable.qrex_icon),
+                contentDescription = null,
+                modifier = Modifier.size(30.dp).clip(RoundedCornerShape(9.dp))
+            )
+            Spacer(Modifier.width(9.dp))
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 21.sp,
+                maxLines = 2, overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onBackground)
+        }
         Text(subtitle, fontSize = 11.sp, maxLines = 2,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
@@ -956,7 +967,11 @@ private fun CreateScreen(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     DropdownMenu(expanded = createMenu, onDismissRequest = { createMenu = false }) {
-                        listOf(0, 1, 2, 6, 3, 4, 5, 7).forEach { type ->
+                        // Only advanced/unpinned types belong in the
+                        // overflow; never duplicate the visible quick choices.
+                        val overflowTypes = if (lightTheme) listOf(7)
+                            else listOf(3, 4, 5, 7)
+                        overflowTypes.forEach { type ->
                             DropdownMenuItem(text = { Text(types[type]) }, onClick = {
                                 kind = type
                                 content = ""
