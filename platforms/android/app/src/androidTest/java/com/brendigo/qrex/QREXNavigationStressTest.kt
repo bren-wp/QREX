@@ -245,10 +245,12 @@ class QREXNavigationStressTest {
         val interaction = rule.onNodeWithTag(tag, useUnmergedTree = true)
             .assertIsDisplayed()
         val area = interaction.getUnclippedBoundsInRoot()
-        assertTrue("$tag width ${area.width} must be >= ${minWidthDp}dp",
-            area.width >= minWidthDp.dp)
-        assertTrue("$tag height ${area.height} must be >= ${minHeightDp}dp",
-            area.height >= minHeightDp.dp)
+        val measuredWidth = area.right - area.left
+        val measuredHeight = area.bottom - area.top
+        assertTrue("$tag width $measuredWidth must be >= ${minWidthDp}dp",
+            measuredWidth >= minWidthDp.dp)
+        assertTrue("$tag height $measuredHeight must be >= ${minHeightDp}dp",
+            measuredHeight >= minHeightDp.dp)
     }
 
     @Test
