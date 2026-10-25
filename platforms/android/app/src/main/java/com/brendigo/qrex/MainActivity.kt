@@ -490,7 +490,7 @@ private fun ResultScreen(
                 fontSize = 21.sp, color = MaterialTheme.colorScheme.onSurface)
             Box {
                 IconButton(onClick = { showResultMenu = true },
-                    modifier = Modifier.size(48.dp).testTag("qrex-result-menu")) {
+                    modifier = Modifier.size(52.dp).testTag("qrex-result-menu")) {
                     Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                         tint = MaterialTheme.colorScheme.onSurface)
                 }
