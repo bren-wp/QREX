@@ -9,11 +9,12 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github/workflows"
+ARCHIVED_RELEASES = ROOT / "docs/releases/workflows"
 
 
 class ReleaseIntegrityTests(unittest.TestCase):
     def test_old_1_0_0_publisher_and_dangerous_cleanup_are_retired(self):
-        self.assertFalse((WORKFLOWS / "github-release-1.0.0.yml").exists())
+        self.assertFalse((ARCHIVED_RELEASES / "github-release-1.0.0.yml").exists())
         self.assertFalse((WORKFLOWS / "release.yml").exists())
         self.assertFalse((WORKFLOWS / "release-native-preview.yml").exists())
         self.assertFalse((ROOT / "tool/retire_legacy_releases.sh").exists())
@@ -47,7 +48,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("keytool -genkeypair", signer)
 
     def test_public_github_release_has_no_play_key_and_is_labeled(self):
-        public = (WORKFLOWS / "github-release-1.0.1.yml").read_text("utf-8")
+        public = (ARCHIVED_RELEASES / "github-release-1.0.1.yml").read_text("utf-8")
         self.assertIn("workflow_run:", public)
         self.assertIn("types: [completed]", public)
         self.assertIn("branches: [main]", public)
@@ -60,7 +61,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("SHA256SUMS.txt", public)
 
     def test_new_github_1_0_2_release_is_separate_and_signature_labeled(self):
-        published = (WORKFLOWS / "github-release-1.0.2.yml").read_text("utf-8")
+        published = (ARCHIVED_RELEASES / "github-release-1.0.2.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.2.md").read_text("utf-8")
         self.assertIn("workflow_run:", published)
         self.assertIn("types: [completed]", published)
@@ -83,7 +84,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("cannot be installed in place", notes)
 
     def test_github_1_0_3_publisher_remains_separate_and_immutable(self):
-        published = (WORKFLOWS / "github-release-1.0.3.yml").read_text("utf-8")
+        published = (ARCHIVED_RELEASES / "github-release-1.0.3.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.3.md").read_text("utf-8")
         self.assertIn("workflow_run:", published)
         self.assertIn("branches: [main]", published)
@@ -105,7 +106,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("b15a95a18820cbe8588b4d098a0719a3a5ce7b4a", published)
 
     def test_github_1_0_4_release_requires_real_emulator_images_and_no_play_key(self):
-        published = (WORKFLOWS / "github-release-1.0.4.yml").read_text("utf-8")
+        published = (ARCHIVED_RELEASES / "github-release-1.0.4.yml").read_text("utf-8")
         screenshots = (WORKFLOWS / "capture-screenshots.yml").read_text("utf-8")
         main = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         for workflow in ("native-platforms.yml", "capture-screenshots.yml",
@@ -126,7 +127,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("No validated QREX", (ROOT / "tool/capture_android_screen.sh").read_text("utf-8"))
 
     def test_github_1_0_5_dark_ui_release_is_signed_separately_from_play(self):
-        published = (WORKFLOWS / "github-release-1.0.5.yml").read_text("utf-8")
+        published = (ARCHIVED_RELEASES / "github-release-1.0.5.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.5.md").read_text("utf-8")
         self.assertIn("branches: [main]", published)
         self.assertIn("gh release create v1.0.5", published)
@@ -155,7 +156,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("1.0.5", notes)
 
     def test_new_106_publisher_requires_exact_commit_ci_and_avoids_play_keys(self):
-        release = (WORKFLOWS / "github-release-1.0.6.yml").read_text("utf-8")
+        release = (ARCHIVED_RELEASES / "github-release-1.0.6.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.6.md").read_text("utf-8")
         self.assertIn("gh release create v1.0.6", release)
         self.assertIn("com.brendigo.qrex 106 1.0.6", release)
@@ -169,7 +170,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("106", notes)
 
     def test_next_107_android_reference_release_requires_ten_real_screens(self):
-        workflow = (WORKFLOWS / "github-release-1.0.7.yml").read_text("utf-8")
+        workflow = (ARCHIVED_RELEASES / "github-release-1.0.7.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.7.md").read_text("utf-8")
         self.assertIn("gh release create v1.0.7", workflow)
         self.assertIn("com.brendigo.qrex 107 1.0.7", workflow)
@@ -185,7 +186,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("cannot upgrade differently signed", notes)
 
     def test_108_reference_light_dark_release_requires_twelve_real_screens(self):
-        release = (WORKFLOWS / "github-release-1.0.8.yml").read_text("utf-8")
+        release = (ARCHIVED_RELEASES / "github-release-1.0.8.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.8.md").read_text("utf-8")
         self.assertIn("gh release create v1.0.8", release)
         self.assertIn("com.brendigo.qrex 108 1.0.8", release)
@@ -199,7 +200,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("108", notes)
 
     def test_109_crash_hardening_release_keeps_exact_sha_gates(self):
-        release = (WORKFLOWS / "github-release-1.0.9.yml").read_text("utf-8")
+        release = (ARCHIVED_RELEASES / "github-release-1.0.9.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.9.md").read_text("utf-8")
         self.assertIn("gh release create v1.0.9", release)
         self.assertIn("com.brendigo.qrex 109 1.0.9", release)
@@ -214,7 +215,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("109", notes)
 
     def test_110_reference_grid_release_preserves_all_historical_versions(self):
-        workflow = (WORKFLOWS / "github-release-1.0.10.yml").read_text("utf-8")
+        workflow = (ARCHIVED_RELEASES / "github-release-1.0.10.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.10.md").read_text("utf-8")
         archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
         self.assertIn("gh release create v1.0.10", workflow)
@@ -232,7 +233,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("110", notes)
 
     def test_111_scan_first_release_keeps_all_security_gates(self):
-        release = (WORKFLOWS / "github-release-1.0.11.yml").read_text("utf-8")
+        release = (ARCHIVED_RELEASES / "github-release-1.0.11.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.11.md").read_text("utf-8")
         self.assertIn("gh release create v1.0.11", release)
         self.assertIn("com.brendigo.qrex 111 1.0.11", release)
@@ -245,7 +246,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("111", notes)
 
     def test_112_pdf_only_dark_release_gates(self):
-        workflow = (WORKFLOWS / "github-release-1.0.12.yml").read_text("utf-8")
+        workflow = (ARCHIVED_RELEASES / "github-release-1.0.12.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.12.md").read_text("utf-8")
         main = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         self.assertIn("gh release create v1.0.12", workflow)
@@ -263,7 +264,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
 
 
     def test_113_premium_github_release_requires_exact_main_sha_and_proves_artifacts(self):
-        workflow = (WORKFLOWS / "github-release-1.0.13.yml").read_text("utf-8")
+        workflow = (ARCHIVED_RELEASES / "github-release-1.0.13.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.13.md").read_text("utf-8")
         android = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         # This historic release's version is immutable in its own workflow;
@@ -290,7 +291,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
 
 
     def test_114_launcher_and_ui_release_gates_are_distinct_from_play(self):
-        workflow = (WORKFLOWS / "github-release-1.0.14.yml").read_text("utf-8")
+        workflow = (ARCHIVED_RELEASES / "github-release-1.0.14.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.14.md").read_text("utf-8")
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         # Historical v1.0.14 source metadata is immutable in its own
@@ -310,7 +311,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("23", notes)
 
     def test_115_crashfix_github_release_requires_exact_sha_and_signed_assets(self):
-        workflow = (WORKFLOWS / "github-release-1.0.15.yml").read_text("utf-8")
+        workflow = (ARCHIVED_RELEASES / "github-release-1.0.15.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.15.md").read_text("utf-8")
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         self.assertIn("versionCode = 116", gradle)
@@ -343,13 +344,14 @@ class ReleaseIntegrityTests(unittest.TestCase):
         # advertised as the latest version after publishing 1.0.15.
         self.assertIn("| 1.0.13 | [v1.0.13]", archive)
         self.assertIn("## Published: v1.0.13 · Android versionCode 113", notes)
-        self.assertIn("Latest published release: **[v1.0.15]", readme)
-        self.assertIn("versionCode 115", readme)
-        self.assertIn("/releases/download/v1.0.15/android-create.png", readme)
-        self.assertIn("/releases/download/v1.0.15/android-export.png", readme)
+        self.assertIn("Latest published release: **[v1.0.16]", readme)
+        self.assertIn("versionCode 116", readme)
+        self.assertIn("/releases/download/v1.0.16/android-create.png", readme)
+        self.assertIn("/releases/download/v1.0.16/android-export.png", readme)
         self.assertNotIn("/releases/download/v1.0.14/android-create.png", readme)
         self.assertIn("| 1.0.14 | [v1.0.14]", archive)
         self.assertIn("| 1.0.15 | [v1.0.15]", archive)
+        self.assertIn("| 1.0.16 | [v1.0.16]", archive)
         self.assertIn("## Published: v1.0.14 · Android versionCode 114", notes)
         self.assertIn("## Published: v1.0.15 · Android versionCode 115", notes)
 

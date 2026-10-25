@@ -56,7 +56,7 @@ class AndroidCodeAuditTests(unittest.TestCase):
 
     def test_play_upload_bundle_keeps_real_key_separate_from_github(self):
         play = (ROOT / ".github/workflows/production-release.yml").read_text("utf-8")
-        public = (ROOT / ".github/workflows/github-release-1.0.1.yml").read_text("utf-8")
+        public = (ROOT / "docs/releases/workflows/github-release-1.0.1.yml").read_text("utf-8")
         for required in ("QREX_UPLOAD_CERT_SHA256", "QREX_UPLOAD_KEYSTORE_BASE64",
                          "environment: production", "RELEASE_VERSION",
                          "production/QREX-Android-${{ inputs.version }}.aab"):

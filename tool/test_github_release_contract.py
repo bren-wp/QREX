@@ -4,7 +4,7 @@ from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKFLOW = ROOT / ".github/workflows/github-release-1.0.1.yml"
+WORKFLOW = ROOT / "docs/releases/workflows/github-release-1.0.1.yml"
 
 
 class GithubReleaseContractTests(unittest.TestCase):

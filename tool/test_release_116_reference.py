@@ -11,27 +11,28 @@ ANDROID = ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex"
 
 
 class Production116ReferenceTests(unittest.TestCase):
-    def test_only_the_new_version_can_run_publisher_jobs(self):
-        for minor in range(4, 16):
-            src = (WORKFLOWS / f"github-release-1.0.{minor}.yml").read_text("utf-8")
+    def test_published_versions_are_archived_outside_active_workflows(self):
+        archived = ROOT / "docs/releases/workflows"
+        self.assertEqual(
+            [], list(WORKFLOWS.glob("github-release-1.0.*.yml")),
+            "No already-published version must trigger on future main pushes"
+        )
+        for minor in range(1, 17):
+            src = (archived / f"github-release-1.0.{minor}.yml").read_text("utf-8")
             with self.subTest(version=minor):
-                self.assertIn(
-                    "github.event.workflow_run.event == 'push' && false", src
-                )
-                self.assertIn("RETIRED:", src)
-        new = (WORKFLOWS / "github-release-1.0.16.yml").read_text("utf-8")
-        self.assertNotIn("&& false", new)
-        self.assertIn('workflows: ["QREX Android native CI"]', new)
-        self.assertIn("gh release create v1.0.16", new)
-        self.assertIn("com.brendigo.qrex 116 1.0.16", new)
-        self.assertIn("sha256sum --check SHA256SUMS.txt", new)
-        self.assertIn("assert len(screens) == 10", new)
-        self.assertIn("QREX-Android-1.0.16-Play-UNSIGNED-QA.aab", new)
+                self.assertIn(f"gh release create v1.0.{minor}", src)
+                self.assertIn("github.event.workflow_run", src)
+                self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", src)
+        latest = (archived / "github-release-1.0.16.yml").read_text("utf-8")
+        self.assertIn('workflows: ["QREX Android native CI"]', latest)
+        self.assertIn("com.brendigo.qrex 116 1.0.16", latest)
+        self.assertIn("sha256sum --check SHA256SUMS.txt", latest)
+        self.assertIn("assert len(screens) == 10", latest)
+        self.assertIn("QREX-Android-1.0.16-Play-UNSIGNED-QA.aab", latest)
         for gate in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml", "jarsigner -verify",
                      "apksigner", "tool/verify_screenshots.py"):
-            self.assertIn(gate, new)
-        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", new)
+            self.assertIn(gate, latest)
 
     def test_version_and_native_navigation(self):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
