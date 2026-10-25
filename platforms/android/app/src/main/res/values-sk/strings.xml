@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Všetky záznamy histórie a uložené QR kódy sa natrvalo odstránia. Nastavenia témy a jazyka zostanú uložené.</string>
     <string name="pdf_saved_code">Uložený kód %1$d z %2$d</string>
     <string name="splash_message">Všetko pre QR — jednoducho, rýchlo a bez účtu.</string>
+    <string name="all">Všetky</string>
+    <string name="no_history">Zatiaľ žiadne QR kódy</string>
 </resources>

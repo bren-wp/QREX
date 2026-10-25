@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Wszystkie wpisy historii i zapisane kody QR zostaną trwale usunięte. Ustawienia motywu i języka pozostaną zapisane.</string>
     <string name="pdf_saved_code">Zapisany kod %1$d z %2$d</string>
     <string name="splash_message">Wszystko o QR — prosto, szybko i bez konta.</string>
+    <string name="all">Wszystkie</string>
+    <string name="no_history">Brak kodów QR</string>
 </resources>

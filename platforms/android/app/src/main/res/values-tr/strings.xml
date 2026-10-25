@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Tüm geçmiş kayıtları ve kaydedilen QR kodları kalıcı olarak silinecek. Tema ve dil seçimleri kayıtlı kalacak.</string>
     <string name="pdf_saved_code">Kayıtlı kod %1$d / %2$d</string>
     <string name="splash_message">QR için her şey — basit, hızlı ve hesapsız.</string>
+    <string name="all">Tümü</string>
+    <string name="no_history">Henüz QR kod yok</string>
 </resources>

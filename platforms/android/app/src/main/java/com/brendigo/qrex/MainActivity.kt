@@ -1240,7 +1240,7 @@ private fun HistoryScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
                 selected = !savedOnly, onClick = { savedOnly = false },
-                label = { Text(tr("history"), maxLines = 1) },
+                label = { Text(tr("all"), maxLines = 1) },
                 leadingIcon = {
                     Icon(Icons.Default.History, contentDescription = null,
                         modifier = Modifier.size(17.dp))
@@ -1250,7 +1250,7 @@ private fun HistoryScreen(
             )
             FilterChip(
                 selected = savedOnly, onClick = { savedOnly = true },
-                label = { Text(tr("favorites"), maxLines = 1) },
+                label = { Text(tr("saved"), maxLines = 1) },
                 leadingIcon = {
                     Icon(
                         if (savedOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -1270,6 +1270,7 @@ private fun HistoryScreen(
             singleLine = true,
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                .testTag("qrex-history-search")
         )
         Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
@@ -1286,7 +1287,8 @@ private fun HistoryScreen(
                 ) {
                     Icon(Icons.Default.History, contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary)
-                    Text(tr("no_saved"), color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Text(if (savedOnly) tr("no_saved") else tr("no_history"),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium)
                 }
             }

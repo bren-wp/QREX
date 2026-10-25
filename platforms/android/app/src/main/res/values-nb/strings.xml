@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Alle historikkoppføringer og lagrede QR-koder slettes permanent. Tema- og språkvalgene beholdes.</string>
     <string name="pdf_saved_code">Lagret kode %1$d av %2$d</string>
     <string name="splash_message">Alt for QR — enkelt, raskt og uten konto.</string>
+    <string name="all">Alle</string>
+    <string name="no_history">Ingen QR-koder ennå</string>
 </resources>
