@@ -300,6 +300,27 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun referenceResultCardAndActionsRemainRealAccessibleControls() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "reference Result setup")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/qrex/result-design")
+        awaitCreateAction(0, "reference Result Generate")
+        rule.onNodeWithTag("qrex-create-show").performClick()
+        requireScreenTag("qrex-result-summary", 0, "reference Result content card")
+        rule.onNodeWithTag("qrex-result-summary", useUnmergedTree = true)
+            .assertIsDisplayed()
+        assertTouchTarget("qrex-result-close", minWidthDp = 48, minHeightDp = 48)
+        assertTouchTarget("qrex-result-menu")
+        assertTouchTarget("qrex-result-primary")
+        assertTouchTarget("qrex-result-toggle-qr")
+        // A saved/generated result retains its working confirmation-backed
+        // Delete action below the scroll fold, not a decorative red badge.
+        rule.onNodeWithTag("qrex-result-delete", useUnmergedTree = true)
+            .assertExists()
+    }
+
+    @Test
     fun scanFirstKeepsGalleryAndTorchAsSingleClearActions() {
         rule.onNodeWithTag("qrex-tab-0").assertIsSelected()
         rule.onNodeWithTag("qrex-scan-gallery", useUnmergedTree = true)
