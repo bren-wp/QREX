@@ -226,6 +226,25 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('if (alreadySaved) tr("remove_favorite") else tr("add_favorite")', self.main)
         self.assertIn("if (currentCode == null)", self.main)
 
+    def test_reference_result_single_hero_card_and_destructive_row(self):
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn('testTag("qrex-result-summary")', self.main)
+        self.assertIn('modifier = Modifier.size(52.dp).testTag("qrex-result-menu")', self.main)
+        self.assertIn('testTag("qrex-result-primary")', self.main)
+        self.assertIn('testTag("qrex-result-delete")', self.main)
+        self.assertIn("heightIn(min = 178.dp)", self.main)
+        self.assertIn("RoundedCornerShape(14.dp), color = QrexDesign.actionBlue", self.main)
+        self.assertIn("modifier = Modifier.size(52.dp).testTag(\"qrex-result-close\")", self.main)
+        self.assertIn("destructive = true", self.main)
+        self.assertIn('showChevron = false', self.main)
+        self.assertIn("val foreground = if (destructive) MaterialTheme.colorScheme.error", design)
+        self.assertIn("if (showChevron && !destructive)", design)
+        self.assertIn("heightIn(min = 56.dp)", design)
+        self.assertIn('if (wifi) confirmWifiShare = true', self.main)
+        self.assertIn('if (wifi && !alreadySaved) confirmWifiSave = true', self.main)
+        self.assertIn('if (confirmResultDelete)', self.main)
+        self.assertIn('if (showQrPreview)', self.main)
+
     def test_scan_first_has_one_torch_button_and_a_primary_gallery_action(self):
         self.assertIn('testTag("qrex-scan-gallery")', self.scanner)
         self.assertIn('testTag("qrex-scan-torch")', self.scanner)

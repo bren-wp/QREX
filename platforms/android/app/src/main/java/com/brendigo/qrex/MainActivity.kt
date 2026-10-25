@@ -372,6 +372,7 @@ private fun PrimaryAction(
 ) {
     Button(onClick = onClick, enabled = enabled,
         modifier = modifier.fillMaxWidth().heightIn(min = 54.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = QrexDesign.actionBlue, contentColor = Color.White)) {
         Text(text, fontWeight = FontWeight.Bold)
@@ -489,7 +490,7 @@ private fun ResultScreen(
                 fontSize = 21.sp, color = MaterialTheme.colorScheme.onSurface)
             Box {
                 IconButton(onClick = { showResultMenu = true },
-                    modifier = Modifier.size(48.dp)) {
+                    modifier = Modifier.size(52.dp).testTag("qrex-result-menu")) {
                     Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                         tint = MaterialTheme.colorScheme.onSurface)
                 }
@@ -513,54 +514,83 @@ private fun ResultScreen(
             }
         }
         Column(Modifier.weight(1f).fillMaxWidth()
-            .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll").padding(20.dp),
+            .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll")
+            .padding(horizontal = 16.dp, vertical = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        Spacer(Modifier.height(12.dp))
-        Surface(shape = RoundedCornerShape(16.dp), color = QrexDesign.accent) {
-            Box(Modifier.size(54.dp), contentAlignment = Alignment.Center) {
-                val resultIcon = when {
-                    wifi -> Icons.Default.Wifi
-                    QRContent.isEvent(raw) -> Icons.Default.Event
-                    raw.startsWith("mailto:", ignoreCase = true) -> Icons.Default.Email
-                    raw.startsWith("tel:", ignoreCase = true) -> Icons.Default.Phone
-                    raw.startsWith("geo:", ignoreCase = true) -> Icons.Default.LocationOn
-                    QRContent.safeUrl(raw) != null -> Icons.Default.Link
-                    else -> Icons.Default.QrCode
-                }
-                Icon(resultIcon, contentDescription = null,
-                    tint = Color.White, modifier = Modifier.size(30.dp))
-            }
+        // Reference screens use ONE large navy content card. Previously the
+        // icon floated above a second panel, wasting height and misaligning
+        // the action stack on ordinary phones.
+        val resultIcon = when {
+            wifi -> Icons.Default.Wifi
+            QRContent.isEvent(raw) -> Icons.Default.Event
+            raw.startsWith("mailto:", ignoreCase = true) -> Icons.Default.Email
+            raw.startsWith("tel:", ignoreCase = true) -> Icons.Default.Phone
+            raw.startsWith("geo:", ignoreCase = true) -> Icons.Default.LocationOn
+            url != null -> Icons.Default.Link
+            else -> Icons.Default.QrCode
         }
-        Spacer(Modifier.height(14.dp))
-        QrexPanel(modifier = Modifier.fillMaxWidth()) {
-            Column(Modifier.fillMaxWidth().padding(14.dp)) {
+        QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
+            Column(
+                Modifier.fillMaxWidth().heightIn(min = 178.dp)
+                    .padding(horizontal = 16.dp, vertical = 18.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Surface(shape = RoundedCornerShape(14.dp), color = QrexDesign.actionBlue) {
+                    Box(Modifier.size(62.dp), contentAlignment = Alignment.Center) {
+                        Icon(resultIcon, contentDescription = null,
+                            tint = Color.White, modifier = Modifier.size(32.dp))
+                    }
+                }
+                Spacer(Modifier.height(14.dp))
                 if (wifi) {
-                    Text("${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
-                        fontWeight = FontWeight.Bold)
-                    // Open Wi-Fi networks have no credential to reveal; do not
-                    // render a fake hidden password and a meaningless toggle.
+                    Text(
+                        "${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold, fontSize = 16.sp,
+                        textAlign = TextAlign.Center, maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    // Never surface private Wi-Fi credentials without a tap.
                     val wifiPassword = QRContent.wifiField(raw, "P").orEmpty()
                     if (wifiPassword.isNotEmpty()) {
-                        Text(if (showPassword)
-                            "${tr("password")}: $wifiPassword" else "${tr("password")}: ••••••••",
-                            softWrap = true)
-                        TextButton(onClick = { showPassword = !showPassword }) {
-                            Text(if (showPassword) tr("hide") else tr("show"))
-                        }
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            if (showPassword) "${tr("password")}: $wifiPassword"
+                                else "${tr("password")}: ••••••••",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center, fontSize = 12.sp
+                        )
+                        TextButton(
+                            onClick = { showPassword = !showPassword },
+                            modifier = Modifier.heightIn(min = 48.dp)
+                        ) { Text(if (showPassword) tr("hide") else tr("show")) }
                     }
                 } else {
-                    Text(raw, color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.SemiBold,
+                    Text(
+                        raw, color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold, fontSize = 16.sp,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth())
-                    if (url != null) Text(tr("check_url"),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (url != null) {
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            url.toString(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp, textAlign = TextAlign.Center,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }
-        Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(12.dp))
         if (url != null) {
-            PrimaryAction(tr("open_link")) { openLink(context, url) }
+            PrimaryAction(
+                tr("open_link"), modifier = Modifier.testTag("qrex-result-primary")
+            ) { openLink(context, url) }
             Spacer(Modifier.height(10.dp))
         } else if (QRContent.isEvent(raw)) {
             PrimaryAction(tr("add_to_calendar")) {
@@ -579,15 +609,17 @@ private fun ResultScreen(
             if (wifi) confirmWifiShare = true
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         QrexResultAction(tr("show_qr"), Icons.Default.QrCode,
-            modifier = Modifier.testTag("qrex-result-toggle-qr")) {
+            modifier = Modifier.testTag("qrex-result-toggle-qr"),
+            showChevron = false) {
             showQrPreview = !showQrPreview
         }
         Spacer(Modifier.height(8.dp))
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
-            if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+            if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            showChevron = false
         ) {
             if (wifi && !alreadySaved) confirmWifiSave = true
             else if (alreadySaved) {
@@ -618,21 +650,17 @@ private fun ResultScreen(
                 ) { Text(tr("export_png")) }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         QrexResultAction(tr("edit"), Icons.Default.Edit) { onEdit(raw) }
         if (hasHistoryRecord) {
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = { confirmResultDelete = true },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error)) {
-                Icon(Icons.Default.Delete, contentDescription = null,
-                    modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(tr("delete"))
-            }
+            QrexResultAction(
+                tr("delete"), Icons.Default.Delete,
+                modifier = Modifier.testTag("qrex-result-delete"),
+                destructive = true
+            ) { confirmResultDelete = true }
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
         }
         // This secondary Close remains reachable even if Android's IME
         // resizes the viewport after entering Result. Keeping it outside
