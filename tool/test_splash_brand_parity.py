@@ -27,7 +27,7 @@ class SplashBrandParityTest(unittest.TestCase):
         ]
         self.assertEqual(android_paths, svg_paths,
                          "The external brand SVG drifted from the in-app QREX mark")
-        self.assertEqual(len(svg_paths), 12)
+        self.assertEqual(len(svg_paths), 13)
         vtext = (RES / "drawable/qrex_icon.xml").read_text("utf-8")
         stext = (ROOT / "assets/brand/qrex-icon.svg").read_text("utf-8")
         for color in ("#19CAFF", "#0868EE", "#07187E",
