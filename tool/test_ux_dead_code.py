@@ -56,8 +56,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
         styles = (ROOT / "platforms/android/app/src/main/res/values/styles.xml").read_text("utf-8")
         self.assertIn('tr("splash_message")', splash)
-        self.assertIn('Text("QRE"', splash)
-        self.assertIn('Text("X"', splash)
+        self.assertIn('"QRE", color = Color.White', splash)
+        self.assertIn('"X",', splash)
         self.assertIn('android:windowBackground', styles)
         self.assertIn('#030A18', styles)
         # Android API 26 must lint/build without referencing API 27-only attrs.
@@ -252,7 +252,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QRContent.contact(input, contactPhone, contactEmail)", self.main)
         self.assertIn('EncodeHintType.CHARACTER_SET to Charsets.UTF_8.name()', self.main)
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
-        self.assertIn("Modifier.size(192.dp).clip(RoundedCornerShape(42.dp))", splash)
+        self.assertIn("Modifier.size(metrics.logoDp.dp)", splash)
+        self.assertIn("qrexSplashMetrics(", splash)
 
     def test_irreplaceable_history_migration_and_wifi_encryption_are_retained(self):
         self.assertIn('getSharedPreferences("FlutterSharedPreferences"', self.core)

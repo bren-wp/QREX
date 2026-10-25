@@ -89,6 +89,7 @@ internal fun QrexSplashScreen(
         val metrics = qrexSplashMetrics(
             maxWidth.value.toInt(), maxHeight.value.toInt(), LocalDensity.current.fontScale
         )
+        val compactWidth = maxWidth < 360.dp
         Canvas(Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
@@ -210,7 +211,7 @@ internal fun QrexSplashScreen(
             Text(
                 tr("splash_message"),
                 color = Color(0xFFB9CFF4),
-                fontSize = if (maxWidth < 360.dp) 12.sp else 13.sp,
+                fontSize = if (compactWidth) 12.sp else 13.sp,
                 lineHeight = 19.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 3
