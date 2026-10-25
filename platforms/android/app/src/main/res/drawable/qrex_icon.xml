@@ -6,7 +6,9 @@
     <!-- QREX approved 2026-10-22 icon: white Q, white QR modules,
          cyan scanner brackets and a blue-to-navy rounded-square badge.
          The vector is intentionally kept sharp at every Android density. -->
-    <path android:pathData="M0,0H108V108H0Z">
+    <!-- A rounded-square badge, not a square path only clipped by Compose.
+         The precise same Q/QR motif is used in the adaptive foreground. -->
+    <path android:pathData="M25,1 H83 C96.25,1 107,11.75 107,25 V83 C107,96.25 96.25,107 83,107 H25 C11.75,107 1,96.25 1,83 V25 C1,11.75 11.75,1 25,1 Z">
         <aapt:attr name="android:fillColor">
             <gradient android:type="linear" android:startX="13" android:startY="9"
                 android:endX="93" android:endY="109"

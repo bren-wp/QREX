@@ -11,6 +11,22 @@ class QREXCoreTest {
     }
 
 
+    @Test fun splashReferenceGeometryAdaptsToThreeDeviceClasses() {
+        val compact = qrexSplashMetrics(320, 568, 1f)
+        assertEquals(156, compact.logoDp)
+        assertEquals(50, compact.titleSp)
+        assertEquals(26, compact.bottomPaddingDp)
+        val standard = qrexSplashMetrics(393, 852, 1f)
+        assertEquals(214, standard.logoDp)
+        assertEquals(60, standard.titleSp)
+        assertEquals(58, standard.bottomPaddingDp)
+        val enlarged = qrexSplashMetrics(393, 852, 1.6f)
+        assertEquals(38, enlarged.titleSp)
+        assertTrue(enlarged.logoDp <= 214)
+        val smallAndTall = qrexSplashMetrics(320, 900, 1f)
+        assertTrue(smallAndTall.logoDp < standard.logoDp)
+    }
+
     @Test fun responsivePhoneLayoutProfilesKeepActionsAvailable() {
         val compact = qrexLayoutProfile(320, 568, 1.0f)
         assertTrue(compact.stackTypeChoices)

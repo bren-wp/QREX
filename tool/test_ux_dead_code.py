@@ -65,6 +65,22 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('val appLanguage = screenshotLanguage ?: store.language', self.main)
         self.assertNotIn('context.resources.configuration.locales[0].language', self.main)
 
+    def test_user_reference_splash_brand_spacing_and_badge_geometry(self):
+        splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
+        icon = (ROOT / "platforms/android/app/src/main/res/drawable/qrex_icon.xml").read_text("utf-8")
+        foreground = (ROOT / "platforms/android/app/src/main/res/drawable/qrex_launcher_foreground.xml").read_text("utf-8")
+        for anchor in ("qrexSplashMetrics(", "qrex-splash-logo", "qrex-splash-wordmark",
+                       "qrex-splash-tagline", "qrex-splash-footer",
+                       'tr("splash_message")', "upperRibbon", "lowerRibbon",
+                       "Brush.horizontalGradient(", "TextStyle("):
+            self.assertIn(anchor, splash)
+        self.assertNotIn('Text("Brendigo"', splash)
+        self.assertIn('M25,1 H83 C96.25,1', icon)
+        for symbol in ("M44,39 C34.1,39", "M51,64 L59,57 L76,77 L68,84 Z",
+                       "M68,36 H83 V51 H68 Z"):
+            self.assertIn(symbol, icon)
+            self.assertIn(symbol, foreground)
+
     def test_primary_actions_have_explicit_readable_light_text(self):
         self.assertIn("containerColor = QrexDesign.actionBlue, contentColor = Color.White", self.main)
 
