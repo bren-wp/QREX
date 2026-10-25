@@ -123,7 +123,6 @@ internal fun QrexExportDetails(
                     tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
                 Spacer(Modifier.width(10.dp))
                 Text(tr("privacy_summary"), fontSize = 14.sp,
-                    maxLines = 4,
                     color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
