@@ -1,6 +1,6 @@
 # QREX Android dark UI — current source-of-truth visual audit
 
-**Release candidate:** 1.0.14 (build 114). Previous concept boards are historical inspiration, not a literal byte-for-byte screenshot baseline. Some older design notes referred to light mode and a fifth Favorites tab; **the approved current implementation has a single dark theme and four root destinations**. Compare like-for-like viewport, text scale, state, locale and selected tab when checking real screenshot pixels. A genuine user-supplied reference bitmap is required for any numerical pixel-difference claim; CI screenshots alone cannot prove 1:1 with an unseen reference.
+**Release candidate:** 1.0.16 (build 116). Previous concept boards are historical inspiration, not a literal byte-for-byte screenshot baseline. Some older design notes referred to light mode and a fifth Favorites tab; **the approved current implementation has a single dark theme and four root destinations**. Compare like-for-like viewport, text scale, state, locale and selected tab when checking real screenshot pixels. A genuine user-supplied reference bitmap is required for any numerical pixel-difference claim; CI screenshots alone cannot prove 1:1 with an unseen reference.
 
 ## Brand / icon parity
 

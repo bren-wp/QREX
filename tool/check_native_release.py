@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail closed on Android QREX 1.0.15 release metadata and privacy regressions.
+"""Fail closed on Android QREX 1.0.16 release metadata and privacy regressions.
 
 Checks committed source only; does not verify upload key, app bundle signatures,
 Google Play approval, end-to-end migration or physical-device behavior.
@@ -14,9 +14,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 TOOLS_NS = "http://schemas.android.com/tools"
 APP_ID = "com.brendigo.qrex"
-LAST_PUBLISHED_NATIVE_BUILD_CODE = 114
-PRODUCTION_VERSION = "1.0.15"
-PRODUCTION_BUILD_CODE = 115
+LAST_PUBLISHED_NATIVE_BUILD_CODE = 115
+PRODUCTION_VERSION = "1.0.16"
+PRODUCTION_BUILD_CODE = 116
 
 
 def field(source: str, name: str) -> str | None:
@@ -39,7 +39,7 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
             f"Android versionCode must advance beyond published QREX build "
             f"{LAST_PUBLISHED_NATIVE_BUILD_CODE}")
     if version != PRODUCTION_VERSION or code != str(PRODUCTION_BUILD_CODE):
-        issues.append("Production candidate must be QREX 1.0.15 / build 115")
+        issues.append("Production candidate must be QREX 1.0.16 / build 116")
     try:
         root = ET.fromstring(android_manifest)
         app = root.find("application")

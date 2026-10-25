@@ -317,13 +317,13 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-more-language").performClick()
         requireScreenTag("qrex-language-screen", 0, "touch target Language")
         assertTouchTarget("qrex-language-option-hr")
-        assertTouchTarget("qrex-detail-back")
+        assertTouchTarget("qrex-detail-back", minWidthDp = 50, minHeightDp = 50)
         rule.onNodeWithTag("qrex-detail-back").performClick()
         requireScreenTag("qrex-more-screen", 0, "touch target More return")
         rule.onNodeWithTag("qrex-more-export").performClick()
         requireScreenTag("qrex-export-screen", 0, "touch target Export")
         assertTouchTarget("qrex-export-pdf")
-        assertTouchTarget("qrex-detail-back")
+        assertTouchTarget("qrex-detail-back", minWidthDp = 50, minHeightDp = 50)
     }
 
     @Test

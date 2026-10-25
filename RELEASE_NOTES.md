@@ -1,3 +1,9 @@
+## Pending: v1.0.16 · Android versionCode 116
+
+QREX dark Android reference stabilization: accurate 52dp Back controls and 23-language TalkBack labels, correct History search symbol, full 10-screen emulator validation, and suppression of historical release publisher jobs. GitHub APK/AAB must pass exact-commit CI, 23-locale checks, Android API 26/31/34/35/36 lifecycle matrix on the PR, hash/signature verification, and the ten genuine emulator captures before publication. No claim of pixel-exact parity with perspective marketing boards; no Play distribution without authorized upload key.
+
+[Release candidate notes](docs/releases/v1.0.16.md)
+
 ## Published: v1.0.15 · Android versionCode 115
 
 Fixes the Android 15 (API 35) Result Back touch-target geometry failure, increases History filter and Language/PDF Export Back hit areas, and incorporates the full on-device control-size audit. Includes source-level strict pixel comparator for ten real Android screen captures. All five emulator API levels 26/31/34/35/36 passed the regression matrix. Verified APK, AAB, 10 real emulator screenshots and SHA256 checksums were published following exact-main Android CI, localization, signing and capture validation. The GitHub binaries use a disposable certificate and cannot update installs signed with another identity.
