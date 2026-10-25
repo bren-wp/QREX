@@ -21,9 +21,11 @@ concurrency:
 
 jobs:
   preflight:
+    # RETIRED: tag is already published. Preserve historical build recipe,
+    # but never start a runner for new main commits. New version owns releases.
     # After v1.0.15 is published, future main merges must SKIP the old
     # publisher without starting an expensive build doomed to fail.
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && false }}
     runs-on: ubuntu-latest
     outputs:
       release_needed: ${{ steps.check.outputs.release_needed }}
