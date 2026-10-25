@@ -252,28 +252,39 @@ internal fun QrexResultAction(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    destructive: Boolean = false,
+    showChevron: Boolean = true,
     onClick: () -> Unit
 ) {
+    // Screenshot references show flat, soft-cornered rows, with destructive
+    // actions in a subtly tinted red row rather than a pill-shaped outline.
+    // All rows remain genuine Compose click targets (>= 56dp).
+    val foreground = if (destructive) MaterialTheme.colorScheme.error
+        else MaterialTheme.colorScheme.onSurface
     Surface(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.fillMaxWidth().heightIn(min = 56.dp),
         shape = RoundedCornerShape(15.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
+            else MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp,
+            if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.20f)
+            else MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Row(Modifier.padding(horizontal = 13.dp, vertical = 9.dp),
+        Row(Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.primary)
+            Icon(icon, contentDescription = null, modifier = Modifier.size(21.dp),
+                tint = foreground)
             Spacer(Modifier.width(12.dp))
             Text(label, modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Medium, maxLines = 2,
-                overflow = TextOverflow.Ellipsis)
-            Icon(Icons.Default.ChevronRight, contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(19.dp))
+                color = foreground, fontWeight = FontWeight.Medium,
+                maxLines = 2, overflow = TextOverflow.Ellipsis)
+            if (showChevron && !destructive) {
+                Icon(Icons.Default.ChevronRight, contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(19.dp))
+            }
         }
     }
 }
