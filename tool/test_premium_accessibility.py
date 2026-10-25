@@ -55,7 +55,13 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
             "containerColor = QrexDesign.actionBlue, contentColor = Color.White",
             self.main,
         )
-        self.assertIn("containerColor = QrexDesign.actionBlue,", self.scanner)
+        # The in-camera primary Gallery button overlays a live image and has
+        # a dark 88% scrim with high-contrast white text plus cyan icon/
+        # border. Outside the preview it retains the WCAG-AA action-blue.
+        self.assertIn("else QrexDesign.actionBlue,", self.scanner)
+        self.assertIn("QrexDesign.backgroundDeep.copy(alpha = .88f)", self.scanner)
+        self.assertIn("contentColor = Color.White", self.scanner)
+        self.assertGreaterEqual(contrast(self.color("backgroundDeep"), "FFFFFF"), 4.5)
         self.assertNotIn("Color(0xFF1677FF)", self.main)
         self.assertNotIn("Color(0xFF1677FF)", self.scanner)
 

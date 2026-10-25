@@ -233,6 +233,18 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn("modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)", self.scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", self.scanner)
 
+    def test_scanner_reference_actions_overlay_real_live_preview(self):
+        self.assertIn('testTag("qrex-camera-preview")', self.scanner)
+        self.assertIn('testTag("qrex-scan-hint")', self.scanner)
+        self.assertIn('scannerActions(true)', self.scanner)
+        self.assertIn('scannerActions(false)', self.scanner)
+        self.assertIn('val scannerActions: @Composable (Boolean) -> Unit', self.scanner)
+        self.assertIn("size.minDimension * 0.61f", self.scanner)
+        self.assertIn("zoomLimits.maxZoomRatio > 1f", self.scanner)
+        self.assertIn("QrexDesign.backgroundDeep.copy(alpha = .88f)", self.scanner)
+        self.assertIn("galleryActive.compareAndSet(false, true)", self.scanner)
+        self.assertIn("onClick = toggleTorch", self.scanner)
+
     def test_scanner_torch_waits_for_actual_camerax_completion(self):
         self.assertIn("var torchBusy by remember { mutableStateOf(false) }", self.scanner)
         self.assertIn("activeCamera.cameraControl.enableTorch(next)", self.scanner)

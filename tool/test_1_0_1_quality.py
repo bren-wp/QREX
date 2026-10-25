@@ -28,13 +28,13 @@ class AndroidCodeAuditTests(unittest.TestCase):
         scanner = (JAVA / "QREXScanner.kt").read_text("utf-8")
         self.assertIn("TextOverflow.Ellipsis", view)
         self.assertIn("BackHandler(enabled = currentCode != null)", view)
-        # Gallery is the clearly highlighted primary action, while Torch
-        # remains a separate secondary button. Both stay >=52dp on small
-        # phones and >=66dp on normal-width phones.
+        # Gallery is the highlighted primary action, while Torch stays
+        # a separate control inside the live preview. On compact phones
+        # both are >=64dp and >=80dp on normal-width phones.
         self.assertIn("Row(Modifier.fillMaxWidth(),", scanner)
         self.assertIn("horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)", scanner)
         self.assertEqual(
-            scanner.count(".heightIn(min = if (compactScan) 52.dp else 66.dp)"), 2)
+            scanner.count(".heightIn(min = if (compactScan) 64.dp else 80.dp)"), 2)
         self.assertIn('testTag("qrex-scan-gallery")', scanner)
         self.assertIn('testTag("qrex-scan-torch")', scanner)
         self.assertIn("ButtonDefaults.buttonColors(", scanner)
