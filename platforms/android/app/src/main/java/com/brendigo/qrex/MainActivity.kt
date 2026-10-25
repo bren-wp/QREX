@@ -611,13 +611,15 @@ private fun ResultScreen(
         }
         Spacer(Modifier.height(8.dp))
         QrexResultAction(tr("show_qr"), Icons.Default.QrCode,
-            modifier = Modifier.testTag("qrex-result-toggle-qr")) {
+            modifier = Modifier.testTag("qrex-result-toggle-qr"),
+            showChevron = false) {
             showQrPreview = !showQrPreview
         }
         Spacer(Modifier.height(8.dp))
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
-            if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+            if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            showChevron = false
         ) {
             if (wifi && !alreadySaved) confirmWifiSave = true
             else if (alreadySaved) {
