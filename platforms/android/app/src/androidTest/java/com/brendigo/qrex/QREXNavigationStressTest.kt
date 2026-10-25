@@ -236,6 +236,32 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-screen").assertIsDisplayed()
     }
 
+    @Test
+    fun advancedCreateTypesAreDiscoverableSelectedAndGenerateRealQr() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create advanced types")
+        // A localized visible disclosure is the direct entry point; users do
+        // not need to guess that QR formats are hidden in the header overflow.
+        rule.onNodeWithTag("qrex-create-more-types", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed().performClick()
+        requireScreenTag("qrex-create-advanced-types", 0, "open advanced choices")
+        for (type in listOf(3, 4, 5, 7)) {
+            rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
+                .performScrollTo().assertIsDisplayed().performClick()
+            rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
+                .assertIsSelected()
+        }
+        // Real email encoding remains functional after switching through
+        // every advanced QR kind, not just displaying decorative controls.
+        rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
+            .performScrollTo().performClick()
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performScrollTo().performTextReplacement("support@example.org")
+        awaitCreateAction(0, "advanced Email QR generation")
+        rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
+        requireScreenTag("qrex-result-screen", 0, "advanced Email result")
+    }
+
     /**
      * Measure real Compose semantic bounds in density-independent pixels,
      * not visual guesses based on screenshots. Log only constant UI tag
@@ -267,6 +293,7 @@ class QREXNavigationStressTest {
         for (type in listOf(0, 1, 2, 6)) {
             assertTouchTarget("qrex-create-type-$type")
         }
+        assertTouchTarget("qrex-create-more-types")
         assertTouchTarget("qrex-create-show")
         assertTouchTarget("qrex-create-save")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
