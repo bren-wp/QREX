@@ -48,6 +48,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executors
@@ -62,11 +63,19 @@ import kotlinx.coroutines.withContext
  * Nothing is composited into the scanned image and no camera frames are stored.
  */
 @Composable
-private fun ScannerCornerOverlay(modifier: Modifier = Modifier) {
+private fun ScannerCornerOverlay(
+    modifier: Modifier = Modifier,
+    reservedBottomDp: Int = 156
+) {
     Canvas(modifier) {
-        val side = size.minDimension * 0.61f
+        // Reserve visual room above camera actions without resizing/cropping
+        // the real PreviewView. Bound the reserve on very short screens.
+        val usableHeight = size.height - minOf(
+            reservedBottomDp.dp.toPx(), size.height * 0.45f
+        )
+        val side = minOf(size.width, usableHeight) * 0.61f
         val left = (size.width - side) / 2f
-        val top = (size.height - side) / 2f
+        val top = (usableHeight - side) / 2f
         val right = left + side
         val bottom = top + side
         val segment = side * 0.23f
@@ -120,6 +129,19 @@ internal fun cameraFrameDue(nowMillis: Long, lastMillis: Long): Boolean =
 internal fun cameraFrameAllowed(
     nowMillis: Long, lastMillis: Long, galleryActive: Boolean, alreadyHandled: Boolean
 ): Boolean = !galleryActive && !alreadyHandled && cameraFrameDue(nowMillis, lastMillis)
+
+/** Supported camera zoom levels only; avoid disabled, misleading preset chips. */
+internal fun scannerZoomPresets(minRatio: Float, maxRatio: Float): List<Float> {
+    if (!minRatio.isFinite() || !maxRatio.isFinite() ||
+        minRatio <= 0f || maxRatio < minRatio) return emptyList()
+    val presets = listOf(.5f, 1f, 2f)
+        .filter { it >= minRatio && it <= maxRatio }
+        .toMutableList()
+    if (maxRatio > 1f && presets.none { it > 1f }) {
+        presets.add(maxRatio)
+    }
+    return presets.distinct().sorted()
+}
 
 /** Apply all eight EXIF orientations, including mirrored JPEGs, after sampling. */
 internal fun orientGalleryBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
@@ -277,9 +299,10 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     // LocalConfiguration is responsive without introducing SubcomposeLayout
     // disposal/lifecycle regressions on low-memory Android 8 devices.
     val window = LocalConfiguration.current
+    val fontScale = LocalDensity.current.fontScale
     val compactScan = window.screenWidthDp < 360 ||
         window.screenHeightDp < 670 ||
-        LocalDensity.current.fontScale >= 1.35f
+        fontScale >= 1.35f
     // A single composable action row is reused in the preview and in the
     // permission-denied state. Gallery never depends on camera permission.
     // Neither action is a decorative graphic; each retains the original
@@ -304,7 +327,8 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 },
                 enabled = !galleryBusy,
                 modifier = Modifier.weight(1f)
-                    .heightIn(min = if (compactScan) 64.dp else 80.dp)
+                    .heightIn(min = if (fontScale >= 1.5f) 88.dp
+                        else if (compactScan) 64.dp else 80.dp)
                     .testTag("qrex-scan-gallery"),
                 shape = RoundedCornerShape(15.dp),
                 border = if (inCamera) BorderStroke(
@@ -330,7 +354,9 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                              modifier = Modifier.size(22.dp))
                     }
                     Spacer(Modifier.height(4.dp))
-                    Text(tr("from_gallery"), maxLines = 2,
+                    Text(tr("from_gallery"), maxLines = if (fontScale >= 1.5f) 3 else 2,
+                        fontSize = if (compactScan) 12.sp else 14.sp,
+                        lineHeight = if (compactScan) 16.sp else 18.sp,
                         textAlign = TextAlign.Center)
                 }
             }
@@ -339,7 +365,8 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 enabled = allowed && !torchBusy &&
                     camera?.cameraInfo?.hasFlashUnit() == true,
                 modifier = Modifier.weight(1f)
-                    .heightIn(min = if (compactScan) 64.dp else 80.dp)
+                    .heightIn(min = if (fontScale >= 1.5f) 88.dp
+                        else if (compactScan) 64.dp else 80.dp)
                     .testTag("qrex-scan-torch"),
                 shape = RoundedCornerShape(15.dp),
                 border = BorderStroke(
@@ -359,7 +386,9 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         contentDescription = null, tint = QrexDesign.accentBright,
                         modifier = Modifier.size(22.dp))
                     Spacer(Modifier.height(4.dp))
-                    Text(tr("flashlight"), maxLines = 2,
+                    Text(tr("flashlight"), maxLines = if (fontScale >= 1.5f) 3 else 2,
+                        fontSize = if (compactScan) 12.sp else 14.sp,
+                        lineHeight = if (compactScan) 16.sp else 18.sp,
                         textAlign = TextAlign.Center)
                 }
             }
@@ -440,73 +469,82 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     analysisExecutor.shutdown()
                 }
             }
+            val zoomLimits = camera?.cameraInfo?.zoomState?.value
+            val zoomPresets = zoomLimits?.let {
+                scannerZoomPresets(it.minZoomRatio, it.maxZoomRatio)
+            }.orEmpty()
+            val showZoom = !compactScan && zoomPresets.size > 1
             Box(Modifier.fillMaxWidth().weight(1f)
                 .clip(RoundedCornerShape(24.dp))
                 .background(QrexDesign.surface)
                 .testTag("qrex-camera-preview")) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
-                ScannerCornerOverlay(Modifier.fillMaxSize())
-                // Actual optical/digital zoom controls: never offer levels
-                // outside the camera's advertised range.
-                val zoomLimits = camera?.cameraInfo?.zoomState?.value
-                if (!compactScan && zoomLimits != null &&
-                    zoomLimits.maxZoomRatio > 1f) Row(
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                        .padding(bottom = 178.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    listOf(.5f, 1f, 2f).forEach { ratio ->
-                        val available = camera != null && zoomLimits != null &&
-                            ratio >= zoomLimits.minZoomRatio &&
-                            ratio <= zoomLimits.maxZoomRatio
-                        FilterChip(
-                            selected = selectedZoom == ratio,
-                            onClick = {
-                                val active = camera
-                                if (active != null && available) {
-                                    val request = runCatching {
-                                        active.cameraControl.setZoomRatio(ratio)
-                                    }.getOrNull()
-                                    request?.addListener({
-                                        if (camera === active &&
-                                            runCatching { request.get() }.isSuccess) {
-                                            selectedZoom = ratio
-                                        }
-                                    }, ContextCompat.getMainExecutor(context))
-                                }
-                            },
-                            enabled = available,
-                            label = { Text("${ratio}×") },
-                            modifier = Modifier.heightIn(min = 48.dp),
-                            shape = RoundedCornerShape(18.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = QrexDesign.backgroundDeep.copy(alpha = .88f),
-                                labelColor = Color.White,
-                                selectedContainerColor = QrexDesign.accent,
-                                selectedLabelColor = Color.White
-                            )
-                        )
+                ScannerCornerOverlay(
+                    Modifier.fillMaxSize(),
+                    reservedBottomDp = when {
+                        showZoom -> 220
+                        fontScale >= 1.5f -> 190
+                        compactScan -> 145
+                        else -> 165
                     }
-                }
-                // The screenshot reference has both real actions *inside*
-                // the camera panel. Keep the instruction above those actions,
-                // zoom controls farther above, and the live image behind all.
-                Text(
-                    tr("point_camera"),
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                        .padding(bottom = if (compactScan) 96.dp else 112.dp)
-                        .background(QrexDesign.backgroundDeep.copy(alpha = .78f),
-                            RoundedCornerShape(9.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                        .testTag("qrex-scan-hint"),
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2
                 )
-                Box(
-                    Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                // Compose measures hint, zoom and buttons together, avoiding
+                // collisions caused by absolute bottom offsets on short devices.
+                Column(
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                        .fillMaxWidth()
                         .padding(horizontal = 10.dp, vertical = 12.dp)
+                        .testTag("qrex-scan-controls"),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(if (compactScan) 8.dp else 12.dp)
                 ) {
+                    if (showZoom) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            zoomPresets.forEach { ratio ->
+                                FilterChip(
+                                    selected = selectedZoom == ratio,
+                                    onClick = {
+                                        val active = camera
+                                        if (active != null) {
+                                            val request = runCatching {
+                                                active.cameraControl.setZoomRatio(ratio)
+                                            }.getOrNull()
+                                            request?.addListener({
+                                                if (camera === active &&
+                                                    runCatching { request.get() }.isSuccess) {
+                                                    selectedZoom = ratio
+                                                }
+                                            }, ContextCompat.getMainExecutor(context))
+                                        }
+                                    },
+                                    label = { Text("${ratio}×") },
+                                    modifier = Modifier.heightIn(min = 48.dp)
+                                        .testTag("qrex-zoom-${ratio}"),
+                                    shape = RoundedCornerShape(18.dp),
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        containerColor = QrexDesign.backgroundDeep.copy(alpha = .88f),
+                                        labelColor = Color.White,
+                                        selectedContainerColor = QrexDesign.actionBlue,
+                                        selectedLabelColor = Color.White
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        tr("point_camera"),
+                        modifier = Modifier.background(
+                            QrexDesign.backgroundDeep.copy(alpha = .78f),
+                            RoundedCornerShape(9.dp)
+                        ).padding(horizontal = 12.dp, vertical = 8.dp)
+                            .testTag("qrex-scan-hint"),
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        maxLines = if (fontScale >= 1.5f) 3 else 2
+                    )
                     scannerActions(true)
                 }
             }
@@ -520,10 +558,14 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     OutlinedButton(
                         onClick = { permission.launch(Manifest.permission.CAMERA) },
                         modifier = Modifier.heightIn(min = 48.dp)
+                            .testTag("qrex-enable-camera")
                     ) {
                         Text(tr("enable_camera"))
                     }
-                    TextButton(onClick = {
+                    TextButton(
+                        modifier = Modifier.heightIn(min = 48.dp)
+                            .testTag("qrex-open-app-settings"),
+                        onClick = {
                         runCatching {
                             context.startActivity(Intent(
                                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
