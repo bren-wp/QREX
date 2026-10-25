@@ -229,7 +229,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_result_single_hero_card_and_destructive_row(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn('testTag("qrex-result-summary")', self.main)
-        self.assertIn('testTag("qrex-result-menu")', self.main)
+        self.assertIn('modifier = Modifier.size(52.dp).testTag("qrex-result-menu")', self.main)
         self.assertIn('testTag("qrex-result-primary")', self.main)
         self.assertIn('testTag("qrex-result-delete")', self.main)
         self.assertIn("heightIn(min = 178.dp)", self.main)
