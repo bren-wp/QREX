@@ -22,6 +22,10 @@
 | Privatnost | Ponovno skrivanje Wi-Fi lozinke pri promjeni vrste; potvrda spremanja Wi-Fi QR-a ostaje | Nikada se ne izvozi Wi-Fi QR bez postojeće potvrde |
 | Responzivnost | Isti `qrexLayoutProfile` za širine i povećani font; formatna mreža unutar scrollable forme, Generate/Save izvan nje | Akcijski gumbi dostupni uz mali viewport i otvorenu tipkovnicu |
 
+## Regresija i popravak zaslona iz CI snimanja
+
+Prva implementacija postavila je 52dp „Više” redak **ispod** četiri brza tipa. Android emulator screenshot gate s pravom je odbio prikaz jer zadani URL `https://brendigo.com` nije ostao vidljiv u stanju Create na referentnom viewportu. Stoga je gumb premješten u **postojeći redak zaglavlja**, zadržao je ≥52dp dodirne visine, 23-jezičnu oznaku i otvaranje naprednih tipova, bez 52dp novoga sadržaja iznad polja. Ovaj nalaz zahtijeva novi screenshot prolaz na točnom PR HEAD-u prije mergea.
+
 ## Što referenca ne dokazuje
 
 Promotivni Android uređaji imaju umjetne okvire/perspektivu i različite gustoće. Ne postoji izdvojena neiskrivljena tamna snimka „Create” s poznatim Android viewportom, stanjem i fontScaleom. Zato ova promjena **nije verificirano podudaranje 1:1 za svaki piksel**; ispravljene su opipljive funkcionalne i geometrijske razlike. Nikakva nova marketinška grafika ili lažni emulator screenshot nije generiran.

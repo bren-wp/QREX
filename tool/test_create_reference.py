@@ -23,6 +23,9 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertIn("val overflowTypes = listOf(3, 4, 5, 7)", self.source)
         self.assertIn("listOf(3, 4, 5, 7).chunked(2)", self.source)
         self.assertIn('testTag("qrex-create-more-types")', self.source)
+        # Advanced disclosure must not add a fifth row ahead of the URL field.
+        self.assertLess(self.source.index('testTag("qrex-create-more-types")'),
+                        self.source.index("val quickTypes = listOf(0, 1, 2, 6)"))
         self.assertIn('testTag("qrex-create-advanced-types")', self.source)
         self.assertIn("showAdvancedTypes = true", self.source)
         self.assertIn("selected = kind == index", self.source)
