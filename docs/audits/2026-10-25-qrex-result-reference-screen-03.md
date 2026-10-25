@@ -11,7 +11,7 @@ Referentni zaslon redom prikazuje: gumb Natrag (lijevo), naslov Rezultat, izborn
 | Element | Android pravilo |
 | --- | --- |
 | Pozadina | `#061020` / `#030A18`, kartice `#111E32`, obrub `#27405F` |
-| Zaglavlje | Centriran naslov s `21.sp`, priključeni Natrag `52.dp`, izbornik `48.dp` |
+| Zaglavlje | Centriran naslov s `21.sp`, priključeni Natrag `52.dp`, izbornik `52.dp` |
 | Vanjski razmak | `16.dp` horizontalno, `10.dp` vertikalno na pomičnom sadržaju |
 | Objedinjena kartica | 100% dostupne širine, radijus `18.dp`, minimalna visina `178.dp`, unutarnja vodoravna margina `16.dp` |
 | Ikona sadržaja | `62.dp` plavi kvadrat s radijusom `14.dp`; bijeli piktogram `32.dp` |
