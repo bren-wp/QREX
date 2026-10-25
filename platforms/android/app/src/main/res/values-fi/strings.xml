@@ -87,4 +87,5 @@
     <string name="splash_message">Kaikki QR-koodeihin — helposti, nopeasti ja ilman tiliä.</string>
     <string name="all">Kaikki</string>
     <string name="no_history">Ei vielä QR-koodeja</string>
+    <string name="back">Takaisin</string>
 </resources>

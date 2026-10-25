@@ -134,8 +134,8 @@ private fun QrexDetailHeader(title: String, onBack: () -> Unit) {
     Row(Modifier.fillMaxWidth().heightIn(min = 58.dp),
         verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = onBack,
-            modifier = Modifier.size(48.dp).testTag("qrex-detail-back")) {
-            Icon(Icons.Default.ArrowBack, contentDescription = tr("close"))
+            modifier = Modifier.size(52.dp).testTag("qrex-detail-back")) {
+            Icon(Icons.Default.ArrowBack, contentDescription = tr("back"))
         }
         Spacer(Modifier.width(6.dp))
         Text(title, fontSize = 23.sp, fontWeight = FontWeight.Bold,

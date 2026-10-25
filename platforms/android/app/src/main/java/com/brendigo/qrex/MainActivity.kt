@@ -55,6 +55,7 @@ import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -1314,7 +1315,7 @@ private fun HistoryScreen(
             value = search,
             onValueChange = { search = it.take(120) },
             label = { Text(tr("search_qr")) },
-            leadingIcon = { Icon(Icons.Default.History, contentDescription = null) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             singleLine = true,
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)

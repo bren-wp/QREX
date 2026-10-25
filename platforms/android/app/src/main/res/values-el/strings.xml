@@ -87,4 +87,5 @@
     <string name="splash_message">Όλα για τα QR — απλά, γρήγορα και χωρίς λογαριασμό.</string>
     <string name="all">Όλα</string>
     <string name="no_history">Δεν υπάρχουν ακόμη κωδικοί QR</string>
+    <string name="back">Πίσω</string>
 </resources>

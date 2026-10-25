@@ -87,4 +87,5 @@
     <string name="splash_message">Everything QR — simple, fast and without an account.</string>
     <string name="all">All</string>
     <string name="no_history">No QR codes yet</string>
+    <string name="back">Back</string>
 </resources>

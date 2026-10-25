@@ -87,4 +87,5 @@
     <string name="splash_message">Alt til QR — nemt, hurtigt og uden konto.</string>
     <string name="all">Alle</string>
     <string name="no_history">Ingen QR-koder endnu</string>
+    <string name="back">Tilbage</string>
 </resources>

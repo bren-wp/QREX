@@ -70,6 +70,9 @@ QREX asks before sharing Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM 
 
 ## Get QREX
 
+**Next QA candidate — QREX v1.0.16 (build 116):** navigation semantics in 23 languages, History search icon parity, and streamlined release CI. This becomes the new public release only after independent Android CI, emulator screenshots, and signing checks pass. Until then, the verified v1.0.15 binaries and screenshots remain available below.
+
+
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
 [**All historical QREX releases (v1.0.0–v1.0.15) →**](docs/releases/INDEX.md)

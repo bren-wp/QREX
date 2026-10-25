@@ -87,4 +87,5 @@
     <string name="splash_message">Alles voor QR — eenvoudig, snel en zonder account.</string>
     <string name="all">Alles</string>
     <string name="no_history">Nog geen QR-codes</string>
+    <string name="back">Terug</string>
 </resources>
