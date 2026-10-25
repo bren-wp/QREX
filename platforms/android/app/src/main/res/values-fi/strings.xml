@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Kaikki historiatiedot ja tallennetut QR-koodit poistetaan pysyvästi. Teema- ja kieliasetukset säilyvät.</string>
     <string name="pdf_saved_code">Tallennettu koodi %1$d / %2$d</string>
     <string name="splash_message">Kaikki QR-koodeihin — helposti, nopeasti ja ilman tiliä.</string>
+    <string name="all">Kaikki</string>
+    <string name="no_history">Ei vielä QR-koodeja</string>
 </resources>

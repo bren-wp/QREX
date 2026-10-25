@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Alle Verlaufseinträge und gespeicherten QR-Codes werden dauerhaft gelöscht. Thema und Sprache bleiben gespeichert.</string>
     <string name="pdf_saved_code">Gespeicherter Code %1$d von %2$d</string>
     <string name="splash_message">QR leicht gemacht — einfach, schnell und ohne Konto.</string>
+    <string name="all">Alle</string>
+    <string name="no_history">Noch keine QR-Codes</string>
 </resources>

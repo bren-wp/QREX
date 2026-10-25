@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Vsi zapisi zgodovine in shranjene kode QR bodo trajno izbrisani. Nastavitve teme in jezika bodo ostale shranjene.</string>
     <string name="pdf_saved_code">Shranjena koda %1$d od %2$d</string>
     <string name="splash_message">Vse za QR — preprosto, hitro in brez računa.</string>
+    <string name="all">Vse</string>
+    <string name="no_history">Za zdaj ni kod QR</string>
 </resources>

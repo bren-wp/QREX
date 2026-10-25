@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Tutte le voci della cronologia e i codici QR salvati verranno eliminati definitivamente. Tema e lingua resteranno salvati.</string>
     <string name="pdf_saved_code">Codice salvato %1$d di %2$d</string>
     <string name="splash_message">Tutto per i QR — semplice, veloce e senza account.</string>
+    <string name="all">Tutti</string>
+    <string name="no_history">Ancora nessun codice QR</string>
 </resources>

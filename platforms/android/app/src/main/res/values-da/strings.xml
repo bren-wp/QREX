@@ -85,4 +85,6 @@
     <string name="clear_history_warning">Alle historikposter og gemte QR-koder slettes permanent. Tema- og sprogvalg gemmes.</string>
     <string name="pdf_saved_code">Gemt kode %1$d af %2$d</string>
     <string name="splash_message">Alt til QR — nemt, hurtigt og uden konto.</string>
+    <string name="all">Alle</string>
+    <string name="no_history">Ingen QR-koder endnu</string>
 </resources>
