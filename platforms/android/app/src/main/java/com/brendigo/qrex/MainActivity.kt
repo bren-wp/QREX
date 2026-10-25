@@ -483,7 +483,7 @@ private fun ResultScreen(
         ) {
             IconButton(onClick = onClose,
                 modifier = Modifier.size(52.dp).testTag("qrex-result-close")) {
-                Icon(Icons.Default.ArrowBack, contentDescription = tr("close"),
+                Icon(Icons.Default.ArrowBack, contentDescription = tr("back"),
                     tint = MaterialTheme.colorScheme.onSurface)
             }
             Text(tr("scan_complete"), modifier = Modifier.weight(1f),
