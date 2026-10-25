@@ -63,6 +63,13 @@ QREX 1.0.8 refines the dark Create QR preview and reference-aligned light Settin
 ## Published: v1.0.7 · Android versionCode 107
 # QREX — Scan. Create. Share.
 
+## Published: v1.0.16 · Android versionCode 116
+
+QREX 1.0.16 is available on GitHub with the dark Q/QR scanner identity, tested camera/gallery and QR creation flows, 23-language accessibility updates, native About and PDF Export fixes, ten genuine Android emulator captures, APK/AAB, and SHA256 hashes. Historical published binaries and Play signing identities remain unchanged. GitHub's disposable APK certificate does not guarantee an in-place upgrade; the public AAB is not Google Play-ready.
+
+[Version 1.0.16 changes](docs/releases/v1.0.16.md) · [Published release](https://github.com/bren-wp/QREX/releases/tag/v1.0.16)
+
+
 ## Latest candidate: v1.0.7 · Android versionCode 107
 
 QREX 1.0.7 refines the actual Android adaptive Q/QR launcher icon, light theme, luminous live-camera scanner, dedicated Language and PDF/ZIP Export screens, and ten real emulator captures. The protected GitHub release process must complete before these changes are called published.
