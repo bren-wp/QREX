@@ -782,6 +782,11 @@ private fun CreateScreen(
     }
     var reveal by remember { mutableStateOf(false) }
     var createMenu by remember { mutableStateOf(false) }
+    // A visible disclosure keeps the four advanced QR formats discoverable.
+    // Editing an advanced QR reopens the same controls automatically.
+    var showAdvancedTypes by remember(screenshotMode, initialValue) {
+        mutableStateOf(draft.first in listOf(3, 4, 5, 7))
+    }
     var confirmWifiSave by remember { mutableStateOf(false) }
     var eventLocation by remember(screenshotMode, initialValue) {
         mutableStateOf(initialValue?.let { QRContent.eventField(it, "LOCATION") }.orEmpty())
@@ -802,8 +807,11 @@ private fun CreateScreen(
     var eventEnd by remember(screenshotMode, initialValue) {
         mutableStateOf(savedEventTime("DTEND", defaultStart.plusHours(1)))
     }
-    val dateTimeFormat = remember {
-        DateTimeFormatter.ofPattern("dd.MM.yyyy · HH:mm", Locale.getDefault())
+    val displayLanguage = LocalLanguage.current
+    val dateTimeFormat = remember(displayLanguage) {
+        val locale = if (displayLanguage == "system") Locale.getDefault()
+            else Locale.forLanguageTag(displayLanguage)
+        DateTimeFormatter.ofPattern("dd.MM.yyyy · HH:mm", locale)
     }
     val input = content.trim()
     val payload = when (kind) {
@@ -927,6 +935,8 @@ private fun CreateScreen(
                                 contactEmail = ""
                                 eventLocation = ""
                                 eventDescription = ""
+                                reveal = false
+                                showAdvancedTypes = true
                                 createMenu = false
                             })
                         }
@@ -948,6 +958,7 @@ private fun CreateScreen(
                 contactEmail = ""
                 eventLocation = ""
                 eventDescription = ""
+                reveal = false
             }
             if (layout.stackTypeChoices) {
                 // 320dp phones and large accessibility fonts: 2 × 2 prevents
@@ -1003,6 +1014,41 @@ private fun CreateScreen(
                     }
                 }
             }
+            // Keep the approved four quick choices, while exposing the
+            // remaining QR types without relying on the header overflow menu.
+            TextButton(
+                onClick = { showAdvancedTypes = !showAdvancedTypes },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                    .testTag("qrex-create-more-types")
+            ) {
+                Icon(Icons.Default.MoreHoriz, contentDescription = null,
+                    modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    if (kind in listOf(3, 4, 5, 7)) "${tr("more")}: ${types[kind]}"
+                    else tr("more"),
+                    maxLines = 2, overflow = TextOverflow.Ellipsis
+                )
+            }
+            if (showAdvancedTypes) {
+                Column(
+                    Modifier.fillMaxWidth().testTag("qrex-create-advanced-types"),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    listOf(3, 4, 5, 7).chunked(2).forEach { pair ->
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            pair.forEach { index ->
+                                QrexCreateTypeChoice(types[index], typeIcons[index],
+                                    selected = kind == index,
+                                    modifier = Modifier.weight(1f)
+                                        .testTag("qrex-create-type-$index"),
+                                    onClick = { selectType(index) })
+                            }
+                        }
+                    }
+                }
+            }
             Spacer(Modifier.height(10.dp))
             OutlinedTextField(
                 value = content,
@@ -1013,8 +1059,12 @@ private fun CreateScreen(
                 minLines = if (kind == 1) 2 else 1,
                 maxLines = if (kind == 1) 4 else 1,
                 label = { Text(if (kind == 7) tr("event_title") else types[kind]) },
-                keyboardOptions = KeyboardOptions(keyboardType =
-                    if (kind == 0) KeyboardType.Uri else KeyboardType.Text)
+                keyboardOptions = KeyboardOptions(keyboardType = when (kind) {
+                    0 -> KeyboardType.Uri
+                    3 -> KeyboardType.Email
+                    4 -> KeyboardType.Phone
+                    else -> KeyboardType.Text
+                })
             )
             if (kind == 2) {
                 Spacer(Modifier.height(8.dp))
