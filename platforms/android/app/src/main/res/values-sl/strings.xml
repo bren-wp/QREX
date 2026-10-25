@@ -87,4 +87,5 @@
     <string name="splash_message">Vse za QR — preprosto, hitro in brez računa.</string>
     <string name="all">Vse</string>
     <string name="no_history">Za zdaj ni kod QR</string>
+    <string name="back">Nazaj</string>
 </resources>

@@ -96,6 +96,7 @@ object QREXStrings {
         "splash_message" -> R.string.splash_message
         "all" -> R.string.all
         "no_history" -> R.string.no_history
+        "back" -> R.string.back
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

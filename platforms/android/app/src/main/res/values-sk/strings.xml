@@ -87,4 +87,5 @@
     <string name="splash_message">Všetko pre QR — jednoducho, rýchlo a bez účtu.</string>
     <string name="all">Všetky</string>
     <string name="no_history">Zatiaľ žiadne QR kódy</string>
+    <string name="back">Späť</string>
 </resources>

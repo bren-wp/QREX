@@ -87,4 +87,5 @@
     <string name="splash_message">Totul pentru QR — simplu, rapid și fără cont.</string>
     <string name="all">Toate</string>
     <string name="no_history">Încă nu există coduri QR</string>
+    <string name="back">Înapoi</string>
 </resources>
