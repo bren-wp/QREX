@@ -87,4 +87,5 @@
     <string name="splash_message">Усе для QR — просто, швидко та без облікового запису.</string>
     <string name="all">Усі</string>
     <string name="no_history">Поки немає QR-кодів</string>
+    <string name="back">Назад</string>
 </resources>

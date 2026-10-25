@@ -87,4 +87,5 @@
     <string name="splash_message">Minden QR-hez — egyszerűen, gyorsan, fiók nélkül.</string>
     <string name="all">Összes</string>
     <string name="no_history">Még nincsenek QR-kódok</string>
+    <string name="back">Vissza</string>
 </resources>

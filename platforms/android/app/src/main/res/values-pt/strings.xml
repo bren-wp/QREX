@@ -87,4 +87,5 @@
     <string name="splash_message">Tudo sobre QR — simples, rápido e sem conta.</string>
     <string name="all">Todos</string>
     <string name="no_history">Ainda não há códigos QR</string>
+    <string name="back">Voltar</string>
 </resources>

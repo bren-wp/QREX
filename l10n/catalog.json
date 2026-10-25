@@ -90,7 +90,8 @@
         "pdf_saved_code": "Saved code %1$d of %2$d",
         "splash_message": "Everything QR — simple, fast and without an account.",
         "all": "All",
-        "no_history": "No QR codes yet"
+        "no_history": "No QR codes yet",
+        "back": "Back"
       }
     },
     "hr": {
@@ -182,7 +183,8 @@
         "pdf_saved_code": "Spremljeni kod %1$d od %2$d",
         "splash_message": "Sve što može QR — jednostavno, brzo i bez prijave.",
         "all": "Sve",
-        "no_history": "Još nema QR kodova"
+        "no_history": "Još nema QR kodova",
+        "back": "Natrag"
       }
     },
     "de": {
@@ -274,7 +276,8 @@
         "pdf_saved_code": "Gespeicherter Code %1$d von %2$d",
         "splash_message": "QR leicht gemacht — einfach, schnell und ohne Konto.",
         "all": "Alle",
-        "no_history": "Noch keine QR-Codes"
+        "no_history": "Noch keine QR-Codes",
+        "back": "Zurück"
       }
     },
     "fr": {
@@ -366,7 +369,8 @@
         "pdf_saved_code": "Code enregistré %1$d sur %2$d",
         "splash_message": "Tout pour les QR — simplement, rapidement et sans compte.",
         "all": "Tous",
-        "no_history": "Aucun code QR pour le moment"
+        "no_history": "Aucun code QR pour le moment",
+        "back": "Retour"
       }
     },
     "es": {
@@ -458,7 +462,8 @@
         "pdf_saved_code": "Código guardado %1$d de %2$d",
         "splash_message": "Todo sobre QR — fácil, rápido y sin cuenta.",
         "all": "Todos",
-        "no_history": "Todavía no hay códigos QR"
+        "no_history": "Todavía no hay códigos QR",
+        "back": "Atrás"
       }
     },
     "it": {
@@ -550,7 +555,8 @@
         "pdf_saved_code": "Codice salvato %1$d di %2$d",
         "splash_message": "Tutto per i QR — semplice, veloce e senza account.",
         "all": "Tutti",
-        "no_history": "Ancora nessun codice QR"
+        "no_history": "Ancora nessun codice QR",
+        "back": "Indietro"
       }
     },
     "pt": {
@@ -642,7 +648,8 @@
         "pdf_saved_code": "Código guardado %1$d de %2$d",
         "splash_message": "Tudo sobre QR — simples, rápido e sem conta.",
         "all": "Todos",
-        "no_history": "Ainda não há códigos QR"
+        "no_history": "Ainda não há códigos QR",
+        "back": "Voltar"
       }
     },
     "nl": {
@@ -734,7 +741,8 @@
         "pdf_saved_code": "Opgeslagen code %1$d van %2$d",
         "splash_message": "Alles voor QR — eenvoudig, snel en zonder account.",
         "all": "Alles",
-        "no_history": "Nog geen QR-codes"
+        "no_history": "Nog geen QR-codes",
+        "back": "Terug"
       }
     },
     "pl": {
@@ -826,7 +834,8 @@
         "pdf_saved_code": "Zapisany kod %1$d z %2$d",
         "splash_message": "Wszystko o QR — prosto, szybko i bez konta.",
         "all": "Wszystkie",
-        "no_history": "Brak kodów QR"
+        "no_history": "Brak kodów QR",
+        "back": "Wstecz"
       }
     },
     "cs": {
@@ -918,7 +927,8 @@
         "pdf_saved_code": "Uložený kód %1$d z %2$d",
         "splash_message": "Vše pro QR — jednoduše, rychle a bez účtu.",
         "all": "Vše",
-        "no_history": "Zatím žádné QR kódy"
+        "no_history": "Zatím žádné QR kódy",
+        "back": "Zpět"
       }
     },
     "sk": {
@@ -1010,7 +1020,8 @@
         "pdf_saved_code": "Uložený kód %1$d z %2$d",
         "splash_message": "Všetko pre QR — jednoducho, rýchlo a bez účtu.",
         "all": "Všetky",
-        "no_history": "Zatiaľ žiadne QR kódy"
+        "no_history": "Zatiaľ žiadne QR kódy",
+        "back": "Späť"
       }
     },
     "sl": {
@@ -1102,7 +1113,8 @@
         "pdf_saved_code": "Shranjena koda %1$d od %2$d",
         "splash_message": "Vse za QR — preprosto, hitro in brez računa.",
         "all": "Vse",
-        "no_history": "Za zdaj ni kod QR"
+        "no_history": "Za zdaj ni kod QR",
+        "back": "Nazaj"
       }
     },
     "hu": {
@@ -1194,7 +1206,8 @@
         "pdf_saved_code": "Mentett kód: %1$d / %2$d",
         "splash_message": "Minden QR-hez — egyszerűen, gyorsan, fiók nélkül.",
         "all": "Összes",
-        "no_history": "Még nincsenek QR-kódok"
+        "no_history": "Még nincsenek QR-kódok",
+        "back": "Vissza"
       }
     },
     "ro": {
@@ -1286,7 +1299,8 @@
         "pdf_saved_code": "Cod salvat %1$d din %2$d",
         "splash_message": "Totul pentru QR — simplu, rapid și fără cont.",
         "all": "Toate",
-        "no_history": "Încă nu există coduri QR"
+        "no_history": "Încă nu există coduri QR",
+        "back": "Înapoi"
       }
     },
     "bg": {
@@ -1378,7 +1392,8 @@
         "pdf_saved_code": "Запазен код %1$d от %2$d",
         "splash_message": "Всичко за QR — лесно, бързо и без профил.",
         "all": "Всички",
-        "no_history": "Все още няма QR кодове"
+        "no_history": "Все още няма QR кодове",
+        "back": "Назад"
       }
     },
     "el": {
@@ -1470,7 +1485,8 @@
         "pdf_saved_code": "Αποθηκευμένος κωδικός %1$d από %2$d",
         "splash_message": "Όλα για τα QR — απλά, γρήγορα και χωρίς λογαριασμό.",
         "all": "Όλα",
-        "no_history": "Δεν υπάρχουν ακόμη κωδικοί QR"
+        "no_history": "Δεν υπάρχουν ακόμη κωδικοί QR",
+        "back": "Πίσω"
       }
     },
     "tr": {
@@ -1562,7 +1578,8 @@
         "pdf_saved_code": "Kayıtlı kod %1$d / %2$d",
         "splash_message": "QR için her şey — basit, hızlı ve hesapsız.",
         "all": "Tümü",
-        "no_history": "Henüz QR kod yok"
+        "no_history": "Henüz QR kod yok",
+        "back": "Geri"
       }
     },
     "uk": {
@@ -1654,7 +1671,8 @@
         "pdf_saved_code": "Збережений код %1$d із %2$d",
         "splash_message": "Усе для QR — просто, швидко та без облікового запису.",
         "all": "Усі",
-        "no_history": "Поки немає QR-кодів"
+        "no_history": "Поки немає QR-кодів",
+        "back": "Назад"
       }
     },
     "ru": {
@@ -1746,7 +1764,8 @@
         "pdf_saved_code": "Сохранённый код %1$d из %2$d",
         "splash_message": "Всё для QR — просто, быстро и без аккаунта.",
         "all": "Все",
-        "no_history": "Пока нет QR-кодов"
+        "no_history": "Пока нет QR-кодов",
+        "back": "Назад"
       }
     },
     "sv": {
@@ -1838,7 +1857,8 @@
         "pdf_saved_code": "Sparad kod %1$d av %2$d",
         "splash_message": "Allt för QR — enkelt, snabbt och utan konto.",
         "all": "Alla",
-        "no_history": "Inga QR-koder ännu"
+        "no_history": "Inga QR-koder ännu",
+        "back": "Tillbaka"
       }
     },
     "da": {
@@ -1930,7 +1950,8 @@
         "pdf_saved_code": "Gemt kode %1$d af %2$d",
         "splash_message": "Alt til QR — nemt, hurtigt og uden konto.",
         "all": "Alle",
-        "no_history": "Ingen QR-koder endnu"
+        "no_history": "Ingen QR-koder endnu",
+        "back": "Tilbage"
       }
     },
     "fi": {
@@ -2022,7 +2043,8 @@
         "pdf_saved_code": "Tallennettu koodi %1$d / %2$d",
         "splash_message": "Kaikki QR-koodeihin — helposti, nopeasti ja ilman tiliä.",
         "all": "Kaikki",
-        "no_history": "Ei vielä QR-koodeja"
+        "no_history": "Ei vielä QR-koodeja",
+        "back": "Takaisin"
       }
     },
     "nb": {
@@ -2114,7 +2136,8 @@
         "pdf_saved_code": "Lagret kode %1$d av %2$d",
         "splash_message": "Alt for QR — enkelt, raskt og uten konto.",
         "all": "Alle",
-        "no_history": "Ingen QR-koder ennå"
+        "no_history": "Ingen QR-koder ennå",
+        "back": "Tilbake"
       }
     }
   }

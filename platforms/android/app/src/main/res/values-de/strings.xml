@@ -87,4 +87,5 @@
     <string name="splash_message">QR leicht gemacht — einfach, schnell und ohne Konto.</string>
     <string name="all">Alle</string>
     <string name="no_history">Noch keine QR-Codes</string>
+    <string name="back">Zurück</string>
 </resources>
