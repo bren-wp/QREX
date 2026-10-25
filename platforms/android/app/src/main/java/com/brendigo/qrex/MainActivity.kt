@@ -917,6 +917,20 @@ private fun CreateScreen(
                 }
                 Icon(Icons.Default.Shield, contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                // Visible advanced QR disclosure shares the existing header
+                // row. It adds NO vertical space ahead of the real URL form:
+                // emulator screenshot verification requires the input visible.
+                TextButton(
+                    onClick = { showAdvancedTypes = !showAdvancedTypes },
+                    modifier = Modifier.heightIn(min = 52.dp)
+                        .testTag("qrex-create-more-types"),
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
+                        modifier = Modifier.size(18.dp))
+                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        fontSize = 11.sp)
+                }
                 Box {
                     IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp)) {
                         Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
@@ -1013,22 +1027,6 @@ private fun CreateScreen(
                         }
                     }
                 }
-            }
-            // Keep the approved four quick choices, while exposing the
-            // remaining QR types without relying on the header overflow menu.
-            TextButton(
-                onClick = { showAdvancedTypes = !showAdvancedTypes },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                    .testTag("qrex-create-more-types")
-            ) {
-                Icon(Icons.Default.MoreHoriz, contentDescription = null,
-                    modifier = Modifier.size(20.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    if (kind in listOf(3, 4, 5, 7)) "${tr("more")}: ${types[kind]}"
-                    else tr("more"),
-                    maxLines = 2, overflow = TextOverflow.Ellipsis
-                )
             }
             if (showAdvancedTypes) {
                 Column(
