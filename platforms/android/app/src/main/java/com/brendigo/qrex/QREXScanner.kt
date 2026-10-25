@@ -22,6 +22,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
@@ -63,7 +64,7 @@ import kotlinx.coroutines.withContext
 @Composable
 private fun ScannerCornerOverlay(modifier: Modifier = Modifier) {
     Canvas(modifier) {
-        val side = size.minDimension * 0.56f
+        val side = size.minDimension * 0.61f
         val left = (size.width - side) / 2f
         val top = (size.height - side) / 2f
         val right = left + side
@@ -279,6 +280,91 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val compactScan = window.screenWidthDp < 360 ||
         window.screenHeightDp < 670 ||
         LocalDensity.current.fontScale >= 1.35f
+    // A single composable action row is reused in the preview and in the
+    // permission-denied state. Gallery never depends on camera permission.
+    // Neither action is a decorative graphic; each retains the original
+    // one-shot photo picker / asynchronous CameraX torch callback.
+    val scannerActions: @Composable (Boolean) -> Unit = { inCamera ->
+        Row(Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)) {
+            Button(
+                onClick = {
+                    if (galleryActive.compareAndSet(false, true)) {
+                        galleryBusy = true
+                        runCatching {
+                            photoPicker.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }.onFailure {
+                            galleryActive.set(false)
+                            galleryBusy = false
+                            message = imageFailed
+                        }
+                    }
+                },
+                enabled = !galleryBusy,
+                modifier = Modifier.weight(1f)
+                    .heightIn(min = if (compactScan) 64.dp else 80.dp)
+                    .testTag("qrex-scan-gallery"),
+                shape = RoundedCornerShape(15.dp),
+                border = if (inCamera) BorderStroke(
+                    1.dp, QrexDesign.accentBright.copy(alpha = .55f)
+                ) else null,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (inCamera)
+                        QrexDesign.backgroundDeep.copy(alpha = .88f)
+                    else QrexDesign.actionBlue,
+                    contentColor = Color.White
+                )
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (galleryBusy) {
+                        // Visible work feedback while an image is being decoded.
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(22.dp), strokeWidth = 2.dp,
+                            color = Color.White
+                        )
+                    } else {
+                        Icon(Icons.Default.PhotoLibrary, contentDescription = null,
+                            tint = if (inCamera) QrexDesign.accentBright else Color.White,
+                             modifier = Modifier.size(22.dp))
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text(tr("from_gallery"), maxLines = 2,
+                        textAlign = TextAlign.Center)
+                }
+            }
+            OutlinedButton(
+                onClick = toggleTorch,
+                enabled = allowed && !torchBusy &&
+                    camera?.cameraInfo?.hasFlashUnit() == true,
+                modifier = Modifier.weight(1f)
+                    .heightIn(min = if (compactScan) 64.dp else 80.dp)
+                    .testTag("qrex-scan-torch"),
+                shape = RoundedCornerShape(15.dp),
+                border = BorderStroke(
+                    1.dp, if (inCamera) Color.White.copy(alpha = .19f)
+                    else MaterialTheme.colorScheme.outlineVariant
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = if (inCamera)
+                        QrexDesign.backgroundDeep.copy(alpha = .88f)
+                    else MaterialTheme.colorScheme.surface,
+                    contentColor = if (inCamera) Color.White
+                    else MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                        contentDescription = null, tint = QrexDesign.accentBright,
+                        modifier = Modifier.size(22.dp))
+                    Spacer(Modifier.height(4.dp))
+                    Text(tr("flashlight"), maxLines = 2,
+                        textAlign = TextAlign.Center)
+                }
+            }
+        }
+    }
     Column(Modifier.fillMaxSize().padding(if (compactScan) 10.dp else 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
         QrexBrandHeader(onMore = onMore)
@@ -356,15 +442,17 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             }
             Box(Modifier.fillMaxWidth().weight(1f)
                 .clip(RoundedCornerShape(24.dp))
-                .background(QrexDesign.surface)) {
+                .background(QrexDesign.surface)
+                .testTag("qrex-camera-preview")) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
                 ScannerCornerOverlay(Modifier.fillMaxSize())
                 // Actual optical/digital zoom controls: never offer levels
                 // outside the camera's advertised range.
                 val zoomLimits = camera?.cameraInfo?.zoomState?.value
-                if (!compactScan) Row(
+                if (!compactScan && zoomLimits != null &&
+                    zoomLimits.maxZoomRatio > 1f) Row(
                     modifier = Modifier.align(Alignment.BottomCenter)
-                        .padding(bottom = 58.dp),
+                        .padding(bottom = 178.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf(.5f, 1f, 2f).forEach { ratio ->
@@ -400,17 +488,27 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         )
                     }
                 }
-                // One torch control lives below the camera. Avoid a second
-                // button on top of the live scanner viewport.
+                // The screenshot reference has both real actions *inside*
+                // the camera panel. Keep the instruction above those actions,
+                // zoom controls farther above, and the live image behind all.
                 Text(
                     tr("point_camera"),
                     modifier = Modifier.align(Alignment.BottomCenter)
-                        .padding(18.dp)
-                        .background(QrexDesign.backgroundDeep.copy(alpha = .76f),
+                        .padding(bottom = if (compactScan) 96.dp else 112.dp)
+                        .background(QrexDesign.backgroundDeep.copy(alpha = .78f),
                             RoundedCornerShape(9.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    color = Color.White
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .testTag("qrex-scan-hint"),
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
                 )
+                Box(
+                    Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 12.dp)
+                ) {
+                    scannerActions(true)
+                }
             }
         } else {
             Box(Modifier.fillMaxWidth().weight(1f)
@@ -438,72 +536,10 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 }
             }
         }
-        Spacer(Modifier.height(if (compactScan) 7.dp else 12.dp))
-        Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)) {
-            Button(
-                onClick = {
-                    if (galleryActive.compareAndSet(false, true)) {
-                        galleryBusy = true
-                        runCatching {
-                            photoPicker.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        }.onFailure {
-                            galleryActive.set(false)
-                            galleryBusy = false
-                            message = imageFailed
-                        }
-                    }
-                },
-                enabled = !galleryBusy,
-                modifier = Modifier.weight(1f)
-                    .heightIn(min = if (compactScan) 52.dp else 66.dp)
-                    .testTag("qrex-scan-gallery"),
-                shape = RoundedCornerShape(15.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = QrexDesign.actionBlue,
-                    contentColor = Color.White
-                )
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (galleryBusy) {
-                        // Visible work feedback while an image is being decoded.
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(22.dp), strokeWidth = 2.dp,
-                            color = Color.White
-                        )
-                    } else {
-                        Icon(Icons.Default.PhotoLibrary, contentDescription = null,
-                            tint = Color.White, modifier = Modifier.size(22.dp))
-                    }
-                    Spacer(Modifier.height(4.dp))
-                    Text(tr("from_gallery"), maxLines = 2,
-                        textAlign = TextAlign.Center)
-                }
-            }
-            OutlinedButton(
-                onClick = toggleTorch,
-                enabled = allowed && !torchBusy &&
-                    camera?.cameraInfo?.hasFlashUnit() == true,
-                modifier = Modifier.weight(1f)
-                    .heightIn(min = if (compactScan) 52.dp else 66.dp)
-                    .testTag("qrex-scan-torch"),
-                shape = RoundedCornerShape(15.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                )
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                        contentDescription = null, tint = QrexDesign.accentBright,
-                        modifier = Modifier.size(22.dp))
-                    Spacer(Modifier.height(4.dp))
-                    Text(tr("flashlight"), maxLines = 2,
-                        textAlign = TextAlign.Center)
-                }
-            }
+        if (!allowed) {
+            // Keep the gallery usable when camera access is denied.
+            Spacer(Modifier.height(if (compactScan) 7.dp else 12.dp))
+            scannerActions(false)
         }
     }
 
