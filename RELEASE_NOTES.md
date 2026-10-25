@@ -1,3 +1,9 @@
+## QREX v1.0.15 — release candidate · Android versionCode 115
+
+Fixes the Android 15 (API 35) Result Back touch-target geometry failure, increases History filter and Language/PDF Export Back hit areas, and incorporates the full on-device control-size audit. Includes source-level strict pixel comparator for ten real Android screen captures. All five emulator API levels 26/31/34/35/36 passed the regression matrix before the version bump. Exact-main build, localization and emulator captures must pass again before the new APK/AAB GitHub publisher runs. The GitHub binaries use a disposable certificate and cannot update installs signed with another identity.
+
+[QREX v1.0.15 changes](docs/releases/v1.0.15.md) · [GitHub releases](https://github.com/bren-wp/QREX/releases)
+
 ## Published: v1.0.14 · Android versionCode 114
 
 Launcher/background parity, a correct monochrome QR finder cutout, accessible icon/button hit areas across all app screens, responsive QR quick-type grids, and 23-language dark UI refinements. GitHub APK/AAB publishing uses exact-main-SHA automated validation and independent disposable signing; it cannot upgrade a differently signed installation.
