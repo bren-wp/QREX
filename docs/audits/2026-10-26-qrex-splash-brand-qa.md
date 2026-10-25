@@ -40,9 +40,46 @@ Play signer, package ID or saved records.
   and device testing are inspected. These tests do not prove visual 1:1
   from perspective-transformed marketing art.
 
+## Scanner / screen 02 continuation in the same PR
+
+The original live CameraX PreviewView, offline ZXing analysis, gallery picker
+and torch callback are retained; no mock photo or network scanning was added.
+
+- The bottom hint, camera actions and available zoom chips now share one
+  measured Compose Column within the preview instead of separately fixed
+  bottom offsets. This is a layout correction, not a camera feed change.
+- ScannerCornerOverlay reserves a bottom UI region, limited to 45% of its
+  available height, so short screens can still show a guide and camera actions.
+- CameraX min/max zoom ratios filter the preset chips. Devices with maximum
+  zoom between 1× and 2× expose that real maximum rather than a disabled 2×.
+- Gallery/Torch labels allow a third line with increased system font scale;
+  the controls remain at least 64dp compact, 80dp normal and 88dp at ≥1.5×
+  font scale. The Settings recovery action now has a 48dp minimum target.
+- Existing permitted/denied camera behavior, gallery cancellation guard,
+  main-thread torch confirmation and camera frame closure are unchanged.
+- New device-independent Kotlin tests cover zoom bounds (normal/ultrawide/
+  capped/invalid) and an instrumentation test measures actual gallery, torch
+  and camera recovery action hit regions on the running Compose screen.
+- Existing Python source-guard tests were updated to assert the new layouts
+  *instead of* asserting the removed fixed offsets; do not skip tests.
+
+Screen 03 Result: the pinned 52dp Back icon now announces the localized
+`back` string instead of "Close"; it continues to use the same navigation
+callback and retains the original screenshot fixture behavior.
+
+### Validation notes
+
+- Initial scanner branch CI identified two stale source-contract checks
+  (`test_1_0_1_quality` / `test_ux_dead_code`); those were updated after
+  reading the actual failed logs, without disabling the underlying checks.
+- This document does **not** claim final emulator, screenshot or full API-matrix
+  success until exact-HEAD CI checks are complete.
+- Camera-specific zoom, flash, focus, denied permissions and OEM launcher
+  masks still need physical-device verification.
+
 ## Follow-on screen order
 
-Scan → Result → Create → History / Saved → More → Language → Export →
+Create → History / Saved → More → Language → Export →
 dialogs and accessibility states. Each must undergo screenshot diffing
 against properly rectified reference captures at matched locale, DPI,
 viewport and UI state before any zero-pixel-difference claim.
