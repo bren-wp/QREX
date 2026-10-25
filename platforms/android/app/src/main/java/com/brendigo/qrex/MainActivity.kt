@@ -1546,6 +1546,7 @@ private fun MoreScreen(
     var showDelete by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
     var confirmPdfExport by remember { mutableStateOf(false) }
     val archiveScope = rememberCoroutineScope()
     val trSaved = tr("saved")
@@ -1607,9 +1608,8 @@ private fun MoreScreen(
                     onClick = { showTerms = true })
                 QrexSettingsListRow(tr("about"), Icons.Default.Info,
                     subtitle = tr("developed_by"),
-                    onClick = {
-                        openLink(context, Uri.parse("https://brendigo.com"))
-                    })
+                    onClick = { showAbout = true },
+                    modifier = Modifier.testTag("qrex-more-about"))
                 Spacer(Modifier.height(6.dp))
                 QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
                     destructive = true, onClick = { showDelete = true })
@@ -1632,7 +1632,7 @@ private fun MoreScreen(
                 }
                 QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
                     subtitle = tr("developed_by"),
-                    onClick = { openLink(context, Uri.parse("https://brendigo.com")) })
+                    onClick = { showAbout = true }, modifier = Modifier.testTag("qrex-more-about"))
                 OutlinedButton(onClick = { showDelete = true },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
@@ -1646,6 +1646,48 @@ private fun MoreScreen(
         }
         Spacer(Modifier.height(20.dp))
     }
+    }
+    if (showAbout) {
+        val versionName = remember(context) {
+            // Read the installed APK metadata, never a hardcoded release number.
+            @Suppress("DEPRECATION")
+            val info = runCatching {
+                context.packageManager.getPackageInfo(context.packageName, 0)
+            }.getOrNull()
+            info?.versionName.orEmpty()
+        }
+        AlertDialog(
+            onDismissRequest = { showAbout = false },
+            modifier = Modifier.testTag("qrex-about-dialog"),
+            title = { Text(tr("about")) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                    QrexBrandMark(logoSize = 32.dp, textSize = 21.sp)
+                    Text(tr("developed_by"),
+                        color = MaterialTheme.colorScheme.onSurface)
+                    if (versionName.isNotBlank()) {
+                        Text("v$versionName",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Text(tr("tagline"),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("brendigo.com",
+                        color = MaterialTheme.colorScheme.primary)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showAbout = false }) { Text(tr("close")) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showAbout = false
+                        openLink(context, Uri.parse("https://brendigo.com"))
+                    },
+                    modifier = Modifier.testTag("qrex-about-website")
+                ) { Text(tr("open_link")) }
+            }
+        )
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
