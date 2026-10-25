@@ -293,8 +293,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         workflow = (WORKFLOWS / "github-release-1.0.14.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.14.md").read_text("utf-8")
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        self.assertIn("versionCode = 114", gradle)
-        self.assertIn('versionName = "1.0.14"', gradle)
+        # Historical v1.0.14 source metadata is immutable in its own
+        # release workflow; current application version must advance.
         self.assertIn("gh release create v1.0.14", workflow)
         self.assertIn("com.brendigo.qrex 114 1.0.14", workflow)
         self.assertIn("assert len(screens) == 10", workflow)
@@ -307,6 +307,32 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", workflow)
         self.assertIn("disposable", notes)
         self.assertIn("cannot update", notes)
+        self.assertIn("23", notes)
+
+    def test_115_crashfix_github_release_requires_exact_sha_and_signed_assets(self):
+        workflow = (WORKFLOWS / "github-release-1.0.15.yml").read_text("utf-8")
+        notes = (ROOT / "docs/releases/v1.0.15.md").read_text("utf-8")
+        gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
+        self.assertIn("versionCode = 115", gradle)
+        self.assertIn('versionName = "1.0.15"', gradle)
+        self.assertIn("gh release create v1.0.15", workflow)
+        self.assertIn("com.brendigo.qrex 115 1.0.15", workflow)
+        self.assertIn("assert len(screens) == 10", workflow)
+        for name in (
+            "native-platforms.yml", "capture-screenshots.yml",
+            "generate-localizations.yml", "SHA256SUMS.txt",
+            "keytool -genkeypair", "apksigner", "jarsigner -verify",
+            "sha256sum --check SHA256SUMS.txt", "tool/verify_screenshots.py",
+            "github.event.workflow_run.head_sha", "commits/main",
+            "QREX-Android-1.0.15.apk",
+            "QREX-Android-1.0.15.aab",
+            "QREX-Android-1.0.15-Play-UNSIGNED-QA.aab"
+        ):
+            self.assertIn(name, workflow)
+        self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", workflow)
+        self.assertIn("disposable", notes)
+        self.assertIn("cannot update", notes)
+        self.assertIn("API 35", notes)
         self.assertIn("23", notes)
 
     def test_historical_113_and_current_published_114_links_are_grounded(self):
@@ -340,8 +366,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 114", gradle)
-        self.assertIn('versionName = "1.0.14"', gradle)
+        self.assertIn("versionCode = 115", gradle)
+        self.assertIn('versionName = "1.0.15"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
@@ -359,6 +385,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertTrue((ROOT / "docs/releases/v1.0.12.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.13.md").exists())
         self.assertTrue((ROOT / "docs/releases/v1.0.14.md").exists())
+        self.assertTrue((ROOT / "docs/releases/v1.0.15.md").exists())
         self.assertTrue((ROOT / "docs/PLAY_STORE_SUBMISSION.md").exists())
 
 
