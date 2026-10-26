@@ -10,7 +10,8 @@ ARCHIVE = ROOT / "docs/releases/workflows"
 
 class ArchivedPublisherTests(unittest.TestCase):
     def test_all_published_publishers_are_inert_and_preserved(self):
-        self.assertEqual([], list(ACTIVE.glob("github-release-1.0.*.yml")))
+        self.assertEqual(["github-release-1.0.17.yml"],
+                         sorted(p.name for p in ACTIVE.glob("github-release-1.0.*.yml")))
         expected = {f"github-release-1.0.{n}.yml" for n in range(1, 17)}
         self.assertEqual(expected, {p.name for p in ARCHIVE.glob("github-release-1.0.*.yml")})
         for name in sorted(expected):
