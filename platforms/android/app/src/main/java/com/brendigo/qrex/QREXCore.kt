@@ -29,6 +29,15 @@ internal fun eventDateTimeWithDate(
 
 /** Search saved QR information without exposing Wi-Fi secrets through keyword matches. */
 object QRHistory {
+    /**
+     * LazyColumn keys can be stored in Android's saved UI state. Never use
+     * record.raw: Wi-Fi QR codes contain passwords and other QR formats can
+     * carry private data. Position disambiguates identical millisecond stamps
+     * in filtered lists; no QR payload or digest reaches a saved-state key.
+     */
+    fun uiRowKey(record: QRRecord, visibleIndex: Int): String =
+        "${record.timestamp}:$visibleIndex"
+
     fun matches(record: QRRecord, query: String, savedOnly: Boolean): Boolean {
         if (savedOnly && !record.saved) return false
         if (query.isBlank()) return true
