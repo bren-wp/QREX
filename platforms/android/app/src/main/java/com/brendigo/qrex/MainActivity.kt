@@ -764,6 +764,17 @@ private fun QrexCreateTypeChoice(
     }
 }
 
+/**
+ * QR bitmap work is strictly for a visible valid Create preview, never for a
+ * hidden preview while the IME is open or the device is too short.
+ * Keep this pure for JVM regression tests and cheap Compose recompositions.
+ */
+internal fun shouldGenerateCreateQrPreview(
+    imeVisible: Boolean,
+    layoutAllowsPreview: Boolean,
+    payloadValid: Boolean
+): Boolean = !imeVisible && layoutAllowsPreview && payloadValid
+
 @Composable
 private fun CreateScreen(
     screenshotMode: String? = null,
@@ -854,15 +865,34 @@ private fun CreateScreen(
         else -> QRContent.event(input, eventStart, eventEnd, eventLocation, eventDescription).orEmpty()
     }
 
-    val qrFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = payload) {
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    // Avoid SubcomposeLayout and read only the current available phone dimensions.
+    val window = LocalConfiguration.current
+    val layout = qrexLayoutProfile(
+        window.screenWidthDp, (window.screenHeightDp - 80).coerceAtLeast(0),
+        LocalDensity.current.fontScale
+    )
+    val previewVisible = !imeVisible && layout.showQrPreview
+    val canGenerate = canOpenQrResult(payload)
+    // Debounce generation only when users can see a valid preview. Keyboard,
+    // small viewport and invalid payloads must not trigger a 680×680 bitmap.
+    // Keying to visibility also discards an obsolete image on IME changes.
+    val qrFrame by produceState<Pair<String, Bitmap>?>(
+        initialValue = null, key1 = payload, key2 = previewVisible
+    ) {
         value = null
+        if (!shouldGenerateCreateQrPreview(imeVisible, layout.showQrPreview, canGenerate)) {
+            return@produceState
+        }
         delay(140)
         val image = withContext(Dispatchers.Default) { generateQR(payload) }
         value = image?.let { payload to it }
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
-    val canGenerate = canOpenQrResult(payload)
     var pendingExportPayload by remember { mutableStateOf<String?>(null) }
+    // Pin the exact Wi-Fi payload to which the user consented: the form can
+    // never silently switch the payload between warning and file picker.
+    var pendingWifiExportPayload by remember { mutableStateOf<String?>(null) }
     val exportScope = rememberCoroutineScope()
     val imageSaved = tr("saved")
     val imageFailed = tr("png_save_failed")
@@ -890,10 +920,12 @@ private fun CreateScreen(
         }
     }
     fun requestImageExport() {
-        if (QRContent.isWifi(payload)) {
+        val requested = payload.takeIf { QRContent.canRender(it) } ?: return
+        if (QRContent.isWifi(requested)) {
+            pendingWifiExportPayload = requested
             confirmWifiSave = true
         } else {
-            pendingExportPayload = payload
+            pendingExportPayload = requested
             exportImage.launch("QREX-QR.png")
         }
     }
@@ -918,15 +950,7 @@ private fun CreateScreen(
         ).show()
     }
 
-    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    // Android LocalConfiguration updates for screen sizes, rotation and
-    // multi-window. Do not use BoxWithConstraints/SubcomposeLayout here:
-    // repeated subcomposition caused a documented Android 8 crash.
-    val window = LocalConfiguration.current
-    val layout = qrexLayoutProfile(
-        window.screenWidthDp, (window.screenHeightDp - 80).coerceAtLeast(0),
-        LocalDensity.current.fontScale
-    )
+
     val horizontalPadding = layout.horizontalPaddingDp.dp
     val qrSize = layout.darkQrSizeDp.dp
     Column(Modifier.fillMaxSize().imePadding().testTag("qrex-create-screen")) {
@@ -1181,7 +1205,7 @@ private fun CreateScreen(
         // Keep the QR preview directly above Generate and Save, as in the
         // approved phone reference. Collapse only the preview while typing,
         // leaving the scrollable form and essential actions accessible.
-        if (!imeVisible && layout.showQrPreview) {
+        if (previewVisible) {
             QrexPanel(Modifier.fillMaxWidth()
                 .padding(horizontal = horizontalPadding, vertical = 4.dp)) {
                 // Single high-contrast centered QR preview.
@@ -1231,18 +1255,29 @@ private fun CreateScreen(
     }
     if (confirmWifiSave) {
         AlertDialog(
-            onDismissRequest = { confirmWifiSave = false },
+            onDismissRequest = {
+                confirmWifiSave = false
+                pendingWifiExportPayload = null
+            },
             title = { Text(tr("wifi_save_title")) },
             text = { Text(tr("wifi_save_warning")) },
             confirmButton = {
                 TextButton(onClick = {
+                    val approved = pendingWifiExportPayload
                     confirmWifiSave = false
-                    pendingExportPayload = payload
-                    exportImage.launch("QREX-QR.png")
+                    pendingWifiExportPayload = null
+                    if (approved != null && QRContent.canRender(approved) &&
+                        QRContent.isWifi(approved)) {
+                        pendingExportPayload = approved
+                        exportImage.launch("QREX-QR.png")
+                    }
                 }) { Text(tr("save_to_device")) }
             },
             dismissButton = {
-                TextButton(onClick = { confirmWifiSave = false }) { Text(tr("cancel")) }
+                TextButton(onClick = {
+                    confirmWifiSave = false
+                    pendingWifiExportPayload = null
+                }) { Text(tr("cancel")) }
             }
         )
     }
