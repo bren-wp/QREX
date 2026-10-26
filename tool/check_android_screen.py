@@ -37,7 +37,8 @@ def validate(xml_content: str, screen: str = "create") -> None:
     # Result's pinned Back icon now correctly announces localized "Natrag".
     expected = {
         "splash": ("qrex", "skener. stvara. dijeli.", "sve što može qr"),
-        "create": ("stvori qr kod", "https://brendigo.com", "wi-fi"),
+        "create": ("stvori qr kod", "https://brendigo.com", "wi-fi",
+                   "generiraj qr kod", "spremi na uređaj"),
         "wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
         "result": ("rezultat", "https://brendigo.com", "natrag"),
         "history": ("povijest", "brendigo.com", "pretraži povijest..."),
@@ -45,7 +46,8 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "more": ("postavke", "pdf", "jezik"),
         "language": ("jezik", "hrvatski", "english"),
         "export": ("izvoz arhive", "pdf"),
-        "responsive-create": ("stvori qr kod",),
+        "responsive-create": ("stvori qr kod", "generiraj qr kod",
+                              "spremi na uređaj"),
         "responsive-scan": ("skener. stvara. dijeli.", "iz galerije"),
         "responsive-more": ("postavke", "jezik"),
         "scan": ("skener. stvara. dijeli.", "iz galerije", "usmjeri kameru prema qr kodu"),
