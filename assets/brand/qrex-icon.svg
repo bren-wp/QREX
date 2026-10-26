@@ -1,24 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="QREX app icon">
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080"
+     viewBox="0 0 108 108" role="img" aria-label="QREX app icon">
+  <!-- Canonical 108x108 geometry matches the Android drawable qrex_icon.xml.
+       Do not introduce a second inset background, letterform or module grid. -->
   <defs>
-    <linearGradient id="tile" x1="0.08" y1="0.02" x2="0.84" y2="1">
+    <linearGradient id="tile" gradientUnits="userSpaceOnUse"
+                    x1="13" y1="9" x2="93" y2="109">
       <stop offset="0" stop-color="#19CAFF"/>
-      <stop offset=".44" stop-color="#0868EE"/>
+      <stop offset=".5" stop-color="#0868EE"/>
       <stop offset="1" stop-color="#07187E"/>
     </linearGradient>
   </defs>
-  <rect width="1080" height="1080" rx="240" fill="#061020"/>
-  <rect x="50" y="50" width="980" height="980" rx="215" fill="url(#tile)" stroke="#54E9FF" stroke-width="8"/>
-  <g fill="none" stroke-width="56" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M220 370 V300 Q220 230 290 230 H350" stroke="#E5F9FF"/>
-    <path d="M740 230 H800 Q860 230 860 300 V370" stroke="#41C9FF"/>
-    <path d="M220 720 V800 Q220 860 290 860 H360" stroke="#3FD0FF"/>
-    <path d="M740 860 H800 Q860 860 860 800 V730" stroke="#13E3F1"/>
+  <path d="M25,1 H83 C96.25,1 107,11.75 107,25 V83 C107,96.25 96.25,107 83,107 H25 C11.75,107 1,96.25 1,83 V25 C1,11.75 11.75,1 25,1 Z"
+        fill="url(#tile)"/>
+  <path d="M25,5 H83 C95,5 103,14 103,26 V82 C103,95 95,103 82,103 H26 C13,103 5,95 5,82 V26 C5,14 13,5 25,5 Z"
+        fill="none" stroke="#54E9FF" stroke-width=".9"/>
+  <g fill="none" stroke-width="5.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22,37 V30 Q22,23 29,23 H35" stroke="#E5F9FF"/>
+    <path d="M74,23 H80 Q86,23 86,30 V37" stroke="#41C9FF"/>
+    <path d="M22,72 V80 Q22,86 29,86 H36" stroke="#3FD0FF"/>
+    <path d="M74,86 H80 Q86,86 86,80 V73" stroke="#13E3F1"/>
+    <path d="M44,39 C34.1,39 26,47.1 26,57 C26,66.9 34.1,75 44,75 C53.9,75 62,66.9 62,57 C62,47.1 53.9,39 44,39 Z"
+          stroke="#FFFFFF" stroke-width="10"/>
   </g>
-  <circle cx="440" cy="570" r="180" fill="none" stroke="#fff" stroke-width="100"/>
-  <path d="M510 640 L590 570 L760 770 L680 840 Z" fill="#fff"/>
-  <rect x="680" y="360" width="150" height="150" rx="10" fill="#fff"/>
-  <rect x="720" y="400" width="70" height="70" rx="4" fill="#1151BA"/>
-  <rect x="690" y="570" width="70" height="70" rx="7" fill="#fff"/>
-  <rect x="800" y="570" width="70" height="70" rx="7" fill="#fff"/>
-  <rect x="690" y="680" width="70" height="70" rx="7" fill="#fff"/>
+  <path d="M51,64 L59,57 L76,77 L68,84 Z" fill="#FFFFFF"/>
+  <path d="M68,36 H83 V51 H68 Z" fill="#FFFFFF"/>
+  <path d="M72,40 H79 V47 H72 Z" fill="#1151BA"/>
+  <path d="M69,57 H76 V64 H69 Z" fill="#FFFFFF"/>
+  <path d="M80,57 H87 V64 H80 Z" fill="#FFFFFF"/>
+  <path d="M69,68 H76 V75 H69 Z" fill="#FFFFFF"/>
 </svg>

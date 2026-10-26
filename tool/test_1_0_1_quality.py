@@ -30,16 +30,19 @@ class AndroidCodeAuditTests(unittest.TestCase):
         self.assertIn("BackHandler(enabled = currentCode != null)", view)
         # Gallery is the highlighted primary action, while Torch stays
         # a separate control inside the live preview. On compact phones
-        # both are >=64dp and >=80dp on normal-width phones.
+        # both are >=64dp, >=80dp on regular phones and >=88dp for large fonts.
         self.assertIn("Row(Modifier.fillMaxWidth(),", scanner)
         self.assertIn("horizontalArrangement = Arrangement.spacedBy(if (compactScan) 6.dp else 12.dp)", scanner)
         self.assertEqual(
-            scanner.count(".heightIn(min = if (compactScan) 64.dp else 80.dp)"), 2)
+            scanner.count(".heightIn(min = if (fontScale >= 1.5f) 88.dp\n"
+                          "                        else if (compactScan) 64.dp else 80.dp)"), 2)
+        self.assertIn('testTag("qrex-scan-controls")', scanner)
+        self.assertIn("reservedBottomDp", scanner)
         self.assertIn('testTag("qrex-scan-gallery")', scanner)
         self.assertIn('testTag("qrex-scan-torch")', scanner)
         self.assertIn("ButtonDefaults.buttonColors(", scanner)
         self.assertIn("onClick = toggleTorch", scanner)
-        self.assertIn('Text(tr("from_gallery"), maxLines = 2,', scanner)
+        self.assertIn('Text(tr("from_gallery"), maxLines = if (fontScale >= 1.5f) 3 else 2,', scanner)
         self.assertIn("verticalScroll(rememberScrollState())", scanner)
         self.assertIn("ActivityResultContracts.PickVisualMedia()", scanner)
 

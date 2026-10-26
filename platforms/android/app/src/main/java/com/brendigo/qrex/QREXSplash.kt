@@ -3,6 +3,8 @@ package com.brendigo.qrex
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -72,6 +74,14 @@ internal fun qrexSplashMetrics(
 }
 
 /**
+ * The centered brand and independently anchored footer are correct for the
+ * reference phone. For short windows or large accessibility text they can
+ * overlap; switch to a single vertically scrollable column instead.
+ */
+internal fun qrexSplashUsesScrollLayout(heightDp: Int, fontScale: Float): Boolean =
+    heightDp < 640 || fontScale >= 1.5f
+
+/**
  * Reference 01: real Compose Android dark splash — rounded Q/QR logo, two-tone
  * QREX wordmark, translated tagline, sweeping blue wave paths and bottom copy.
  * Marketing boards are framed/angled device renders, not byte-exact PNG
@@ -79,12 +89,11 @@ internal fun qrexSplashMetrics(
  */
 @Composable
 internal fun QrexSplashScreen(
-    subtitle: String = "Scan. Create. Share.",
+    subtitle: String,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(
         modifier.fillMaxSize().background(QrexDesign.backgroundDeep)
-            .semantics { contentDescription = "QREX splash: $subtitle" }
     ) {
         val metrics = qrexSplashMetrics(
             maxWidth.value.toInt(), maxHeight.value.toInt(), LocalDensity.current.fontScale
@@ -157,76 +166,126 @@ internal fun QrexSplashScreen(
                 style = Stroke(width = 1.dp.toPx())
             )
         }
-        Column(
-            modifier = Modifier.align(Alignment.Center)
-                .offset(y = metrics.centerOffsetDp.dp)
-                .fillMaxWidth().padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.qrex_icon),
-                contentDescription = null,
-                modifier = Modifier.size(metrics.logoDp.dp)
-                    .clip(RoundedCornerShape(24.dp)).testTag("qrex-splash-logo")
-            )
-            Spacer(Modifier.height(18.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.semantics(mergeDescendants = true) {
-                    contentDescription = "QREX"
-                }.testTag("qrex-splash-wordmark")
+        // The original absolute positions must never obscure localized
+        // branding or the footer when Android font scaling is increased.
+        if (qrexSplashUsesScrollLayout(
+                maxHeight.value.toInt(), LocalDensity.current.fontScale
+            )) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 24.dp)
+                    .testTag("qrex-splash-scroll-content"),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(26.dp)
             ) {
-                Text(
-                    "QRE", color = Color.White, fontSize = metrics.titleSp.sp,
-                    fontWeight = FontWeight.Black, letterSpacing = (-1).sp
+                QrexSplashBrand(
+                    subtitle = subtitle,
+                    metrics = metrics,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Text(
-                    "X",
-                    style = TextStyle(
-                        brush = Brush.horizontalGradient(
-                            listOf(QrexDesign.cyan, Color(0xFF0788FF))
-                        ),
-                        fontSize = metrics.titleSp.sp,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = (-1).sp
-                    )
+                QrexSplashFooter(
+                    compactWidth = compactWidth,
+                    modifier = Modifier.fillMaxWidth(),
+                    allowFullText = true
                 )
             }
-            Spacer(Modifier.height(3.dp))
-            Text(
-                subtitle, color = Color.White, fontSize = metrics.taglineSp.sp,
-                fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center,
-                maxLines = 2,
-                modifier = Modifier.testTag("qrex-splash-tagline")
+        } else {
+            QrexSplashBrand(
+                subtitle = subtitle,
+                metrics = metrics,
+                modifier = Modifier.align(Alignment.Center)
+                    .offset(y = metrics.centerOffsetDp.dp)
+                    .fillMaxWidth().padding(horizontal = 20.dp)
+            )
+            QrexSplashFooter(
+                compactWidth = compactWidth,
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .fillMaxWidth().padding(horizontal = 30.dp)
+                    .padding(bottom = metrics.bottomPaddingDp.dp)
             )
         }
-        Column(
-            modifier = Modifier.align(Alignment.BottomCenter)
-                .fillMaxWidth().padding(horizontal = 30.dp)
-                .padding(bottom = metrics.bottomPaddingDp.dp)
-                .testTag("qrex-splash-footer"),
-            horizontalAlignment = Alignment.CenterHorizontally
+    }
+}
+
+@Composable
+private fun QrexSplashBrand(
+    subtitle: String,
+    metrics: QrexSplashMetrics,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.qrex_icon),
+            contentDescription = null,
+            modifier = Modifier.size(metrics.logoDp.dp)
+                .clip(RoundedCornerShape(24.dp)).testTag("qrex-splash-logo")
+        )
+        Spacer(Modifier.height(18.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {
+                contentDescription = "QREX"
+            }.testTag("qrex-splash-wordmark")
         ) {
             Text(
-                tr("splash_message"),
-                color = Color(0xFFB9CFF4),
-                fontSize = if (compactWidth) 12.sp else 13.sp,
-                lineHeight = 19.sp,
-                textAlign = TextAlign.Center,
-                maxLines = 3
+                "QRE", color = Color.White, fontSize = metrics.titleSp.sp,
+                fontWeight = FontWeight.Black, letterSpacing = (-1).sp
             )
-            Spacer(Modifier.height(18.dp))
-            Box(
-                Modifier.width(94.dp).height(4.dp)
-                    .background(Color(0xFF435778), RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Box(
-                    Modifier.width(42.dp).height(4.dp)
-                        .background(QrexDesign.cyan, RoundedCornerShape(8.dp))
+            Text(
+                "X",
+                style = TextStyle(
+                    brush = Brush.horizontalGradient(
+                        listOf(QrexDesign.cyan, Color(0xFF0788FF))
+                    ),
+                    fontSize = metrics.titleSp.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = (-1).sp
                 )
-            }
+            )
+        }
+        Spacer(Modifier.height(3.dp))
+        Text(
+            subtitle, color = Color.White, fontSize = metrics.taglineSp.sp,
+            fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center,
+            maxLines = 3,
+            modifier = Modifier.testTag("qrex-splash-tagline")
+        )
+    }
+}
+
+@Composable
+private fun QrexSplashFooter(
+    compactWidth: Boolean,
+    modifier: Modifier,
+    allowFullText: Boolean = false
+) {
+    Column(
+        modifier = modifier.testTag("qrex-splash-footer"),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            tr("splash_message"),
+            color = Color(0xFFB9CFF4),
+            fontSize = if (compactWidth) 12.sp else 13.sp,
+            lineHeight = 19.sp,
+            textAlign = TextAlign.Center,
+            maxLines = if (allowFullText) Int.MAX_VALUE else 3
+        )
+        Spacer(Modifier.height(18.dp))
+        Box(
+            Modifier.width(94.dp).height(4.dp)
+                .background(Color(0xFF435778), RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Box(
+                Modifier.width(42.dp).height(4.dp)
+                    .background(QrexDesign.cyan, RoundedCornerShape(8.dp))
+            )
         }
     }
 }

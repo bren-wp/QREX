@@ -11,9 +11,27 @@ def screen(body: str) -> str:
 class ForegroundTests(unittest.TestCase):
     def test_actual_dark_splash(self):
         validate(screen(
-            '<node package="com.brendigo.qrex" content-desc="QREX splash: Skener. Stvara. Dijeli." />'
+            '<node package="com.brendigo.qrex" content-desc="QREX" />'
             '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+            '<node package="com.brendigo.qrex" text="Sve što može QR — jednostavno, brzo i bez prijave." />'
         ), "splash")
+
+    def test_splash_is_not_confused_with_normal_qrex_header(self):
+        # Scan and Create repeat QREX + tagline, but not the Splash footer.
+        with self.assertRaisesRegex(ValueError, "sve što može qr"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" content-desc="QREX" />'
+                '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+                '<node package="com.brendigo.qrex" text="Iz galerije" />'
+            ), "splash")
+
+    def test_result_old_close_label_does_not_pass_back_button_check(self):
+        with self.assertRaisesRegex(ValueError, "natrag"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="Rezultat" />'
+                '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
+                '<node package="com.brendigo.qrex" content-desc="Zatvori" />'
+            ), "result")
 
     def test_real_app(self):
         validate(screen(
@@ -26,7 +44,7 @@ class ForegroundTests(unittest.TestCase):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Rezultat" />'
             '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
-            '<node package="com.brendigo.qrex" content-desc="Zatvori" />'
+            '<node package="com.brendigo.qrex" content-desc="Natrag" />'
         ), "result")
 
     def test_genuine_history_screen_is_accepted(self):
