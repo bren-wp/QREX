@@ -1206,42 +1206,45 @@ private fun CreateScreen(
                     maxLines = 2
                 )
             }
-        }
-        // Keep the QR preview directly above Generate and Save, as in the
-        // approved phone reference. Collapse only the preview while typing,
-        // leaving the scrollable form and essential actions accessible.
-        if (previewVisible) {
-            QrexPanel(Modifier.fillMaxWidth()
-                .padding(horizontal = horizontalPadding, vertical = 4.dp)) {
-                // Single high-contrast centered QR preview.
-                    Column(Modifier.fillMaxWidth().padding(12.dp),
+            // Preview belongs to the scrollable form, never the pinned footer.
+            // An empty/invalid QR placeholder would otherwise consume space
+            // needed by Generate on 320dp phones and during IME transitions.
+            // Render a card only after there is a real generated QR bitmap.
+            if (previewVisible && qr != null) {
+                Spacer(Modifier.height(12.dp))
+                QrexPanel(
+                    Modifier.fillMaxWidth().testTag("qrex-create-preview-card")
+                ) {
+                    Column(
+                        Modifier.fillMaxWidth().padding(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(tr("qr_preview"), fontWeight = FontWeight.SemiBold,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            tr("qr_preview"), fontWeight = FontWeight.SemiBold,
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface)
-                        if (qr != null) {
-                            Image(qr.asImageBitmap(), contentDescription = tr("qr_preview"),
-                                modifier = Modifier.testTag("qrex-create-preview-ready")
-                                    .size(qrSize).background(Color.White).padding(9.dp))
-                        } else {
-                            Box(Modifier.size(qrSize).background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(12.dp)),
-                                contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.QrCode, contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(50.dp))
-                            }
-                        }
-                        Text(if (payload.isBlank()) tr("invalid_content")
-                             else QRContent.label(payload),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Image(
+                            qr.asImageBitmap(),
+                            contentDescription = tr("qr_preview"),
+                            modifier = Modifier.testTag("qrex-create-preview-ready")
+                                .size(qrSize).background(Color.White).padding(9.dp)
+                        )
+                        Text(
+                            QRContent.label(payload),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp, maxLines = 1,
-                            overflow = TextOverflow.Ellipsis)
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
+                }
             }
         }
+        // Primary actions stay in their own non-scrollable footer and can
+        // never be overlapped or pushed away by the QR preview.
+        // Their disabled state reflects payload validation, not bitmap timing.
         PrimaryAction(tr("generate_qr"), enabled = canGenerate,
             modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 3.dp)
                 .testTag("qrex-create-show")) {
