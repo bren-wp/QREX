@@ -31,11 +31,15 @@ def validate(xml_content: str, screen: str = "create") -> None:
         raise ValueError(f"QREX is not the foreground package: {sorted(packages)}")
     # Require screen-specific actual app text and control markers. These
     # are screenshots of production Compose UI with *debug-only* neutral data.
+    # Splash's old English-only root content-desc was removed for TalkBack:
+    # check the actual localized footer as well as the branded wordmark and
+    # tagline, so the regular Scan/Create header cannot impersonate Splash.
+    # Result's pinned Back icon now correctly announces localized "Natrag".
     expected = {
-        "splash": ("qrex splash", "skener. stvara. dijeli."),
+        "splash": ("qrex", "skener. stvara. dijeli.", "sve što može qr"),
         "create": ("stvori qr kod", "https://brendigo.com", "wi-fi"),
         "wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
-        "result": ("rezultat", "https://brendigo.com", "zatvori"),
+        "result": ("rezultat", "https://brendigo.com", "natrag"),
         "history": ("povijest", "brendigo.com", "pretraži povijest..."),
         "saved": ("favoriti", "brendigo.com", "spremljeno"),
         "more": ("postavke", "pdf", "jezik"),
