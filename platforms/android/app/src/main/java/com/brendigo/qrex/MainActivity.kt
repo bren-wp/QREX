@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -1308,6 +1309,7 @@ private fun HistoryScreen(
         DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, historyLocale)
     }
     val operationFailed = tr("operation_failed")
+    val largeHistoryText = LocalDensity.current.fontScale >= 1.35f
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
@@ -1365,7 +1367,7 @@ private fun HistoryScreen(
                 shape = RoundedCornerShape(15.dp),
                 color = MaterialTheme.colorScheme.surface,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().testTag("qrex-history-empty")
             ) {
                 Row(
                     Modifier.padding(16.dp),
@@ -1385,7 +1387,7 @@ private fun HistoryScreen(
             verticalArrangement = Arrangement.spacedBy(6.dp),
             contentPadding = PaddingValues(bottom = 8.dp)
         ) {
-            items(found, key = { it.raw }) { item ->
+            itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) }) { _, item ->
                 val icon = when {
                     QRContent.isWifi(item.raw) -> Icons.Default.Wifi
                     QRContent.isEvent(item.raw) -> Icons.Default.Event
@@ -1448,7 +1450,7 @@ private fun HistoryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = 68.dp)
+                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 88.dp else 68.dp)
                             .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -1457,7 +1459,7 @@ private fun HistoryScreen(
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
                                 QRContent.label(item.raw),
-                                maxLines = 1,
+                                maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.SemiBold,
@@ -1466,7 +1468,7 @@ private fun HistoryScreen(
                             val subtitle = listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
                                 subtitle,
-                                maxLines = 1,
+                                maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
