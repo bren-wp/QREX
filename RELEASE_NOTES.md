@@ -1,3 +1,9 @@
+## Next GitHub release: v1.0.17 · Android versionCode 117
+
+Create QR no longer displays an empty placeholder over its actions: real preview cards scroll with the form, while Generate QR and Save to device remain available. Also fixes Wi-Fi export consent snapshot, responsive scanner controls, safe History/Favorites row state keys, large-font display and Splash/Result accessibility. Publication is gated on exact-main Android CI, genuine screenshots, signature/identity and checksums. GitHub APK/AAB use a disposable certificate and are not Play upload replacements.
+
+[Release notes](docs/releases/v1.0.17.md)
+
 ## Pending: v1.0.16 · Android versionCode 116
 
 QREX dark Android reference stabilization: accurate 52dp Back controls and 23-language TalkBack labels, correct History search symbol, full 10-screen emulator validation, and suppression of historical release publisher jobs. GitHub APK/AAB must pass exact-commit CI, 23-locale checks, Android API 26/31/34/35/36 lifecycle matrix on the PR, hash/signature verification, and the ten genuine emulator captures before publication. No claim of pixel-exact parity with perspective marketing boards; no Play distribution without authorized upload key.
