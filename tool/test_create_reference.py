@@ -39,7 +39,16 @@ class CreateReferenceRegressionTests(unittest.TestCase):
                         self.source.index('testTag("qrex-create-save")'))
         self.assertIn("Modifier.fillMaxSize().imePadding()", self.source)
         self.assertIn("val previewVisible = !imeVisible && layout.showQrPreview", self.source)
-        self.assertIn("if (previewVisible)", self.source)
+        self.assertIn("if (previewVisible && qr != null)", self.source)
+        self.assertIn('testTag("qrex-create-preview-card")', self.source)
+        create = self.source.split("private fun CreateScreen(", 1)[1].split(
+            "private fun HistoryScreen(", 1)[0]
+        self.assertLess(create.index('testTag("qrex-create-preview-card")'),
+                        create.index('PrimaryAction(tr("generate_qr")'))
+        self.assertLess(create.index('PrimaryAction(tr("generate_qr")'),
+                        create.index('testTag("qrex-create-save")'))
+        self.assertIn("// Primary actions stay in their own non-scrollable footer", create)
+        self.assertNotIn('if (qr != null) {', create)
         self.assertIn("shouldGenerateCreateQrPreview(imeVisible, layout.showQrPreview, canGenerate)", self.source)
         self.assertIn("key2 = previewVisible", self.source)
         self.assertIn("if (!shouldGenerateCreateQrPreview(", self.source)
