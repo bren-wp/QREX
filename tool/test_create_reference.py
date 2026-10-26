@@ -38,7 +38,11 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertLess(self.source.index('testTag("qrex-create-show")'),
                         self.source.index('testTag("qrex-create-save")'))
         self.assertIn("Modifier.fillMaxSize().imePadding()", self.source)
-        self.assertIn("if (!imeVisible && layout.showQrPreview)", self.source)
+        self.assertIn("val previewVisible = !imeVisible && layout.showQrPreview", self.source)
+        self.assertIn("if (previewVisible)", self.source)
+        self.assertIn("shouldGenerateCreateQrPreview(imeVisible, layout.showQrPreview, canGenerate)", self.source)
+        self.assertIn("key2 = previewVisible", self.source)
+        self.assertIn("if (!shouldGenerateCreateQrPreview(", self.source)
         self.assertNotIn("BoxWithConstraints(", self.source)
 
     def test_email_phone_ime_and_user_selected_locale(self):
@@ -50,6 +54,10 @@ class CreateReferenceRegressionTests(unittest.TestCase):
 
     def test_security_and_existing_export_unchanged(self):
         self.assertIn("confirmWifiSave = true", self.source)
+        self.assertIn("pendingWifiExportPayload = requested", self.source)
+        self.assertIn("val approved = approvedWifiQrExport(pendingWifiExportPayload)", self.source)
+        self.assertIn("pendingExportPayload = approved", self.source)
+        self.assertIn("pendingWifiExportPayload = null", self.source)
         self.assertIn('tr("wifi_save_warning")', self.source)
         self.assertIn('CreateDocument("image/png")', self.source)
         self.assertIn("reveal = false", self.source)
