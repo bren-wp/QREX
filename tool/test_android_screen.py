@@ -38,7 +38,22 @@ class ForegroundTests(unittest.TestCase):
             '<node package="com.brendigo.qrex" text="Stvori QR kod" />'
             '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
             '<node package="com.brendigo.qrex" text="Wi-Fi" />'
+            '<node package="com.brendigo.qrex" text="Generiraj QR kod" />'
+            '<node package="com.brendigo.qrex" text="Spremi na uređaj" />'
         ))
+
+    def test_create_screen_without_generate_and_save_is_rejected(self):
+        # The screenshot gate must fail when an over-sized blank QR preview
+        # replaces or pushes the essential actions off the real screen.
+        obscured = screen(
+            '<node package="com.brendigo.qrex" text="Stvori QR kod" />'
+            '<node package="com.brendigo.qrex" text="https://brendigo.com" />'
+            '<node package="com.brendigo.qrex" text="Wi-Fi" />'
+        )
+        for mode in ("create", "responsive-create"):
+            with self.subTest(mode=mode):
+                with self.assertRaisesRegex(ValueError, "generiraj qr kod"):
+                    validate(obscured, mode)
 
     def test_genuine_result_screen_is_accepted(self):
         validate(screen(

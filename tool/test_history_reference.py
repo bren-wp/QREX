@@ -42,6 +42,11 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
                       self.source)
         self.assertGreaterEqual(self.source.count(".heightIn(min = 52.dp)"), 3)
         self.assertIn("QRHistory.matches(it, search, savedOnly)", self.source)
+        self.assertIn("itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) })", self.source)
+        self.assertNotIn("items(found, key = { it.raw })", self.source)
+        self.assertIn('testTag("qrex-history-empty")', self.source)
+        self.assertIn("largeHistoryText = LocalDensity.current.fontScale >= 1.35f", self.source)
+        self.assertIn("maxLines = if (largeHistoryText) 2 else 1", self.source)
         self.assertIn("confirm_delete", self.source)
 
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -764,6 +765,21 @@ private fun QrexCreateTypeChoice(
     }
 }
 
+/**
+ * QR bitmap work is strictly for a visible valid Create preview, never for a
+ * hidden preview while the IME is open or the device is too short.
+ * Keep this pure for JVM regression tests and cheap Compose recompositions.
+ */
+internal fun shouldGenerateCreateQrPreview(
+    imeVisible: Boolean,
+    layoutAllowsPreview: Boolean,
+    payloadValid: Boolean
+): Boolean = !imeVisible && layoutAllowsPreview && payloadValid
+
+/** Consent may authorize only the originally requested bounded Wi-Fi QR. */
+internal fun approvedWifiQrExport(candidate: String?): String? =
+    candidate?.takeIf { QRContent.canRender(it) && QRContent.isWifi(it) }
+
 @Composable
 private fun CreateScreen(
     screenshotMode: String? = null,
@@ -854,15 +870,34 @@ private fun CreateScreen(
         else -> QRContent.event(input, eventStart, eventEnd, eventLocation, eventDescription).orEmpty()
     }
 
-    val qrFrame by produceState<Pair<String, Bitmap>?>(initialValue = null, key1 = payload) {
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    // Avoid SubcomposeLayout and read only the current available phone dimensions.
+    val window = LocalConfiguration.current
+    val layout = qrexLayoutProfile(
+        window.screenWidthDp, (window.screenHeightDp - 80).coerceAtLeast(0),
+        LocalDensity.current.fontScale
+    )
+    val previewVisible = !imeVisible && layout.showQrPreview
+    val canGenerate = canOpenQrResult(payload)
+    // Debounce generation only when users can see a valid preview. Keyboard,
+    // small viewport and invalid payloads must not trigger a 680×680 bitmap.
+    // Keying to visibility also discards an obsolete image on IME changes.
+    val qrFrame by produceState<Pair<String, Bitmap>?>(
+        initialValue = null, key1 = payload, key2 = previewVisible
+    ) {
         value = null
+        if (!shouldGenerateCreateQrPreview(imeVisible, layout.showQrPreview, canGenerate)) {
+            return@produceState
+        }
         delay(140)
         val image = withContext(Dispatchers.Default) { generateQR(payload) }
         value = image?.let { payload to it }
     }
     val qr = qrFrame?.takeIf { it.first == payload }?.second
-    val canGenerate = canOpenQrResult(payload)
     var pendingExportPayload by remember { mutableStateOf<String?>(null) }
+    // Pin the exact Wi-Fi payload to which the user consented: the form can
+    // never silently switch the payload between warning and file picker.
+    var pendingWifiExportPayload by remember { mutableStateOf<String?>(null) }
     val exportScope = rememberCoroutineScope()
     val imageSaved = tr("saved")
     val imageFailed = tr("png_save_failed")
@@ -890,10 +925,12 @@ private fun CreateScreen(
         }
     }
     fun requestImageExport() {
-        if (QRContent.isWifi(payload)) {
+        val requested = payload.takeIf { QRContent.canRender(it) } ?: return
+        if (QRContent.isWifi(requested)) {
+            pendingWifiExportPayload = requested
             confirmWifiSave = true
         } else {
-            pendingExportPayload = payload
+            pendingExportPayload = requested
             exportImage.launch("QREX-QR.png")
         }
     }
@@ -918,15 +955,7 @@ private fun CreateScreen(
         ).show()
     }
 
-    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    // Android LocalConfiguration updates for screen sizes, rotation and
-    // multi-window. Do not use BoxWithConstraints/SubcomposeLayout here:
-    // repeated subcomposition caused a documented Android 8 crash.
-    val window = LocalConfiguration.current
-    val layout = qrexLayoutProfile(
-        window.screenWidthDp, (window.screenHeightDp - 80).coerceAtLeast(0),
-        LocalDensity.current.fontScale
-    )
+
     val horizontalPadding = layout.horizontalPaddingDp.dp
     val qrSize = layout.darkQrSizeDp.dp
     Column(Modifier.fillMaxSize().imePadding().testTag("qrex-create-screen")) {
@@ -1177,42 +1206,45 @@ private fun CreateScreen(
                     maxLines = 2
                 )
             }
-        }
-        // Keep the QR preview directly above Generate and Save, as in the
-        // approved phone reference. Collapse only the preview while typing,
-        // leaving the scrollable form and essential actions accessible.
-        if (!imeVisible && layout.showQrPreview) {
-            QrexPanel(Modifier.fillMaxWidth()
-                .padding(horizontal = horizontalPadding, vertical = 4.dp)) {
-                // Single high-contrast centered QR preview.
-                    Column(Modifier.fillMaxWidth().padding(12.dp),
+            // Preview belongs to the scrollable form, never the pinned footer.
+            // An empty/invalid QR placeholder would otherwise consume space
+            // needed by Generate on 320dp phones and during IME transitions.
+            // Render a card only after there is a real generated QR bitmap.
+            if (previewVisible && qr != null) {
+                Spacer(Modifier.height(12.dp))
+                QrexPanel(
+                    Modifier.fillMaxWidth().testTag("qrex-create-preview-card")
+                ) {
+                    Column(
+                        Modifier.fillMaxWidth().padding(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(tr("qr_preview"), fontWeight = FontWeight.SemiBold,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            tr("qr_preview"), fontWeight = FontWeight.SemiBold,
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface)
-                        if (qr != null) {
-                            Image(qr.asImageBitmap(), contentDescription = tr("qr_preview"),
-                                modifier = Modifier.testTag("qrex-create-preview-ready")
-                                    .size(qrSize).background(Color.White).padding(9.dp))
-                        } else {
-                            Box(Modifier.size(qrSize).background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(12.dp)),
-                                contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.QrCode, contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(50.dp))
-                            }
-                        }
-                        Text(if (payload.isBlank()) tr("invalid_content")
-                             else QRContent.label(payload),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Image(
+                            qr.asImageBitmap(),
+                            contentDescription = tr("qr_preview"),
+                            modifier = Modifier.testTag("qrex-create-preview-ready")
+                                .size(qrSize).background(Color.White).padding(9.dp)
+                        )
+                        Text(
+                            QRContent.label(payload),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp, maxLines = 1,
-                            overflow = TextOverflow.Ellipsis)
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
+                }
             }
         }
+        // Primary actions stay in their own non-scrollable footer and can
+        // never be overlapped or pushed away by the QR preview.
+        // Their disabled state reflects payload validation, not bitmap timing.
         PrimaryAction(tr("generate_qr"), enabled = canGenerate,
             modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 3.dp)
                 .testTag("qrex-create-show")) {
@@ -1231,18 +1263,28 @@ private fun CreateScreen(
     }
     if (confirmWifiSave) {
         AlertDialog(
-            onDismissRequest = { confirmWifiSave = false },
+            onDismissRequest = {
+                confirmWifiSave = false
+                pendingWifiExportPayload = null
+            },
             title = { Text(tr("wifi_save_title")) },
             text = { Text(tr("wifi_save_warning")) },
             confirmButton = {
                 TextButton(onClick = {
+                    val approved = approvedWifiQrExport(pendingWifiExportPayload)
                     confirmWifiSave = false
-                    pendingExportPayload = payload
-                    exportImage.launch("QREX-QR.png")
+                    pendingWifiExportPayload = null
+                    if (approved != null) {
+                        pendingExportPayload = approved
+                        exportImage.launch("QREX-QR.png")
+                    }
                 }) { Text(tr("save_to_device")) }
             },
             dismissButton = {
-                TextButton(onClick = { confirmWifiSave = false }) { Text(tr("cancel")) }
+                TextButton(onClick = {
+                    confirmWifiSave = false
+                    pendingWifiExportPayload = null
+                }) { Text(tr("cancel")) }
             }
         )
     }
@@ -1270,6 +1312,7 @@ private fun HistoryScreen(
         DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, historyLocale)
     }
     val operationFailed = tr("operation_failed")
+    val largeHistoryText = LocalDensity.current.fontScale >= 1.35f
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
@@ -1327,7 +1370,7 @@ private fun HistoryScreen(
                 shape = RoundedCornerShape(15.dp),
                 color = MaterialTheme.colorScheme.surface,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().testTag("qrex-history-empty")
             ) {
                 Row(
                     Modifier.padding(16.dp),
@@ -1347,7 +1390,7 @@ private fun HistoryScreen(
             verticalArrangement = Arrangement.spacedBy(6.dp),
             contentPadding = PaddingValues(bottom = 8.dp)
         ) {
-            items(found, key = { it.raw }) { item ->
+            itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) }) { _, item ->
                 val icon = when {
                     QRContent.isWifi(item.raw) -> Icons.Default.Wifi
                     QRContent.isEvent(item.raw) -> Icons.Default.Event
@@ -1410,7 +1453,7 @@ private fun HistoryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = 68.dp)
+                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 88.dp else 68.dp)
                             .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -1419,7 +1462,7 @@ private fun HistoryScreen(
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
                                 QRContent.label(item.raw),
-                                maxLines = 1,
+                                maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.SemiBold,
@@ -1428,7 +1471,7 @@ private fun HistoryScreen(
                             val subtitle = listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
                                 subtitle,
-                                maxLines = 1,
+                                maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
