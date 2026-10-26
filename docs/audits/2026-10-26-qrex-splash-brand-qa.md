@@ -67,6 +67,27 @@ Screen 03 Result: the pinned 52dp Back icon now announces the localized
 `back` string instead of "Close"; it continues to use the same navigation
 callback and retains the original screenshot fixture behavior.
 
+### Screenshot CI regression and repair (26 October)
+
+The exact previous PR HEAD `5f90685` compiled successfully and passed
+Kotlin JUnit, Android Lint/R8, 23 languages and the API 26/31/34/35
+lifecycle jobs. The actual screenshot run failed **after 48 on-device
+instrumentation tests completed successfully** at its Splash capture:
+`tool/check_android_screen.py` expected the removed parent TalkBack marker
+`qrex splash`. The camera was not the source of the failure.
+
+The verifier now requires **three distinct observed real UI markers** on
+Splash: the QREX wordmark, Croatian localized tagline and the unique Croatian
+Splash footer `Sve što može QR`. Requiring the footer avoids false acceptance
+of ordinary Scan/Create headers as the Splash screen. For the Result screenshot,
+the pinned action must expose the accurate localized **Natrag** label, not
+the stale **Zatvori** one.
+
+`tool/test_android_screen.py` now tests both accepted real labels and
+rejects a false Splash-only header and the old Close label. The foreground
+package, ANR detection, authentic 1080×1920 PNG verification, no-fabrication
+and fail-closed behavior were **not weakened**.
+
 ### Validation notes
 
 - Initial scanner branch CI identified two stale source-contract checks
