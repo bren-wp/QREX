@@ -49,3 +49,38 @@ A numerical pixel-difference assessment requires genuine same-state,
 same-locale, same-dimension reference images, plus emulator and hardware QA
 for IME transitions, repeated gallery exports, and accessibility.
 No new public release should be issued from this unfinished QA change.
+
+
+## User-reported blocker: empty QR preview obscures Generate
+
+Reported on the live Create screen after this branch began: an empty QR
+preview consumed layout height, covering or displacing the user's path to
+create a QR code. This was a real usability blocker, not an icon discrepancy.
+
+**Root layout cause:** Create used a weighted scrolling form followed by
+an *unweighted* QR preview panel, followed by Generate and Save buttons.
+The preview was displayed even with no valid QR bitmap, showing an inert
+placeholder; on shorter viewports this competed with form/action height.
+
+**Fix:**
+- Only show a preview card after `previewVisible && qr != null`.
+  No empty QR box or placeholder is shown for a blank URL, invalid
+  payload, during bitmap generation, or with the keyboard open.
+- Move the preview panel **inside the weighted, vertically scrollable form**.
+  It can no longer reserve non-scrollable height ahead of the actions.
+- Keep Generate and Save outside the scroll container as fixed footer
+  actions, with validation-driven enabled states independent of QR
+  bitmap timing. Existing QR format handling remains unchanged.
+- The Android Compose integration test
+  `QREXCreateBlockedPreviewTest` checks the empty initial state,
+  visible Generate/Save hit targets and actual Generate click from a
+  valid URL through to Result while the IME may still be visible.
+- The screenshot hierarchy gate now requires *both* translated
+  `Generiraj QR kod` and `Spremi na uređaj` labels on Create,
+  including the compact and large-font responsive captures; it
+  fails closed instead of certifying a screen whose buttons vanished.
+
+**Release gate:** validate Python source regressions, Kotlin JUnit,
+Android instrumentation, native build, Lint/R8 and screenshot jobs on
+the final PR HEAD. Physical-device reproduction at user viewport/font
+settings is still required for a final 1:1 claim.
