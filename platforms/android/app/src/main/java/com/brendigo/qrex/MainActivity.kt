@@ -775,6 +775,10 @@ internal fun shouldGenerateCreateQrPreview(
     payloadValid: Boolean
 ): Boolean = !imeVisible && layoutAllowsPreview && payloadValid
 
+/** Consent may authorize only the originally requested bounded Wi-Fi QR. */
+internal fun approvedWifiQrExport(candidate: String?): String? =
+    candidate?.takeIf { QRContent.canRender(it) && QRContent.isWifi(it) }
+
 @Composable
 private fun CreateScreen(
     screenshotMode: String? = null,
@@ -1263,11 +1267,10 @@ private fun CreateScreen(
             text = { Text(tr("wifi_save_warning")) },
             confirmButton = {
                 TextButton(onClick = {
-                    val approved = pendingWifiExportPayload
+                    val approved = approvedWifiQrExport(pendingWifiExportPayload)
                     confirmWifiSave = false
                     pendingWifiExportPayload = null
-                    if (approved != null && QRContent.canRender(approved) &&
-                        QRContent.isWifi(approved)) {
+                    if (approved != null) {
                         pendingExportPayload = approved
                         exportImage.launch("QREX-QR.png")
                     }
