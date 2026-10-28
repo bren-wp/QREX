@@ -72,7 +72,7 @@ class P03CrashLogTests(unittest.TestCase):
             sdk = work / "sdkmanager"
             emu = work / "emulator"
             state = work / "attempts"
-            emu.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
+            emu.write_text("#!/usr/bin/env bash\nexit 42\n", encoding="utf-8")
             emu.chmod(0o755)
 
             def run_mock(failure: str, fails_before_success: int):
@@ -108,6 +108,18 @@ class P03CrashLogTests(unittest.TestCase):
             self.assertEqual(3, attempts)
             permanent, attempts = run_mock("QREX genuine SDK error", 3)
             self.assertNotEqual(0, permanent.returncode)
+            self.assertEqual(1, attempts)
+
+            # A headless emulator may return a failure for -version while
+            # the runner can still boot it. Package validation checks the
+            # executable path; the live AVD/ADB check remains mandatory.
+            # The mock emulator exits 42 if run; it must not be invoked here.
+            installed, attempts = run_mock("ignored", 0)
+            self.assertEqual(0, installed.returncode)
+            self.assertEqual(1, attempts)
+            emu.unlink()
+            missing, attempts = run_mock("ignored", 0)
+            self.assertNotEqual(0, missing.returncode)
             self.assertEqual(1, attempts)
 
     def test_non_app_crashes_are_not_attributed_to_qrex(self):
