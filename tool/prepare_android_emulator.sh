@@ -18,11 +18,15 @@ log_file="$(mktemp "${RUNNER_TEMP:-/tmp}/qrex-emulator-sdk.XXXXXXXX")"
 trap 'rm -f "$log_file"' EXIT
 for attempt in 1 2 3; do
   if timeout -k 5s 180s "$manager" --install emulator --channel=0 >"$log_file" 2>&1; then
-    if timeout -k 2s 15s "$emulator" -version >/dev/null 2>&1; then
-      echo "Android Emulator SDK is installed and executable."
+    # The emulator CLI's -version may fail in GitHub's headless pre-boot
+    # environment, even when Emulator Runner can start the AVD normally.
+    # Check that the package installed an executable file, then delegate
+    # actual boot/ADB/instrumentation validation to the mandatory runner.
+    if [[ -x "$emulator" && -f "$emulator" ]]; then
+      echo "Android Emulator SDK package installed; live boot validation follows."
       exit 0
     fi
-    echo "Android Emulator SDK install returned success but emulator is unusable." >&2
+    echo "Android Emulator SDK package has no executable after install." >&2
     exit 1
   fi
   # Never print the raw sdkmanager output: a failed dependency URL may carry
