@@ -169,7 +169,12 @@ class MainActivity : ComponentActivity() {
         val screenshotLanguage = if (isDebug && screenshotMode != null)
             intent.getStringExtra("qrex_language")?.takeIf { it in QREXStrings.languages }
         else null
-        setContent { QREXApp(store, screenshotMode, screenshotLanguage) }
+        // UI screenshot-only override: never accepted in release builds or
+        // normal user sessions, and never written to persisted settings.
+        val screenshotTheme = if (isDebug && screenshotMode != null)
+            intent.getStringExtra("qrex_theme")?.takeIf { it in setOf("dark", "light") }
+        else null
+        setContent { QREXApp(store, screenshotMode, screenshotLanguage, screenshotTheme) }
     }
 }
 
@@ -177,7 +182,8 @@ class MainActivity : ComponentActivity() {
 private fun QREXApp(
     store: QREXStore,
     screenshotMode: String? = null,
-    screenshotLanguage: String? = null
+    screenshotLanguage: String? = null,
+    screenshotTheme: String? = null
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -239,7 +245,7 @@ private fun QREXApp(
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
-    val darkUi = when (store.themeMode) {
+    val darkUi = when (screenshotTheme ?: store.themeMode) {
         "light" -> false
         "system" -> isSystemInDarkTheme()
         else -> true
