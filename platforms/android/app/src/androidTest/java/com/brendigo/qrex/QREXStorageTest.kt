@@ -41,6 +41,25 @@ class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
+    fun languageAndHistorySettingsCommitDurablyBeforeUiStateChanges() {
+        val first = QREXStore(context)
+        assertTrue(first.clearAll())
+        assertTrue(first.updateLanguage("hr"))
+        assertEquals("hr", first.language)
+        assertTrue(first.updateHistoryEnabled(false))
+        assertFalse(first.historyEnabled)
+
+        // A fresh Store simulates an Activity process restart. Both choices
+        // must have been committed before the UI reported the new state.
+        val restarted = QREXStore(context)
+        assertEquals("hr", restarted.language)
+        assertFalse(restarted.historyEnabled)
+        assertTrue(restarted.updateHistoryEnabled(true))
+        assertTrue(restarted.updateLanguage("system"))
+        assertTrue(restarted.clearAll())
+    }
+
+    @Test
     fun failedUrlLaunchCannotCrashWithMalformedLanguagePreference() {
         val store = QREXStore(context)
         assertTrue(store.clearAll())
