@@ -114,20 +114,17 @@ private val white = Color.White
 internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
 
 /**
- * Android 13+ clipboard previews can display copied text to bystanders.
- * Mark Wi-Fi QR payloads as sensitive (without changing copy/paste contents).
+ * QR contents can carry secrets even when they aren't Wi-Fi codes: e.g.
+ * login links, contacts, calendar notes or arbitrary text. Never expose
+ * copied QR payloads in Android 13+ system clipboard previews.
+ * This hides previews only; it does NOT encrypt/expire the OS clipboard.
  */
-internal fun qrClipboardSensitive(raw: String): Boolean = QRContent.isWifi(raw)
-
-internal fun makeQrClipboardClip(raw: String): ClipData {
-    val clip = ClipData.newPlainText("QR", raw)
-    if (qrClipboardSensitive(raw)) {
-        clip.description.extras = PersistableBundle().apply {
+internal fun makeQrClipboardClip(raw: String): ClipData =
+    ClipData.newPlainText("QR", raw).apply {
+        description.extras = PersistableBundle().apply {
             putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
         }
     }
-    return clip
-}
 
 internal fun copyQrToClipboard(context: Context, raw: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
