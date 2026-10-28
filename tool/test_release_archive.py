@@ -22,10 +22,10 @@ class ArchivedPublisherTests(unittest.TestCase):
 
     def test_current_published_release_metadata_is_not_a_candidate(self):
         readme = (ROOT / "README.md").read_text("utf-8")
-        self.assertIn("Latest published release: **[v1.0.17]", readme)
-        self.assertIn("/releases/download/v1.0.17/android-create.png", readme)
+        self.assertIn("Latest published release: **[v1.0.18]", readme)
+        self.assertIn("/releases/download/v1.0.18/android-create.png", readme)
         self.assertNotIn("Next QA candidate — QREX v1.0.17", readme)
-        self.assertIn("| 1.0.17 |", (ROOT / "docs/releases/INDEX.md").read_text("utf-8"))
+        self.assertIn("| 1.0.18 |", (ROOT / "docs/releases/INDEX.md").read_text("utf-8"))
 
 
 if __name__ == "__main__":
