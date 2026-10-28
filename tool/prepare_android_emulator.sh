@@ -4,8 +4,15 @@
 # error, never evidence of a QREX application crash. Retry ONLY known transient
 # package transport/archive errors; do not suppress emulator/instrumentation QA.
 set -Eeuo pipefail
-manager="${QREX_SDKMANAGER:-sdkmanager}"
-emulator="${QREX_EMULATOR_BIN:-emulator}"
+sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+manager="${QREX_SDKMANAGER:-${sdk_root}/cmdline-tools/latest/bin/sdkmanager}"
+emulator="${QREX_EMULATOR_BIN:-${sdk_root}/emulator/emulator}"
+# GitHub hosted runners expose cmdline-tools inside ANDROID_HOME; the tools
+# are not necessarily on PATH before Android Emulator Runner starts.
+if [[ ! -x "$manager" ]]; then
+  echo "Android SDK command-line tools unavailable at SDK root." >&2
+  exit 1
+fi
 retry_sleep="${QREX_RETRY_SLEEP_SECONDS:-15}"
 log_file="$(mktemp "${RUNNER_TEMP:-/tmp}/qrex-emulator-sdk.XXXXXXXX")"
 trap 'rm -f "$log_file"' EXIT
