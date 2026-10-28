@@ -91,7 +91,11 @@
         "splash_message": "Everything QR — simple, fast and without an account.",
         "all": "All",
         "no_history": "No QR codes yet",
-        "back": "Back"
+        "back": "Back",
+        "theme": "Theme",
+        "theme_dark": "Dark",
+        "theme_light": "Light",
+        "theme_system": "System"
       }
     },
     "hr": {
@@ -184,7 +188,11 @@
         "splash_message": "Sve što može QR — jednostavno, brzo i bez prijave.",
         "all": "Sve",
         "no_history": "Još nema QR kodova",
-        "back": "Natrag"
+        "back": "Natrag",
+        "theme": "Tema",
+        "theme_dark": "Tamna",
+        "theme_light": "Svijetla",
+        "theme_system": "Sustav"
       }
     },
     "de": {
@@ -277,7 +285,11 @@
         "splash_message": "QR leicht gemacht — einfach, schnell und ohne Konto.",
         "all": "Alle",
         "no_history": "Noch keine QR-Codes",
-        "back": "Zurück"
+        "back": "Zurück",
+        "theme": "Design",
+        "theme_dark": "Dunkel",
+        "theme_light": "Hell",
+        "theme_system": "System"
       }
     },
     "fr": {
@@ -370,7 +382,11 @@
         "splash_message": "Tout pour les QR — simplement, rapidement et sans compte.",
         "all": "Tous",
         "no_history": "Aucun code QR pour le moment",
-        "back": "Retour"
+        "back": "Retour",
+        "theme": "Thème",
+        "theme_dark": "Sombre",
+        "theme_light": "Clair",
+        "theme_system": "Système"
       }
     },
     "es": {
@@ -463,7 +479,11 @@
         "splash_message": "Todo sobre QR — fácil, rápido y sin cuenta.",
         "all": "Todos",
         "no_history": "Todavía no hay códigos QR",
-        "back": "Atrás"
+        "back": "Atrás",
+        "theme": "Tema",
+        "theme_dark": "Oscuro",
+        "theme_light": "Claro",
+        "theme_system": "Sistema"
       }
     },
     "it": {
@@ -556,7 +576,11 @@
         "splash_message": "Tutto per i QR — semplice, veloce e senza account.",
         "all": "Tutti",
         "no_history": "Ancora nessun codice QR",
-        "back": "Indietro"
+        "back": "Indietro",
+        "theme": "Tema",
+        "theme_dark": "Scuro",
+        "theme_light": "Chiaro",
+        "theme_system": "Sistema"
       }
     },
     "pt": {
@@ -649,7 +673,11 @@
         "splash_message": "Tudo sobre QR — simples, rápido e sem conta.",
         "all": "Todos",
         "no_history": "Ainda não há códigos QR",
-        "back": "Voltar"
+        "back": "Voltar",
+        "theme": "Tema",
+        "theme_dark": "Escuro",
+        "theme_light": "Claro",
+        "theme_system": "Sistema"
       }
     },
     "nl": {
@@ -742,7 +770,11 @@
         "splash_message": "Alles voor QR — eenvoudig, snel en zonder account.",
         "all": "Alles",
         "no_history": "Nog geen QR-codes",
-        "back": "Terug"
+        "back": "Terug",
+        "theme": "Thema",
+        "theme_dark": "Donker",
+        "theme_light": "Licht",
+        "theme_system": "Systeem"
       }
     },
     "pl": {
@@ -835,7 +867,11 @@
         "splash_message": "Wszystko o QR — prosto, szybko i bez konta.",
         "all": "Wszystkie",
         "no_history": "Brak kodów QR",
-        "back": "Wstecz"
+        "back": "Wstecz",
+        "theme": "Motyw",
+        "theme_dark": "Ciemny",
+        "theme_light": "Jasny",
+        "theme_system": "System"
       }
     },
     "cs": {
@@ -928,7 +964,11 @@
         "splash_message": "Vše pro QR — jednoduše, rychle a bez účtu.",
         "all": "Vše",
         "no_history": "Zatím žádné QR kódy",
-        "back": "Zpět"
+        "back": "Zpět",
+        "theme": "Motiv",
+        "theme_dark": "Tmavý",
+        "theme_light": "Světlý",
+        "theme_system": "Systém"
       }
     },
     "sk": {
@@ -1021,7 +1061,11 @@
         "splash_message": "Všetko pre QR — jednoducho, rýchlo a bez účtu.",
         "all": "Všetky",
         "no_history": "Zatiaľ žiadne QR kódy",
-        "back": "Späť"
+        "back": "Späť",
+        "theme": "Motív",
+        "theme_dark": "Tmavý",
+        "theme_light": "Svetlý",
+        "theme_system": "Systém"
       }
     },
     "sl": {
@@ -1114,7 +1158,11 @@
         "splash_message": "Vse za QR — preprosto, hitro in brez računa.",
         "all": "Vse",
         "no_history": "Za zdaj ni kod QR",
-        "back": "Nazaj"
+        "back": "Nazaj",
+        "theme": "Tema",
+        "theme_dark": "Temna",
+        "theme_light": "Svetla",
+        "theme_system": "Sistem"
       }
     },
     "hu": {
@@ -1207,7 +1255,11 @@
         "splash_message": "Minden QR-hez — egyszerűen, gyorsan, fiók nélkül.",
         "all": "Összes",
         "no_history": "Még nincsenek QR-kódok",
-        "back": "Vissza"
+        "back": "Vissza",
+        "theme": "Téma",
+        "theme_dark": "Sötét",
+        "theme_light": "Világos",
+        "theme_system": "Rendszer"
       }
     },
     "ro": {
@@ -1300,7 +1352,11 @@
         "splash_message": "Totul pentru QR — simplu, rapid și fără cont.",
         "all": "Toate",
         "no_history": "Încă nu există coduri QR",
-        "back": "Înapoi"
+        "back": "Înapoi",
+        "theme": "Temă",
+        "theme_dark": "Întunecată",
+        "theme_light": "Luminoasă",
+        "theme_system": "Sistem"
       }
     },
     "bg": {
@@ -1393,7 +1449,11 @@
         "splash_message": "Всичко за QR — лесно, бързо и без профил.",
         "all": "Всички",
         "no_history": "Все още няма QR кодове",
-        "back": "Назад"
+        "back": "Назад",
+        "theme": "Тема",
+        "theme_dark": "Тъмна",
+        "theme_light": "Светла",
+        "theme_system": "Система"
       }
     },
     "el": {
@@ -1486,7 +1546,11 @@
         "splash_message": "Όλα για τα QR — απλά, γρήγορα και χωρίς λογαριασμό.",
         "all": "Όλα",
         "no_history": "Δεν υπάρχουν ακόμη κωδικοί QR",
-        "back": "Πίσω"
+        "back": "Πίσω",
+        "theme": "Θέμα",
+        "theme_dark": "Σκούρο",
+        "theme_light": "Φωτεινό",
+        "theme_system": "Σύστημα"
       }
     },
     "tr": {
@@ -1579,7 +1643,11 @@
         "splash_message": "QR için her şey — basit, hızlı ve hesapsız.",
         "all": "Tümü",
         "no_history": "Henüz QR kod yok",
-        "back": "Geri"
+        "back": "Geri",
+        "theme": "Tema",
+        "theme_dark": "Koyu",
+        "theme_light": "Açık",
+        "theme_system": "Sistem"
       }
     },
     "uk": {
@@ -1672,7 +1740,11 @@
         "splash_message": "Усе для QR — просто, швидко та без облікового запису.",
         "all": "Усі",
         "no_history": "Поки немає QR-кодів",
-        "back": "Назад"
+        "back": "Назад",
+        "theme": "Тема",
+        "theme_dark": "Темна",
+        "theme_light": "Світла",
+        "theme_system": "Система"
       }
     },
     "ru": {
@@ -1765,7 +1837,11 @@
         "splash_message": "Всё для QR — просто, быстро и без аккаунта.",
         "all": "Все",
         "no_history": "Пока нет QR-кодов",
-        "back": "Назад"
+        "back": "Назад",
+        "theme": "Тема",
+        "theme_dark": "Тёмная",
+        "theme_light": "Светлая",
+        "theme_system": "Система"
       }
     },
     "sv": {
@@ -1858,7 +1934,11 @@
         "splash_message": "Allt för QR — enkelt, snabbt och utan konto.",
         "all": "Alla",
         "no_history": "Inga QR-koder ännu",
-        "back": "Tillbaka"
+        "back": "Tillbaka",
+        "theme": "Tema",
+        "theme_dark": "Mörkt",
+        "theme_light": "Ljust",
+        "theme_system": "System"
       }
     },
     "da": {
@@ -1951,7 +2031,11 @@
         "splash_message": "Alt til QR — nemt, hurtigt og uden konto.",
         "all": "Alle",
         "no_history": "Ingen QR-koder endnu",
-        "back": "Tilbage"
+        "back": "Tilbage",
+        "theme": "Tema",
+        "theme_dark": "Mørkt",
+        "theme_light": "Lyst",
+        "theme_system": "System"
       }
     },
     "fi": {
@@ -2044,7 +2128,11 @@
         "splash_message": "Kaikki QR-koodeihin — helposti, nopeasti ja ilman tiliä.",
         "all": "Kaikki",
         "no_history": "Ei vielä QR-koodeja",
-        "back": "Takaisin"
+        "back": "Takaisin",
+        "theme": "Teema",
+        "theme_dark": "Tumma",
+        "theme_light": "Vaalea",
+        "theme_system": "Järjestelmä"
       }
     },
     "nb": {
@@ -2137,7 +2225,11 @@
         "splash_message": "Alt for QR — enkelt, raskt og uten konto.",
         "all": "Alle",
         "no_history": "Ingen QR-koder ennå",
-        "back": "Tilbake"
+        "back": "Tilbake",
+        "theme": "Tema",
+        "theme_dark": "Mørkt",
+        "theme_light": "Lyst",
+        "theme_system": "System"
       }
     }
   }

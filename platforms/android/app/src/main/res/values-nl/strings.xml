@@ -88,4 +88,8 @@
     <string name="all">Alles</string>
     <string name="no_history">Nog geen QR-codes</string>
     <string name="back">Terug</string>
+    <string name="theme">Thema</string>
+    <string name="theme_dark">Donker</string>
+    <string name="theme_light">Licht</string>
+    <string name="theme_system">Systeem</string>
 </resources>

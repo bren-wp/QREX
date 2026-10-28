@@ -88,4 +88,8 @@
     <string name="all">Všetky</string>
     <string name="no_history">Zatiaľ žiadne QR kódy</string>
     <string name="back">Späť</string>
+    <string name="theme">Motív</string>
+    <string name="theme_dark">Tmavý</string>
+    <string name="theme_light">Svetlý</string>
+    <string name="theme_system">Systém</string>
 </resources>

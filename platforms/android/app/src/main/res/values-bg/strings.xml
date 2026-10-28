@@ -88,4 +88,8 @@
     <string name="all">Всички</string>
     <string name="no_history">Все още няма QR кодове</string>
     <string name="back">Назад</string>
+    <string name="theme">Тема</string>
+    <string name="theme_dark">Тъмна</string>
+    <string name="theme_light">Светла</string>
+    <string name="theme_system">Система</string>
 </resources>

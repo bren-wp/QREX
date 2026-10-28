@@ -88,4 +88,8 @@
     <string name="all">Tümü</string>
     <string name="no_history">Henüz QR kod yok</string>
     <string name="back">Geri</string>
+    <string name="theme">Tema</string>
+    <string name="theme_dark">Koyu</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_system">Sistem</string>
 </resources>

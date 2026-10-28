@@ -88,4 +88,8 @@
     <string name="all">Όλα</string>
     <string name="no_history">Δεν υπάρχουν ακόμη κωδικοί QR</string>
     <string name="back">Πίσω</string>
+    <string name="theme">Θέμα</string>
+    <string name="theme_dark">Σκούρο</string>
+    <string name="theme_light">Φωτεινό</string>
+    <string name="theme_system">Σύστημα</string>
 </resources>
