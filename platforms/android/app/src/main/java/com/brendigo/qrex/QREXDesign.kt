@@ -180,7 +180,8 @@ internal fun QrexSettingsListRow(
     destructive: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    accentOverride: Color? = null
+    accentOverride: Color? = null,
+    showChevron: Boolean = true
 ) {
     val accent = if (destructive) MaterialTheme.colorScheme.error
         else accentOverride ?: MaterialTheme.colorScheme.primary
@@ -188,8 +189,11 @@ internal fun QrexSettingsListRow(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(min = 60.dp),
         shape = RoundedCornerShape(13.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
+            else MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, if (destructive)
+            MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
+            else MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically) {
@@ -212,9 +216,11 @@ internal fun QrexSettingsListRow(
                         maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
-            Icon(Icons.Default.ChevronRight, contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(18.dp))
+            if (showChevron && !destructive) {
+                Icon(Icons.Default.ChevronRight, contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp))
+            }
         }
     }
 }

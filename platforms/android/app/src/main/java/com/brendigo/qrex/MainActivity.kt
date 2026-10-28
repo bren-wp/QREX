@@ -1806,16 +1806,14 @@ private fun MoreScreen(
                         onClick = { showAbout = true },
                         modifier = Modifier.weight(1f).testTag("qrex-more-about"))
                 }
-                OutlinedButton(onClick = { showDelete = true },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                        .testTag("qrex-more-delete"),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error)) {
-                    Icon(Icons.Default.DeleteForever, contentDescription = null,
-                        modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(tr("clear_history"))
-                }
+                QrexSettingsListRow(
+                    label = tr("clear_history"),
+                    icon = Icons.Default.DeleteForever,
+                    onClick = { showDelete = true },
+                    destructive = true,
+                    showChevron = false,
+                    modifier = Modifier.testTag("qrex-more-delete")
+                )
             }
         }
         Spacer(Modifier.height(20.dp))
