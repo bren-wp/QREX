@@ -38,11 +38,13 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("alwaysShowLabel = true", self.main)
         self.assertIn("fontSize = if (compactNavigation) 10.sp else 11.sp", self.main)
 
-    def test_dark_only_palette_and_pdf_export(self):
-        self.assertIn("val colors = darkColorScheme(", self.main)
-        self.assertNotIn("lightColorScheme(", self.main)
-        self.assertNotIn("lightTheme", self.main)
-        self.assertNotIn("qrex_light", self.main)
+    def test_system_dark_light_palette_and_pdf_export(self):
+        self.assertIn("if (darkUi) darkColorScheme(", self.main)
+        self.assertIn("else lightColorScheme(", self.main)
+        self.assertIn('"system" -> isSystemInDarkTheme()', self.main)
+        self.assertIn('store.themeMode', self.main)
+        self.assertIn('testTag("qrex-more-theme")', self.main)
+        self.assertIn('testTag("qrex-theme-dialog")', self.main)
         self.assertNotIn("updateLightMode(", self.main)
         self.assertNotIn("updateLightMode(", self.core)
         self.assertNotIn("exportSavedPdfZip(", self.main)

@@ -407,11 +407,18 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun darkSettingsHaveLanguagePdfAndNoThemeSwitch() {
+    fun darkReferenceSettingsHaveSixRealCardsAndThemeSelection() {
         rule.onNodeWithTag("qrex-tab-4").performClick()
-        requireScreenTag("qrex-more-screen", 0, "dark settings")
-        rule.onAllNodesWithTag("qrex-more-theme", useUnmergedTree = true)
-            .assertCountEquals(0)
+        requireScreenTag("qrex-more-screen", 0, "reference More")
+        assertTouchTarget("qrex-more-theme")
+        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true).performClick()
+        requireScreenTag("qrex-theme-dialog", 0, "native theme selector")
+        rule.onNodeWithTag("qrex-theme-choice-light", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-more-screen", 0, "after light selection")
+        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true).performClick()
+        rule.onNodeWithTag("qrex-theme-choice-dark", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-more-export", useUnmergedTree = true)
