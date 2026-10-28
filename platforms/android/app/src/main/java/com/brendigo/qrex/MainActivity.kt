@@ -1820,7 +1820,11 @@ private fun MoreScreen(
                     Text(tr("save_history"), Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.onSurface)
                     Switch(checked = store.historyEnabled,
-                        onCheckedChange = store::updateHistoryEnabled)
+                        onCheckedChange = { enabled ->
+                            if (!store.updateHistoryEnabled(enabled)) {
+                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                            }
+                        })
                 }
             }
         },
