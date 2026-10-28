@@ -14,7 +14,7 @@ ANDROID = ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex"
 class QREXPrivacyStabilityTests(unittest.TestCase):
     def test_android_clipboard_marks_passwords_sensitive(self):
         main = (ANDROID / "MainActivity.kt").read_text("utf-8")
-        self.assertIn("qrClipboardSensitive(raw)", main)
+        self.assertIn('ClipData.newPlainText("QR", raw).apply', main)
         self.assertIn("ClipDescription.EXTRA_IS_SENSITIVE", main)
         self.assertIn("clipboard.setPrimaryClip(makeQrClipboardClip(raw))", main)
         self.assertNotIn('setPrimaryClip(android.content.ClipData.newPlainText("QR", raw))', main)
