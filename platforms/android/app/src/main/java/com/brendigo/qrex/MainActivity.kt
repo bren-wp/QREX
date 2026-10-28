@@ -59,6 +59,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -1376,6 +1377,7 @@ private fun HistoryScreen(
     val largeHistoryText = LocalDensity.current.fontScale >= 1.35f
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
+    var historyFilterExpanded by remember { mutableStateOf(false) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
         // Favorites is a dedicated destination: its filter cannot be reset
@@ -1390,44 +1392,79 @@ private fun HistoryScreen(
             if (favoritesPage) tr("favorites") else tr("history"),
             if (favoritesPage) tr("saved") else tr("history_local")
         )
-        // Keep the All/Saved selector in History; dedicated Favorites always
-        // shows saved records, even after returning from another destination.
-        if (!favoritesPage) Row(Modifier.fillMaxWidth().testTag("qrex-history-segments"),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(
-                selected = !savedOnly, onClick = { savedOnly = false },
-                label = { Text(tr("all"), maxLines = 1) },
-                leadingIcon = {
-                    Icon(Icons.Default.History, contentDescription = null,
-                        modifier = Modifier.size(17.dp))
-                },
+        // Reference History has one search field plus a filter icon; no
+        // full-width chip row pushing the first QR cards down. Favorites is
+        // a separate saved-only destination and needs no extra filter button.
+        Row(
+            Modifier.fillMaxWidth().testTag("qrex-history-search-row"),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = search,
+                onValueChange = { search = it.take(120) },
+                label = { Text(tr("search_qr")) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+                shape = RoundedCornerShape(13.dp),
                 modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-                    .testTag("qrex-history-all")
+                    .testTag("qrex-history-search")
             )
-            FilterChip(
-                selected = savedOnly, onClick = { savedOnly = true },
-                label = { Text(tr("saved"), maxLines = 1) },
-                leadingIcon = {
-                    Icon(
-                        if (savedOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = null, modifier = Modifier.size(17.dp)
-                    )
-                },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-                    .testTag("qrex-history-saved")
-            )
+            if (!favoritesPage) {
+                Box {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(13.dp),
+                        border = BorderStroke(
+                            1.dp, MaterialTheme.colorScheme.outlineVariant
+                        )
+                    ) {
+                        IconButton(
+                            onClick = { historyFilterExpanded = true },
+                            modifier = Modifier.size(52.dp)
+                                .testTag("qrex-history-filter-toggle")
+                        ) {
+                            Icon(
+                                Icons.Default.FilterList,
+                                contentDescription = "${tr("all")} / ${tr("saved")}",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = historyFilterExpanded,
+                        onDismissRequest = { historyFilterExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(tr("all")) },
+                            onClick = {
+                                savedOnly = false
+                                historyFilterExpanded = false
+                            },
+                            modifier = Modifier.heightIn(min = 52.dp)
+                                .testTag("qrex-history-all")
+                                .semantics { selected = !savedOnly },
+                            leadingIcon = {
+                                Icon(Icons.Default.History, contentDescription = null)
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(tr("saved")) },
+                            onClick = {
+                                savedOnly = true
+                                historyFilterExpanded = false
+                            },
+                            modifier = Modifier.heightIn(min = 52.dp)
+                                .testTag("qrex-history-saved")
+                                .semantics { selected = savedOnly },
+                            leadingIcon = {
+                                Icon(Icons.Default.FavoriteBorder, contentDescription = null)
+                            }
+                        )
+                    }
+                }
+            }
         }
-        Spacer(Modifier.height(4.dp))
-        OutlinedTextField(
-            value = search,
-            onValueChange = { search = it.take(120) },
-            label = { Text(tr("search_qr")) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            singleLine = true,
-            shape = RoundedCornerShape(13.dp),
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                .testTag("qrex-history-search")
-        )
         Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
             Surface(

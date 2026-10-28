@@ -129,7 +129,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.heroBrush", self.main)
         self.assertIn('initiallySavedOnly = true, favoritesPage = true', self.main)
         self.assertIn('"qrex-favorites-screen" else "qrex-history-screen"', self.main)
-        self.assertIn('testTag("qrex-history-segments")', self.main)
+        self.assertIn('testTag("qrex-history-filter-toggle")', self.main)
         self.assertIn('testTag("qrex-history-saved")', self.main)
         self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
