@@ -1,4 +1,10 @@
-## Next GitHub release: v1.0.17 · Android versionCode 117
+## Next GitHub release: v1.0.18 · Android versionCode 118
+
+Protects password-bearing Wi-Fi QR PNG exports on the Result screen with explicit consent and an export-payload snapshot. Hardens failed URL-opening against malformed persisted language settings, and adds Android instrumentation regression coverage. The new release requires successful exact-commit compilation, JUnit, Lint/R8, real-emulator screenshots, translations, and signed package integrity checks. GitHub packages are not signed with the existing Google Play upload certificate.
+
+[Release notes](docs/releases/v1.0.18.md)
+
+## Published: v1.0.17 · Android versionCode 117
 
 Create QR no longer displays an empty placeholder over its actions: real preview cards scroll with the form, while Generate QR and Save to device remain available. Also fixes Wi-Fi export consent snapshot, responsive scanner controls, safe History/Favorites row state keys, large-font display and Splash/Result accessibility. Publication is gated on exact-main Android CI, genuine screenshots, signature/identity and checksums. GitHub APK/AAB use a disposable certificate and are not Play upload replacements.
 
