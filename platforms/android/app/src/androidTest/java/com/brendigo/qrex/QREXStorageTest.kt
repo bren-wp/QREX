@@ -41,6 +41,27 @@ class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
+    fun failedUrlLaunchCannotCrashWithMalformedLanguagePreference() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        assertTrue(prefs.edit().putBoolean("language", true).commit())
+        // Force the browser launch to fail without depending on installed
+        // browser apps or leaking a real URL to an external application.
+        val blockedBrowser = object : android.content.ContextWrapper(context) {
+            override fun startActivity(intent: android.content.Intent) {
+                throw android.content.ActivityNotFoundException("Synthetic missing browser")
+            }
+        }
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            openLink(blockedBrowser, android.net.Uri.parse("https://example.org"))
+        }
+        // A corrupt preference remains intact for explicit user recovery.
+        assertTrue(prefs.getBoolean("language", false))
+        assertTrue(store.clearAll())
+    }
+
+    @Test
     fun renderedUnicodeContactsDecodeExactlyAsGenerated() {
         val qr = QRContent.contact("Šime Željka Kovačić", "+385 91 123 4567",
             "info@example.hr")!!

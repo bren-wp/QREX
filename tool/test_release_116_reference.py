@@ -14,10 +14,10 @@ class Production116ReferenceTests(unittest.TestCase):
     def test_published_versions_are_archived_outside_active_workflows(self):
         archived = ROOT / "docs/releases/workflows"
         self.assertEqual(
-            ["github-release-1.0.17.yml"], sorted(p.name for p in WORKFLOWS.glob("github-release-1.0.*.yml")),
+            ["github-release-1.0.18.yml"], sorted(p.name for p in WORKFLOWS.glob("github-release-1.0.*.yml")),
             "No already-published version must trigger on future main pushes"
         )
-        for minor in range(1, 17):
+        for minor in range(1, 18):
             src = (archived / f"github-release-1.0.{minor}.yml").read_text("utf-8")
             with self.subTest(version=minor):
                 self.assertIn(f"gh release create v1.0.{minor}", src)
@@ -36,8 +36,8 @@ class Production116ReferenceTests(unittest.TestCase):
 
     def test_version_and_native_navigation(self):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        self.assertIn("versionCode = 117", gradle)
-        self.assertIn('versionName = "1.0.17"', gradle)
+        self.assertIn("versionCode = 118", gradle)
+        self.assertIn('versionName = "1.0.18"', gradle)
         details = (ANDROID / "QREXMoreDetails.kt").read_text("utf-8")
         self.assertIn('Modifier.size(52.dp).testTag("qrex-detail-back")', details)
         self.assertIn('contentDescription = tr("back")', details)
