@@ -53,8 +53,7 @@ class P03CrashLogTests(unittest.TestCase):
 
 
     def test_sdk_archive_retry_is_bounded_and_does_not_hide_app_failures(self):
-        """Synthetic sdkmanager fixture: transport corruption may retry; all
-        other failures remain blocking and no test job is bypassed."""
+        """Mock SDK downloads: only recognized transport corruption can retry."""
         from pathlib import Path
         import os
         import subprocess
@@ -67,20 +66,19 @@ class P03CrashLogTests(unittest.TestCase):
             sdk = work / "sdkmanager"
             emu = work / "emulator"
             state = work / "attempts"
-            emu.write_text("#!/usr/bin/env bash\\nexit 0\\n", encoding="utf-8")
+            emu.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
             emu.chmod(0o755)
 
             def run_mock(failure: str, fails_before_success: int):
                 state.write_text("0", encoding="utf-8")
-                # Prefix remains fixed and only synthetic errors are emitted.
                 sdk.write_text(
-                    "#!/usr/bin/env bash\\n"
-                    "n=$(cat \\"$QREX_TEST_ATTEMPTS\\")\\n"
-                    "n=$((n+1))\\n"
-                    "printf '%s' \\"$n\\" > \\"$QREX_TEST_ATTEMPTS\\"\\n"
+                    '#!/usr/bin/env bash\n'
+                    'n=$(cat "$QREX_TEST_ATTEMPTS")\n'
+                    'n=$((n+1))\n'
+                    'printf "%s" "$n" > "$QREX_TEST_ATTEMPTS"\n'
                     f"if (( n <= {fails_before_success} )); then "
-                    f"echo '{failure}' >&2; exit 1; fi\\n"
-                    "exit 0\\n", encoding="utf-8"
+                    f"echo '{failure}' >&2; exit 1; fi\n"
+                    'exit 0\n', encoding="utf-8"
                 )
                 sdk.chmod(0o755)
                 env = dict(os.environ)
