@@ -13,7 +13,7 @@ QREX scans and creates QR codes on your Android device. It does not require regi
 - **QR contents:** scanned and generated URLs, text, Wi-Fi details, contacts, locations and calendar events are processed locally. URLs are not opened automatically. If you tap a recognized web link, QREX hands it to an app you choose; any network activity then takes place outside QREX.
 - **Optional history:** up to 250 items can be stored locally if enabled; Wi-Fi QR codes are **never automatically recorded**.
 - **Favorites:** manually saved Wi-Fi QR codes can contain passwords. Their contents are encrypted with AES-GCM using an Android Keystore key. Existing Flutter Android history is migrated locally, only after a durable protected save.
-- **Preferences:** language and history settings are held on your device.
+- **Preferences:** language, History and System/Dark/Light appearance settings are stored only on your device. Preference changes are confirmed after a durable local save.
 
 QREX does not operate a cloud backend that receives QR scans or history. Android backup is disabled in the app manifest. No internet, contact, location or broad storage permission is requested.
 

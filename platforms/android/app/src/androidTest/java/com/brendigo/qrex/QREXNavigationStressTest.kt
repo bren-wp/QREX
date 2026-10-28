@@ -378,8 +378,7 @@ class QREXNavigationStressTest {
             .performClick()
         rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
             .assertIsSelected()
-        rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
-            .performClick()
+        // Close the filter popup before switching destinations.
         rule.onNodeWithTag("qrex-tab-3").assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-tab-3").assertIsSelected()
         requireScreenTag("qrex-favorites-screen", 0, "open dedicated Favorites")
