@@ -119,10 +119,15 @@ internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(pay
  * copied QR payloads in Android 13+ system clipboard previews.
  * This hides previews only; it does NOT encrypt/expire the OS clipboard.
  */
+internal fun qrClipboardSensitive(raw: String): Boolean = raw.isNotEmpty()
+
 internal fun makeQrClipboardClip(raw: String): ClipData =
     ClipData.newPlainText("QR", raw).apply {
-        description.extras = PersistableBundle().apply {
-            putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+        // Even seemingly ordinary QR URLs may embed private tokens.
+        if (qrClipboardSensitive(raw)) {
+            description.extras = PersistableBundle().apply {
+                putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+            }
         }
     }
 
