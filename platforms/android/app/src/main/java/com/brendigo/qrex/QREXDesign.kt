@@ -145,7 +145,7 @@ internal fun QrexSettingsTile(
     QrexPanel(modifier = modifier.clickable(
         enabled = enabled, role = Role.Button, onClick = onClick
     )) {
-        Column(Modifier.fillMaxWidth().heightIn(min = 102.dp).padding(12.dp),
+        Column(Modifier.fillMaxWidth().heightIn(min = 104.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
             Surface(shape = RoundedCornerShape(12.dp),
                 color = foreground.copy(alpha = 0.14f)) {
