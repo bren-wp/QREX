@@ -351,7 +351,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertNotIn("/releases/download/v1.0.14/android-create.png", readme)
         self.assertIn("| 1.0.14 | [v1.0.14]", archive)
         self.assertIn("| 1.0.15 | [v1.0.15]", archive)
-        self.assertIn("| 1.0.16 | [v1.0.17]", archive)
+        self.assertIn("| 1.0.16 | [v1.0.16]", archive)
+        self.assertIn("| 1.0.17 | [v1.0.17]", archive)
         self.assertIn("## Published: v1.0.14 · Android versionCode 114", notes)
         self.assertIn("## Published: v1.0.15 · Android versionCode 115", notes)
 
