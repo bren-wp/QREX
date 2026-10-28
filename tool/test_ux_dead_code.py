@@ -121,14 +121,15 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('confirmExport = true', self.main)
         self.assertIn('showDelete = true', self.main)
 
-    def test_four_main_tabs_keep_favorites_one_tap_from_history(self):
-        self.assertIn('listOf("scan", "create", "history", "more")', self.main)
-        self.assertIn("navTargets = listOf(0, 1, 2, 4)", self.main)
+    def test_five_main_tabs_have_dedicated_favorites_and_accessible_history_filters(self):
+        self.assertIn('listOf("scan", "create", "history", "favorites", "more")', self.main)
+        self.assertIn("navTargets = listOf(0, 1, 2, 3, 4)", self.main)
         self.assertIn("QrexDesign.heroBrush", self.main)
-        self.assertIn('favoritesPage = screenshotMode == "saved"', self.main)
+        self.assertIn('initiallySavedOnly = true, favoritesPage = true', self.main)
+        self.assertIn('testTag("qrex-favorites-screen")', self.main)
         self.assertIn('testTag("qrex-history-segments")', self.main)
         self.assertIn('testTag("qrex-history-saved")', self.main)
-        self.assertIn("QRHistory.matches(it, search, savedOnly)", self.main)
+        self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("hasSaved = store.items.any { it.saved }", self.main)
 
