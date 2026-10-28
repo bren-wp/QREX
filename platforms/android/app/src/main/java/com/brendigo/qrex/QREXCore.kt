@@ -483,15 +483,28 @@ class QREXStore(context: Context) {
         return true
     }
 
-    fun updateLanguage(value: String) {
+    /**
+     * Settings are user data, not optimistic UI decoration. Persist first so
+     * an interrupted process cannot display a preference that wasn't saved.
+     * Never replace an unreadable existing value on failed durable writes.
+     */
+    fun updateLanguage(value: String): Boolean {
         require(value == "system" || value in QREXStrings.languages)
-        language = value
-        preferences.edit().putString("language", value).apply()
+        if (language == value) return true
+        val committed = runCatching {
+            preferences.edit().putString("language", value).commit()
+        }.getOrDefault(false)
+        if (committed) language = value
+        return committed
     }
 
-    fun updateHistoryEnabled(value: Boolean) {
-        historyEnabled = value
-        preferences.edit().putBoolean("historyEnabled", value).apply()
+    fun updateHistoryEnabled(value: Boolean): Boolean {
+        if (historyEnabled == value) return true
+        val committed = runCatching {
+            preferences.edit().putBoolean("historyEnabled", value).commit()
+        }.getOrDefault(false)
+        if (committed) historyEnabled = value
+        return committed
     }
 
     private fun persist(records: List<QRRecord> = items): Boolean {
