@@ -75,17 +75,20 @@ class QREXStorageTest {
     }
 
     @Test
-    fun wifiClipboardSuppressesAndroidSystemPreview() {
-        val secret = QRContent.wifi("Guest", "super-private-pass")
-        val clip = makeQrClipboardClip(secret)
-        assertEquals(secret, clip.getItemAt(0).text.toString())
-        assertTrue(clip.description.extras?.getBoolean(
-            android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
-
-        val ordinary = makeQrClipboardClip("https://brendigo.com")
-        assertEquals("https://brendigo.com", ordinary.getItemAt(0).text.toString())
-        assertFalse(ordinary.description.extras?.getBoolean(
-            android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
+    fun copiedQrPayloadsSuppressAndroidSystemPreviewWithoutChangingPastedText() {
+        val samples = listOf(
+            QRContent.wifi("Guest", "super-private-pass"),
+            "https://example.org/private-reset?token=test-only",
+            "mailto:person@example.org",
+            "BEGIN:VCARD\\nVERSION:3.0\\nFN:Demo Contact\\nEND:VCARD",
+            "private free text"
+        )
+        for (raw in samples) {
+            val clip = makeQrClipboardClip(raw)
+            assertEquals(raw, clip.getItemAt(0).text.toString())
+            assertTrue(clip.description.extras?.getBoolean(
+                android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
+        }
     }
 
     @Test
