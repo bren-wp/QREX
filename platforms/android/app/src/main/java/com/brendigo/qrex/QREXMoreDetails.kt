@@ -31,6 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +44,8 @@ import java.util.Locale
  */
 @Composable
 internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
+    val context = LocalContext.current
+    val errorText = tr("operation_failed")
     val flags = mapOf(
         "en" to "🇬🇧", "hr" to "🇭🇷", "de" to "🇩🇪", "it" to "🇮🇹",
         "es" to "🇪🇸", "fr" to "🇫🇷", "pt" to "🇵🇹", "nl" to "🇳🇱",
@@ -63,7 +67,11 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                 }
                 val selected = store.language == code
                 Surface(
-                    onClick = { store.updateLanguage(code) },
+                    onClick = {
+                        if (!store.updateLanguage(code)) {
+                            Toast.makeText(context, errorText, Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)
                         .testTag("qrex-language-option-$code"),
                     shape = RoundedCornerShape(13.dp),
