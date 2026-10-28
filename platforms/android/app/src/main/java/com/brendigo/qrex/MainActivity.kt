@@ -23,6 +23,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
@@ -51,6 +52,7 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
@@ -235,24 +237,34 @@ private fun QREXApp(
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
-    // A single, polished midnight/cyan brand theme. Existing deprecated
-    // light preferences remain untouched on disk; no theme selector exists.
-    val colors = darkColorScheme(
+    val darkUi = when (store.themeMode) {
+        "light" -> false
+        "system" -> isSystemInDarkTheme()
+        else -> true
+    }
+    val colors = if (darkUi) darkColorScheme(
         primary = QrexDesign.accentBright, secondary = purple,
         background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
-        error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
+        error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised
+    ) else lightColorScheme(
+        primary = QrexDesign.actionBlue, secondary = QrexDesign.purple,
+        background = Color(0xFFF7FAFF), surface = Color.White,
+        surfaceVariant = Color(0xFFEAF1FB),
+        onSurface = Color(0xFF091A32), onBackground = Color(0xFF091A32),
+        onSurfaceVariant = Color(0xFF52647D), outlineVariant = Color(0xFFD5E1F0),
+        error = Color(0xFFBC2941), primaryContainer = Color(0xFFE7F0FF)
+    )
     val hostActivity = context as? ComponentActivity
     SideEffect {
         hostActivity?.let { activity ->
             WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
-                isAppearanceLightStatusBars = false
-                isAppearanceLightNavigationBars = false
+                isAppearanceLightStatusBars = !darkUi
+                isAppearanceLightNavigationBars = !darkUi
             }
         }
     }
-    val selectedNavigationColor = QrexDesign.accentBright
     val compactNavigation = LocalConfiguration.current.screenWidthDp < 400 ||
         LocalDensity.current.fontScale >= 1.35f
     MaterialTheme(colorScheme = colors) {
@@ -262,10 +274,15 @@ private fun QREXApp(
         } else {
         Scaffold(containerColor = colors.background, bottomBar = {
             if (currentCode == null) {
-            NavigationBar(containerColor = QrexDesign.backgroundDeep,
+            NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep else Color(0xFFF0F5FD),
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     val target = navTargets[index]
+                    val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue
+                        else listOf(
+                            QrexDesign.purple, QrexDesign.accentBright,
+                            Color(0xFF2298FF), QrexDesign.purple, QrexDesign.accentBright
+                        )[index]
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == target,
                         onClick = {
@@ -291,12 +308,14 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = QrexDesign.surfaceRaised))
+                            indicatorColor = colors.primaryContainer))
                 }
             }
             }
         }) { padding ->
-            Box(Modifier.fillMaxSize().background(QrexDesign.heroBrush).padding(padding)) {
+            Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
+                androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
+                .padding(padding)) {
                 if (currentCode != null) {
                     ResultScreen(
                         raw = currentCode!!,
@@ -1633,6 +1652,7 @@ private fun MoreScreen(
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
+    var showTheme by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
@@ -1669,6 +1689,11 @@ private fun MoreScreen(
         uiLanguage else store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
+    val themeTitle = when (store.themeMode) {
+        "system" -> tr("theme_system")
+        "light" -> tr("theme_light")
+        else -> tr("theme_dark")
+    }
     val compactSettings = LocalConfiguration.current.screenWidthDp < 360 ||
         LocalDensity.current.fontScale >= 1.30f
     when (detailPage) {
@@ -1687,6 +1712,9 @@ private fun MoreScreen(
             // two-column tiles. Reference two-column cards remain on wide phones.
             // The midnight-navy variant keeps its separate 2-column tiles.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                QrexSettingsListRow(tr("theme"), Icons.Default.Palette,
+                    subtitle = themeTitle, onClick = { showTheme = true },
+                    modifier = Modifier.testTag("qrex-more-theme"))
                 QrexSettingsListRow(tr("language"), Icons.Default.Translate,
                     subtitle = languageName,
                     onClick = { detailPage = "language" },
@@ -1710,22 +1738,28 @@ private fun MoreScreen(
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    QrexSettingsTile(label = tr("theme"), icon = Icons.Default.Palette,
+                        subtitle = themeTitle, onClick = { showTheme = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-theme"))
                     QrexSettingsTile(label = tr("language"), icon = Icons.Default.Translate,
                         subtitle = languageName, onClick = { detailPage = "language" },
                         modifier = Modifier.weight(1f).testTag("qrex-more-language"))
-                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.PictureAsPdf,
-                        subtitle = "PDF", onClick = { detailPage = "export" },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-export"))
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.Archive,
+                        subtitle = "PDF", onClick = { detailPage = "export" },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-export"))
                     QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Shield,
                         onClick = { showPrivacy = true }, modifier = Modifier.weight(1f))
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     QrexSettingsTile(label = tr("terms_of_use"), icon = Icons.Default.Description,
                         onClick = { showTerms = true }, modifier = Modifier.weight(1f))
+                    QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
+                        subtitle = tr("developed_by"),
+                        onClick = { showAbout = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-about"))
                 }
-                QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
-                    subtitle = tr("developed_by"),
-                    onClick = { showAbout = true }, modifier = Modifier.testTag("qrex-more-about"))
                 OutlinedButton(onClick = { showDelete = true },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
@@ -1739,6 +1773,43 @@ private fun MoreScreen(
         }
         Spacer(Modifier.height(20.dp))
     }
+    }
+    if (showTheme) {
+        AlertDialog(
+            onDismissRequest = { showTheme = false },
+            modifier = Modifier.testTag("qrex-theme-dialog"),
+            title = { Text(tr("theme")) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    listOf("system", "dark", "light").forEach { mode ->
+                        val label = when (mode) {
+                            "system" -> tr("theme_system")
+                            "light" -> tr("theme_light")
+                            else -> tr("theme_dark")
+                        }
+                        Surface(
+                            onClick = {
+                                if (store.updateThemeMode(mode)) showTheme = false
+                                else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                                .testTag("qrex-theme-choice-$mode"),
+                            color = MaterialTheme.colorScheme.surface
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 8.dp)) {
+                                RadioButton(selected = store.themeMode == mode, onClick = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(label, color = MaterialTheme.colorScheme.onSurface)
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showTheme = false }) { Text(tr("close")) }
+            }
+        )
     }
     if (showAbout) {
         val versionName = remember(context) {

@@ -242,6 +242,15 @@ class QREXStore(context: Context) {
     var language by mutableStateOf(readLanguage())
         private set
 
+    // The previous QREX appearance was always dark. Preserve that visual
+    // default during upgrades; users may explicitly choose System or Light.
+    private fun readThemeMode(): String =
+        runCatching { preferences.getString("themeMode", "dark") }.getOrNull()
+            ?.takeIf { it in setOf("dark", "light", "system") } ?: "dark"
+
+    var themeMode by mutableStateOf(readThemeMode())
+        private set
+
     init {
         // Keep the original preference value intact when any entry is corrupt,
         // incomplete or undecryptable. Otherwise a later save could destroy it.
@@ -495,6 +504,16 @@ class QREXStore(context: Context) {
             preferences.edit().putString("language", value).commit()
         }.getOrDefault(false)
         if (committed) language = value
+        return committed
+    }
+
+    fun updateThemeMode(value: String): Boolean {
+        require(value in setOf("system", "dark", "light"))
+        if (themeMode == value) return true
+        val committed = runCatching {
+            preferences.edit().putString("themeMode", value).commit()
+        }.getOrDefault(false)
+        if (committed) themeMode = value
         return committed
     }
 
