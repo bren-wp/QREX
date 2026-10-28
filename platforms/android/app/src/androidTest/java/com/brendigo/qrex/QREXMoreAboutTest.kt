@@ -18,10 +18,10 @@ class QREXMoreAboutTest {
     @Test
     fun aboutOpensNativeDialogAndKeepsWebsiteAnExplicitSecondaryAction() {
         rule.waitUntil(timeoutMillis = 15_000L) {
-            rule.onAllNodesWithTag("qrex-tab-3", useUnmergedTree = true)
+            rule.onAllNodesWithTag("qrex-tab-4", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-4").performClick()
         rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
         val about = rule.onNodeWithTag("qrex-more-about", useUnmergedTree = true)
             .assertIsDisplayed()
