@@ -1714,7 +1714,8 @@ private fun MoreScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 QrexSettingsListRow(tr("theme"), Icons.Default.Palette,
                     subtitle = themeTitle, onClick = { showTheme = true },
-                    modifier = Modifier.testTag("qrex-more-theme"))
+                    modifier = Modifier.testTag("qrex-more-theme"),
+                    accentOverride = QrexDesign.purple)
                 QrexSettingsListRow(tr("language"), Icons.Default.Translate,
                     subtitle = languageName,
                     onClick = { detailPage = "language" },
@@ -1724,23 +1725,28 @@ private fun MoreScreen(
                     onClick = { detailPage = "export" },
                     modifier = Modifier.testTag("qrex-more-export"))
                 QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Shield,
-                    onClick = { showPrivacy = true })
+                    onClick = { showPrivacy = true },
+                    modifier = Modifier.testTag("qrex-more-privacy"))
                 QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
-                    onClick = { showTerms = true })
+                    onClick = { showTerms = true },
+                    modifier = Modifier.testTag("qrex-more-terms"),
+                    accentOverride = QrexDesign.purple)
                 QrexSettingsListRow(tr("about"), Icons.Default.Info,
                     subtitle = tr("developed_by"),
                     onClick = { showAbout = true },
                     modifier = Modifier.testTag("qrex-more-about"))
                 Spacer(Modifier.height(6.dp))
                 QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
-                    destructive = true, onClick = { showDelete = true })
+                    destructive = true, onClick = { showDelete = true },
+                    modifier = Modifier.testTag("qrex-more-delete"))
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     QrexSettingsTile(label = tr("theme"), icon = Icons.Default.Palette,
                         subtitle = themeTitle, onClick = { showTheme = true },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-theme"))
+                        modifier = Modifier.weight(1f).testTag("qrex-more-theme"),
+                        accentOverride = QrexDesign.purple)
                     QrexSettingsTile(label = tr("language"), icon = Icons.Default.Translate,
                         subtitle = languageName, onClick = { detailPage = "language" },
                         modifier = Modifier.weight(1f).testTag("qrex-more-language"))
@@ -1750,18 +1756,22 @@ private fun MoreScreen(
                         subtitle = "PDF", onClick = { detailPage = "export" },
                         modifier = Modifier.weight(1f).testTag("qrex-more-export"))
                     QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Shield,
-                        onClick = { showPrivacy = true }, modifier = Modifier.weight(1f))
+                        onClick = { showPrivacy = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-privacy"))
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     QrexSettingsTile(label = tr("terms_of_use"), icon = Icons.Default.Description,
-                        onClick = { showTerms = true }, modifier = Modifier.weight(1f))
+                        onClick = { showTerms = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-terms"),
+                        accentOverride = QrexDesign.purple)
                     QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
                         subtitle = tr("developed_by"),
                         onClick = { showAbout = true },
                         modifier = Modifier.weight(1f).testTag("qrex-more-about"))
                 }
                 OutlinedButton(onClick = { showDelete = true },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                        .testTag("qrex-more-delete"),
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colorScheme.error)) {
                     Icon(Icons.Default.DeleteForever, contentDescription = null,
