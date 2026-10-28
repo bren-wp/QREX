@@ -336,22 +336,22 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("API 35", notes)
         self.assertIn("23", notes)
 
-    def test_historical_114_and_current_published_115_links_are_grounded(self):
+    def test_historical_releases_and_current_117_links_are_grounded(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
         # Historical 1.0.13 and 1.0.14 remain in the release archive, not
-        # advertised as the latest version after publishing 1.0.15.
+        # advertised as the latest version after publishing 1.0.17.
         self.assertIn("| 1.0.13 | [v1.0.13]", archive)
         self.assertIn("## Published: v1.0.13 · Android versionCode 113", notes)
-        self.assertIn("Latest published release: **[v1.0.16]", readme)
-        self.assertIn("versionCode 116", readme)
-        self.assertIn("/releases/download/v1.0.16/android-create.png", readme)
-        self.assertIn("/releases/download/v1.0.16/android-export.png", readme)
+        self.assertIn("Latest published release: **[v1.0.17]", readme)
+        self.assertIn("versionCode 117", readme)
+        self.assertIn("/releases/download/v1.0.17/android-create.png", readme)
+        self.assertIn("/releases/download/v1.0.17/android-export.png", readme)
         self.assertNotIn("/releases/download/v1.0.14/android-create.png", readme)
         self.assertIn("| 1.0.14 | [v1.0.14]", archive)
         self.assertIn("| 1.0.15 | [v1.0.15]", archive)
-        self.assertIn("| 1.0.16 | [v1.0.16]", archive)
+        self.assertIn("| 1.0.16 | [v1.0.17]", archive)
         self.assertIn("## Published: v1.0.14 · Android versionCode 114", notes)
         self.assertIn("## Published: v1.0.15 · Android versionCode 115", notes)
 
