@@ -1637,16 +1637,20 @@ private fun MoreScreen(
     var showTerms by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
     var confirmPdfExport by remember { mutableStateOf(false) }
+    // In-memory only: the approved snapshot must never enter Android saved state.
+    // A recreated Activity without this snapshot fails closed on picker return.
+    var pendingPdfRecords by remember { mutableStateOf<List<QRRecord>?>(null) }
     val archiveScope = rememberCoroutineScope()
     val trSaved = tr("saved")
     val exportPdf = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/pdf")
     ) { destination ->
-        if (destination != null) {
-            val records = store.items.filter { it.saved }.toList()
+        val approvedRecords = pendingPdfRecords
+        pendingPdfRecords = null
+        if (destination != null && !approvedRecords.isNullOrEmpty()) {
             archiveScope.launch {
                 val exported = withContext(Dispatchers.IO) {
-                    QREXDocuments.exportSavedPdf(context, records, destination)
+                    QREXDocuments.exportSavedPdf(context, approvedRecords, destination)
                 }
                 Toast.makeText(context, if (exported) trSaved else operationFailed,
                     Toast.LENGTH_SHORT).show()
@@ -1784,7 +1788,13 @@ private fun MoreScreen(
         text = { Text(tr("export_archive_warning")) },
         confirmButton = { TextButton(onClick = {
             confirmPdfExport = false
-            exportPdf.launch("QREX-Saved-Codes.pdf")
+            val approvedRecords = snapshotSavedQrForPdf(store.items)
+            if (approvedRecords.isEmpty()) {
+                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            } else {
+                pendingPdfRecords = approvedRecords
+                exportPdf.launch("QREX-Saved-Codes.pdf")
+            }
         }) { Text("PDF") } },
         dismissButton = { TextButton(onClick = { confirmPdfExport = false }) {
             Text(tr("cancel"))
