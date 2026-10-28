@@ -25,23 +25,26 @@ class QREXHistoryFilterTest {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         rule.onNodeWithTag("qrex-history-screen").assertIsDisplayed()
 
-        val all = rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
-        val saved = rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
+        val filter = rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
         val search = rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
-        all.assertIsDisplayed().assertIsSelected()
-        saved.assertIsDisplayed()
+        filter.assertIsDisplayed()
         search.assertIsDisplayed()
-
-        for (tag in listOf("qrex-history-all", "qrex-history-saved", "qrex-history-search")) {
+        for (tag in listOf("qrex-history-filter-toggle", "qrex-history-search")) {
             val area = rule.onNodeWithTag(tag, useUnmergedTree = true)
                 .getUnclippedBoundsInRoot()
-            val width = area.right - area.left
-            val height = area.bottom - area.top
-            assertTrue("$tag must be at least 48dp wide", width >= 48.dp)
-            assertTrue("$tag must be at least 48dp tall", height >= 48.dp)
+            assertTrue("$tag must be at least 48dp wide", area.right - area.left >= 48.dp)
+            assertTrue("$tag must be at least 48dp tall", area.bottom - area.top >= 48.dp)
         }
-
-        saved.performClick().assertIsSelected()
-        all.performClick().assertIsSelected()
+        filter.performClick()
+        val all = rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
+        val saved = rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
+        all.assertIsDisplayed().assertIsSelected()
+        saved.assertIsDisplayed()
+        saved.performClick()
+        filter.performClick()
+        saved.assertIsDisplayed().assertIsSelected()
+        all.performClick()
+        filter.performClick()
+        all.assertIsDisplayed().assertIsSelected()
     }
 }
