@@ -19,6 +19,10 @@ The Result PNG callback also used the composable's current `raw` rather than an 
 - Keep the existing on-device PNG generation and temporary bitmap recycling. No new permissions, network services, strings or external dependencies are added.
 - Add Compose instrumentation coverage for the Create → Wi-Fi Result → Show QR → Export PNG → Cancel → retry path.
 
+## Additional crash hardening
+
+A malformed saved `language` preference could throw `ClassCastException` inside the failure handler of `openLink()` if no browser handled a valid URL. The handler now safely falls back to English without rewriting the original preference. `QREXStorageTest.failedUrlLaunchCannotCrashWithMalformedLanguagePreference` forces an unavailable browser and a wrongly typed language preference on the main instrumentation thread, then checks that the preference remains intact.
+
 ## Required verification
 
 The new Android test is `QREXResultWifiPngConsentTest`. The PR must pass Kotlin debug compilation, JUnit, connected Android instrumentation, Android Lint, R8 release and AAB builds, 23-language checks, actual Android screenshot checks, and GitHub Actions before merge or a new release. Validate manually on small devices and API 26/31/34/35/36 with a genuine QR, including returning from a cancelled SAF picker.
