@@ -419,6 +419,10 @@ private fun ResultScreen(
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
+    var confirmWifiPngExport by remember(raw) { mutableStateOf(false) }
+    // SAF may return after a different result has been selected. Export only
+    // the payload that launched the picker; never use a subsequently changed QR.
+    var pendingResultPngPayload by remember(raw) { mutableStateOf<String?>(null) }
     var confirmResultDelete by remember(raw) { mutableStateOf(false) }
     var showQrPreview by remember(raw, showQrOnOpen) { mutableStateOf(showQrOnOpen) }
     var showResultMenu by remember(raw) { mutableStateOf(false) }
@@ -450,14 +454,16 @@ private fun ResultScreen(
     val pngExport = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("image/png")
     ) { uri ->
-        if (uri != null) {
+        val approvedPayload = pendingResultPngPayload
+        pendingResultPngPayload = null
+        if (uri != null && approvedPayload != null) {
             // Content providers may block. Never compress or write on the UI thread.
             exportScope.launch {
                 val saved = withContext(Dispatchers.IO) {
                     runCatching {
                         // Never compress the Compose-rendered preview bitmap:
                         // it may be replaced while SAF's picker is foregrounded.
-                        val bitmap = generateQR(raw) ?: error("Cannot render QR")
+                        val bitmap = generateQR(approvedPayload) ?: error("Cannot render QR")
                         try {
                             context.contentResolver.openOutputStream(uri)?.use { stream ->
                                 check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
@@ -470,6 +476,15 @@ private fun ResultScreen(
                 Toast.makeText(context, if (saved) savedMessage else exportFailedMessage,
                     Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+    fun requestResultPngExport() {
+        if (!QRContent.canRender(raw)) return
+        if (wifi) {
+            confirmWifiPngExport = true
+        } else {
+            pendingResultPngPayload = raw
+            pngExport.launch("QREX-QR.png")
         }
     }
     // Android 16 may keep the IME visible briefly after leaving Create. Keep
@@ -647,8 +662,9 @@ private fun ResultScreen(
                 }
                 Spacer(Modifier.height(10.dp))
                 OutlinedButton(
-                    onClick = { pngExport.launch("QREX-QR.png") },
+                    onClick = ::requestResultPngExport,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)
+                        .testTag("qrex-result-export-png")
                 ) { Text(tr("export_png")) }
             }
         }
@@ -685,6 +701,27 @@ private fun ResultScreen(
             dismissButton = { TextButton(onClick = { confirmResultDelete = false }) {
                 Text(tr("cancel"))
             } })
+    }
+    if (confirmWifiPngExport) {
+        AlertDialog(
+            modifier = Modifier.testTag("qrex-result-wifi-png-warning"),
+            onDismissRequest = { confirmWifiPngExport = false },
+            title = { Text(tr("wifi_save_title")) },
+            text = { Text("${tr("wifi_warning")}\n${tr("wifi_save_warning")}") },
+            confirmButton = { TextButton(onClick = {
+                // An approval belongs to this exact result, not to a later QR
+                // selected while Android's document picker is in the foreground.
+                val approved = approvedWifiQrExport(raw)
+                confirmWifiPngExport = false
+                if (approved != null) {
+                    pendingResultPngPayload = approved
+                    pngExport.launch("QREX-QR.png")
+                }
+            }) { Text(tr("export_png")) } },
+            dismissButton = { TextButton(onClick = {
+                confirmWifiPngExport = false
+            }) { Text(tr("cancel")) } }
+        )
     }
     if (confirmWifiShare) {
         AlertDialog(onDismissRequest = { confirmWifiShare = false },
