@@ -36,7 +36,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("finally {", self.scanner)
         self.assertIn("galleryActive.set(false)", self.scanner)
         self.assertIn("alwaysShowLabel = true", self.main)
-        self.assertIn("fontSize = if (compactNavigation) 11.sp else 12.sp", self.main)
+        self.assertIn("fontSize = if (compactNavigation) 10.sp else 11.sp", self.main)
 
     def test_dark_only_palette_and_pdf_export(self):
         self.assertIn("val colors = darkColorScheme(", self.main)
