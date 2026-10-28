@@ -1,4 +1,4 @@
-## Next GitHub release: v1.0.18 · Android versionCode 118
+## Published: v1.0.18 · Android versionCode 118
 
 Protects password-bearing Wi-Fi QR PNG exports on the Result screen with explicit consent and an export-payload snapshot. Hardens failed URL-opening against malformed persisted language settings, and adds Android instrumentation regression coverage. The new release requires successful exact-commit compilation, JUnit, Lint/R8, real-emulator screenshots, translations, and signed package integrity checks. GitHub packages are not signed with the existing Google Play upload certificate.
 
