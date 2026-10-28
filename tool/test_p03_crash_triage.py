@@ -13,6 +13,12 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertIn("script: bash tool/run_p03_emulator.sh ${{ matrix.api }}", workflow)
         self.assertNotIn("script: |", workflow)
         self.assertIn("max-parallel: 2", workflow)
+        self.assertIn("bash tool/prepare_android_emulator.sh", workflow)
+        preflight = (root / "tool/prepare_android_emulator.sh").read_text("utf-8")
+        self.assertIn('cmdline-tools/latest/bin/sdkmanager', preflight)
+        self.assertIn('ANDROID_HOME:-', preflight)
+        self.assertIn('QREX_SDKMANAGER:-', preflight)
+        subprocess.run(["bash", "-n", str(root / "tool/prepare_android_emulator.sh")], check=True)
         subprocess.run(["bash", "-n", str(runner_script)], check=True)
         source = runner_script.read_text("utf-8")
         for expected in (":app:connectedDebugAndroidTest", "adb logcat -b crash",
