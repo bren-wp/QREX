@@ -175,11 +175,13 @@ class QREXCoreTest {
         assertFalse(QRHistory.matches(QRRecord(record, 1L, true), secret, false))
     }
 
-    @Test fun wifiQrClipboardCopiesAreSensitiveButNormalQrTextIsNot() {
+    @Test fun allNonEmptyQrPayloadsHaveSensitiveAndroidClipboardPreviews() {
         assertTrue(qrClipboardSensitive(QRContent.wifi("Office", "private-password")))
         assertTrue(qrClipboardSensitive("wifi:T:WPA;S:Guest;P:secret;;"))
-        assertFalse(qrClipboardSensitive("https://brendigo.com"))
-        assertFalse(qrClipboardSensitive("Normal QR message"))
+        assertTrue(qrClipboardSensitive("https://example.org/private?token=demo"))
+        assertTrue(qrClipboardSensitive("Normal QR message"))
+        assertTrue(qrClipboardSensitive("BEGIN:VCARD\\nFN:Demo\\nEND:VCARD"))
+        assertFalse(qrClipboardSensitive(""))
     }
 
     @Test fun whitespaceOnlyQrCannotBeRendered() {
