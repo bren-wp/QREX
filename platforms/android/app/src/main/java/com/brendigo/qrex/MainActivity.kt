@@ -78,6 +78,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -1378,6 +1379,7 @@ private fun HistoryScreen(
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var historyFilterExpanded by remember { mutableStateOf(false) }
+    val historyFilterState = if (savedOnly) tr("saved") else tr("all")
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
         // Favorites is a dedicated destination: its filter cannot be reset
@@ -1423,11 +1425,13 @@ private fun HistoryScreen(
                             onClick = { historyFilterExpanded = true },
                             modifier = Modifier.size(52.dp)
                                 .testTag("qrex-history-filter-toggle")
+                                .semantics { stateDescription = historyFilterState }
                         ) {
                             Icon(
                                 Icons.Default.FilterList,
                                 contentDescription = "${tr("all")} / ${tr("saved")}",
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = if (savedOnly) QrexDesign.purple
+                                    else MaterialTheme.colorScheme.primary
                             )
                         }
                     }
