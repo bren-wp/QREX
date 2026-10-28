@@ -280,8 +280,8 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun allFourRootTabsAndScannerActionsHaveMeasuredTouchTargets() {
-        for (index in 0..3) assertTouchTarget("qrex-tab-$index")
+    fun allFiveRootTabsAndScannerActionsHaveMeasuredTouchTargets() {
+        for (index in 0..4) assertTouchTarget("qrex-tab-$index")
         assertTouchTarget("qrex-scan-gallery")
         assertTouchTarget("qrex-scan-torch")
     }
@@ -310,7 +310,7 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-history-screen", 0, "touch target History")
         assertTouchTarget("qrex-history-all")
         assertTouchTarget("qrex-history-saved")
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-4").performClick()
         requireScreenTag("qrex-more-screen", 0, "touch target Settings")
         assertTouchTarget("qrex-more-language")
         assertTouchTarget("qrex-more-export")
@@ -357,7 +357,7 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun fourMainTabsKeepHistoryFavoritesAndMoreWithinTwoTaps() {
+    fun fiveMainTabsExposeDedicatedFavoritesAndMore() {
         rule.onNodeWithTag("qrex-tab-2").assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
         requireScreenTag("qrex-history-screen", 0, "open History")
@@ -371,15 +371,20 @@ class QREXNavigationStressTest {
             .assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
             .assertIsSelected()
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-3").assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-tab-3").assertIsSelected()
+        requireScreenTag("qrex-favorites-screen", 0, "open dedicated Favorites")
+        rule.onAllNodesWithTag("qrex-history-segments", useUnmergedTree = true)
+            .assertCountEquals(0)
+        assertTouchTarget("qrex-history-search")
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        rule.onNodeWithTag("qrex-tab-4").assertIsSelected()
         requireScreenTag("qrex-more-screen", 0, "open More")
-        rule.onAllNodesWithTag("qrex-tab-4").assertCountEquals(0)
     }
 
     @Test
     fun languageAndExportScreensFollowReferenceAndNavigateBack() {
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-4").performClick()
         requireScreenTag("qrex-more-screen", 0, "open More")
         rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
@@ -403,7 +408,7 @@ class QREXNavigationStressTest {
 
     @Test
     fun darkSettingsHaveLanguagePdfAndNoThemeSwitch() {
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-4").performClick()
         requireScreenTag("qrex-more-screen", 0, "dark settings")
         rule.onAllNodesWithTag("qrex-more-theme", useUnmergedTree = true)
             .assertCountEquals(0)
