@@ -36,3 +36,7 @@ All native destinations requiring screenshot and functional checking: Splash, Sc
 ## Unverified and non-goals
 
 No claim of all-screen 1:1 pixel equality, iOS implementation, Google Play approval, hardware-specific camera performance, or absence of every potential security vulnerability is made. A full measured visual comparison requires aligned, unwarped target screen captures at known resolution, density, language and font scale. Release gating requires successful Android Kotlin, JUnit, instrumented device tests, P03 API matrix, language checks, Lint/R8 and real screenshot validation. Never publish a release from failing or incomplete CI.
+
+## P03 Android API 34 SDK infrastructure triage
+
+During PR #69 commit `af556669`, Android API 34 stress testing failed **before emulator boot**: GitHub's `sdkmanager --install emulator` returned `Error on ZipFile unknown archive`, then the action could not reach emulator TCP port 5554. This is a truncated/corrupt SDK download, **not an observed QREX exception or ANR**. The P03 workflow now runs a bounded, fail-closed emulator SDK preflight with a maximum of three retries for specifically recognized transient archive/transport failures. A missing executable, unknown SDK error, failed app test, genuine crash or ANR still fails CI. Synthetic retry tests verify recovery, three-attempt limit and nontransient fast failure; redacted failure categories are logged without dumping raw SDK transport URLs. Re-run all five live API jobs and check instrumented results before merging or publishing any new release.

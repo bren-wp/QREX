@@ -51,6 +51,61 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertNotIn("awaitDispose { image?.recycle() }", source)
         self.assertIn("bitmap.recycle()", source)  # independent SAF PNG bitmap
 
+
+    def test_sdk_archive_retry_is_bounded_and_does_not_hide_app_failures(self):
+        """Synthetic sdkmanager fixture: transport corruption may retry; all
+        other failures remain blocking and no test job is bypassed."""
+        from pathlib import Path
+        import os
+        import subprocess
+        import tempfile
+
+        root = Path(__file__).resolve().parents[1]
+        script = root / "tool/prepare_android_emulator.sh"
+        with tempfile.TemporaryDirectory(prefix="qrex-sdk-test-") as directory:
+            work = Path(directory)
+            sdk = work / "sdkmanager"
+            emu = work / "emulator"
+            state = work / "attempts"
+            emu.write_text("#!/usr/bin/env bash\\nexit 0\\n", encoding="utf-8")
+            emu.chmod(0o755)
+
+            def run_mock(failure: str, fails_before_success: int):
+                state.write_text("0", encoding="utf-8")
+                # Prefix remains fixed and only synthetic errors are emitted.
+                sdk.write_text(
+                    "#!/usr/bin/env bash\\n"
+                    "n=$(cat \\"$QREX_TEST_ATTEMPTS\\")\\n"
+                    "n=$((n+1))\\n"
+                    "printf '%s' \\"$n\\" > \\"$QREX_TEST_ATTEMPTS\\"\\n"
+                    f"if (( n <= {fails_before_success} )); then "
+                    f"echo '{failure}' >&2; exit 1; fi\\n"
+                    "exit 0\\n", encoding="utf-8"
+                )
+                sdk.chmod(0o755)
+                env = dict(os.environ)
+                env.update({
+                    "QREX_SDKMANAGER": str(sdk),
+                    "QREX_EMULATOR_BIN": str(emu),
+                    "QREX_RETRY_SLEEP_SECONDS": "0",
+                    "QREX_TEST_ATTEMPTS": str(state),
+                    "RUNNER_TEMP": directory,
+                })
+                result = subprocess.run(["bash", str(script)], env=env,
+                                        capture_output=True, text=True, timeout=15)
+                return result, int(state.read_text(encoding="utf-8"))
+
+            fixed, attempts = run_mock("Error on ZipFile unknown archive", 1)
+            self.assertEqual(0, fixed.returncode)
+            self.assertEqual(2, attempts)
+            self.assertNotIn("ZipFile unknown archive", fixed.stderr)
+            persistent, attempts = run_mock("Error on ZipFile unknown archive", 3)
+            self.assertNotEqual(0, persistent.returncode)
+            self.assertEqual(3, attempts)
+            permanent, attempts = run_mock("QREX genuine SDK error", 3)
+            self.assertNotEqual(0, permanent.returncode)
+            self.assertEqual(1, attempts)
+
     def test_non_app_crashes_are_not_attributed_to_qrex(self):
         raw = ("FATAL EXCEPTION: main\n"
                "Process: com.android.systemui, PID: 20\n"
