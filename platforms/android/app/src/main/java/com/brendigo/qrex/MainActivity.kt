@@ -177,28 +177,23 @@ private fun QREXApp(
     val focusManager = LocalFocusManager.current
     // Compose observes locale/configuration changes without stale Resources reads.
     val appLanguage = screenshotLanguage ?: store.language
-    // Four root destinations: Favorites belongs in History, not a fifth tab.
-    // Preserve internal page IDs so scan/result/edit paths remain unchanged.
-    val navTargets = listOf(0, 1, 2, 4)
-    val pages = listOf("scan", "create", "history", "more")
+    // Android dark reference has five distinct bottom destinations.
+    // Retain stable page IDs so no QR records/settings require migration.
+    val navTargets = listOf(0, 1, 2, 3, 4)
+    val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
     val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
             "history" -> 2
-            "saved" -> 2
+            "saved" -> 3
             "more", "language", "export" -> 4
             else -> 0
         })
-    }
-    // Recover legacy in-memory saved page 3 (old Favorites tab) after an
-    // Activity recreation/update. No QR history or preferences are migrated.
-    LaunchedEffect(selected) {
-        if (selected == 3) selected = 2
     }
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
@@ -256,8 +251,8 @@ private fun QREXApp(
         }
     }
     val selectedNavigationColor = QrexDesign.accentBright
-    val compactNavigation = LocalConfiguration.current.screenWidthDp < 350 ||
-        LocalDensity.current.fontScale >= 1.5f
+    val compactNavigation = LocalConfiguration.current.screenWidthDp < 400 ||
+        LocalDensity.current.fontScale >= 1.35f
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides appLanguage) {
         if (showSplash) {
@@ -287,7 +282,7 @@ private fun QREXApp(
                             Text(label, maxLines = 2,
                                 softWrap = true, overflow = TextOverflow.Ellipsis,
                                 textAlign = TextAlign.Center,
-                                fontSize = if (compactNavigation) 11.sp else 12.sp)
+                                fontSize = if (compactNavigation) 10.sp else 11.sp)
                         },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = selectedNavigationColor,
@@ -330,9 +325,10 @@ private fun QREXApp(
                                 currentCode = it
                             })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
+                            screenshotItems = screenshotItems)
+                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
-                            initiallySavedOnly = screenshotMode == "saved",
-                            favoritesPage = screenshotMode == "saved")
+                            initiallySavedOnly = true, favoritesPage = true)
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root")
@@ -1361,7 +1357,9 @@ private fun HistoryScreen(
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
-        QRHistory.matches(it, search, savedOnly)
+        // Favorites is a dedicated destination: its filter cannot be reset
+        // by a transient History tab state after Activity recreation.
+        QRHistory.matches(it, search, favoritesPage || savedOnly)
     }
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)
@@ -1371,8 +1369,9 @@ private fun HistoryScreen(
             if (favoritesPage) tr("favorites") else tr("history"),
             if (favoritesPage) tr("saved") else tr("history_local")
         )
-        // Two visible, accessible filters replace a hidden heart-only switch.
-        Row(Modifier.fillMaxWidth().testTag("qrex-history-segments"),
+        // Keep the All/Saved selector in History; dedicated Favorites always
+        // shows saved records, even after returning from another destination.
+        if (!favoritesPage) Row(Modifier.fillMaxWidth().testTag("qrex-history-segments"),
             horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
                 selected = !savedOnly, onClick = { savedOnly = false },
