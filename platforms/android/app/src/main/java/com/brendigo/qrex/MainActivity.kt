@@ -756,8 +756,12 @@ fun openLink(context: Context, url: Uri) {
     runCatching {
         context.startActivity(Intent(Intent.ACTION_VIEW, url))
     }.onFailure {
-        val language = context.getSharedPreferences("qrex.user", Context.MODE_PRIVATE)
-            .getString("language", "en") ?: "en"
+        // User preferences can have an invalid type after an interrupted old
+        // migration. The error handler itself must never crash or rewrite them.
+        val language = runCatching {
+            context.getSharedPreferences("qrex.user", Context.MODE_PRIVATE)
+                .getString("language", "en")
+        }.getOrNull()?.takeIf { it == "system" || it in QREXStrings.languages } ?: "en"
         Toast.makeText(context, QREXStrings.get(context, language, "link_failed"), Toast.LENGTH_SHORT).show()
     }
 }
