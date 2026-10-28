@@ -1,3 +1,9 @@
+## Next GitHub release: v1.0.19 · Android versionCode 119
+
+QREX dark Android UI now has five native, working destinations (Scanner, Create, History, Favorites, More). The new Favorites tab is saved-only; History retains the All/Saved filter. Android 13+ QR clipboard previews are treated as sensitive for all payload types, not just Wi-Fi. Ten genuine emulator screens, responsive captures, stable 23-language labels, instrumented stress tests, verified signatures and SHA256 checksums gate publication. Public GitHub packages are not authorized Google Play upload artifacts.
+
+[Release notes](docs/releases/v1.0.19.md)
+
 ## Published: v1.0.18 · Android versionCode 118
 
 Protects password-bearing Wi-Fi QR PNG exports on the Result screen with explicit consent and an export-payload snapshot. Hardens failed URL-opening against malformed persisted language settings, and adds Android instrumentation regression coverage. The new release requires successful exact-commit compilation, JUnit, Lint/R8, real-emulator screenshots, translations, and signed package integrity checks. GitHub packages are not signed with the existing Google Play upload certificate.

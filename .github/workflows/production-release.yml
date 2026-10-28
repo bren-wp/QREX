@@ -9,7 +9,7 @@ on:
         description: 'VersionName already set in Android Gradle metadata'
         required: true
         type: string
-        default: '1.0.18'
+        default: '1.0.19'
       confirmation:
         description: 'Type PLAY_UPLOAD_<version> after reviewing the exact main commit'
         required: true
