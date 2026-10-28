@@ -717,10 +717,13 @@ private fun ResultScreen(
                     pendingResultPngPayload = approved
                     pngExport.launch("QREX-QR.png")
                 }
-            }) { Text(tr("export_png")) } },
-            dismissButton = { TextButton(onClick = {
-                confirmWifiPngExport = false
-            }) { Text(tr("cancel")) } }
+            }, modifier = Modifier.testTag("qrex-result-wifi-png-confirm")) {
+                Text(tr("export_png"))
+            } },
+            dismissButton = { TextButton(
+                onClick = { confirmWifiPngExport = false },
+                modifier = Modifier.testTag("qrex-result-wifi-png-cancel")
+            ) { Text(tr("cancel")) } }
         )
     }
     if (confirmWifiShare) {
