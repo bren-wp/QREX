@@ -1,6 +1,6 @@
 # QREX Privacy Policy
 
-**Last updated:** 22 October 2026  
+**Last updated:** 28 October 2026  
 **Developer:** Brendigo · https://brendigo.com  
 **Platform:** Android only
 
@@ -19,13 +19,13 @@ QREX does not operate a cloud backend that receives QR scans or history. Android
 
 ## Sharing, copying and calendar actions
 
-When you tap **Share**, QREX sends the selected QR text to the app you choose; QREX does not upload it to a server. Wi-Fi QR content may include a plaintext password. QREX asks for confirmation before sharing Wi-Fi content and marks Wi-Fi clipboard content as sensitive so Android can suppress preview displays. Clipboard flags cannot prevent all other software from accessing clipboard data; shared or copied content may persist in recipient apps.
+When you tap **Share**, QREX sends the selected QR text to the app you choose; QREX does not upload it to a server. Wi-Fi QR content may include a plaintext password. QREX asks for explicit confirmation before sharing Wi-Fi content. **Every copied QR code** (including private URLs, contacts, text and Wi-Fi passwords) is marked sensitive so Android 13+ can hide its system clipboard preview. Copying still places the original readable text on the operating-system clipboard; this flag does **not** encrypt or automatically clear it, and other apps may access copied or shared content.
 
 Calendar-event QR content is processed on device. If you tap **Add to calendar**, QREX passes the event title, start/end time and any location or details you entered to the calendar app selected on your device using Android's standard event-insert action. QREX does not request calendar read or write permission. The selected calendar app controls its own storage and privacy practices.
 
 ## PDF and PNG exports
 
-Exports are created after you choose to export. A PDF archive contains only your manually saved codes and **is not encrypted**. Cloud providers or recipients selected by you may store it separately. Deleting data in QREX does **not** erase already-exported copies.
+Exports are created only after you choose to export. A PDF archive contains only your manually saved codes and **is not encrypted**. A saved PNG likewise contains readable QR data and **is not encrypted**. QREX warns before exporting a Wi-Fi QR image because it may encode a password. Cloud providers or recipients selected by you may store it separately. Deleting data in QREX does **not** erase already-exported copies.
 
 ## Rights and deletion
 
