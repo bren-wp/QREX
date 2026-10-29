@@ -1,6 +1,6 @@
 # QREX Android dark UI — current source-of-truth visual audit
 
-**Release candidate:** 1.0.16 (build 116). Previous concept boards are historical inspiration, not a literal byte-for-byte screenshot baseline. Some older design notes referred to light mode and a fifth Favorites tab; **the approved current implementation has a single dark theme and four root destinations**. Compare like-for-like viewport, text scale, state, locale and selected tab when checking real screenshot pixels. A genuine user-supplied reference bitmap is required for any numerical pixel-difference claim; CI screenshots alone cannot prove 1:1 with an unseen reference.
+**Active implementation:** QREX v1.0.23 (build 123). The latest supplied dark blue/cyan marketing board depicts the intended brand and six primary views, but its perspective phone frames and illustrative content cannot be used as an unregistered byte-for-byte screenshot baseline. **The current Android app has five real root destinations: Scan, Create, History, Favorites and More, plus a pinned five-tab bar on Result.** Dark is the default and Light/System remain user-selectable. Compare like-for-like viewport, text scale, state, locale and selected tab when checking real screenshot pixels. A genuine user-supplied reference bitmap is required for any numerical pixel-difference claim; CI screenshots alone cannot prove 1:1 with an unseen reference.
 
 ## Brand / icon parity
 
@@ -19,7 +19,7 @@
 | Scan — gallery busy | Same layout, real spinner in Gallery action, bounded bitmap decoding | No concurrent double picker; finish or cancel restores state |
 | Create — compact / regular | Four top choices (URL, Text, Wi-Fi, Contact), advanced types in More; for 320–399dp width or ≥1.3× fonts a **2×2 grid** avoids truncation; all choices show a selected state in semantics | Eight QR types encode correctly, 23 languages, long labels do not disappear, Generate and Save always accessible |
 | Create — form/keyboard | Scrollable form, optional Wi-Fi password, contact, event fields, QR preview (hidden for short viewport/IME), docked Generate/Save | Event local date handling, password reveal, secure export, no hidden submit |
-| Result | Pinned back control, scrolling value/QR preview, Open / calendar, Copy, Share, Favorite, PNG, Edit, Delete actions; no bottom tabs | Explicit URL review, Wi-Fi password consent, history updates, safe Android calendar fallback |
+| Result | Pinned back control, scrolling value/QR preview, Open / calendar, Copy, Share, Favorite, PNG, Edit, Delete actions; five real bottom tabs above Android gesture/navigation insets | Explicit URL review, Wi-Fi password consent, history updates, safe Android calendar fallback |
 | History / Favorites | Segmented All/Saved filter, search, category glyph, labeled entries, 48dp favorite and overflow icons | Favorites reversible, Wi-Fi secrets not searchable, delete requires confirmation |
 | More / Settings | Dark responsive two-column tiles on wider phones, full-width rows on narrow phones, localized labels, consistent card heights ≥104dp | Language, PDF export, Privacy, Terms, About, clear history are actual actions |
 | Language | Dedicated vertical list with 23 offline languages plus System, flag, native name and radio selected state; list rows ≥64dp | Persists selected locale, no hardcoded user-facing missing keys |

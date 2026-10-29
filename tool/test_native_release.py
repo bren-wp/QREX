@@ -31,7 +31,7 @@ class NativeReleaseGateTests(unittest.TestCase):
     def test_release_workflow_uses_registered_agp9_unit_test_task(self):
         # A missing Gradle task previously blocked a fully green CI build
         # from publishing the signed GitHub-only APK/AAB.
-        release = (ROOT / ".github/workflows/github-release-1.0.22.yml").read_text(
+        release = (ROOT / ".github/workflows/github-release-1.0.23.yml").read_text(
             "utf-8"
         )
         ci = (ROOT / ".github/workflows/native-platforms.yml").read_text("utf-8")
@@ -40,7 +40,7 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertNotIn(":app:testReleaseUnitTest", release)
         self.assertIn(":app:assembleRelease :app:bundleRelease", release)
         self.assertIn("Require all 3 green exact-commit Android checks", release)
-        self.assertIn("QREX-Android-1.0.22-Play-UNSIGNED-QA.aab", release)
+        self.assertIn("QREX-Android-1.0.23-Play-UNSIGNED-QA.aab", release)
 
     def test_valid_repo_config(self):
         self.assertEqual(self.check(), [])
@@ -50,12 +50,12 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
     def test_published_version_code_is_rejected(self):
-        issues = self.check(android=self.android.replace("versionCode = 122", "versionCode = 121"))
-        self.assertTrue(any("published QREX build 121" in issue for issue in issues), issues)
+        issues = self.check(android=self.android.replace("versionCode = 123", "versionCode = 122"))
+        self.assertTrue(any("published QREX build 122" in issue for issue in issues), issues)
 
     def test_prerelease_version_metadata_is_rejected(self):
         issues = self.check(
-            android=self.android.replace('versionName = "1.0.22"', 'versionName = "0.2.4"')
+            android=self.android.replace('versionName = "1.0.23"', 'versionName = "0.2.4"')
         )
         self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
 

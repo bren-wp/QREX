@@ -319,7 +319,7 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = colors.primaryContainer))
+                            indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer))
                 }
             }
         }) { padding ->
