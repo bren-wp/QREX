@@ -41,6 +41,11 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn(":app:assembleRelease :app:bundleRelease", release)
         self.assertIn("Require all 3 green exact-commit Android checks", release)
         self.assertIn("QREX-Android-1.0.23-Play-UNSIGNED-QA.aab", release)
+        # Publisher must inspect the ACTUAL new Android versionCode, not the
+        # previous release's code. The v1.0.23 publisher once built correct
+        # packages and then failed only at this stale aapt badging assertion.
+        self.assertIn('= "com.brendigo.qrex 123 1.0.23"', release)
+        self.assertNotIn('= "com.brendigo.qrex 122 1.0.23"', release)
 
     def test_github_publisher_requires_exact_android_identity(self):
         # The 1.0.23 publisher once compiled and signed both packages but
