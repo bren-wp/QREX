@@ -63,6 +63,12 @@ internal object QrexDesign {
     val purple = Color(0xFF9866FF)
     val muted = Color(0xFFA9BAD2)
     val danger = Color(0xFFFF657B)
+    // Phone and contact types are informational, not destructive actions.
+    val success = Color(0xFF19CFAB)
+    val titleTextSize = 21.sp
+    val supportingTextSize = 11.sp
+    val tileTitleTextSize = 13.sp
+    val tileSupportingTextSize = 12.sp
     val heroBrush = Brush.verticalGradient(
         listOf(Color(0xFF09172D), background, backgroundDeep)
     )
@@ -135,6 +141,8 @@ internal fun QrexPanel(
         shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        // Stable, low-cost layered depth: no runtime blur or animation.
+        shadowElevation = 3.dp,
         content = content
     )
 }
@@ -167,9 +175,10 @@ internal fun QrexSettingsTile(
             Text(label, fontWeight = FontWeight.SemiBold,
                 color = if (!enabled) MaterialTheme.colorScheme.onSurfaceVariant
                     else if (destructive) foreground else MaterialTheme.colorScheme.onSurface,
-                maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 13.sp)
+                maxLines = 2, overflow = TextOverflow.Ellipsis,
+                fontSize = QrexDesign.tileTitleTextSize)
             if (subtitle != null) {
-                Text(subtitle, fontSize = 12.sp,
+                Text(subtitle, fontSize = QrexDesign.tileSupportingTextSize,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
@@ -200,6 +209,7 @@ internal fun QrexSettingsListRow(
         shape = RoundedCornerShape(13.dp),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
+        shadowElevation = 2.dp,
         border = BorderStroke(1.dp, if (destructive)
             MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
             else MaterialTheme.colorScheme.outlineVariant)
@@ -285,6 +295,7 @@ internal fun QrexResultAction(
         shape = RoundedCornerShape(15.dp),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
+        shadowElevation = 2.dp,
         border = BorderStroke(1.dp,
             if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.20f)
             else MaterialTheme.colorScheme.outlineVariant)

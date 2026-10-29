@@ -383,11 +383,12 @@ private fun AppHeader(title: String, subtitle: String) {
                 modifier = Modifier.size(30.dp).clip(RoundedCornerShape(9.dp))
             )
             Spacer(Modifier.width(9.dp))
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 21.sp,
+            Text(title, fontWeight = FontWeight.Bold,
+                fontSize = QrexDesign.titleTextSize,
                 maxLines = 2, overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground)
         }
-        Text(subtitle, fontSize = 11.sp, maxLines = 2,
+        Text(subtitle, fontSize = QrexDesign.supportingTextSize, maxLines = 2,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
@@ -1521,7 +1522,8 @@ private fun HistoryScreen(
                 val tint = when {
                     QRContent.isWifi(item.raw) -> QrexDesign.cyan
                     item.raw.startsWith("mailto:", ignoreCase = true) -> QrexDesign.accentBright
-                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.danger
+                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.success
+                    item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> QrexDesign.success
                     QRContent.isEvent(item.raw) -> QrexDesign.purple
                     else -> MaterialTheme.colorScheme.primary
                 }
@@ -1698,7 +1700,7 @@ private fun HistoryScreen(
 }
 
 internal fun useCompactMoreList(screenWidthDp: Int, fontScale: Float): Boolean =
-    screenWidthDp < 300 || fontScale >= 1.45f
+    screenWidthDp < 300 || fontScale >= 1.30f
 
 @Composable
 private fun MoreScreen(
