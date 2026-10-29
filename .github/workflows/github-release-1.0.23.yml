@@ -157,7 +157,7 @@ jobs:
           test "$cert_aab" = "$cert_apk"
           test "$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
             sed -n "s/^package: name='\([^']*\)' versionCode='\([^']*\)' versionName='\([^']*\)'.*/\1 \2 \3/p" |
-            head -n 1)" = "com.brendigo.qrex 122 1.0.23"
+            head -n 1)" = "com.brendigo.qrex 123 1.0.23"
           mkdir -p production
           cp "$apk" production/QREX-Android-1.0.23.apk
           cp "$aab" production/QREX-Android-1.0.23.aab

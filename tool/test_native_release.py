@@ -42,6 +42,24 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn("Require all 3 green exact-commit Android checks", release)
         self.assertIn("QREX-Android-1.0.23-Play-UNSIGNED-QA.aab", release)
 
+    def test_github_publisher_requires_exact_android_identity(self):
+        # The 1.0.23 publisher once compiled and signed both packages but
+        # refused to publish because this check still demanded build 122.
+        # Resolve metadata from the real Android Gradle configuration so
+        # the publisher can never silently drift from the package under test.
+        import re
+        code = re.search(r"(?m)^\s*versionCode\s*=\s*(\d+)", self.android)
+        version = re.search(r'(?m)^\s*versionName\s*=\s*"([^"]+)"', self.android)
+        self.assertIsNotNone(code)
+        self.assertIsNotNone(version)
+        workflow = (
+            ROOT / ".github/workflows/github-release-1.0.23.yml"
+        ).read_text("utf-8")
+        self.assertIn(
+            f'com.brendigo.qrex {code.group(1)} {version.group(1)}', workflow
+        )
+        self.assertNotIn('com.brendigo.qrex 122 1.0.23', workflow)
+
     def test_valid_repo_config(self):
         self.assertEqual(self.check(), [])
 
