@@ -1,6 +1,6 @@
-## Next GitHub release: v1.0.22 · Android versionCode 122
+## Published: v1.0.22 · Android versionCode 122
 
-QREX addresses Google Play's AndroidX Fragment 1.1.0 deprecation by using AndroidX Fragment 1.9.1, upgrades to Android Gradle Plugin 9.0.1/Gradle 9.1 and enables integrated R8 optimized resource shrinking. Release dependencies and exact signed APK/AAB metadata must be verified before GitHub distribution. All local QR, History, Favorites and Keystore-backed Wi-Fi data are preserved.
+QREX addresses Google Play's AndroidX Fragment 1.1.0 deprecation by using AndroidX Fragment 1.9.1, upgrades to Android Gradle Plugin 9.0.1/Gradle 9.1 and enables integrated R8 optimized resource shrinking. Release dependencies, exact signed APK/AAB metadata and ten real Android screenshots passed the exact-commit GitHub release gate. All local QR, History, Favorites and Keystore-backed Wi-Fi data are preserved.
 
 [Release notes](docs/releases/v1.0.22.md)
 
