@@ -3,6 +3,8 @@ name: QREX Android native CI
 on:
   pull_request:
     paths:
+      # Every tool/ test or gate edit must run CI before merge.
+      - "tool/**"
       - "README.md"
       - "RELEASE_NOTES.md"
       - "docs/**"

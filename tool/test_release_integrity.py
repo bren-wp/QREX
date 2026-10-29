@@ -337,29 +337,55 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("API 35", notes)
         self.assertIn("23", notes)
 
-    def test_historical_releases_and_current_120_links_are_grounded(self):
+    def test_historical_releases_and_current_links_are_grounded(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        # Historical 1.0.13 and 1.0.14 remain in the release archive, not
-        # advertised as the latest version after publishing 1.0.21.
-        self.assertIn("| 1.0.13 | [v1.0.13]", archive)
-        self.assertIn("## Published: v1.0.13 · Android versionCode 113", notes)
-        self.assertIn("Latest published release: **[v1.0.21]", readme)
-        self.assertIn("versionCode 121", readme)
-        self.assertIn("/releases/download/v1.0.21/android-create.png", readme)
-        self.assertIn("/releases/download/v1.0.21/android-export.png", readme)
+        gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
+
+        # Resolve the newest *published* version from the README rather than
+        # freezing this regression gate at a previous GitHub release.
+        latest = re.search(
+            r"Latest published release: \*\*\[v(?P<version>[0-9]+[.][0-9]+[.][0-9]+)\].*?"
+            r"versionCode (?P<code>[0-9]+)", readme,
+        )
+        self.assertIsNotNone(latest, "Missing published version and build code")
+        version, build_code = latest.group("version", "code")
+        current_build = re.search(r"versionCode\s*=\s*([0-9]+)", gradle)
+        self.assertIsNotNone(current_build)
+        self.assertLessEqual(int(build_code), int(current_build.group(1)))
+        self.assertIn(f"releases/tag/v{version}", readme)
+        self.assertIn(f"| {version} | [v{version}]", archive)
+        self.assertIn(
+            f"## Published: v{version} · Android versionCode {build_code}", notes
+        )
+        for screen in ("create", "export"):
+            self.assertIn(
+                f"/releases/download/v{version}/android-{screen}.png", readme
+            )
+
+        # Historical releases must remain archived, never silently removed
+        # or substituted with a different version's screenshots.
         self.assertNotIn("/releases/download/v1.0.14/android-create.png", readme)
-        self.assertIn("| 1.0.14 | [v1.0.14]", archive)
-        self.assertIn("| 1.0.15 | [v1.0.15]", archive)
-        self.assertIn("| 1.0.16 | [v1.0.16]", archive)
-        self.assertIn("| 1.0.17 | [v1.0.17]", archive)
-        self.assertIn("| 1.0.18 | [v1.0.18]", archive)
-        self.assertIn("| 1.0.19 | [v1.0.19]", archive)
-        self.assertIn("| 1.0.20 | [v1.0.20]", archive)
-        self.assertIn("| 1.0.21 | [v1.0.21]", archive)
-        self.assertIn("## Published: v1.0.14 · Android versionCode 114", notes)
-        self.assertIn("## Published: v1.0.15 · Android versionCode 115", notes)
+        for num in range(13, 22):
+            self.assertIn(f"| 1.0.{num} | [v1.0.{num}]", archive)
+        for num in (13, 14, 15):
+            self.assertIn(
+                f"## Published: v1.0.{num} · Android versionCode {100 + num}",
+                notes,
+            )
+
+    def test_any_tool_regression_edit_triggers_premerge_checks(self):
+        # Regression-test-only PRs previously skipped every required CI job
+        # because pull_request filters enumerated only selected tool scripts.
+        for name in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml"):
+            workflow = (WORKFLOWS / name).read_text("utf-8")
+            with self.subTest(workflow=name):
+                pr_paths = workflow.split("  pull_request:\n", 1)[1].split(
+                    "  push:\n", 1
+                )[0]
+                self.assertIn('      - "tool/**"', pr_paths)
 
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
