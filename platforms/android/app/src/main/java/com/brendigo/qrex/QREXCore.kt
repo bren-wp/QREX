@@ -102,9 +102,17 @@ object QRContent {
     fun contactField(raw: String, field: String): String? {
         if (!raw.startsWith("BEGIN:VCARD", ignoreCase = true) ||
             field !in setOf("FN", "TEL", "EMAIL")) return null
-        val encoded = raw.lineSequence().firstOrNull {
-            it.startsWith("$field:", ignoreCase = true)
-        }?.substringAfter(':')?.trimEnd('\r') ?: return null
+        // External QR/vCard producers commonly use FN;CHARSET=UTF-8,
+        // TEL;TYPE=CELL or EMAIL;TYPE=INTERNET. Accept standard property
+        // parameters and folded lines, without interpreting another property.
+        val unfolded = raw.replace(Regex("\r?\n[ \t]"), "")
+        val encoded = unfolded.lineSequence().firstNotNullOfOrNull { line ->
+            val separator = line.indexOf(':')
+            if (separator < 0 ||
+                !line.substring(0, separator).substringBefore(';')
+                    .equals(field, ignoreCase = true)) null
+            else line.substring(separator + 1).trimEnd('\r')
+        } ?: return null
         val plain = StringBuilder()
         var escaped = false
         for (char in encoded) {
@@ -118,7 +126,11 @@ object QRContent {
             }
         }
         if (escaped) return null
-        return plain.toString()
+        // VALUE=uri:tel:+... is a standard vCard phone form; dialers
+        // expect only the number when the UI constructs its tel: action.
+        val value = plain.toString()
+        return if (field == "TEL" && value.startsWith("tel:", ignoreCase = true))
+            value.substring(4) else value
     }
 
     fun eventField(raw: String, name: String): String? {
