@@ -517,7 +517,11 @@ private fun ResultScreen(
     // Android 16 may keep the IME visible briefly after leaving Create. Keep
     // the scrollable Result and its bottom Close target above the keyboard;
     // relying only on adjustResize is not sufficient in edge-to-edge windows.
-    Column(Modifier.fillMaxSize().imePadding().testTag("qrex-result-screen")) {
+    // Leave a real 20dp separation between the Result scroll viewport and
+    // Scaffold's pinned navigation on API 26+; font/inset differences must
+    // not allow result actions to paint into the bottom tab hit region.
+    Column(Modifier.fillMaxSize().imePadding().padding(bottom = 20.dp)
+        .testTag("qrex-result-screen")) {
         // Keep the primary Close action outside the scrolling Result content.
         // Scroll restoration and keyboard resizing must not hide navigation.
         Row(

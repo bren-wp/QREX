@@ -10,9 +10,9 @@ ARCHIVE = ROOT / "docs/releases/workflows"
 
 class ArchivedPublisherTests(unittest.TestCase):
     def test_all_published_publishers_are_inert_and_preserved(self):
-        self.assertEqual(["github-release-1.0.21.yml"],
+        self.assertEqual(["github-release-1.0.22.yml"],
                          sorted(p.name for p in ACTIVE.glob("github-release-1.0.*.yml")))
-        expected = {f"github-release-1.0.{n}.yml" for n in range(1, 21)}
+        expected = {f"github-release-1.0.{n}.yml" for n in range(1, 22)}
         self.assertEqual(expected, {p.name for p in ARCHIVE.glob("github-release-1.0.*.yml")})
         for name in sorted(expected):
             with self.subTest(name=name):
@@ -22,10 +22,10 @@ class ArchivedPublisherTests(unittest.TestCase):
 
     def test_current_published_release_metadata_is_not_a_candidate(self):
         readme = (ROOT / "README.md").read_text("utf-8")
-        self.assertIn("Latest published release: **[v1.0.20]", readme)
-        self.assertIn("/releases/download/v1.0.20/android-create.png", readme)
+        self.assertIn("Latest published release: **[v1.0.21]", readme)
+        self.assertIn("/releases/download/v1.0.21/android-create.png", readme)
         self.assertNotIn("Next QA candidate — QREX v1.0.17", readme)
-        self.assertIn("| 1.0.20 |", (ROOT / "docs/releases/INDEX.md").read_text("utf-8"))
+        self.assertIn("| 1.0.21 |", (ROOT / "docs/releases/INDEX.md").read_text("utf-8"))
 
 
 if __name__ == "__main__":
