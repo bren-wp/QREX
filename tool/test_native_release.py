@@ -48,8 +48,8 @@ class NativeReleaseGateTests(unittest.TestCase):
         # Resolve metadata from the real Android Gradle configuration so
         # the publisher can never silently drift from the package under test.
         import re
-        code = re.search(r"(?m)^\\s*versionCode\\s*=\\s*(\\d+)", self.android)
-        version = re.search(r'(?m)^\\s*versionName\\s*=\\s*"([^"]+)"', self.android)
+        code = re.search(r"(?m)^\s*versionCode\s*=\s*(\d+)", self.android)
+        version = re.search(r'(?m)^\s*versionName\s*=\s*"([^"]+)"', self.android)
         self.assertIsNotNone(code)
         self.assertIsNotNone(version)
         workflow = (
