@@ -102,7 +102,16 @@ internal fun QrexBrandHeader(
 ) {
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            QrexBrandMark()
+            // The reference Scanner header uses the QREX wordmark without
+            // a second small launcher icon above the live camera.
+            Row(Modifier.semantics(mergeDescendants = true) {
+                contentDescription = "QREX"
+            }, verticalAlignment = Alignment.CenterVertically) {
+                Text("QRE", fontWeight = FontWeight.Black, fontSize = 25.sp,
+                    color = MaterialTheme.colorScheme.onBackground)
+                Text("X", fontWeight = FontWeight.Black, fontSize = 25.sp,
+                    color = QrexDesign.accentBright)
+            }
             Spacer(Modifier.weight(1f))
             Icon(Icons.Default.Shield, contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(19.dp))
