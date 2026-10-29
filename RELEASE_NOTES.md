@@ -1,4 +1,10 @@
-## Next GitHub release: v1.0.20 · Android versionCode 120
+## Next GitHub release: v1.0.21 · Android versionCode 121
+
+Five-tab navigation is now visible on the actual Result screen. Ten native Android screens are captured at 320dp compact and reference sizes, with eight large-font and three light-mode QA variants. The existing dark Play-sized screenshots remain real emulator pixels. Full device instrumentation, 23 translations, Kotlin/JUnit, Lint/R8, image checks and verified signatures/checksums gate the next APK/AAB publication.
+
+[Release notes](docs/releases/v1.0.21.md)
+
+## Published: v1.0.20 · Android versionCode 120
 
 QREX maintains a midnight-dark presentation for its actual release screenshots, prevents previous user preferences from contaminating debug-only marketing captures, and uses a compact six-card More grid on standard 320dp Android screens. The release gate verifies real dark PNG pixels in addition to foreground UI, screen dimensions, Lint/R8, 23 translations, and five-API full device instrumentation. History, Favorites, encrypted Wi-Fi storage, package identity and authorized Play signing remain unchanged.
 
