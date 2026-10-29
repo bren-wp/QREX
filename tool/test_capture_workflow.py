@@ -109,10 +109,14 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertNotIn("qrex_light", responsive)
         self.assertIn("light|1080x2340|440|1.0|create,scan,more", responsive)
         self.assertIn("--es qrex_theme light", responsive)
+        self.assertIn("theme_args=(--es qrex_theme dark)", responsive)
+        self.assertIn("--es qrex_theme dark", body)
+
         self.assertIn("light-create light-scan light-more", WORKFLOW.read_text("utf-8"))
         app = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         self.assertIn("val screenshotTheme = if (isDebug && screenshotMode != null)", app)
         self.assertIn("screenshotTheme ?: store.themeMode", app)
+        self.assertIn('?: "dark"', app)
         self.assertIn("exit 1", body)
 
 

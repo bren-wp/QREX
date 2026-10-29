@@ -59,6 +59,20 @@ class QREXMoreAboutTest {
     }
 
     @Test
+    fun moreDeleteActionIsVisibleWithoutScrollingOnStandardPhone() {
+        rule.waitUntil(timeoutMillis = 15_000L) {
+            rule.onAllNodesWithTag("qrex-tab-4", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
+        // Main More is a single screen on a reference-size Android phone.
+        // Lists of 23 languages/history records can still scroll by design.
+        rule.onNodeWithTag("qrex-more-delete", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun aboutOpensNativeDialogAndKeepsWebsiteAnExplicitSecondaryAction() {
         rule.waitUntil(timeoutMillis = 15_000L) {
             rule.onAllNodesWithTag("qrex-tab-4", useUnmergedTree = true)

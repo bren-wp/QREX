@@ -49,7 +49,7 @@ timeout -k 2s 12s adb shell pm grant com.brendigo.qrex android.permission.CAMERA
 timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
 timeout -k 2s 12s adb shell input keyevent KEYCODE_HOME || true
 timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
-  --es qrex_screenshot create --es qrex_language hr
+  --es qrex_screenshot create --es qrex_language hr --es qrex_theme dark
 
 # Never trust just a PNG signature. The *actual* foreground accessibility tree
 # must prove QREX Create is visible and exclude system crash/ANR overlays.
@@ -71,7 +71,7 @@ for attempt in 1 2 3 4; do
   # An unresponsive emulator can also block 'am start'; bound retries too.
   timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
   timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
-    --es qrex_screenshot create --es qrex_language hr || true
+    --es qrex_screenshot create --es qrex_language hr --es qrex_theme dark || true
 done
 
 if ! test -s "$screenshot"; then
@@ -89,7 +89,7 @@ for screen in splash scan wifi result history saved more language export; do
   for attempt in 1 2 3 4; do
     timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
     timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
-      --es qrex_screenshot "$screen" --es qrex_language hr
+      --es qrex_screenshot "$screen" --es qrex_language hr --es qrex_theme dark
     sleep 5
     if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-window.xml >/dev/null 2>&1 \
       && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-window.xml > "$hierarchy" \

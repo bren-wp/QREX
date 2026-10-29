@@ -172,7 +172,9 @@ class MainActivity : ComponentActivity() {
         // UI screenshot-only override: never accepted in release builds or
         // normal user sessions, and never written to persisted settings.
         val screenshotTheme = if (isDebug && screenshotMode != null)
-            intent.getStringExtra("qrex_theme")?.takeIf { it in setOf("dark", "light") }
+            (intent.getStringExtra("qrex_theme")?.takeIf {
+                it in setOf("dark", "light")
+            } ?: "dark")
         else null
         setContent { QREXApp(store, screenshotMode, screenshotLanguage, screenshotTheme) }
     }
@@ -1692,6 +1694,10 @@ private fun HistoryScreen(
 }
 
 @Composable
+internal fun useCompactMoreList(screenWidthDp: Int, fontScale: Float): Boolean =
+    screenWidthDp < 300 || fontScale >= 1.45f
+
+@Composable
 private fun MoreScreen(
     store: QREXStore,
     initialDetailPage: String = "root"
@@ -1741,8 +1747,13 @@ private fun MoreScreen(
         "light" -> tr("theme_light")
         else -> tr("theme_dark")
     }
-    val compactSettings = LocalConfiguration.current.screenWidthDp < 360 ||
-        LocalDensity.current.fontScale >= 1.30f
+    // Keep six 2-column cards visible without forced scrolling on a
+    // regular/320dp handset. Switch to accessible rows only if physically
+    // too narrow or when accessibility text would truncate/overlap.
+    val compactSettings = useCompactMoreList(
+        LocalConfiguration.current.screenWidthDp,
+        LocalDensity.current.fontScale
+    )
     when (detailPage) {
     "language" -> QrexLanguageDetails(store, onBack = { detailPage = "root" })
     "export" -> QrexExportDetails(
@@ -1751,7 +1762,7 @@ private fun MoreScreen(
         onPdf = { confirmPdfExport = true }
     )
     else -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp, vertical = 18.dp)
+        .padding(horizontal = 14.dp, vertical = 12.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
         if (compactSettings) {
@@ -1826,7 +1837,7 @@ private fun MoreScreen(
                 )
             }
         }
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(8.dp))
     }
     }
     if (showTheme) {
