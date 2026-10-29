@@ -129,8 +129,12 @@ jobs:
           export QREX_UPLOAD_KEY_PASSWORD="$password"
           python3 tool/check_native_release.py
           python3 tool/generate_localizations.py --check
+          # The enabled Android variant registers debug JVM tests; AGP 9 does
+          # not register a JVM test task for the release variant in this app.
+          # The mandatory CI also runs these tests against the exact commit.
+          # Keep release lint, optimized APK and AAB compilation mandatory.
           gradle -p platforms/android --no-daemon --stacktrace \
-            :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
+            :app:testDebugUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
           apk="platforms/android/app/build/outputs/apk/release/app-release.apk"
           aab="platforms/android/app/build/outputs/bundle/release/app-release.aab"
           test -s "$apk"
