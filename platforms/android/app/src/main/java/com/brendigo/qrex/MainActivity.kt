@@ -1693,7 +1693,6 @@ private fun HistoryScreen(
     }
 }
 
-@Composable
 internal fun useCompactMoreList(screenWidthDp: Int, fontScale: Float): Boolean =
     screenWidthDp < 300 || fontScale >= 1.45f
 
