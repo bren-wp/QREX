@@ -13,7 +13,8 @@ restore_device() {
 trap restore_device EXIT
 
 # profile | actual pixel width x height | density DPI | Android font scale |
-# Capture all ten screens at compact and reference size, plus a large-font
+# 320dp compact profile: capture all ten screens at compact and reference size,
+# plus a large-font
 # accessibility sample of every functional destination.
 profiles=(
   "compact|720x1280|360|1.0|splash,scan,create,wifi,result,history,saved,more,language,export"
