@@ -375,6 +375,18 @@ class ReleaseIntegrityTests(unittest.TestCase):
                 notes,
             )
 
+    def test_any_tool_regression_edit_triggers_premerge_checks(self):
+        # Regression-test-only PRs previously skipped every required CI job
+        # because pull_request filters enumerated only selected tool scripts.
+        for name in ("native-platforms.yml", "capture-screenshots.yml",
+                     "generate-localizations.yml"):
+            workflow = (WORKFLOWS / name).read_text("utf-8")
+            with self.subTest(workflow=name):
+                pr_paths = workflow.split("  pull_request:\n", 1)[1].split(
+                    "  push:\n", 1
+                )[0]
+                self.assertIn('      - "tool/**"', pr_paths)
+
     def test_readme_only_updates_run_all_exact_commit_ci(self):
         for name in ("native-platforms.yml", "capture-screenshots.yml",
                      "generate-localizations.yml"):
