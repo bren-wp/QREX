@@ -27,7 +27,7 @@ for spec in "${profiles[@]}"; do
   timeout -k 2s 12s adb shell wm density "$dpi"
   timeout -k 2s 12s adb shell settings put system font_scale "$scale"
   # Only debug builds accept this non-persistent reference screenshot override.
-  theme_args=()
+  theme_args=(--es qrex_theme dark)
   if [[ "$profile" == "light" ]]; then
     theme_args=(--es qrex_theme light)
   fi

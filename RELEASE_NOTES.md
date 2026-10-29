@@ -1,4 +1,10 @@
-## Next GitHub release: v1.0.19 · Android versionCode 119
+## Next GitHub release: v1.0.20 · Android versionCode 120
+
+QREX maintains a midnight-dark presentation for its actual release screenshots, prevents previous user preferences from contaminating debug-only marketing captures, and uses a compact six-card More grid on standard 320dp Android screens. The release gate verifies real dark PNG pixels in addition to foreground UI, screen dimensions, Lint/R8, 23 translations, and five-API full device instrumentation. History, Favorites, encrypted Wi-Fi storage, package identity and authorized Play signing remain unchanged.
+
+[Release notes](docs/releases/v1.0.20.md)
+
+## Published: v1.0.19 · Android versionCode 119
 
 QREX dark Android UI now has five native, working destinations (Scanner, Create, History, Favorites, More). The new Favorites tab is saved-only; History retains the All/Saved filter. Android 13+ QR clipboard previews are treated as sensitive for all payload types, not just Wi-Fi. Ten genuine emulator screens, responsive captures, stable 23-language labels, instrumented stress tests, verified signatures and SHA256 checksums gate publication. Public GitHub packages are not authorized Google Play upload artifacts.
 
