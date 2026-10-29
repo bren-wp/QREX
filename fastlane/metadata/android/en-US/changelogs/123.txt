@@ -1,0 +1,1 @@
+Improved QR contact scanning for standard parameterized and folded vCards. Polished Scanner branding and five-tab dark navigation. Kept all offline/privacy protections. Android 36 compatibility and R8 release checks.
