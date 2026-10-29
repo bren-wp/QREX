@@ -1,12 +1,13 @@
 # QREX Android dark UI — current source-of-truth visual audit
 
-**Active implementation:** QREX v1.0.23 (build 123). The latest supplied dark blue/cyan marketing board depicts the intended brand and six primary views, but its perspective phone frames and illustrative content cannot be used as an unregistered byte-for-byte screenshot baseline. **The current Android app has five real root destinations: Scan, Create, History, Favorites and More, plus a pinned five-tab bar on Result.** Dark is the default and Light/System remain user-selectable. Compare like-for-like viewport, text scale, state, locale and selected tab when checking real screenshot pixels. A genuine user-supplied reference bitmap is required for any numerical pixel-difference claim; CI screenshots alone cannot prove 1:1 with an unseen reference.
+**Active development candidate:** QREX v1.0.24 (build 124), based on published v1.0.23. The latest supplied dark blue/cyan marketing board depicts the intended brand and six primary views, but its perspective phone frames and illustrative content cannot be used as an unregistered byte-for-byte screenshot baseline. **The current Android app has five real root destinations: Scan, Create, History, Favorites and More, plus a pinned five-tab bar on Result.** Dark is the default and Light/System remain user-selectable. Compare like-for-like viewport, text scale, state, locale and selected tab when checking real screenshot pixels. A genuine user-supplied reference bitmap is required for any numerical pixel-difference claim; CI screenshots alone cannot prove 1:1 with an unseen reference.
 
 ## Brand / icon parity
 
 - Identity: QREX blue Q with diagonal tail, four cyan scanner brackets, five white QR squares including one hollow finder; **Brendigo** publisher.
 - The full-color in-app/splash drawable `qrex_icon.xml` and launcher adaptive background `qrex_launcher_background.xml` share the same gradient stops **#19CAFF → #0868EE → #07187E**. The adaptive foreground retains the safe-zone Q and modules without a redundant background tile. Android OEM masks may crop outer edges and cannot all produce identical pixels.
 - The monochrome Android themed icon retains the same negative-space finder center using an even-odd cutout; never replace it with a filled white block.
+- Informational contact/phone history icons use success #19CFAB rather than destructive red. Cards use restrained 2–3dp native Compose shadows for depth without real-time blurs or bitmaps. At fontScale 1.30 or above, More switches to full-width rows to protect readability.
 - The one dark palette uses backgrounds #061020 / #030A18, surface #111E32, raised #152641, accents #22C7FF, #19E3F5 and purple #9866FF. The action-blue token #086BD8 guarantees >4.5:1 normal-text white contrast.
 
 ## Screen-by-screen Android implementation contract

@@ -1,8 +1,14 @@
-## Prepared: v1.0.23 · Android versionCode 123
+## Prepared: v1.0.24 · Android versionCode 124
 
-QREX refines its dark Scanner wordmark and five-tab selection visuals, improves external vCard QR interoperability for parameterized/folded contacts, and keeps localized navigation, data migration and Keystore protection unchanged. Android build/release identity advances to 1.0.23 (123); the publisher must pass all three exact-commit CI checks, real screenshots, Lint/R8 and signature/SHA256 verification before the release is public.
+QREX v1.0.24 adds consistent native card elevation, accessible More rows from 1.30× font scale, and correct green contact/phone glyph colors. The published v1.0.23 already refines its dark Scanner wordmark and five-tab selection visuals, improves external vCard QR interoperability for parameterized/folded contacts, and keeps localized navigation, data migration and Keystore protection unchanged. Android build/release identity advances to 1.0.23 (123); the publisher must pass all three exact-commit CI checks, real screenshots, Lint/R8 and signature/SHA256 verification before the release is public.
 
-[Release preparation](docs/releases/v1.0.23.md)
+[Release preparation](docs/releases/v1.0.24.md)
+
+## Published: v1.0.23 · Android versionCode 123
+
+QR contact interoperability (parameterized and folded vCards), five-tab dark navigation polish, verified GitHub-only signed APK/AAB, 10 genuine emulator screenshots and checksums. The Play upload key was not used.
+
+[Release notes](docs/releases/v1.0.23.md)
 
 ## Published: v1.0.22 · Android versionCode 122
 
