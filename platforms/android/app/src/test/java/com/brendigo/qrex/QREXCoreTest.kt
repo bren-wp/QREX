@@ -136,6 +136,19 @@ class QREXCoreTest {
         assertNull(QRContent.contactField("ordinary text", "FN"))
     }
 
+    @Test fun parameterizedVcardContactPropertiesFromOtherQrApps() {
+        val card = "BEGIN:VCARD\r\nVERSION:3.0\r\n" +
+            "FN;CHARSET=UTF-8:Šime Ko\r\n vačić\r\n" +
+            "TEL;TYPE=CELL;VALUE=uri:tel:+38591234567\r\n" +
+            "EMAIL;TYPE=INTERNET:kontakt@example.hr\r\nEND:VCARD"
+        assertEquals("Šime Kovačić", QRContent.contactField(card, "FN"))
+        assertEquals("+38591234567", QRContent.contactField(card, "TEL"))
+        assertEquals("kontakt@example.hr", QRContent.contactField(card, "EMAIL"))
+        assertEquals("Šime Kovačić", QRContent.label(card))
+        assertNull(QRContent.contactField(card, "BDAY"))
+        assertNull(QRContent.contactField("BEGIN:VCARD\nFN;TYPE=HOME", "FN"))
+    }
+
     @Test fun contactNameNewlinesCannotInjectVcardFields() {
         val name = "Ana\nBEGIN:VCARD"
         val card = QRContent.contact(name)!!
