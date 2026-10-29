@@ -74,6 +74,18 @@ jobs:
         run: gradle --no-daemon --stacktrace :app:assembleDebug :app:testDebugUnitTest :app:assembleDebugAndroidTest
       - name: Check native distribution metadata
         run: python3 tool/check_native_release.py
+      - name: Check resolved release Fragment version is modern
+        working-directory: platforms/android
+        run: |
+          set -euo pipefail
+          gradle --no-daemon :app:dependencyInsight \
+            --dependency androidx.fragment:fragment \
+            --configuration releaseRuntimeClasspath > "$RUNNER_TEMP/qrex-fragment-dependencies.txt"
+          grep -Eq '^androidx.fragment:fragment:1\.9\.1($|[[:space:]])' "$RUNNER_TEMP/qrex-fragment-dependencies.txt"
+          if grep -Eq '^androidx.fragment:fragment:1\.1\.0($|[[:space:]])' "$RUNNER_TEMP/qrex-fragment-dependencies.txt"; then
+            echo 'Deprecated Fragment runtime dependency still selected' >&2
+            exit 1
+          fi
       - name: Validate Android lint and R8 release variants
         working-directory: platforms/android
         run: gradle --no-daemon --stacktrace :app:lintDebug :app:assembleRelease :app:bundleRelease

@@ -36,12 +36,12 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
     def test_published_version_code_is_rejected(self):
-        issues = self.check(android=self.android.replace("versionCode = 121", "versionCode = 120"))
-        self.assertTrue(any("published QREX build 120" in issue for issue in issues), issues)
+        issues = self.check(android=self.android.replace("versionCode = 122", "versionCode = 121"))
+        self.assertTrue(any("published QREX build 121" in issue for issue in issues), issues)
 
     def test_prerelease_version_metadata_is_rejected(self):
         issues = self.check(
-            android=self.android.replace('versionName = "1.0.21"', 'versionName = "0.2.4"')
+            android=self.android.replace('versionName = "1.0.22"', 'versionName = "0.2.4"')
         )
         self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
 
