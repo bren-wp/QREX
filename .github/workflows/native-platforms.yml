@@ -60,7 +60,7 @@ jobs:
           test -d "$ANDROID_HOME/build-tools/36.0.0" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.13"
+          gradle-version: "9.1.0"
       - name: Check screenshot authenticity gate
         run: python3 -m unittest discover -s tool -p 'test_*.py'
       - name: Check production UI labels

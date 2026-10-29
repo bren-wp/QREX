@@ -43,7 +43,7 @@ jobs:
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.13"
+          gradle-version: "9.1.0"
       - name: Verify crash/ANR privacy redaction and runner syntax
         run: python3 -m unittest discover -s tool -p test_p03_crash_triage.py -v
       - name: Enable KVM acceleration when the runner exposes /dev/kvm

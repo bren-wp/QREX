@@ -17,6 +17,17 @@ class NativeReleaseGateTests(unittest.TestCase):
             self.manifest if manifest is None else manifest,
         )
 
+    def test_androidx_fragment_updated_and_r8_optimized_with_agp9(self):
+        root_gradle = (ROOT / "platforms/android/build.gradle.kts").read_text("utf-8")
+        properties = (ROOT / "platforms/android/gradle.properties").read_text("utf-8")
+        self.assertIn('id("com.android.application") version "9.0.1"', root_gradle)
+        self.assertNotIn("org.jetbrains.kotlin.android", root_gradle)
+        self.assertNotIn("org.jetbrains.kotlin.android", self.android)
+        self.assertIn('implementation("androidx.fragment:fragment:1.9.1")', self.android)
+        self.assertIn("isMinifyEnabled = true", self.android)
+        self.assertIn("isShrinkResources = true", self.android)
+        self.assertNotIn("android.r8.optimizedResourceShrinking=false", properties)
+
     def test_valid_repo_config(self):
         self.assertEqual(self.check(), [])
 
