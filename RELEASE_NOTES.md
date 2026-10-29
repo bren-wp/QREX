@@ -1,3 +1,9 @@
+## Prepared: v1.0.23 · Android versionCode 123
+
+QREX refines its dark Scanner wordmark and five-tab selection visuals, improves external vCard QR interoperability for parameterized/folded contacts, and keeps localized navigation, data migration and Keystore protection unchanged. Android build/release identity advances to 1.0.23 (123); the publisher must pass all three exact-commit CI checks, real screenshots, Lint/R8 and signature/SHA256 verification before the release is public.
+
+[Release preparation](docs/releases/v1.0.23.md)
+
 ## Published: v1.0.22 · Android versionCode 122
 
 QREX addresses Google Play's AndroidX Fragment 1.1.0 deprecation by using AndroidX Fragment 1.9.1, upgrades to Android Gradle Plugin 9.0.1/Gradle 9.1 and enables integrated R8 optimized resource shrinking. Release dependencies, exact signed APK/AAB metadata and ten real Android screenshots passed the exact-commit GitHub release gate. All local QR, History, Favorites and Keystore-backed Wi-Fi data are preserved.
