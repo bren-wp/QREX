@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Verify that production Compose screens respond to real window/density/font
-# changes. Run only after the normal debug APK and 12 screenshots succeed.
+# Verify all 10 real Compose screens on different Android window/density
+# profiles. Run only after the main debug APK and screen captures succeed.
 # Captures come from a real Android emulator; NEVER resize 1080x1920 marketing
 # images or inject static UI artwork.
 set -Eeuo pipefail
@@ -13,11 +13,13 @@ restore_device() {
 trap restore_device EXIT
 
 # profile | actual pixel width x height | density DPI | Android font scale |
-# screens: 320dp compact, ~393dp reference handset, enlarged text handset
+# 320dp compact profile: capture all ten screens at compact and reference size,
+# plus a large-font
+# accessibility sample of every functional destination.
 profiles=(
-  "compact|720x1280|360|1.0|create,scan,more"
-  "reference|1080x2340|440|1.0|create,more"
-  "largefont|1080x2340|440|1.6|create,more"
+  "compact|720x1280|360|1.0|splash,scan,create,wifi,result,history,saved,more,language,export"
+  "reference|1080x2340|440|1.0|splash,scan,create,wifi,result,history,saved,more,language,export"
+  "largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export"
   "light|1080x2340|440|1.0|create,scan,more"
 )
 
@@ -69,4 +71,4 @@ if actual != expected[sys.argv[1]]:
 PY
   done
 done
-echo "Verified 7 genuine dark and 3 genuine light responsive screenshots."
+echo "Verified ten real Android screens at compact/reference sizes, eight large-font and three light variants."

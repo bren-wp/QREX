@@ -71,6 +71,21 @@ class ForegroundTests(unittest.TestCase):
         ), "saved")
 
 
+    def test_all_additional_responsive_screens_validate_real_content(self):
+        cases = {
+            "responsive-splash": "QREX Skener. Stvara. Dijeli.",
+            "responsive-result": "Rezultat https://brendigo.com Natrag",
+            "responsive-history": "Povijest brendigo.com Pretraži povijest...",
+            "responsive-saved": "Favoriti brendigo.com Spremljeno",
+            "responsive-wifi": "Stvori QR kod QREX-Demo Wi-Fi",
+            "responsive-language": "Jezik Hrvatski English",
+            "responsive-export": "Izvoz arhive PDF",
+        }
+        for mode, content in cases.items():
+            with self.subTest(mode=mode):
+                validate(screen('<node package="com.brendigo.qrex" text="' +
+                                content + '" />'), mode)
+
     def test_wifi_create_fixture_is_visible(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Stvori QR kod" />'

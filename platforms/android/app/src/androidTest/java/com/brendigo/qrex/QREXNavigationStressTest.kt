@@ -347,6 +347,34 @@ class QREXNavigationStressTest {
     }
 
     @Test
+    fun allFiveTabsStayReachableOnResultWithoutOverlappingPinnedActions() {
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        requireScreenTag("qrex-create-screen", 0, "open Create for Result navigation")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://brendigo.com")
+        rule.onNodeWithTag("qrex-create-show").performClick()
+        requireScreenTag("qrex-result-screen", 0, "open Result with bottom navigation")
+        val nav = rule.onNodeWithTag("qrex-tab-1", useUnmergedTree = true)
+        nav.assertIsDisplayed().assertIsSelected()
+        val navTop = nav.getUnclippedBoundsInRoot().top
+        val back = rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
+        back.assertIsDisplayed()
+        val scroll = rule.onNodeWithTag("qrex-result-scroll", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertTrue("Result scrolling area must stay above navigation",
+            scroll.bottom <= navTop + 1.dp)
+        for (index in 0..4) {
+            rule.onNodeWithTag("qrex-tab-$index").assertIsDisplayed()
+        }
+        // Changing the tab must close Result instead of showing stale
+        // sensitive QR content under another selected destination.
+        rule.onNodeWithTag("qrex-tab-2").performClick()
+        requireScreenTag("qrex-history-screen", 0, "Result to History")
+        rule.onAllNodesWithTag("qrex-result-screen", useUnmergedTree = true)
+            .assertCountEquals(0)
+    }
+
+    @Test
     fun referenceResultCardAndActionsRemainRealAccessibleControls() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "reference Result setup")
