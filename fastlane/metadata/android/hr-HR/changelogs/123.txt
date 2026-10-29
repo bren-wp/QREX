@@ -1,0 +1,1 @@
+Poboljšano čitanje QR kontakata iz drugih aplikacija (vCard s parametrima i presavijenim retcima). Dorađen izgled skenera i navigacije s pet kartica. Zadržani privatnost, rad bez interneta i kompatibilnost s Androidom 36.
