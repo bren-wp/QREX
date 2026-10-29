@@ -4,6 +4,17 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class QREXCoreTest {
+    @Test fun moreLayoutFitsNormalSmallPhoneAndProtectsAccessibilityText() {
+        // 3x2 More cards should fit the ordinary 320dp screen without an
+        // unnecessary seven-row scroll list. Very narrow/high-font layouts
+        // intentionally keep accessible rows to avoid overlapping labels.
+        assertFalse(useCompactMoreList(320, 1.0f))
+        assertFalse(useCompactMoreList(393, 1.0f))
+        assertTrue(useCompactMoreList(280, 1.0f))
+        assertTrue(useCompactMoreList(393, 1.6f))
+        assertTrue(useCompactMoreList(320, 1.45f))
+    }
+
     @Test fun pdfSnapshotKeepsExactlyTheApprovedFavoritesAfterHistoryChanges() {
         val personalLink = QRRecord("https://example.org/private?token=demo", 1L, true)
         val wifi = QRRecord(QRContent.wifi("Demo network", "demo secret"), 2L, true)
