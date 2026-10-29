@@ -1,0 +1,1 @@
+Poboljšan responzivni prikaz postavki za veće fontove, suptilna dubina kartica i usklađene boje ikonica u povijesti. Skeniranje, izrada QR kodova i lokalna zaštita podataka ostaju nepromijenjeni.

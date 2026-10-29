@@ -1,6 +1,6 @@
 ## Prepared: v1.0.24 · Android versionCode 124
 
-QREX v1.0.24 adds consistent native card elevation, accessible More rows from 1.30× font scale, and correct green contact/phone glyph colors. The published v1.0.23 already refines its dark Scanner wordmark and five-tab selection visuals, improves external vCard QR interoperability for parameterized/folded contacts, and keeps localized navigation, data migration and Keystore protection unchanged. Android build/release identity advances to 1.0.23 (123); the publisher must pass all three exact-commit CI checks, real screenshots, Lint/R8 and signature/SHA256 verification before the release is public.
+Native card elevation and dark depth are now consistent across More tiles and Result actions. The settings grid switches to readable full-width rows starting at 1.30× font scale. Phone and contact history glyphs use an informational green instead of destructive red. Header and tile typography share design tokens, with Kotlin and Python regression tests. All five API-level stress tests, exact-commit Android CI, real 10-screen emulator captures, Lint/R8, 23-language checks, signed GitHub artifacts and SHA256 remain mandatory before publication.
 
 [Release preparation](docs/releases/v1.0.24.md)
 

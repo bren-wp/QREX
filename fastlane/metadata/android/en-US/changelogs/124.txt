@@ -1,0 +1,1 @@
+Improved responsive settings for larger fonts, refined native card depth and consistent QR history icon colors. Offline scanning, private data storage and QR creation remain unchanged.
