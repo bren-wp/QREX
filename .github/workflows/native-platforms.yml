@@ -82,8 +82,12 @@ jobs:
             --dependency androidx.fragment:fragment \
             --configuration releaseRuntimeClasspath > "$RUNNER_TEMP/qrex-fragment-dependencies.txt"
           grep -Eq '^androidx.fragment:fragment:1\.9\.1($|[[:space:]])' "$RUNNER_TEMP/qrex-fragment-dependencies.txt"
-          if grep -Eq '^androidx.fragment:fragment:1\.1\.0($|[[:space:]])' "$RUNNER_TEMP/qrex-fragment-dependencies.txt"; then
-            echo 'Deprecated Fragment runtime dependency still selected' >&2
+          # dependencyInsight legitimately shows older *requests* redirected
+          # to 1.9.1, e.g. "1.1.0 -> 1.9.1". Only a selected old module is a
+          # regression. Requested-but-upgraded versions must not fail CI.
+          if grep -E '^androidx.fragment:fragment:1\.1\.0($|[[:space:]])' "$RUNNER_TEMP/qrex-fragment-dependencies.txt" |
+              grep -v -- ' -> ' | grep -q .; then
+            echo 'Deprecated Fragment 1.1.0 was SELECTED in release runtime' >&2
             exit 1
           fi
       - name: Validate Android lint and R8 release variants
