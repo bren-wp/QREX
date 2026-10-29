@@ -229,7 +229,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('QrexResultAction(tr("share"), Icons.Default.Share)', self.main)
         self.assertIn('testTag("qrex-result-toggle-qr")', self.main)
         self.assertIn('if (alreadySaved) tr("remove_favorite") else tr("add_favorite")', self.main)
-        self.assertIn("if (currentCode == null)", self.main)
+        self.assertIn("Scaffold(containerColor = colors.background, bottomBar = {", self.main)
+        self.assertNotIn("if (currentCode == null) {\\n            NavigationBar", self.main)
 
     def test_reference_result_single_hero_card_and_destructive_row(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
