@@ -88,4 +88,8 @@
     <string name="all">Összes</string>
     <string name="no_history">Még nincsenek QR-kódok</string>
     <string name="back">Vissza</string>
+    <string name="theme">Téma</string>
+    <string name="theme_dark">Sötét</string>
+    <string name="theme_light">Világos</string>
+    <string name="theme_system">Rendszer</string>
 </resources>

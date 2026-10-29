@@ -7,6 +7,7 @@ on:
       - "tool/p03_crash_triage.py"
       - "tool/test_p03_crash_triage.py"
       - "tool/run_p03_emulator.sh"
+      - "tool/prepare_android_emulator.sh"
       - ".github/workflows/p03-stability.yml"
   workflow_dispatch:
 
@@ -80,6 +81,9 @@ jobs:
             echo "Transient dependency repository failure; retry $attempt/3" >&2
             sleep "$((attempt * 15))"
           done
+      - name: Preflight Android Emulator SDK with bounded archive retry
+        shell: bash
+        run: bash tool/prepare_android_emulator.sh
       - name: Execute bounded 30-cycle Compose stress and sanitized crash triage
         uses: reactivecircus/android-emulator-runner@v2
         with:

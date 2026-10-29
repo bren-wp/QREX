@@ -27,8 +27,10 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
                     self.assertTrue(strings[key].strip())
 
     def test_history_matches_reference_labels_and_state_specific_empty_copy(self):
-        self.assertIn('label = { Text(tr("all"), maxLines = 1) }', self.source)
-        self.assertIn('label = { Text(tr("saved"), maxLines = 1) }', self.source)
+        self.assertIn('text = { Text(tr("all")) }', self.source)
+        self.assertIn('text = { Text(tr("saved")) }', self.source)
+        self.assertIn('testTag("qrex-history-filter-toggle")', self.source)
+        self.assertIn('testTag("qrex-history-search-row")', self.source)
         self.assertIn('if (savedOnly) tr("no_saved") else tr("no_history")',
                       self.source)
         for tag in ("qrex-history-all", "qrex-history-saved",
@@ -36,12 +38,12 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
             self.assertIn(f'testTag("{tag}")', self.source)
 
     def test_controls_remain_functional_and_responsive(self):
-        self.assertIn("selected = !savedOnly, onClick = { savedOnly = false }",
-                      self.source)
-        self.assertIn("selected = savedOnly, onClick = { savedOnly = true }",
-                      self.source)
+        self.assertIn("savedOnly = false", self.source)
+        self.assertIn("savedOnly = true", self.source)
+        self.assertIn(".semantics { selected = !savedOnly }", self.source)
+        self.assertIn(".semantics { selected = savedOnly }", self.source)
         self.assertGreaterEqual(self.source.count(".heightIn(min = 52.dp)"), 3)
-        self.assertIn("QRHistory.matches(it, search, savedOnly)", self.source)
+        self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.source)
         self.assertIn("itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) })", self.source)
         self.assertNotIn("items(found, key = { it.raw })", self.source)
         self.assertIn('testTag("qrex-history-empty")', self.source)

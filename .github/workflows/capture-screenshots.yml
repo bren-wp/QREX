@@ -103,7 +103,8 @@ jobs:
           for image in \
             compact-create compact-scan compact-more \
             reference-create reference-more \
-            largefont-create largefont-more; do
+            largefont-create largefont-more \
+            light-create light-scan light-more; do
             test -s "docs/screenshots/responsive/${image}.png"
           done
           python3 tool/verify_screenshots.py docs/screenshots/responsive/*.png

@@ -4,6 +4,23 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class QREXCoreTest {
+    @Test fun pdfSnapshotKeepsExactlyTheApprovedFavoritesAfterHistoryChanges() {
+        val personalLink = QRRecord("https://example.org/private?token=demo", 1L, true)
+        val wifi = QRRecord(QRContent.wifi("Demo network", "demo secret"), 2L, true)
+        val unsaved = QRRecord("never-export", 3L, false)
+        val history = mutableListOf(personalLink, unsaved, wifi)
+        val approved = snapshotSavedQrForPdf(history)
+        assertEquals(listOf(personalLink, wifi), approved)
+
+        // Saving, clearing and reordering the original History while SAF is
+        // open must not change what an earlier PDF confirmation authorized.
+        history.clear()
+        history.add(unsaved.copy(saved = true))
+        assertEquals(listOf(personalLink, wifi), approved)
+        assertFalse(approved.any { it.raw == "never-export" })
+        assertTrue(snapshotSavedQrForPdf(history).single().raw == "never-export")
+    }
+
     @Test fun languageChoicesContainEnglishAndCroatian() {
         assertEquals(23, QREXStrings.languages.size)
         assertEquals("en", QREXStrings.languages.first())
@@ -175,11 +192,13 @@ class QREXCoreTest {
         assertFalse(QRHistory.matches(QRRecord(record, 1L, true), secret, false))
     }
 
-    @Test fun wifiQrClipboardCopiesAreSensitiveButNormalQrTextIsNot() {
+    @Test fun allNonEmptyQrPayloadsHaveSensitiveAndroidClipboardPreviews() {
         assertTrue(qrClipboardSensitive(QRContent.wifi("Office", "private-password")))
         assertTrue(qrClipboardSensitive("wifi:T:WPA;S:Guest;P:secret;;"))
-        assertFalse(qrClipboardSensitive("https://brendigo.com"))
-        assertFalse(qrClipboardSensitive("Normal QR message"))
+        assertTrue(qrClipboardSensitive("https://example.org/private?token=demo"))
+        assertTrue(qrClipboardSensitive("Normal QR message"))
+        assertTrue(qrClipboardSensitive("BEGIN:VCARD\\nFN:Demo\\nEND:VCARD"))
+        assertFalse(qrClipboardSensitive(""))
     }
 
     @Test fun whitespaceOnlyQrCannotBeRendered() {

@@ -8,7 +8,10 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.SemanticsProperties
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -25,23 +28,43 @@ class QREXHistoryFilterTest {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         rule.onNodeWithTag("qrex-history-screen").assertIsDisplayed()
 
-        val all = rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
-        val saved = rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
+        val filter = rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
         val search = rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
-        all.assertIsDisplayed().assertIsSelected()
-        saved.assertIsDisplayed()
+        filter.assertIsDisplayed()
         search.assertIsDisplayed()
-
-        for (tag in listOf("qrex-history-all", "qrex-history-saved", "qrex-history-search")) {
+        // A reference-style search and filter share one aligned row. Both
+        // controls remain separate, non-overlapping touch targets.
+        val searchBounds = search.getUnclippedBoundsInRoot()
+        val filterBounds = filter.getUnclippedBoundsInRoot()
+        assertTrue("search and filter must not overlap",
+            searchBounds.right <= filterBounds.left)
+        assertTrue("search and filter vertical centers must align",
+            kotlin.math.abs(((searchBounds.top + searchBounds.bottom) / 2 -
+                (filterBounds.top + filterBounds.bottom) / 2).value) <= 2f)
+        val initialFilterState =
+            filter.fetchSemanticsNode().config[SemanticsProperties.StateDescription]
+        for (tag in listOf("qrex-history-filter-toggle", "qrex-history-search")) {
             val area = rule.onNodeWithTag(tag, useUnmergedTree = true)
                 .getUnclippedBoundsInRoot()
-            val width = area.right - area.left
-            val height = area.bottom - area.top
-            assertTrue("$tag must be at least 48dp wide", width >= 48.dp)
-            assertTrue("$tag must be at least 48dp tall", height >= 48.dp)
+            assertTrue("$tag must be at least 48dp wide", area.right - area.left >= 48.dp)
+            assertTrue("$tag must be at least 48dp tall", area.bottom - area.top >= 48.dp)
         }
-
-        saved.performClick().assertIsSelected()
-        all.performClick().assertIsSelected()
+        filter.performClick()
+        val all = rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
+        val saved = rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
+        all.assertIsDisplayed().assertIsSelected()
+        saved.assertIsDisplayed()
+        saved.performClick()
+        val savedFilterState =
+            filter.fetchSemanticsNode().config[SemanticsProperties.StateDescription]
+        assertNotEquals("selected filter must be announced", initialFilterState, savedFilterState)
+        filter.performClick()
+        saved.assertIsDisplayed().assertIsSelected()
+        all.performClick()
+        assertEquals("All filter must restore original state description",
+            initialFilterState,
+            filter.fetchSemanticsNode().config[SemanticsProperties.StateDescription])
+        filter.performClick()
+        all.assertIsDisplayed().assertIsSelected()
     }
 }

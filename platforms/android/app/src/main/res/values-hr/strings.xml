@@ -88,4 +88,8 @@
     <string name="all">Sve</string>
     <string name="no_history">Još nema QR kodova</string>
     <string name="back">Natrag</string>
+    <string name="theme">Tema</string>
+    <string name="theme_dark">Tamna</string>
+    <string name="theme_light">Svijetla</string>
+    <string name="theme_system">Sustav</string>
 </resources>

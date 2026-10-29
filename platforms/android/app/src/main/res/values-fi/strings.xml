@@ -88,4 +88,8 @@
     <string name="all">Kaikki</string>
     <string name="no_history">Ei vielä QR-koodeja</string>
     <string name="back">Takaisin</string>
+    <string name="theme">Teema</string>
+    <string name="theme_dark">Tumma</string>
+    <string name="theme_light">Vaalea</string>
+    <string name="theme_system">Järjestelmä</string>
 </resources>

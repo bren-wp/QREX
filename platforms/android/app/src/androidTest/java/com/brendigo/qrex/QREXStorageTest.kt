@@ -23,6 +23,7 @@ private fun QREXStore.clearAll(): Boolean {
     if (!legacyCleared || !preferencesCleared) return false
     resetDelegate("historyEnabled", true)
     resetDelegate("language", "system")
+    resetDelegate("themeMode", "dark")
     return true
 }
 
@@ -39,6 +40,31 @@ private fun QREXStore.resetDelegate(name: String, value: Any?) {
 @RunWith(AndroidJUnit4::class)
 class QREXStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Test
+    fun languageAndHistorySettingsCommitDurablyBeforeUiStateChanges() {
+        val first = QREXStore(context)
+        assertTrue(first.clearAll())
+        assertTrue(first.updateLanguage("hr"))
+        assertEquals("hr", first.language)
+        assertTrue(first.updateHistoryEnabled(false))
+        assertFalse(first.historyEnabled)
+
+        // A fresh Store simulates an Activity process restart. Both choices
+        // must have been committed before the UI reported the new state.
+        val restarted = QREXStore(context)
+        assertEquals("hr", restarted.language)
+        assertFalse(restarted.historyEnabled)
+        assertTrue(restarted.updateHistoryEnabled(true))
+        assertTrue(restarted.updateLanguage("system"))
+        assertTrue(restarted.updateThemeMode("light"))
+        assertEquals("light", QREXStore(context).themeMode)
+        assertTrue(restarted.updateThemeMode("system"))
+        assertEquals("system", QREXStore(context).themeMode)
+        assertTrue(restarted.updateThemeMode("dark"))
+        assertEquals("dark", QREXStore(context).themeMode)
+        assertTrue(restarted.clearAll())
+    }
 
     @Test
     fun failedUrlLaunchCannotCrashWithMalformedLanguagePreference() {
@@ -75,17 +101,20 @@ class QREXStorageTest {
     }
 
     @Test
-    fun wifiClipboardSuppressesAndroidSystemPreview() {
-        val secret = QRContent.wifi("Guest", "super-private-pass")
-        val clip = makeQrClipboardClip(secret)
-        assertEquals(secret, clip.getItemAt(0).text.toString())
-        assertTrue(clip.description.extras?.getBoolean(
-            android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
-
-        val ordinary = makeQrClipboardClip("https://brendigo.com")
-        assertEquals("https://brendigo.com", ordinary.getItemAt(0).text.toString())
-        assertFalse(ordinary.description.extras?.getBoolean(
-            android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
+    fun copiedQrPayloadsSuppressAndroidSystemPreviewWithoutChangingPastedText() {
+        val samples = listOf(
+            QRContent.wifi("Guest", "super-private-pass"),
+            "https://example.org/private-reset?token=test-only",
+            "mailto:person@example.org",
+            "BEGIN:VCARD\\nVERSION:3.0\\nFN:Demo Contact\\nEND:VCARD",
+            "private free text"
+        )
+        for (raw in samples) {
+            val clip = makeQrClipboardClip(raw)
+            assertEquals(raw, clip.getItemAt(0).text.toString())
+            assertTrue(clip.description.extras?.getBoolean(
+                android.content.ClipDescription.EXTRA_IS_SENSITIVE) == true)
+        }
     }
 
     @Test

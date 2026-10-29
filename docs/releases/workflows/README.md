@@ -1,4 +1,4 @@
-# QREX — archived GitHub release recipes (v1.0.1–v1.0.17)
+# QREX — archived GitHub release recipes (v1.0.1–v1.0.18)
 
 These YAML files are **historical, already published** release recipes, preserved as text for reproducibility and audit. Their original GitHub tags, binaries, checksums and release notes remain unchanged. They are intentionally stored **outside** `.github/workflows/` so a new Android CI pass never schedules sixteen obsolete `workflow_run` pipelines, even as skipped runs.
 

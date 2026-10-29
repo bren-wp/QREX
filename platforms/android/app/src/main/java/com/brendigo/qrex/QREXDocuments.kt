@@ -16,6 +16,15 @@ import java.util.Locale
  * There is no intermediate plaintext file and no full-PDF ByteArray.
  * Run exports on Dispatchers.IO; the caller owns the destination URI.
  */
+/**
+ * Freeze the user's approved PDF export selection before handing control to
+ * Android's document picker. Never scan a mutable History list on SAF return:
+ * another QR code (including a password-bearing favorite) may be saved while
+ * the system UI is open.
+ */
+internal fun snapshotSavedQrForPdf(records: List<QRRecord>): List<QRRecord> =
+    records.filter { it.saved }.toList()
+
 object QREXDocuments {
     private fun valid(records: List<QRRecord>): Boolean =
         records.isNotEmpty() && records.size <= 250 &&

@@ -18,6 +18,7 @@ profiles=(
   "compact|720x1280|360|1.0|create,scan,more"
   "reference|1080x2340|440|1.0|create,more"
   "largefont|1080x2340|440|1.6|create,more"
+  "light|1080x2340|440|1.0|create,scan,more"
 )
 
 for spec in "${profiles[@]}"; do
@@ -25,6 +26,11 @@ for spec in "${profiles[@]}"; do
   timeout -k 2s 12s adb shell wm size "$pixels"
   timeout -k 2s 12s adb shell wm density "$dpi"
   timeout -k 2s 12s adb shell settings put system font_scale "$scale"
+  # Only debug builds accept this non-persistent reference screenshot override.
+  theme_args=()
+  if [[ "$profile" == "light" ]]; then
+    theme_args=(--es qrex_theme light)
+  fi
   IFS=',' read -r -a targets <<< "$screens"
   for screen in "${targets[@]}"; do
     file="docs/screenshots/responsive/${profile}-${screen}.png"
@@ -33,7 +39,7 @@ for spec in "${profiles[@]}"; do
     for attempt in 1 2 3; do
       timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
       timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
-        --es qrex_screenshot "$screen" --es qrex_language hr
+        --es qrex_screenshot "$screen" --es qrex_language hr "${theme_args[@]}"
       sleep 5
       if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-responsive.xml >/dev/null 2>&1 \
         && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-responsive.xml > "$hierarchy" \
@@ -55,11 +61,12 @@ from pathlib import Path
 from tool.verify_screenshots import verify
 expected = {"compact": (720, 1280),
             "reference": (1080, 2340),
-            "largefont": (1080, 2340)}
+            "largefont": (1080, 2340),
+            "light": (1080, 2340)}
 actual = verify(Path(sys.argv[2]))
 if actual != expected[sys.argv[1]]:
     raise ValueError(f"Wrong responsive device size: {actual}")
 PY
   done
 done
-echo "Verified 7 genuine dark responsive screenshots: 320dp, 393dp and 1.6x font."
+echo "Verified 7 genuine dark and 3 genuine light responsive screenshots."

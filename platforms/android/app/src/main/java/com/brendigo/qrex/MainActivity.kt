@@ -23,6 +23,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
@@ -51,12 +52,14 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -75,6 +78,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -114,20 +118,22 @@ private val white = Color.White
 internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
 
 /**
- * Android 13+ clipboard previews can display copied text to bystanders.
- * Mark Wi-Fi QR payloads as sensitive (without changing copy/paste contents).
+ * QR contents can carry secrets even when they aren't Wi-Fi codes: e.g.
+ * login links, contacts, calendar notes or arbitrary text. Never expose
+ * copied QR payloads in Android 13+ system clipboard previews.
+ * This hides previews only; it does NOT encrypt/expire the OS clipboard.
  */
-internal fun qrClipboardSensitive(raw: String): Boolean = QRContent.isWifi(raw)
+internal fun qrClipboardSensitive(raw: String): Boolean = raw.isNotEmpty()
 
-internal fun makeQrClipboardClip(raw: String): ClipData {
-    val clip = ClipData.newPlainText("QR", raw)
-    if (qrClipboardSensitive(raw)) {
-        clip.description.extras = PersistableBundle().apply {
-            putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+internal fun makeQrClipboardClip(raw: String): ClipData =
+    ClipData.newPlainText("QR", raw).apply {
+        // Even seemingly ordinary QR URLs may embed private tokens.
+        if (qrClipboardSensitive(raw)) {
+            description.extras = PersistableBundle().apply {
+                putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+            }
         }
     }
-    return clip
-}
 
 internal fun copyQrToClipboard(context: Context, raw: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
@@ -163,7 +169,12 @@ class MainActivity : ComponentActivity() {
         val screenshotLanguage = if (isDebug && screenshotMode != null)
             intent.getStringExtra("qrex_language")?.takeIf { it in QREXStrings.languages }
         else null
-        setContent { QREXApp(store, screenshotMode, screenshotLanguage) }
+        // UI screenshot-only override: never accepted in release builds or
+        // normal user sessions, and never written to persisted settings.
+        val screenshotTheme = if (isDebug && screenshotMode != null)
+            intent.getStringExtra("qrex_theme")?.takeIf { it in setOf("dark", "light") }
+        else null
+        setContent { QREXApp(store, screenshotMode, screenshotLanguage, screenshotTheme) }
     }
 }
 
@@ -171,34 +182,30 @@ class MainActivity : ComponentActivity() {
 private fun QREXApp(
     store: QREXStore,
     screenshotMode: String? = null,
-    screenshotLanguage: String? = null
+    screenshotLanguage: String? = null,
+    screenshotTheme: String? = null
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     // Compose observes locale/configuration changes without stale Resources reads.
     val appLanguage = screenshotLanguage ?: store.language
-    // Four root destinations: Favorites belongs in History, not a fifth tab.
-    // Preserve internal page IDs so scan/result/edit paths remain unchanged.
-    val navTargets = listOf(0, 1, 2, 4)
-    val pages = listOf("scan", "create", "history", "more")
+    // Android dark reference has five distinct bottom destinations.
+    // Retain stable page IDs so no QR records/settings require migration.
+    val navTargets = listOf(0, 1, 2, 3, 4)
+    val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
     val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
-        Icons.Default.History, Icons.Default.MoreHoriz)
+        Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
             "create", "wifi", "result" -> 1
             "history" -> 2
-            "saved" -> 2
+            "saved" -> 3
             "more", "language", "export" -> 4
             else -> 0
         })
-    }
-    // Recover legacy in-memory saved page 3 (old Favorites tab) after an
-    // Activity recreation/update. No QR history or preferences are migrated.
-    LaunchedEffect(selected) {
-        if (selected == 3) selected = 2
     }
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
@@ -238,26 +245,36 @@ private fun QREXApp(
     // Android 16 predictive/back gesture returns from a QR result to its
     // originating screen instead of abruptly exiting the entire app.
     BackHandler(enabled = currentCode != null) { currentCode = null }
-    // A single, polished midnight/cyan brand theme. Existing deprecated
-    // light preferences remain untouched on disk; no theme selector exists.
-    val colors = darkColorScheme(
+    val darkUi = when (screenshotTheme ?: store.themeMode) {
+        "light" -> false
+        "system" -> isSystemInDarkTheme()
+        else -> true
+    }
+    val colors = if (darkUi) darkColorScheme(
         primary = QrexDesign.accentBright, secondary = purple,
         background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
-        error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised)
+        error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised
+    ) else lightColorScheme(
+        primary = QrexDesign.actionBlue, secondary = QrexDesign.purple,
+        background = Color(0xFFF7FAFF), surface = Color.White,
+        surfaceVariant = Color(0xFFEAF1FB),
+        onSurface = Color(0xFF091A32), onBackground = Color(0xFF091A32),
+        onSurfaceVariant = Color(0xFF52647D), outlineVariant = Color(0xFFD5E1F0),
+        error = Color(0xFFBC2941), primaryContainer = Color(0xFFE7F0FF)
+    )
     val hostActivity = context as? ComponentActivity
     SideEffect {
         hostActivity?.let { activity ->
             WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
-                isAppearanceLightStatusBars = false
-                isAppearanceLightNavigationBars = false
+                isAppearanceLightStatusBars = !darkUi
+                isAppearanceLightNavigationBars = !darkUi
             }
         }
     }
-    val selectedNavigationColor = QrexDesign.accentBright
-    val compactNavigation = LocalConfiguration.current.screenWidthDp < 350 ||
-        LocalDensity.current.fontScale >= 1.5f
+    val compactNavigation = LocalConfiguration.current.screenWidthDp < 400 ||
+        LocalDensity.current.fontScale >= 1.35f
     MaterialTheme(colorScheme = colors) {
         CompositionLocalProvider(LocalLanguage provides appLanguage) {
         if (showSplash) {
@@ -265,10 +282,15 @@ private fun QREXApp(
         } else {
         Scaffold(containerColor = colors.background, bottomBar = {
             if (currentCode == null) {
-            NavigationBar(containerColor = QrexDesign.backgroundDeep,
+            NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep else Color(0xFFF0F5FD),
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
                     val target = navTargets[index]
+                    val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue
+                        else listOf(
+                            QrexDesign.purple, QrexDesign.accentBright,
+                            Color(0xFF2298FF), QrexDesign.purple, QrexDesign.accentBright
+                        )[index]
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == target,
                         onClick = {
@@ -287,19 +309,21 @@ private fun QREXApp(
                             Text(label, maxLines = 2,
                                 softWrap = true, overflow = TextOverflow.Ellipsis,
                                 textAlign = TextAlign.Center,
-                                fontSize = if (compactNavigation) 11.sp else 12.sp)
+                                fontSize = if (compactNavigation) 10.sp else 11.sp)
                         },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = selectedNavigationColor,
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = QrexDesign.surfaceRaised))
+                            indicatorColor = colors.primaryContainer))
                 }
             }
             }
         }) { padding ->
-            Box(Modifier.fillMaxSize().background(QrexDesign.heroBrush).padding(padding)) {
+            Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
+                androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
+                .padding(padding)) {
                 if (currentCode != null) {
                     ResultScreen(
                         raw = currentCode!!,
@@ -330,9 +354,10 @@ private fun QREXApp(
                                 currentCode = it
                             })
                         2 -> HistoryScreen(store, onOpen = { currentCode = it },
+                            screenshotItems = screenshotItems)
+                        3 -> HistoryScreen(store, onOpen = { currentCode = it },
                             screenshotItems = screenshotItems,
-                            initiallySavedOnly = screenshotMode == "saved",
-                            favoritesPage = screenshotMode == "saved")
+                            initiallySavedOnly = true, favoritesPage = true)
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root")
@@ -1359,9 +1384,13 @@ private fun HistoryScreen(
     val largeHistoryText = LocalDensity.current.fontScale >= 1.35f
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
+    var historyFilterExpanded by remember { mutableStateOf(false) }
+    val historyFilterState = if (savedOnly) tr("saved") else tr("all")
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
     val found = (screenshotItems ?: store.items).filter {
-        QRHistory.matches(it, search, savedOnly)
+        // Favorites is a dedicated destination: its filter cannot be reset
+        // by a transient History tab state after Activity recreation.
+        QRHistory.matches(it, search, favoritesPage || savedOnly)
     }
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)
@@ -1371,43 +1400,81 @@ private fun HistoryScreen(
             if (favoritesPage) tr("favorites") else tr("history"),
             if (favoritesPage) tr("saved") else tr("history_local")
         )
-        // Two visible, accessible filters replace a hidden heart-only switch.
-        Row(Modifier.fillMaxWidth().testTag("qrex-history-segments"),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(
-                selected = !savedOnly, onClick = { savedOnly = false },
-                label = { Text(tr("all"), maxLines = 1) },
-                leadingIcon = {
-                    Icon(Icons.Default.History, contentDescription = null,
-                        modifier = Modifier.size(17.dp))
-                },
+        // Reference History has one search field plus a filter icon; no
+        // full-width chip row pushing the first QR cards down. Favorites is
+        // a separate saved-only destination and needs no extra filter button.
+        Row(
+            Modifier.fillMaxWidth().testTag("qrex-history-search-row"),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = search,
+                onValueChange = { search = it.take(120) },
+                label = { Text(tr("search_qr")) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+                shape = RoundedCornerShape(13.dp),
                 modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-                    .testTag("qrex-history-all")
+                    .testTag("qrex-history-search")
             )
-            FilterChip(
-                selected = savedOnly, onClick = { savedOnly = true },
-                label = { Text(tr("saved"), maxLines = 1) },
-                leadingIcon = {
-                    Icon(
-                        if (savedOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = null, modifier = Modifier.size(17.dp)
-                    )
-                },
-                modifier = Modifier.weight(1f).heightIn(min = 52.dp)
-                    .testTag("qrex-history-saved")
-            )
+            if (!favoritesPage) {
+                Box {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(13.dp),
+                        border = BorderStroke(
+                            1.dp, MaterialTheme.colorScheme.outlineVariant
+                        )
+                    ) {
+                        IconButton(
+                            onClick = { historyFilterExpanded = true },
+                            modifier = Modifier.size(52.dp)
+                                .testTag("qrex-history-filter-toggle")
+                                .semantics { stateDescription = historyFilterState }
+                        ) {
+                            Icon(
+                                Icons.Default.FilterList,
+                                contentDescription = "${tr("all")} / ${tr("saved")}",
+                                tint = if (savedOnly) QrexDesign.purple
+                                    else MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = historyFilterExpanded,
+                        onDismissRequest = { historyFilterExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(tr("all")) },
+                            onClick = {
+                                savedOnly = false
+                                historyFilterExpanded = false
+                            },
+                            modifier = Modifier.heightIn(min = 52.dp)
+                                .testTag("qrex-history-all")
+                                .semantics { selected = !savedOnly },
+                            leadingIcon = {
+                                Icon(Icons.Default.History, contentDescription = null)
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(tr("saved")) },
+                            onClick = {
+                                savedOnly = true
+                                historyFilterExpanded = false
+                            },
+                            modifier = Modifier.heightIn(min = 52.dp)
+                                .testTag("qrex-history-saved")
+                                .semantics { selected = savedOnly },
+                            leadingIcon = {
+                                Icon(Icons.Default.FavoriteBorder, contentDescription = null)
+                            }
+                        )
+                    }
+                }
+            }
         }
-        Spacer(Modifier.height(4.dp))
-        OutlinedTextField(
-            value = search,
-            onValueChange = { search = it.take(120) },
-            label = { Text(tr("search_qr")) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            singleLine = true,
-            shape = RoundedCornerShape(13.dp),
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                .testTag("qrex-history-search")
-        )
         Spacer(Modifier.height(8.dp))
         if (found.isEmpty()) {
             Surface(
@@ -1632,20 +1699,25 @@ private fun MoreScreen(
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
+    var showTheme by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
     var confirmPdfExport by remember { mutableStateOf(false) }
+    // In-memory only: the approved snapshot must never enter Android saved state.
+    // A recreated Activity without this snapshot fails closed on picker return.
+    var pendingPdfRecords by remember { mutableStateOf<List<QRRecord>?>(null) }
     val archiveScope = rememberCoroutineScope()
     val trSaved = tr("saved")
     val exportPdf = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/pdf")
     ) { destination ->
-        if (destination != null) {
-            val records = store.items.filter { it.saved }.toList()
+        val approvedRecords = pendingPdfRecords
+        pendingPdfRecords = null
+        if (destination != null && !approvedRecords.isNullOrEmpty()) {
             archiveScope.launch {
                 val exported = withContext(Dispatchers.IO) {
-                    QREXDocuments.exportSavedPdf(context, records, destination)
+                    QREXDocuments.exportSavedPdf(context, approvedRecords, destination)
                 }
                 Toast.makeText(context, if (exported) trSaved else operationFailed,
                     Toast.LENGTH_SHORT).show()
@@ -1664,6 +1736,11 @@ private fun MoreScreen(
         uiLanguage else store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
+    val themeTitle = when (store.themeMode) {
+        "system" -> tr("theme_system")
+        "light" -> tr("theme_light")
+        else -> tr("theme_dark")
+    }
     val compactSettings = LocalConfiguration.current.screenWidthDp < 360 ||
         LocalDensity.current.fontScale >= 1.30f
     when (detailPage) {
@@ -1682,6 +1759,10 @@ private fun MoreScreen(
             // two-column tiles. Reference two-column cards remain on wide phones.
             // The midnight-navy variant keeps its separate 2-column tiles.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                QrexSettingsListRow(tr("theme"), Icons.Default.Palette,
+                    subtitle = themeTitle, onClick = { showTheme = true },
+                    modifier = Modifier.testTag("qrex-more-theme"),
+                    accentOverride = QrexDesign.purple)
                 QrexSettingsListRow(tr("language"), Icons.Default.Translate,
                     subtitle = languageName,
                     onClick = { detailPage = "language" },
@@ -1691,49 +1772,99 @@ private fun MoreScreen(
                     onClick = { detailPage = "export" },
                     modifier = Modifier.testTag("qrex-more-export"))
                 QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Shield,
-                    onClick = { showPrivacy = true })
+                    onClick = { showPrivacy = true },
+                    modifier = Modifier.testTag("qrex-more-privacy"))
                 QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
-                    onClick = { showTerms = true })
+                    onClick = { showTerms = true },
+                    modifier = Modifier.testTag("qrex-more-terms"),
+                    accentOverride = QrexDesign.purple)
                 QrexSettingsListRow(tr("about"), Icons.Default.Info,
                     subtitle = tr("developed_by"),
                     onClick = { showAbout = true },
                     modifier = Modifier.testTag("qrex-more-about"))
                 Spacer(Modifier.height(6.dp))
                 QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
-                    destructive = true, onClick = { showDelete = true })
+                    destructive = true, onClick = { showDelete = true },
+                    modifier = Modifier.testTag("qrex-more-delete"))
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    QrexSettingsTile(label = tr("theme"), icon = Icons.Default.Palette,
+                        subtitle = themeTitle, onClick = { showTheme = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-theme"),
+                        accentOverride = QrexDesign.purple)
                     QrexSettingsTile(label = tr("language"), icon = Icons.Default.Translate,
                         subtitle = languageName, onClick = { detailPage = "language" },
                         modifier = Modifier.weight(1f).testTag("qrex-more-language"))
-                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.PictureAsPdf,
-                        subtitle = "PDF", onClick = { detailPage = "export" },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-export"))
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.Archive,
+                        subtitle = "PDF", onClick = { detailPage = "export" },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-export"))
                     QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Shield,
-                        onClick = { showPrivacy = true }, modifier = Modifier.weight(1f))
+                        onClick = { showPrivacy = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-privacy"))
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     QrexSettingsTile(label = tr("terms_of_use"), icon = Icons.Default.Description,
-                        onClick = { showTerms = true }, modifier = Modifier.weight(1f))
+                        onClick = { showTerms = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-terms"),
+                        accentOverride = QrexDesign.purple)
+                    QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
+                        subtitle = tr("developed_by"),
+                        onClick = { showAbout = true },
+                        modifier = Modifier.weight(1f).testTag("qrex-more-about"))
                 }
-                QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
-                    subtitle = tr("developed_by"),
-                    onClick = { showAbout = true }, modifier = Modifier.testTag("qrex-more-about"))
-                OutlinedButton(onClick = { showDelete = true },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error)) {
-                    Icon(Icons.Default.DeleteForever, contentDescription = null,
-                        modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(tr("clear_history"))
-                }
+                QrexSettingsListRow(
+                    label = tr("clear_history"),
+                    icon = Icons.Default.DeleteForever,
+                    onClick = { showDelete = true },
+                    destructive = true,
+                    showChevron = false,
+                    modifier = Modifier.testTag("qrex-more-delete")
+                )
             }
         }
         Spacer(Modifier.height(20.dp))
     }
+    }
+    if (showTheme) {
+        AlertDialog(
+            onDismissRequest = { showTheme = false },
+            modifier = Modifier.testTag("qrex-theme-dialog"),
+            title = { Text(tr("theme")) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    listOf("system", "dark", "light").forEach { mode ->
+                        val label = when (mode) {
+                            "system" -> tr("theme_system")
+                            "light" -> tr("theme_light")
+                            else -> tr("theme_dark")
+                        }
+                        Surface(
+                            onClick = {
+                                if (store.updateThemeMode(mode)) showTheme = false
+                                else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                                .testTag("qrex-theme-choice-$mode"),
+                            color = MaterialTheme.colorScheme.surface
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 8.dp)) {
+                                RadioButton(selected = store.themeMode == mode, onClick = null)
+                                Spacer(Modifier.width(8.dp))
+                                Text(label, color = MaterialTheme.colorScheme.onSurface)
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showTheme = false }) { Text(tr("close")) }
+            }
+        )
     }
     if (showAbout) {
         val versionName = remember(context) {
@@ -1783,7 +1914,13 @@ private fun MoreScreen(
         text = { Text(tr("export_archive_warning")) },
         confirmButton = { TextButton(onClick = {
             confirmPdfExport = false
-            exportPdf.launch("QREX-Saved-Codes.pdf")
+            val approvedRecords = snapshotSavedQrForPdf(store.items)
+            if (approvedRecords.isEmpty()) {
+                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+            } else {
+                pendingPdfRecords = approvedRecords
+                exportPdf.launch("QREX-Saved-Codes.pdf")
+            }
         }) { Text("PDF") } },
         dismissButton = { TextButton(onClick = { confirmPdfExport = false }) {
             Text(tr("cancel"))
@@ -1809,7 +1946,11 @@ private fun MoreScreen(
                     Text(tr("save_history"), Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.onSurface)
                     Switch(checked = store.historyEnabled,
-                        onCheckedChange = store::updateHistoryEnabled)
+                        onCheckedChange = { enabled ->
+                            if (!store.updateHistoryEnabled(enabled)) {
+                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                            }
+                        })
                 }
             }
         },

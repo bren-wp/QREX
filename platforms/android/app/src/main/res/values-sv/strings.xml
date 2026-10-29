@@ -88,4 +88,8 @@
     <string name="all">Alla</string>
     <string name="no_history">Inga QR-koder ännu</string>
     <string name="back">Tillbaka</string>
+    <string name="theme">Tema</string>
+    <string name="theme_dark">Mörkt</string>
+    <string name="theme_light">Ljust</string>
+    <string name="theme_system">System</string>
 </resources>

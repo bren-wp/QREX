@@ -246,15 +246,32 @@ class QREXNavigationStressTest {
             .performScrollTo().assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-advanced-types", 0, "open advanced choices")
         for (type in listOf(3, 4, 5, 7)) {
+            // Repeated gesture-based selection while the scroll container is
+            // measuring can trigger a Compose SnapshotStateObserver race on
+            // heavily loaded software-rendered emulators. Scroll and settle
+            // first; then trigger the real exposed semantics click on the UI
+            // thread and await its selected state before switching QR kind.
             rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
-                .performScrollTo().assertIsDisplayed().performClick()
+                .performScrollTo().assertIsDisplayed()
+            rule.waitForIdle()
             rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
-                .assertIsSelected()
+                .performSemanticsAction(SemanticsActions.OnClick)
+            rule.waitUntil(timeoutMillis = 15_000L) {
+                runCatching {
+                    rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
+                        .assertIsSelected()
+                }.isSuccess
+            }
+            rule.waitForIdle()
         }
         // Real email encoding remains functional after switching through
         // every advanced QR kind, not just displaying decorative controls.
         rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
-            .performScrollTo().performClick()
+            .performScrollTo().assertIsDisplayed()
+        rule.waitForIdle()
+        rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.OnClick)
+        rule.waitForIdle()
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performScrollTo().performTextReplacement("support@example.org")
         awaitCreateAction(0, "advanced Email QR generation")
@@ -280,8 +297,8 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun allFourRootTabsAndScannerActionsHaveMeasuredTouchTargets() {
-        for (index in 0..3) assertTouchTarget("qrex-tab-$index")
+    fun allFiveRootTabsAndScannerActionsHaveMeasuredTouchTargets() {
+        for (index in 0..4) assertTouchTarget("qrex-tab-$index")
         assertTouchTarget("qrex-scan-gallery")
         assertTouchTarget("qrex-scan-torch")
     }
@@ -308,9 +325,12 @@ class QREXNavigationStressTest {
     fun historySettingsLanguageAndExportControlsHaveMeasuredTouchTargets() {
         rule.onNodeWithTag("qrex-tab-2").performClick()
         requireScreenTag("qrex-history-screen", 0, "touch target History")
+        assertTouchTarget("qrex-history-filter-toggle")
+        rule.onNodeWithTag("qrex-history-filter-toggle").performClick()
         assertTouchTarget("qrex-history-all")
         assertTouchTarget("qrex-history-saved")
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-history-all").performClick()
+        rule.onNodeWithTag("qrex-tab-4").performClick()
         requireScreenTag("qrex-more-screen", 0, "touch target Settings")
         assertTouchTarget("qrex-more-language")
         assertTouchTarget("qrex-more-export")
@@ -357,29 +377,39 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun fourMainTabsKeepHistoryFavoritesAndMoreWithinTwoTaps() {
+    fun fiveMainTabsExposeDedicatedFavoritesAndMore() {
         rule.onNodeWithTag("qrex-tab-2").assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-tab-2").assertIsSelected()
         requireScreenTag("qrex-history-screen", 0, "open History")
-        rule.onNodeWithTag("qrex-history-segments", useUnmergedTree = true)
-            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
+        rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
+            .performClick()
         rule.onNodeWithTag("qrex-history-saved", useUnmergedTree = true)
             .assertIsSelected()
         rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
+        rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
+            .performClick()
         rule.onNodeWithTag("qrex-history-all", useUnmergedTree = true)
             .assertIsSelected()
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        // Close the filter popup before switching destinations.
+        rule.onNodeWithTag("qrex-tab-3").assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-tab-3").assertIsSelected()
+        requireScreenTag("qrex-favorites-screen", 0, "open dedicated Favorites")
+        rule.onAllNodesWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
+            .assertCountEquals(0)
+        assertTouchTarget("qrex-history-search")
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        rule.onNodeWithTag("qrex-tab-4").assertIsSelected()
         requireScreenTag("qrex-more-screen", 0, "open More")
-        rule.onAllNodesWithTag("qrex-tab-4").assertCountEquals(0)
     }
 
     @Test
     fun languageAndExportScreensFollowReferenceAndNavigateBack() {
-        rule.onNodeWithTag("qrex-tab-3").performClick()
+        rule.onNodeWithTag("qrex-tab-4").performClick()
         requireScreenTag("qrex-more-screen", 0, "open More")
         rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
@@ -402,11 +432,18 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun darkSettingsHaveLanguagePdfAndNoThemeSwitch() {
-        rule.onNodeWithTag("qrex-tab-3").performClick()
-        requireScreenTag("qrex-more-screen", 0, "dark settings")
-        rule.onAllNodesWithTag("qrex-more-theme", useUnmergedTree = true)
-            .assertCountEquals(0)
+    fun darkReferenceSettingsHaveSixRealCardsAndThemeSelection() {
+        rule.onNodeWithTag("qrex-tab-4").performClick()
+        requireScreenTag("qrex-more-screen", 0, "reference More")
+        assertTouchTarget("qrex-more-theme")
+        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true).performClick()
+        requireScreenTag("qrex-theme-dialog", 0, "native theme selector")
+        rule.onNodeWithTag("qrex-theme-choice-light", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        requireScreenTag("qrex-more-screen", 0, "after light selection")
+        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true).performClick()
+        rule.onNodeWithTag("qrex-theme-choice-dark", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-more-export", useUnmergedTree = true)

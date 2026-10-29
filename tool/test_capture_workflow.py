@@ -76,6 +76,21 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("if-no-files-found: error", body)
         self.assertIn("test -s docs/screenshots/android-create.png", body)
 
+    def test_screenshot_smoke_is_real_but_full_suite_stays_mandatory_in_p03(self):
+        # Screenshots need genuine screen smoke checks, not 53 redundant
+        # software-emulator tests. Every instrumented test still runs on the
+        # five API devices in the release-blocking P03 workflow.
+        capture = SCRIPT.read_text("utf-8")
+        matrix = (ROOT / "tool/run_p03_emulator.sh").read_text("utf-8")
+        self.assertIn(":app:connectedDebugAndroidTest", capture)
+        self.assertIn("QREXCreateBlockedPreviewTest", capture)
+        self.assertIn("QREXHistoryFilterTest", capture)
+        self.assertIn("QREXMoreAboutTest", capture)
+        self.assertIn("android.testInstrumentationRunnerArguments.class=", capture)
+        self.assertIn(":app:connectedDebugAndroidTest", matrix)
+        self.assertNotIn("android.testInstrumentationRunnerArguments.class=", matrix)
+        self.assertNotIn("continue-on-error:", WORKFLOW.read_text("utf-8"))
+
     def test_screenshot_is_gated_by_foreground_and_png_checks(self):
         body = SCRIPT.read_text(encoding="utf-8")
         self.assertIn("gradle -p platforms/android", body)
@@ -92,7 +107,12 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn('qrex-responsive-android', WORKFLOW.read_text("utf-8"))
         self.assertIn("capture_responsive_android.sh", body)
         self.assertNotIn("qrex_light", responsive)
-        self.assertNotIn("light-create", responsive)
+        self.assertIn("light|1080x2340|440|1.0|create,scan,more", responsive)
+        self.assertIn("--es qrex_theme light", responsive)
+        self.assertIn("light-create light-scan light-more", WORKFLOW.read_text("utf-8"))
+        app = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
+        self.assertIn("val screenshotTheme = if (isDebug && screenshotMode != null)", app)
+        self.assertIn("screenshotTheme ?: store.themeMode", app)
         self.assertIn("exit 1", body)
 
 

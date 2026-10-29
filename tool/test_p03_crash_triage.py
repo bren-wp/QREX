@@ -13,6 +13,15 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertIn("script: bash tool/run_p03_emulator.sh ${{ matrix.api }}", workflow)
         self.assertNotIn("script: |", workflow)
         self.assertIn("max-parallel: 2", workflow)
+        p03 = runner_script.read_text("utf-8")
+        self.assertIn(":app:connectedDebugAndroidTest", p03)
+        self.assertNotIn("android.testInstrumentationRunnerArguments.class=", p03)
+        self.assertIn("bash tool/prepare_android_emulator.sh", workflow)
+        preflight = (root / "tool/prepare_android_emulator.sh").read_text("utf-8")
+        self.assertIn('cmdline-tools/latest/bin/sdkmanager', preflight)
+        self.assertIn('ANDROID_HOME:-', preflight)
+        self.assertIn('QREX_SDKMANAGER:-', preflight)
+        subprocess.run(["bash", "-n", str(root / "tool/prepare_android_emulator.sh")], check=True)
         subprocess.run(["bash", "-n", str(runner_script)], check=True)
         source = runner_script.read_text("utf-8")
         for expected in (":app:connectedDebugAndroidTest", "adb logcat -b crash",
@@ -50,6 +59,71 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertNotIn("awaitDispose { bitmap?.recycle() }", source)
         self.assertNotIn("awaitDispose { image?.recycle() }", source)
         self.assertIn("bitmap.recycle()", source)  # independent SAF PNG bitmap
+
+
+    def test_sdk_archive_retry_is_bounded_and_does_not_hide_app_failures(self):
+        """Mock SDK downloads: only recognized transport corruption can retry."""
+        from pathlib import Path
+        import os
+        import subprocess
+        import tempfile
+
+        root = Path(__file__).resolve().parents[1]
+        script = root / "tool/prepare_android_emulator.sh"
+        with tempfile.TemporaryDirectory(prefix="qrex-sdk-test-") as directory:
+            work = Path(directory)
+            sdk = work / "sdkmanager"
+            emu = work / "emulator"
+            state = work / "attempts"
+            emu.write_text("#!/usr/bin/env bash\nexit 42\n", encoding="utf-8")
+            emu.chmod(0o755)
+
+            def run_mock(failure: str, fails_before_success: int):
+                state.write_text("0", encoding="utf-8")
+                sdk.write_text(
+                    '#!/usr/bin/env bash\n'
+                    'n=$(cat "$QREX_TEST_ATTEMPTS")\n'
+                    'n=$((n+1))\n'
+                    'printf "%s" "$n" > "$QREX_TEST_ATTEMPTS"\n'
+                    f"if (( n <= {fails_before_success} )); then "
+                    f"echo '{failure}' >&2; exit 1; fi\n"
+                    'exit 0\n', encoding="utf-8"
+                )
+                sdk.chmod(0o755)
+                env = dict(os.environ)
+                env.update({
+                    "QREX_SDKMANAGER": str(sdk),
+                    "QREX_EMULATOR_BIN": str(emu),
+                    "QREX_RETRY_SLEEP_SECONDS": "0",
+                    "QREX_TEST_ATTEMPTS": str(state),
+                    "RUNNER_TEMP": directory,
+                })
+                result = subprocess.run(["bash", str(script)], env=env,
+                                        capture_output=True, text=True, timeout=15)
+                return result, int(state.read_text(encoding="utf-8"))
+
+            fixed, attempts = run_mock("Error on ZipFile unknown archive", 1)
+            self.assertEqual(0, fixed.returncode)
+            self.assertEqual(2, attempts)
+            self.assertNotIn("ZipFile unknown archive", fixed.stderr)
+            persistent, attempts = run_mock("Error on ZipFile unknown archive", 3)
+            self.assertNotEqual(0, persistent.returncode)
+            self.assertEqual(3, attempts)
+            permanent, attempts = run_mock("QREX genuine SDK error", 3)
+            self.assertNotEqual(0, permanent.returncode)
+            self.assertEqual(1, attempts)
+
+            # A headless emulator may return a failure for -version while
+            # the runner can still boot it. Package validation checks the
+            # executable path; the live AVD/ADB check remains mandatory.
+            # The mock emulator exits 42 if run; it must not be invoked here.
+            installed, attempts = run_mock("ignored", 0)
+            self.assertEqual(0, installed.returncode)
+            self.assertEqual(1, attempts)
+            emu.unlink()
+            missing, attempts = run_mock("ignored", 0)
+            self.assertNotEqual(0, missing.returncode)
+            self.assertEqual(1, attempts)
 
     def test_non_app_crashes_are_not_attributed_to_qrex(self):
         raw = ("FATAL EXCEPTION: main\n"

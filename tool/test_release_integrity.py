@@ -314,8 +314,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         workflow = (ARCHIVED_RELEASES / "github-release-1.0.15.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.15.md").read_text("utf-8")
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        self.assertIn("versionCode = 118", gradle)
-        self.assertIn('versionName = "1.0.18"', gradle)
+        self.assertIn("versionCode = 119", gradle)
+        self.assertIn('versionName = "1.0.19"', gradle)
         self.assertIn("gh release create v1.0.15", workflow)
         self.assertIn("com.brendigo.qrex 115 1.0.15", workflow)
         self.assertIn("assert len(screens) == 10", workflow)
@@ -336,23 +336,24 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("API 35", notes)
         self.assertIn("23", notes)
 
-    def test_historical_releases_and_current_117_links_are_grounded(self):
+    def test_historical_releases_and_current_118_links_are_grounded(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
         # Historical 1.0.13 and 1.0.14 remain in the release archive, not
-        # advertised as the latest version after publishing 1.0.17.
+        # advertised as the latest version after publishing 1.0.18.
         self.assertIn("| 1.0.13 | [v1.0.13]", archive)
         self.assertIn("## Published: v1.0.13 · Android versionCode 113", notes)
-        self.assertIn("Latest published release: **[v1.0.17]", readme)
-        self.assertIn("versionCode 117", readme)
-        self.assertIn("/releases/download/v1.0.17/android-create.png", readme)
-        self.assertIn("/releases/download/v1.0.17/android-export.png", readme)
+        self.assertIn("Latest published release: **[v1.0.18]", readme)
+        self.assertIn("versionCode 118", readme)
+        self.assertIn("/releases/download/v1.0.18/android-create.png", readme)
+        self.assertIn("/releases/download/v1.0.18/android-export.png", readme)
         self.assertNotIn("/releases/download/v1.0.14/android-create.png", readme)
         self.assertIn("| 1.0.14 | [v1.0.14]", archive)
         self.assertIn("| 1.0.15 | [v1.0.15]", archive)
         self.assertIn("| 1.0.16 | [v1.0.16]", archive)
         self.assertIn("| 1.0.17 | [v1.0.17]", archive)
+        self.assertIn("| 1.0.18 | [v1.0.18]", archive)
         self.assertIn("## Published: v1.0.14 · Android versionCode 114", notes)
         self.assertIn("## Published: v1.0.15 · Android versionCode 115", notes)
 
@@ -372,8 +373,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 118", gradle)
-        self.assertIn('versionName = "1.0.18"', gradle)
+        self.assertIn("versionCode = 119", gradle)
+        self.assertIn('versionName = "1.0.19"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())

@@ -36,13 +36,15 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("finally {", self.scanner)
         self.assertIn("galleryActive.set(false)", self.scanner)
         self.assertIn("alwaysShowLabel = true", self.main)
-        self.assertIn("fontSize = if (compactNavigation) 11.sp else 12.sp", self.main)
+        self.assertIn("fontSize = if (compactNavigation) 10.sp else 11.sp", self.main)
 
-    def test_dark_only_palette_and_pdf_export(self):
-        self.assertIn("val colors = darkColorScheme(", self.main)
-        self.assertNotIn("lightColorScheme(", self.main)
-        self.assertNotIn("lightTheme", self.main)
-        self.assertNotIn("qrex_light", self.main)
+    def test_system_dark_light_palette_and_pdf_export(self):
+        self.assertIn("if (darkUi) darkColorScheme(", self.main)
+        self.assertIn("else lightColorScheme(", self.main)
+        self.assertIn('"system" -> isSystemInDarkTheme()', self.main)
+        self.assertIn('store.themeMode', self.main)
+        self.assertIn('testTag("qrex-more-theme")', self.main)
+        self.assertIn('testTag("qrex-theme-dialog")', self.main)
         self.assertNotIn("updateLightMode(", self.main)
         self.assertNotIn("updateLightMode(", self.core)
         self.assertNotIn("exportSavedPdfZip(", self.main)
@@ -85,9 +87,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("containerColor = QrexDesign.actionBlue, contentColor = Color.White", self.main)
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
-        self.assertIn("val selectedNavigationColor = QrexDesign.accentBright", self.main)
-        self.assertIn("NavigationBar(containerColor = QrexDesign.backgroundDeep", self.main)
-        self.assertIn("indicatorColor = QrexDesign.surfaceRaised", self.main)
+        self.assertIn("val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue", self.main)
+        self.assertIn("NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep", self.main)
+        self.assertIn("indicatorColor = colors.primaryContainer", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)", design)
@@ -121,14 +123,15 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('confirmExport = true', self.main)
         self.assertIn('showDelete = true', self.main)
 
-    def test_four_main_tabs_keep_favorites_one_tap_from_history(self):
-        self.assertIn('listOf("scan", "create", "history", "more")', self.main)
-        self.assertIn("navTargets = listOf(0, 1, 2, 4)", self.main)
+    def test_five_main_tabs_have_dedicated_favorites_and_accessible_history_filters(self):
+        self.assertIn('listOf("scan", "create", "history", "favorites", "more")', self.main)
+        self.assertIn("navTargets = listOf(0, 1, 2, 3, 4)", self.main)
         self.assertIn("QrexDesign.heroBrush", self.main)
-        self.assertIn('favoritesPage = screenshotMode == "saved"', self.main)
-        self.assertIn('testTag("qrex-history-segments")', self.main)
+        self.assertIn('initiallySavedOnly = true, favoritesPage = true', self.main)
+        self.assertIn('"qrex-favorites-screen" else "qrex-history-screen"', self.main)
+        self.assertIn('testTag("qrex-history-filter-toggle")', self.main)
         self.assertIn('testTag("qrex-history-saved")', self.main)
-        self.assertIn("QRHistory.matches(it, search, savedOnly)", self.main)
+        self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.main)
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("hasSaved = store.items.any { it.saved }", self.main)
 
