@@ -283,7 +283,8 @@ private fun QREXApp(
             QrexSplashScreen(subtitle = tr("tagline"))
         } else {
         Scaffold(containerColor = colors.background, bottomBar = {
-            if (currentCode == null) {
+            // Keep reference five-tab navigation visible on Result too. The
+            // system bottom inset is owned by Scaffold so actions remain above it.
             NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep else Color(0xFFF0F5FD),
                 tonalElevation = 0.dp) {
                 pages.forEachIndexed { index, label ->
@@ -320,7 +321,6 @@ private fun QREXApp(
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             indicatorColor = colors.primaryContainer))
                 }
-            }
             }
         }) { padding ->
             Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
