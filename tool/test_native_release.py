@@ -28,6 +28,20 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn("isShrinkResources = true", self.android)
         self.assertNotIn("android.r8.optimizedResourceShrinking=false", properties)
 
+    def test_release_workflow_uses_registered_agp9_unit_test_task(self):
+        # A missing Gradle task previously blocked a fully green CI build
+        # from publishing the signed GitHub-only APK/AAB.
+        release = (ROOT / ".github/workflows/github-release-1.0.22.yml").read_text(
+            "utf-8"
+        )
+        ci = (ROOT / ".github/workflows/native-platforms.yml").read_text("utf-8")
+        self.assertIn(":app:testDebugUnitTest", ci)
+        self.assertIn(":app:testDebugUnitTest :app:lintRelease", release)
+        self.assertNotIn(":app:testReleaseUnitTest", release)
+        self.assertIn(":app:assembleRelease :app:bundleRelease", release)
+        self.assertIn("Require all 3 green exact-commit Android checks", release)
+        self.assertIn("QREX-Android-1.0.22-Play-UNSIGNED-QA.aab", release)
+
     def test_valid_repo_config(self):
         self.assertEqual(self.check(), [])
 
