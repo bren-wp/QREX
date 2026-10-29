@@ -91,7 +91,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue", self.main)
         self.assertIn("NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep", self.main)
-        self.assertIn("indicatorColor = colors.primaryContainer", self.main)
+        self.assertIn("indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)", design)
