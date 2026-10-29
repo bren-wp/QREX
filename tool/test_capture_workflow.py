@@ -76,6 +76,21 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("if-no-files-found: error", body)
         self.assertIn("test -s docs/screenshots/android-create.png", body)
 
+    def test_screenshot_smoke_is_real_but_full_suite_stays_mandatory_in_p03(self):
+        # Screenshots need genuine screen smoke checks, not 53 redundant
+        # software-emulator tests. Every instrumented test still runs on the
+        # five API devices in the release-blocking P03 workflow.
+        capture = SCRIPT.read_text("utf-8")
+        matrix = (ROOT / "tool/run_p03_emulator.sh").read_text("utf-8")
+        self.assertIn(":app:connectedDebugAndroidTest", capture)
+        self.assertIn("QREXCreateBlockedPreviewTest", capture)
+        self.assertIn("QREXHistoryFilterTest", capture)
+        self.assertIn("QREXMoreAboutTest", capture)
+        self.assertIn("android.testInstrumentationRunnerArguments.class=", capture)
+        self.assertIn(":app:connectedDebugAndroidTest", matrix)
+        self.assertNotIn("android.testInstrumentationRunnerArguments.class=", matrix)
+        self.assertNotIn("continue-on-error:", WORKFLOW.read_text("utf-8"))
+
     def test_screenshot_is_gated_by_foreground_and_png_checks(self):
         body = SCRIPT.read_text(encoding="utf-8")
         self.assertIn("gradle -p platforms/android", body)

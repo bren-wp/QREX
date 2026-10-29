@@ -246,15 +246,32 @@ class QREXNavigationStressTest {
             .performScrollTo().assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-advanced-types", 0, "open advanced choices")
         for (type in listOf(3, 4, 5, 7)) {
+            // Repeated gesture-based selection while the scroll container is
+            // measuring can trigger a Compose SnapshotStateObserver race on
+            // heavily loaded software-rendered emulators. Scroll and settle
+            // first; then trigger the real exposed semantics click on the UI
+            // thread and await its selected state before switching QR kind.
             rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
-                .performScrollTo().assertIsDisplayed().performClick()
+                .performScrollTo().assertIsDisplayed()
+            rule.waitForIdle()
             rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
-                .assertIsSelected()
+                .performSemanticsAction(SemanticsActions.OnClick)
+            rule.waitUntil(timeoutMillis = 15_000L) {
+                runCatching {
+                    rule.onNodeWithTag("qrex-create-type-$type", useUnmergedTree = true)
+                        .assertIsSelected()
+                }.isSuccess
+            }
+            rule.waitForIdle()
         }
         // Real email encoding remains functional after switching through
         // every advanced QR kind, not just displaying decorative controls.
         rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
-            .performScrollTo().performClick()
+            .performScrollTo().assertIsDisplayed()
+        rule.waitForIdle()
+        rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.OnClick)
+        rule.waitForIdle()
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performScrollTo().performTextReplacement("support@example.org")
         awaitCreateAction(0, "advanced Email QR generation")
