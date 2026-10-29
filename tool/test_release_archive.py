@@ -29,7 +29,7 @@ class ArchivedPublisherTests(unittest.TestCase):
         archive = (ROOT / "docs/releases/INDEX.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
         latest = re.search(
-            r"Latest published release: \\*\\*\\[v(\\d+\\.\\d+\\.\\d+)\\]",
+            r"Latest published release: \*\*\[v(\d+\.\d+\.\d+)\]",
             readme,
         )
         self.assertIsNotNone(latest, "README must name the published release")
@@ -42,7 +42,7 @@ class ArchivedPublisherTests(unittest.TestCase):
 
         # All ten real Android captures must point at the *same* release.
         screens = re.findall(
-            r"/releases/download/v([0-9.]+)/android-([a-z]+)\\.png", readme
+            r"/releases/download/v([0-9.]+)/android-([a-z]+)\.png", readme
         )
         expected = {
             (version, name) for name in (
