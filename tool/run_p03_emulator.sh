@@ -21,9 +21,12 @@ timeout -k 3s 15s adb logcat -c || true
 # Preserve nonzero instrumentation status, but always attempt redacted
 # diagnostics. Empty or unavailable logs must never be counted as success.
 test_status=0
+# Release-gating P03 always exercises the FULL unfiltered instrumentation
+# suite: navigation stress + Create/Result, History, Settings, storage and
+# privacy regressions. These tests replace the redundant full-suite replay
+# on the separate software-rendered screenshot capture AVD.
 timeout -k 15s 1200s gradle -p platforms/android --no-daemon --stacktrace \
   :app:connectedDebugAndroidTest \
-  -Pandroid.testInstrumentationRunnerArguments.class=com.brendigo.qrex.QREXNavigationStressTest \
   || test_status=$?
 
 timeout -k 3s 20s adb logcat -b crash -d -v threadtime > "$crash_raw" || {
