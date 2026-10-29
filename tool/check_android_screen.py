@@ -50,6 +50,13 @@ def validate(xml_content: str, screen: str = "create") -> None:
                               "spremi na uređaj"),
         "responsive-scan": ("skener. stvara. dijeli.", "iz galerije"),
         "responsive-more": ("postavke", "jezik"),
+        "responsive-splash": ("qrex", "skener. stvara. dijeli."),
+        "responsive-wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
+        "responsive-result": ("rezultat", "https://brendigo.com", "natrag"),
+        "responsive-history": ("povijest", "brendigo.com", "pretraži povijest..."),
+        "responsive-saved": ("favoriti", "brendigo.com", "spremljeno"),
+        "responsive-language": ("jezik", "hrvatski", "english"),
+        "responsive-export": ("izvoz arhive", "pdf"),
         "scan": ("skener. stvara. dijeli.", "iz galerije", "usmjeri kameru prema qr kodu"),
     }
     if screen not in expected:

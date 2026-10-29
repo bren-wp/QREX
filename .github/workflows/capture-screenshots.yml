@@ -100,12 +100,16 @@ jobs:
           PY
       - name: Verify compact, reference and large-font device captures
         run: |
-          for image in \
-            compact-create compact-scan compact-more \
-            reference-create reference-more \
-            largefont-create largefont-more \
-            light-create light-scan light-more; do
-            test -s "docs/screenshots/responsive/${image}.png"
+          for profile in compact reference; do
+            for screen in splash scan create wifi result history saved more language export; do
+              test -s "docs/screenshots/responsive/${profile}-${screen}.png"
+            done
+          done
+          for screen in scan create result history saved more language export; do
+            test -s "docs/screenshots/responsive/largefont-${screen}.png"
+          done
+          for screen in create scan more; do
+            test -s "docs/screenshots/responsive/light-${screen}.png"
           done
           python3 tool/verify_screenshots.py docs/screenshots/responsive/*.png
       - uses: actions/upload-artifact@v4
