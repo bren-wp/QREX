@@ -108,6 +108,9 @@ for screen in splash scan wifi result history saved more language export; do
   fi
 done
 python3 tool/verify_screenshots.py docs/screenshots/android-*.png
+# Verify the real frame is dark, not just a dark-themed filename. The PNG
+# samples come from the actual emulator capture, not marketing artwork.
+python3 tool/check_dark_screenshots.py docs/screenshots/android-{create,scan,wifi,result,history,saved,more,language,export}.png
 # Capture separate real phone-size screenshots. These do not enter the
 # Play-sized public release screenshot list or alter user settings.
 bash tool/capture_responsive_android.sh
