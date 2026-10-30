@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -89,9 +90,33 @@ class QREXMoreAboutTest {
         about.performClick()
         rule.onNodeWithTag("qrex-about-dialog", useUnmergedTree = true)
             .assertIsDisplayed()
-        // Do not open the browser in test. Verify it is a real optional button,
-        // rather than the only behavior attached to the About tile.
-        rule.onNodeWithTag("qrex-about-website", useUnmergedTree = true)
+        // Verify actual branding and the currently installed APK version,
+        // never an assumed release number or a static mock-up.
+        rule.onNodeWithTag("qrex-about-brand", useUnmergedTree = true)
             .assertIsDisplayed()
+        val version = @Suppress("DEPRECATION") rule.activity.packageManager
+            .getPackageInfo(rule.activity.packageName, 0).versionName.orEmpty()
+        if (version.isNotBlank()) {
+            rule.onNodeWithTag("qrex-about-version", useUnmergedTree = true)
+                .assertIsDisplayed()
+        }
+
+        // Only the secondary user action may open the website; do not open
+        // the browser during this regression. Measure both real controls.
+        for (tag in listOf("qrex-about-website", "qrex-about-close")) {
+            val control = rule.onNodeWithTag(tag, useUnmergedTree = true)
+                .assertIsDisplayed()
+            val bounds = control.getUnclippedBoundsInRoot()
+            assertTrue("$tag must be at least 48dp wide",
+                bounds.right - bounds.left >= 48.dp)
+            assertTrue("$tag must be at least 48dp tall",
+                bounds.bottom - bounds.top >= 48.dp)
+        }
+        rule.onNodeWithTag("qrex-about-close", useUnmergedTree = true)
+            .performClick()
+        rule.onAllNodesWithTag("qrex-about-dialog", useUnmergedTree = true)
+            .assertCountEquals(0)
+        rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
+        rule.onNodeWithTag("qrex-tab-4").assertIsDisplayed()
     }
 }
