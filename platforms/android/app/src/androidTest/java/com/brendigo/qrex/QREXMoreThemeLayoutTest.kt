@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -21,6 +22,7 @@ class QREXMoreThemeLayoutTest {
         val context = rule.activity.applicationContext
         val store = QREXStore(context)
         val original = store.themeMode
+        val originalHistoryCount = store.items.size
         try {
             rule.waitUntil(timeoutMillis = 15_000L) {
                 rule.onAllNodesWithTag("qrex-tab-4", useUnmergedTree = true)
@@ -61,10 +63,14 @@ class QREXMoreThemeLayoutTest {
             // separate user decision; cancel without clearing anything.
             rule.onNodeWithTag("qrex-more-delete", useUnmergedTree = true)
                 .performScrollTo().performClick()
-            rule.onNodeWithTag("qrex-more-screen").assertExists()
-            // Use back to cancel; never activate the destructive confirmation.
-            rule.activity.onBackPressedDispatcher.onBackPressed()
-            rule.waitForIdle()
+            rule.onNodeWithTag("qrex-clear-history-dialog", useUnmergedTree = true)
+                .assertIsDisplayed()
+            rule.onNodeWithTag("qrex-clear-history-cancel", useUnmergedTree = true)
+                .assertIsDisplayed().performClick()
+            rule.onNodeWithTag("qrex-clear-history-dialog", useUnmergedTree = true)
+                .assertDoesNotExist()
+            assertTrue("cancelling clear history must not delete records",
+                QREXStore(context).items.size == originalHistoryCount)
         } finally {
             // Do not leave a different app theme for other instrumentation tests.
             assertTrue("original theme must be restored",
