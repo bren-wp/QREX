@@ -77,6 +77,7 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                     shape = RoundedCornerShape(13.dp),
                     color = if (selected) MaterialTheme.colorScheme.primaryContainer
                         else MaterialTheme.colorScheme.surface,
+                    shadowElevation = if (selected) 3.dp else 1.dp,
                     border = BorderStroke(1.dp,
                         if (selected) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.outlineVariant)
@@ -146,7 +147,7 @@ private fun QrexDetailHeader(title: String, onBack: () -> Unit) {
             Icon(Icons.Default.ArrowBack, contentDescription = tr("back"))
         }
         Spacer(Modifier.width(6.dp))
-        Text(title, fontSize = 23.sp, fontWeight = FontWeight.Bold,
+        Text(title, fontSize = QrexDesign.titleTextSize, fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground)
     }
 }

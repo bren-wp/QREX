@@ -24,6 +24,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashOn
@@ -477,6 +478,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             Box(Modifier.fillMaxWidth().weight(1f)
                 .clip(RoundedCornerShape(24.dp))
                 .background(QrexDesign.surface)
+                .border(1.dp, QrexDesign.stroke, RoundedCornerShape(24.dp))
                 .testTag("qrex-camera-preview")) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
                 ScannerCornerOverlay(
