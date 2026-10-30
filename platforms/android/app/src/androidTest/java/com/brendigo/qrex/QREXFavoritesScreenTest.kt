@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -33,8 +34,9 @@ class QREXFavoritesScreenTest {
     fun favoritesHasOneDirectRemoveActionAndRetainsHistoryOnUnsave() {
         awaitTag("qrex-tab-1")
         val host = "qrex-favorite-${System.nanoTime().toString().removePrefix("-")}.example.org"
-        val url = "https://$host/test"
+        val url = "https://$host/test?token=private-fixture-marker"
 
+        try {
         // Generate with the same real Compose entry point used by customers.
         rule.onNodeWithTag("qrex-tab-1").performClick()
         awaitTag("qrex-create-content")
@@ -62,7 +64,11 @@ class QREXFavoritesScreenTest {
         rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
             .performTextReplacement(host)
         val row = rule.onNodeWithTag("qrex-favorites-row", useUnmergedTree = true)
-        row.assertIsDisplayed().performClick()
+        row.assertIsDisplayed()
+        // Favorites previews do not print whole URLs or private query tokens.
+        rule.onAllNodesWithText("private-fixture-marker", substring = true,
+            useUnmergedTree = true).assertCountEquals(0)
+        row.performClick()
         awaitTag("qrex-result-screen")
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true).performClick()
         awaitTag("qrex-favorites-screen")
@@ -87,5 +93,15 @@ class QREXFavoritesScreenTest {
             .performTextReplacement(host)
         rule.onNodeWithTag("qrex-history-row", useUnmergedTree = true)
             .assertIsDisplayed()
+        } finally {
+            // Clean up only the unique synthetic record. Never clear unrelated
+            // saved codes or history, including when a UI assertion fails.
+            val cleanupStore = QREXStore(rule.activity.applicationContext)
+            val syntheticRecord = cleanupStore.items.firstOrNull { it.raw == url }
+            if (syntheticRecord != null) {
+                assertTrue("Synthetic test QR must be removable",
+                    cleanupStore.remove(syntheticRecord))
+            }
+        }
     }
 }
