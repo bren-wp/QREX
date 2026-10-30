@@ -113,8 +113,10 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
     def test_settings_grid_has_real_actions_and_accessible_touch_targets(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("QrexSettingsTile(", self.main)
-        self.assertIn('Text(tr("save_history"), Modifier.weight(1f),', self.main)
-        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 48.dp)", self.main)
+        self.assertIn('tr("save_history"), Modifier.weight(1f)', self.main)
+        self.assertIn('testTag("qrex-privacy-history-switch")', self.main)
+        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 64.dp)", self.main)
+        self.assertIn("Modifier.heightIn(min = 48.dp)", self.main)
         self.assertIn("heightIn(min = 104.dp)", design)
         self.assertNotIn("store.updateLightMode(", self.main)
         self.assertIn("QrexSettingsListRow(", self.main)
