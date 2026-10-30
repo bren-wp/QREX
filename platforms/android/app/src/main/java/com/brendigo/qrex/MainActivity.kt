@@ -1920,24 +1920,62 @@ private fun MoreScreen(
         AlertDialog(
             onDismissRequest = { showAbout = false },
             modifier = Modifier.testTag("qrex-about-dialog"),
-            title = { Text(tr("about")) },
+            title = {
+                Text(tr("about"), fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface)
+            },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    QrexBrandMark(logoSize = 32.dp, textSize = 21.sp)
-                    Text(tr("developed_by"),
-                        color = MaterialTheme.colorScheme.onSurface)
-                    if (versionName.isNotBlank()) {
-                        Text("v$versionName",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                // Let very long translations and accessibility font sizes
+                // scroll without hiding either of the actual dialog actions.
+                Column(
+                    Modifier.fillMaxWidth().heightIn(max = 400.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    QrexPanel {
+                        Column(
+                            Modifier.fillMaxWidth().padding(14.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(9.dp)
+                        ) {
+                            Row(
+                                Modifier.fillMaxWidth().testTag("qrex-about-brand"),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                QrexBrandMark(logoSize = 36.dp, textSize = 21.sp)
+                            }
+                            if (versionName.isNotBlank()) {
+                                Text(
+                                    "v$versionName",
+                                    modifier = Modifier.fillMaxWidth()
+                                        .testTag("qrex-about-version"),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 12.sp
+                                )
+                            }
+                            Text(
+                                tr("tagline"),
+                                modifier = Modifier.fillMaxWidth()
+                                    .testTag("qrex-about-tagline"),
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 4, overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
-                    Text(tr("tagline"),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("brendigo.com",
+                    Text(tr("developed_by"), fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface)
+                    Text("brendigo.com", modifier = Modifier.testTag("qrex-about-domain"),
                         color = MaterialTheme.colorScheme.primary)
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showAbout = false }) { Text(tr("close")) }
+                TextButton(
+                    onClick = { showAbout = false },
+                    modifier = Modifier.heightIn(min = 48.dp)
+                        .testTag("qrex-about-close")
+                ) { Text(tr("close")) }
             },
             dismissButton = {
                 TextButton(
@@ -1945,7 +1983,8 @@ private fun MoreScreen(
                         showAbout = false
                         openLink(context, Uri.parse("https://brendigo.com"))
                     },
-                    modifier = Modifier.testTag("qrex-about-website")
+                    modifier = Modifier.heightIn(min = 48.dp)
+                        .testTag("qrex-about-website")
                 ) { Text(tr("open_link")) }
             }
         )
