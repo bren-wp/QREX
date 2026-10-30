@@ -1952,21 +1952,32 @@ private fun MoreScreen(
     }
     if (confirmPdfExport) AlertDialog(
         onDismissRequest = { confirmPdfExport = false },
+        modifier = Modifier.testTag("qrex-export-consent"),
         title = { Text("PDF") },
         text = { Text(tr("export_archive_warning")) },
-        confirmButton = { TextButton(onClick = {
-            confirmPdfExport = false
-            val approvedRecords = snapshotSavedQrForPdf(store.items)
-            if (approvedRecords.isEmpty()) {
-                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
-            } else {
-                pendingPdfRecords = approvedRecords
-                exportPdf.launch("QREX-Saved-Codes.pdf")
-            }
-        }) { Text("PDF") } },
-        dismissButton = { TextButton(onClick = { confirmPdfExport = false }) {
-            Text(tr("cancel"))
-        } }
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    confirmPdfExport = false
+                    // Freeze only explicitly saved records at the moment of
+                    // consent, before the external Android SAF picker opens.
+                    val approvedRecords = snapshotSavedQrForPdf(store.items)
+                    if (approvedRecords.isEmpty()) {
+                        Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                    } else {
+                        pendingPdfRecords = approvedRecords
+                        exportPdf.launch("QREX-Saved-Codes.pdf")
+                    }
+                },
+                modifier = Modifier.testTag("qrex-export-consent-confirm")
+            ) { Text("PDF") }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { confirmPdfExport = false },
+                modifier = Modifier.testTag("qrex-export-consent-cancel")
+            ) { Text(tr("cancel")) }
+        }
     )
     if (showDelete) AlertDialog(
         onDismissRequest = { showDelete = false },
