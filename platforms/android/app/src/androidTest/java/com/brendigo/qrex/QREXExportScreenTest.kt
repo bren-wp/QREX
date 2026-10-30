@@ -50,7 +50,7 @@ class QREXExportScreenTest {
                 .assertIsDisplayed()
         }
         rule.onNodeWithTag("qrex-export-warning", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("qrex-export-privacy", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("qrex-detail-back", useUnmergedTree = true)
