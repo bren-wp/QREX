@@ -148,7 +148,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         # navigation arrow before the brand.
         self.assertNotIn('testTag("qrex-create-back")', self.main)
         self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
-        self.assertIn("painter = painterResource(R.drawable.qrex_icon)", self.main)
+        # Plain History and More headings must not duplicate launcher artwork.
+        self.assertIn("private fun AppHeader(", self.main)
+        self.assertNotIn("painter = painterResource(R.drawable.qrex_icon)", self.main)
         self.assertIn("val overflowTypes = listOf(3, 4, 5, 7)", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("painterResource(R.drawable.qrex_icon)", design)

@@ -69,6 +69,9 @@ internal object QrexDesign {
     val supportingTextSize = 11.sp
     val tileTitleTextSize = 13.sp
     val tileSupportingTextSize = 12.sp
+    val sectionSpacing = 12.dp
+    val cardRadius = 15.dp
+    val actionTextSize = 14.sp
     val heroBrush = Brush.verticalGradient(
         listOf(Color(0xFF09172D), background, backgroundDeep)
     )
@@ -138,7 +141,7 @@ internal fun QrexPanel(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(QrexDesign.cardRadius + 3.dp),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         // Stable, low-cost layered depth: no runtime blur or animation.
@@ -292,7 +295,7 @@ internal fun QrexResultAction(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.fillMaxWidth().heightIn(min = 56.dp),
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(QrexDesign.cardRadius),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
         shadowElevation = 2.dp,
@@ -307,6 +310,7 @@ internal fun QrexResultAction(
             Spacer(Modifier.width(12.dp))
             Text(label, modifier = Modifier.weight(1f),
                 color = foreground, fontWeight = FontWeight.Medium,
+                fontSize = QrexDesign.actionTextSize,
                 maxLines = 2, overflow = TextOverflow.Ellipsis)
             if (showChevron && !destructive) {
                 Icon(Icons.Default.ChevronRight, contentDescription = null,
@@ -324,7 +328,7 @@ internal fun QrexHistoryGlyph(icon: ImageVector, tint: Color, modifier: Modifier
         shape = RoundedCornerShape(14.dp),
         color = tint.copy(alpha = 0.14f)
     ) {
-            Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
             Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(21.dp))
         }
     }

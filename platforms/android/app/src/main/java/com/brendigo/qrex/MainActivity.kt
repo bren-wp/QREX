@@ -374,20 +374,13 @@ private fun QREXApp(
 
 @Composable
 private fun AppHeader(title: String, subtitle: String) {
-    Column(Modifier.fillMaxWidth().padding(bottom = 12.dp),
+    // Reference History/Favorites/More screens have a plain leading title.
+    // Avoid repeating the full launcher icon in every section heading.
+    Column(Modifier.fillMaxWidth().padding(bottom = QrexDesign.sectionSpacing),
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(R.drawable.qrex_icon),
-                contentDescription = null,
-                modifier = Modifier.size(30.dp).clip(RoundedCornerShape(9.dp))
-            )
-            Spacer(Modifier.width(9.dp))
-            Text(title, fontWeight = FontWeight.Bold,
-                fontSize = QrexDesign.titleTextSize,
-                maxLines = 2, overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground)
-        }
+        Text(title, fontWeight = FontWeight.Bold, fontSize = QrexDesign.titleTextSize,
+            maxLines = 2, overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onBackground)
         Text(subtitle, fontSize = QrexDesign.supportingTextSize, maxLines = 2,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
@@ -404,7 +397,9 @@ private fun PrimaryAction(
         modifier = modifier.fillMaxWidth().heightIn(min = 54.dp),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = QrexDesign.actionBlue, contentColor = Color.White)) {
+            containerColor = QrexDesign.actionBlue, contentColor = Color.White),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp,
+            pressedElevation = 1.dp, disabledElevation = 0.dp)) {
         Text(text, fontWeight = FontWeight.Bold)
     }
 }
@@ -536,7 +531,7 @@ private fun ResultScreen(
             }
             Text(tr("scan_complete"), modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold,
-                fontSize = 21.sp, color = MaterialTheme.colorScheme.onSurface)
+                fontSize = QrexDesign.titleTextSize, color = MaterialTheme.colorScheme.onSurface)
             Box {
                 IconButton(onClick = { showResultMenu = true },
                     modifier = Modifier.size(52.dp).testTag("qrex-result-menu")) {
@@ -826,7 +821,9 @@ private fun QrexCreateTypeChoice(
         modifier = modifier.heightIn(min = 54.dp).semantics { this.selected = selected },
         shape = RoundedCornerShape(11.dp),
         color = if (selected) QrexDesign.accent else MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shadowElevation = if (selected) 3.dp else 0.dp,
+        border = BorderStroke(1.dp, if (selected) QrexDesign.accentBright
+            else MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.Center,
@@ -1093,9 +1090,10 @@ private fun CreateScreen(
             }
             Spacer(Modifier.height(7.dp))
             Text(tr("create_qr"), color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold, fontSize = 21.sp)
+                fontWeight = FontWeight.Bold, fontSize = QrexDesign.titleTextSize)
             Text(tr("enter_details"), modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = QrexDesign.supportingTextSize)
 
             val quickTypes = listOf(0, 1, 2, 6)
             val selectType: (Int) -> Unit = { index ->
@@ -1139,7 +1137,9 @@ private fun CreateScreen(
                             shape = RoundedCornerShape(11.dp),
                             color = if (kind == index) QrexDesign.accent
                                 else MaterialTheme.colorScheme.surface,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            shadowElevation = if (kind == index) 3.dp else 0.dp,
+                            border = BorderStroke(1.dp, if (kind == index) QrexDesign.accentBright
+                                else MaterialTheme.colorScheme.outlineVariant)
                         ) {
                             Row(
                                 Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
@@ -1567,8 +1567,9 @@ private fun HistoryScreen(
                 Surface(
                     onClick = { onOpen(item.raw) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(15.dp),
+                    shape = RoundedCornerShape(QrexDesign.cardRadius),
                     color = MaterialTheme.colorScheme.surface,
+                    shadowElevation = 2.dp,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
@@ -1585,7 +1586,7 @@ private fun HistoryScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp
+                                fontSize = QrexDesign.actionTextSize
                             )
                             val subtitle = listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
