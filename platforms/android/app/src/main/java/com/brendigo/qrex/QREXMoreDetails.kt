@@ -132,31 +132,75 @@ internal fun QrexExportDetails(
     onBack: () -> Unit,
     onPdf: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp).testTag("qrex-export-screen")) {
+    Column(
+        Modifier.fillMaxSize().padding(horizontal = 16.dp)
+            .testTag("qrex-export-screen")
+    ) {
+        // Keep navigation in place; only the two privacy disclosures scroll.
+        // This also preserves a visible Back target on compact devices and
+        // at high accessibility font scales.
         QrexDetailHeader(tr("export_archive"), onBack)
-        QrexResultAction(
-            label = "PDF", icon = Icons.Default.PictureAsPdf,
-            enabled = hasSaved,
-            modifier = Modifier.testTag("qrex-export-pdf"),
-            onClick = onPdf
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(tr("export_archive_warning"), fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(vertical = 8.dp))
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
+                .testTag("qrex-export-content")
         ) {
-            Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Shield, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
-                Spacer(Modifier.width(10.dp))
-                Text(tr("privacy_summary"), fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Spacer(Modifier.height(8.dp))
+            QrexResultAction(
+                label = "PDF", icon = Icons.Default.PictureAsPdf,
+                enabled = hasSaved,
+                modifier = Modifier.testTag("qrex-export-pdf"),
+                onClick = onPdf
+            )
+            if (!hasSaved) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    tr("no_saved"), fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                        .testTag("qrex-export-no-saved")
+                )
             }
+            Spacer(Modifier.height(16.dp))
+            Surface(
+                shape = RoundedCornerShape(QrexDesign.cardRadius),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                modifier = Modifier.fillMaxWidth().testTag("qrex-export-warning")
+            ) {
+                Row(
+                    Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(
+                        Icons.Default.PictureAsPdf, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        tr("export_archive_warning"), fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(QrexDesign.cardRadius),
+                modifier = Modifier.fillMaxWidth().testTag("qrex-export-privacy")
+            ) {
+                Row(
+                    Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(Icons.Default.Shield, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
+                    Spacer(Modifier.width(12.dp))
+                    Text(tr("privacy_summary"), fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                }
+            }
+            Spacer(Modifier.height(20.dp))
         }
     }
 }
