@@ -1,3 +1,9 @@
+## Candidate: v1.0.26 · Android versionCode 126
+
+Merged PR #80: improved Favorites, More, Language, PDF Export, About and Privacy UI; durable and non-destructive History toggle, responsive 12-screen Android capture coverage and 23-language validation. GitHub APK/AAB artifacts require successful exact-commit CI, signing/checksum checks and publication of the new tag. Play upload packages require the authorized existing signing key.
+
+[Release notes](docs/releases/v1.0.26.md)
+
 ## Prepared: v1.0.25 · Android versionCode 125
 
 A source-code visual pass across all ten real Android screens: plain History/Favorites/More titles, improved scanner frame, consistent native blue action depth, QR type selection states, readable Result/Language text hierarchy, and grounded QA contracts. Existing private history, QR data, signing, offline operation and Android API 26–36 support are preserved. The public release requires exact-commit green CI, 23-language checks, R8/Lint, authentic emulator screenshots, SHA256 and cert verification.

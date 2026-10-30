@@ -85,6 +85,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.runtime.CompositionLocalProvider
@@ -189,6 +190,7 @@ private fun QREXApp(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     // Compose observes locale/configuration changes without stale Resources reads.
     val appLanguage = screenshotLanguage ?: store.language
     // Android dark reference has five distinct bottom destinations.
@@ -350,6 +352,12 @@ private fun QREXApp(
                         1 -> CreateScreen(screenshotMode = screenshotMode,
                             initialValue = editPayload,
                             onResult = {
+                                // Android 12 can keep the IME in flight while
+                                // the Result and bottom NavigationBar remeasure.
+                                // Dismiss it before switching screens so the
+                                // Result scroll viewport never overlaps tabs.
+                                keyboardController?.hide()
+                                focusManager.clearFocus(force = true)
                                 store.record(it)
                                 resultShowsQr = false
                                 editPayload = null
@@ -865,6 +873,7 @@ private fun CreateScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val types = listOf(
         tr("url"), tr("text"), tr("wifi"), tr("email"),
         tr("phone"), tr("location"), tr("contact"), tr("event")
@@ -1328,6 +1337,7 @@ private fun CreateScreen(
         PrimaryAction(tr("generate_qr"), enabled = canGenerate,
             modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 3.dp)
                 .testTag("qrex-create-show")) {
+            keyboardController?.hide()
             focusManager.clearFocus(force = true)
             onResult(payload)
         }

@@ -1,0 +1,235 @@
+name: Publish QREX 1.0.26 GitHub APK + AAB
+
+# GitHub-only distribution; disposable certificate cannot update the older
+# GitHub or Play APK and AAB must never be uploaded to Google Play.
+# The v1.0.26 publisher is the only enabled version-specific publisher. Trigger only after
+# QREX Android native CI succeeds on the exact main-branch commit.
+# Historical publisher jobs are retired (skip unconditionally).
+# Publishing is fail-closed: exact commit, CI, signatures, hashes, real pixels,
+# version/build identity, new tag and existing assets are all verified.
+on:
+  workflow_run:
+    workflows: ["QREX Android native CI"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: qrex-github-1-0-26-publish-once
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    # Sole active new-release preflight; all historical jobs are retired.
+    # After v1.0.26 is published, future main merges must SKIP the old
+    # publisher without starting an expensive build doomed to fail.
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    runs-on: ubuntu-latest
+    outputs:
+      release_needed: ${{ steps.check.outputs.release_needed }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.26 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'release_needed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'release_needed=true' >> "$GITHUB_OUTPUT"
+          fi
+  release:
+    needs: preflight
+    if: ${{ needs.preflight.outputs.release_needed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - name: Check out the exact tested Android commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Require current main and no previous v1.0.26 release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "bren-wp/QREX"
+          [[ "$RELEASE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
+          ! gh release view v1.0.26 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
+          ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.26" >/dev/null 2>&1
+      - name: Require all 3 green exact-commit Android checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(native-platforms.yml capture-screenshots.yml generate-localizations.yml)
+          for attempt in $(seq 1 45); do
+            all_passed=true
+            for workflow in "${required[@]}"; do
+              result="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow/runs?branch=main&head_sha=$RELEASE_SHA&per_page=30" |
+                jq -r --arg sha "$RELEASE_SHA" '[.workflow_runs[] |
+                  select(.head_sha == $sha and .event == "push")] |
+                  sort_by(.id) | last |
+                  if . == null then "missing" else (.status + ":" + (.conclusion // "pending")) end')"
+              echo "$workflow: $result"
+              if [ "$result" = "completed:failure" ] || [ "$result" = "completed:cancelled" ]; then
+                echo "A required workflow did not pass, refusing to publish." >&2
+                exit 1
+              fi
+              if [ "$result" != "completed:success" ]; then all_passed=false; fi
+            done
+            if [ "$all_passed" = true ]; then exit 0; fi
+            test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
+            echo "Waiting for all required tests (attempt $attempt/45)"
+            sleep 20
+          done
+          echo "Timed out waiting for successful exact-commit checks." >&2
+          exit 1
+      - name: Set up Java and Android build tools
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.1.0'
+      - name: Ensure Android SDK 36
+        run: |
+          set -euo pipefail
+          test -d "$ANDROID_HOME/platforms/android-36" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
+      - name: Build a release-mode APK and AAB without the Play upload key
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          # Android APKs require a cryptographic signature to install.
+          # Generate a disposable, one-build certificate; no Play key is needed.
+          # This cert is NOT retained: this APK cannot update an installation
+          # signed with another certificate, and the AAB is NOT Play-ready.
+          keystore="$RUNNER_TEMP/qrex-github-1.0.26.jks"
+          trap 'rm -f "$keystore"' EXIT
+          password="$(openssl rand -hex 24)"
+          keytool -genkeypair -noprompt -keystore "$keystore" -alias qrex-github \
+            -keyalg RSA -keysize 3072 -validity 3650 \
+            -storepass "$password" -keypass "$password" \
+            -dname "CN=QREX 1.0.26 GitHub, OU=CI Distribution, O=Brendigo, C=HR" >/dev/null
+          export QREX_UPLOAD_STORE_FILE="$keystore"
+          export QREX_UPLOAD_STORE_PASSWORD="$password"
+          export QREX_UPLOAD_KEY_ALIAS="qrex-github"
+          export QREX_UPLOAD_KEY_PASSWORD="$password"
+          python3 tool/check_native_release.py
+          python3 tool/generate_localizations.py --check
+          # The enabled Android variant registers debug JVM tests; AGP 9 does
+          # not register a JVM test task for the release variant in this app.
+          # The mandatory CI also runs these tests against the exact commit.
+          # Keep release lint, optimized APK and AAB compilation mandatory.
+          gradle -p platforms/android --no-daemon --stacktrace \
+            :app:testDebugUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
+          apk="platforms/android/app/build/outputs/apk/release/app-release.apk"
+          aab="platforms/android/app/build/outputs/bundle/release/app-release.aab"
+          test -s "$apk"
+          test -s "$aab"
+          # A disposable self-signed GitHub certificate is not in a public
+          # PKI trust store. -strict rejects that expected condition (exit 4).
+          # Verify JAR signature integrity and then compare both exact certs.
+          jarsigner -verify "$aab" > "$RUNNER_TEMP/qrex-aab-verify.txt"
+          grep -F 'jar verified.' "$RUNNER_TEMP/qrex-aab-verify.txt" >/dev/null
+          rm -f "$RUNNER_TEMP/qrex-aab-verify.txt"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --min-sdk-version 26 "$apk"
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -v 4 "$apk" >/dev/null
+          cert_aab="$(keytool -printcert -jarfile "$aab" |
+            sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 |
+            tr -d '[:space:]:' | tr '[:lower:]' '[:upper:]')"
+          cert_apk="$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$apk" |
+            sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1 |
+            tr -d '[:space:]:' | tr '[:lower:]' '[:upper:]')"
+          [[ "$cert_aab" =~ ^[A-F0-9]{64}$ ]]
+          test "$cert_aab" = "$cert_apk"
+          test "$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" |
+            sed -n "s/^package: name='\([^']*\)' versionCode='\([^']*\)' versionName='\([^']*\)'.*/\1 \2 \3/p" |
+            head -n 1)" = "com.brendigo.qrex 126 1.0.26"
+          mkdir -p production
+          cp "$apk" production/QREX-Android-1.0.26.apk
+          cp "$aab" production/QREX-Android-1.0.26.aab
+          (cd production && sha256sum QREX-Android-1.0.26.apk QREX-Android-1.0.26.aab > SHA256SUMS.txt)
+      - name: Retrieve twelve real screenshots from exact-SHA emulator CI
+        shell: bash
+        run: |
+          set -euo pipefail
+          capture_run="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/capture-screenshots.yml/runs?branch=main&head_sha=$RELEASE_SHA&per_page=30" |
+            jq -r --arg sha "$RELEASE_SHA" '[.workflow_runs[] |
+              select(.head_sha == $sha and .event == "push" and .conclusion == "success")] |
+              sort_by(.id) | last | .id // empty')"
+          [[ "$capture_run" =~ ^[0-9]+$ ]]
+          gh run download "$capture_run" --repo "$GITHUB_REPOSITORY" \
+            --name qrex-actual-android --dir production
+          for screen in splash create scan wifi result history saved more language export about privacy; do
+            test -s "production/android-${screen}.png"
+          done
+          python3 tool/verify_screenshots.py production/android-*.png
+          python3 tool/check_dark_screenshots.py production/android-{create,scan,wifi,result,history,saved,more,language,export,about,privacy}.png
+          python3 - <<'PY'
+          from pathlib import Path
+          from tool.verify_screenshots import verify
+          screens = sorted(Path("production").glob("android-*.png"))
+          assert len(screens) == 12, "Release requires twelve real captures"
+          for shot in screens:
+              assert verify(shot) == (1080, 1920), f"Not a Play-size screenshot: {shot}"
+          PY
+          # Retrieve only the unsigned Google Play QA candidate; it is not
+          # signed for upload and must not be mistaken for a store-ready AAB.
+          play_run="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/native-platforms.yml/runs?branch=main&head_sha=$RELEASE_SHA&per_page=30" |
+            jq -r --arg sha "$RELEASE_SHA" '[.workflow_runs[] |
+              select(.head_sha == $sha and .event == "push" and .conclusion == "success")] |
+              sort_by(.id) | last | .id // empty')"
+          [[ "$play_run" =~ ^[0-9]+$ ]]
+          mkdir -p "$RUNNER_TEMP/qa-play"
+          gh run download "$play_run" --repo "$GITHUB_REPOSITORY" \
+            --name QREX-Kotlin-Android-unsigned-AAB-QA --dir "$RUNNER_TEMP/qa-play"
+          test -s "$RUNNER_TEMP/qa-play/app-release.aab"
+          cp "$RUNNER_TEMP/qa-play/app-release.aab" \
+            production/QREX-Android-1.0.26-Play-UNSIGNED-QA.aab
+          (cd production && sha256sum QREX-Android-1.0.26*.apk QREX-Android-1.0.26*.aab android-*.png > SHA256SUMS.txt)
+          (cd production && sha256sum --check SHA256SUMS.txt)
+
+      - name: Publish stable GitHub version v1.0.26
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
+          ! gh release view v1.0.26 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
+          ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.0.26" >/dev/null 2>&1
+          gh release create v1.0.26 \
+            production/QREX-Android-1.0.26.apk \
+            production/QREX-Android-1.0.26.aab \
+            production/QREX-Android-1.0.26-Play-UNSIGNED-QA.aab \
+            production/SHA256SUMS.txt \
+            production/android-*.png \
+            --repo "$GITHUB_REPOSITORY" --target "$RELEASE_SHA" \
+            --title "QREX 1.0.26 — Android GitHub release" \
+            --notes-file docs/releases/v1.0.26.md --latest
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.26" |
+            jq -e --arg sha "$RELEASE_SHA" '
+              .tag_name == "v1.0.26" and .target_commitish == $sha
+              and .draft == false and .prerelease == false
+              and ([.assets[].name] | sort) ==
+                (["QREX-Android-1.0.26.apk", "QREX-Android-1.0.26.aab",
+                  "QREX-Android-1.0.26-Play-UNSIGNED-QA.aab",
+                  "SHA256SUMS.txt",
+                  "android-splash.png", "android-create.png", "android-scan.png", "android-wifi.png",
+                  "android-result.png", "android-history.png", "android-saved.png",
+                  "android-more.png", "android-language.png", "android-export.png",
+                  "android-about.png", "android-privacy.png"] | sort)
+              and all(.assets[]; .size > 0)
+            ' >/dev/null
+
