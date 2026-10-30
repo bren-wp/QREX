@@ -1489,7 +1489,9 @@ private fun HistoryScreen(
                 shape = RoundedCornerShape(15.dp),
                 color = MaterialTheme.colorScheme.surface,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth().testTag(if (favoritesPage) "qrex-favorites-empty" else "qrex-history-empty")
+                modifier = Modifier.fillMaxWidth().testTag(
+                    if (favoritesPage) "qrex-favorites-empty" else "qrex-history-empty"
+                )
             ) {
                 Row(
                     Modifier.padding(16.dp),
@@ -1591,7 +1593,10 @@ private fun HistoryScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = QrexDesign.actionTextSize
                             )
-                            val subtitle = listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
+                            // Favorites is a quick index, not a preview of secret tokens or
+                            // long QR payloads. Full details remain on the Result screen.
+                            val subtitle = if (favoritesPage) date else
+                                listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
                                 subtitle,
                                 maxLines = if (largeHistoryText) 2 else 1,
@@ -1612,7 +1617,8 @@ private fun HistoryScreen(
                                 }
                             },
                             modifier = Modifier.size(48.dp).testTag(
-                                if (favoritesPage) "qrex-favorites-remove" else "qrex-history-favorite"
+                                if (favoritesPage) "qrex-favorites-remove"
+                                else "qrex-history-favorite"
                             )
                         ) {
                             Icon(
@@ -1620,7 +1626,9 @@ private fun HistoryScreen(
                                 else Icons.Default.FavoriteBorder,
                                 contentDescription = if (item.saved) tr("remove_favorite")
                                     else tr("add_favorite"),
-                                tint = if (item.saved) QrexDesign.danger
+                                // Unsaving is reversible, unlike destructive History deletion.
+                                tint = if (item.saved && favoritesPage) QrexDesign.purple
+                                    else if (item.saved) QrexDesign.danger
                                     else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
