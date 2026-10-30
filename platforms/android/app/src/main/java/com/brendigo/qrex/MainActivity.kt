@@ -362,7 +362,8 @@ private fun QREXApp(
                             initiallySavedOnly = true, favoritesPage = true)
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
-                                screenshotMode == "export") screenshotMode else "root")
+                                screenshotMode == "export") screenshotMode else "root",
+                            isDarkAppearance = darkUi)
                     }
                 }
             }
@@ -1717,13 +1718,20 @@ private fun HistoryScreen(
     }
 }
 
-internal fun useCompactMoreList(screenWidthDp: Int, fontScale: Float): Boolean =
-    screenWidthDp < 300 || fontScale >= 1.30f
+/** Dark QREX uses a 3×2 grid; light QREX uses reference-style full-width rows.
+ * Always fall back to rows on narrow devices or with accessibility text scaling.
+ */
+internal fun useCompactMoreList(
+    screenWidthDp: Int,
+    fontScale: Float,
+    preferRows: Boolean = false
+): Boolean = preferRows || screenWidthDp < 300 || fontScale >= 1.30f
 
 @Composable
 private fun MoreScreen(
     store: QREXStore,
-    initialDetailPage: String = "root"
+    initialDetailPage: String = "root",
+    isDarkAppearance: Boolean = true
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
@@ -1770,12 +1778,13 @@ private fun MoreScreen(
         "light" -> tr("theme_light")
         else -> tr("theme_dark")
     }
-    // Keep six 2-column cards visible without forced scrolling on a
-    // regular/320dp handset. Switch to accessible rows only if physically
-    // too narrow or when accessibility text would truncate/overlap.
+    // Dark reference: six tiles in three aligned pairs. Light reference:
+    // native full-width rows. Both themes become rows at narrow widths /
+    // larger font scales so translated labels never overlap.
     val compactSettings = useCompactMoreList(
         LocalConfiguration.current.screenWidthDp,
-        LocalDensity.current.fontScale
+        LocalDensity.current.fontScale,
+        preferRows = !isDarkAppearance
     )
     when (detailPage) {
     "language" -> QrexLanguageDetails(store, onBack = { detailPage = "root" })
@@ -1789,9 +1798,8 @@ private fun MoreScreen(
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
         if (compactSettings) {
-            // Compact dark phones use accessible rows too, avoiding squeezed
-            // two-column tiles. Reference two-column cards remain on wide phones.
-            // The midnight-navy variant keeps its separate 2-column tiles.
+            // Light appearance always uses reference-style rows. Dark appearance
+            // falls back to rows when a narrow viewport or large text needs it.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 QrexSettingsListRow(tr("theme"), Icons.Default.Palette,
                     subtitle = themeTitle, onClick = { showTheme = true },
