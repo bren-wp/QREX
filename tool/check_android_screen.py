@@ -51,7 +51,9 @@ def validate(xml_content: str, screen: str = "create") -> None:
                               "spremi na uređaj"),
         "responsive-scan": ("skener. stvara. dijeli.", "iz galerije"),
         "responsive-more": ("postavke", "jezik"),
-        "responsive-about": ("o aplikaciji", "qrex", "razvio brendigo", "zatvori"),
+        # Large-font dialogs can scroll their informational text; require
+        # the pinned title, brand and close action, not offscreen prose.
+        "responsive-about": ("o aplikaciji", "qrex", "zatvori"),
         "responsive-splash": ("qrex", "skener. stvara. dijeli."),
         "responsive-wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
         "responsive-result": ("rezultat", "https://brendigo.com", "natrag"),
