@@ -1488,15 +1488,16 @@ private fun HistoryScreen(
                 shape = RoundedCornerShape(15.dp),
                 color = MaterialTheme.colorScheme.surface,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth().testTag("qrex-history-empty")
+                modifier = Modifier.fillMaxWidth().testTag(if (favoritesPage) "qrex-favorites-empty" else "qrex-history-empty")
             ) {
                 Row(
                     Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Icon(Icons.Default.History, contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary)
+                    Icon(if (favoritesPage) Icons.Default.FavoriteBorder else Icons.Default.History,
+                        contentDescription = null,
+                        tint = if (favoritesPage) QrexDesign.purple else MaterialTheme.colorScheme.primary)
                     Text(if (savedOnly) tr("no_saved") else tr("no_history"),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium)
@@ -1563,10 +1564,11 @@ private fun HistoryScreen(
                     item.raw.startsWith("geo:", ignoreCase = true) -> tr("location")
                     else -> item.raw
                 }
-                var historyMenu by remember(item.raw) { mutableStateOf(false) }
                 Surface(
                     onClick = { onOpen(item.raw) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag(
+                        if (favoritesPage) "qrex-favorites-row" else "qrex-history-row"
+                    ),
                     shape = RoundedCornerShape(QrexDesign.cardRadius),
                     color = MaterialTheme.colorScheme.surface,
                     shadowElevation = 2.dp,
@@ -1608,7 +1610,9 @@ private fun HistoryScreen(
                                     ).show()
                                 }
                             },
-                            modifier = Modifier.size(48.dp).testTag("qrex-history-favorite")
+                            modifier = Modifier.size(48.dp).testTag(
+                                if (favoritesPage) "qrex-favorites-remove" else "qrex-history-favorite"
+                            )
                         ) {
                             Icon(
                                 if (item.saved) Icons.Default.Favorite
@@ -1619,56 +1623,60 @@ private fun HistoryScreen(
                                     else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        Box {
-                            IconButton(
-                                onClick = { historyMenu = true },
-                                modifier = Modifier.testTag("qrex-history-menu").size(48.dp)
-                            ) {
-                                Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            DropdownMenu(
-                                expanded = historyMenu,
-                                onDismissRequest = { historyMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text(tr("show_qr")) },
-                                    onClick = { historyMenu = false; onOpen(item.raw) },
-                                    leadingIcon = {
-                                        Icon(Icons.Default.QrCode, contentDescription = null)
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(if (item.saved) tr("remove_favorite") else tr("add_favorite"))
-                                    },
-                                    onClick = {
-                                        historyMenu = false
-                                        if (screenshotItems == null) {
-                                            val changed = if (item.saved) store.setSaved(item, false)
-                                                else store.setSaved(item, true)
-                                            if (!changed) {
-                                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
-                                            }
+                        if (!favoritesPage) {
+                            // Favorites uses just the card tap and its visible heart; History retains deletion.
+                            var historyMenu by remember(item.raw) { mutableStateOf(false) }
+                            Box {
+                                IconButton(
+                                    onClick = { historyMenu = true },
+                                    modifier = Modifier.testTag("qrex-history-menu").size(48.dp)
+                                ) {
+                                    Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                DropdownMenu(
+                                    expanded = historyMenu,
+                                    onDismissRequest = { historyMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(tr("show_qr")) },
+                                        onClick = { historyMenu = false; onOpen(item.raw) },
+                                        leadingIcon = {
+                                            Icon(Icons.Default.QrCode, contentDescription = null)
                                         }
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            if (item.saved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                            contentDescription = null,
-                                            tint = if (item.saved) QrexDesign.danger
-                                                else MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(tr("delete")) },
-                                    onClick = { historyMenu = false; pendingDelete = item },
-                                    leadingIcon = {
-                                        Icon(Icons.Default.Delete, contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.error)
-                                    }
-                                )
+                                    )
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(if (item.saved) tr("remove_favorite") else tr("add_favorite"))
+                                        },
+                                        onClick = {
+                                            historyMenu = false
+                                            if (screenshotItems == null) {
+                                                val changed = if (item.saved) store.setSaved(item, false)
+                                                    else store.setSaved(item, true)
+                                                if (!changed) {
+                                                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                if (item.saved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                                contentDescription = null,
+                                                tint = if (item.saved) QrexDesign.danger
+                                                    else MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text(tr("delete")) },
+                                        onClick = { historyMenu = false; pendingDelete = item },
+                                        leadingIcon = {
+                                            Icon(Icons.Default.Delete, contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.error)
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
