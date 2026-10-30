@@ -163,7 +163,7 @@ class MainActivity : ComponentActivity() {
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
                 it in setOf("splash", "create", "scan", "result", "history",
-                    "saved", "more", "wifi", "language", "export")
+                    "saved", "more", "wifi", "language", "export", "about")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
@@ -205,7 +205,7 @@ private fun QREXApp(
             "create", "wifi", "result" -> 1
             "history" -> 2
             "saved" -> 3
-            "more", "language", "export" -> 4
+            "more", "language", "export", "about" -> 4
             else -> 0
         })
     }
@@ -363,7 +363,8 @@ private fun QREXApp(
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root",
-                            isDarkAppearance = darkUi)
+                            isDarkAppearance = darkUi,
+                            initialShowAbout = screenshotMode == "about")
                     }
                 }
             }
@@ -1731,7 +1732,8 @@ internal fun useCompactMoreList(
 private fun MoreScreen(
     store: QREXStore,
     initialDetailPage: String = "root",
-    isDarkAppearance: Boolean = true
+    isDarkAppearance: Boolean = true,
+    initialShowAbout: Boolean = false
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
@@ -1739,7 +1741,9 @@ private fun MoreScreen(
     var showTheme by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
-    var showAbout by remember { mutableStateOf(false) }
+    // Debug screenshot routing can open the real About dialog without
+    // tapping approximate screen coordinates. Normal launches stay closed.
+    var showAbout by remember(initialShowAbout) { mutableStateOf(initialShowAbout) }
     var confirmPdfExport by remember { mutableStateOf(false) }
     // In-memory only: the approved snapshot must never enter Android saved state.
     // A recreated Activity without this snapshot fails closed on picker return.
