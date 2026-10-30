@@ -13,6 +13,12 @@ class QREXVisualLayoutTest {
         assertTrue(useCompactMoreList(299, 1.0f))
         assertTrue(useCompactMoreList(393, 1.30f))
         assertTrue(useCompactMoreList(320, 1.60f))
+        // Light reference always uses accessible full-width rows.
+        assertTrue(useCompactMoreList(393, 1.0f, preferRows = true))
+        assertTrue(useCompactMoreList(430, 1.0f, preferRows = true))
+        // System/dark appearance keeps the original six-tile grid when safe.
+        assertFalse(useCompactMoreList(393, 1.0f, preferRows = false))
+        assertTrue(useCompactMoreList(300, 1.45f, preferRows = false))
     }
 
     @Test fun createChoicesRemainAccessibleAtLargeFontAndCompactWidth() {
