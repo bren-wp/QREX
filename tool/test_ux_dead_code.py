@@ -45,7 +45,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('store.themeMode', self.main)
         self.assertIn('testTag("qrex-more-theme")', self.main)
         self.assertIn("useCompactMoreList(", self.main)
-        self.assertIn("screenWidthDp < 300 || fontScale >= 1.45f", self.main)
+        self.assertIn("screenWidthDp < 300 || fontScale >= 1.30f", self.main)
         self.assertIn('testTag("qrex-theme-dialog")', self.main)
         self.assertNotIn("updateLightMode(", self.main)
         self.assertNotIn("updateLightMode(", self.core)
