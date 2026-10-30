@@ -1960,7 +1960,7 @@ private fun MoreScreen(
                                     .testTag("qrex-about-tagline"),
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 4, overflow = TextOverflow.Ellipsis
+                                softWrap = true
                             )
                         }
                     }
