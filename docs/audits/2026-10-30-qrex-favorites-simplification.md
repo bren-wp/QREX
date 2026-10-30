@@ -9,8 +9,10 @@ The **Favorites** destination is the next isolated screen after the existing Sca
 - Removed the per-item three-dot overflow menu on **Favorites only**. It duplicated the two actions already available: tap the card to open its real QR Result; tap the 48dp heart to remove its saved flag.
 - Kept the **History** per-item menu and its confirmation-backed permanent Delete action. Nothing is removed from History when the favorite heart is tapped on the Favorites screen.
 - The empty Favorites card now uses the Favorites icon and semantic violet tint instead of the History clock.
+- Favorites rows show only the localized timestamp beneath their short label instead of showing full QR payloads, including sensitive URL query tokens. The QR Result still opens on tap for explicitly requested full details.
+- The Favorites heart uses violet (saved state) rather than the destructive red reserved for true deletion.
 - Stable, non-payload UI test tags distinguish Favorites row, unsave control and empty state; the Result's existing favorite action also receives a stable semantic test tag.
-- Added a real device UI regression that creates and saves a synthetic QR, opens it from Favorites, unsaves it and verifies it still exists in History. It also verifies the absent duplicate menu/filter and the 48dp touch target.
+- Added a real device UI regression that creates and saves a synthetic QR, opens it from Favorites, unsaves it and verifies it still exists in History. It also verifies the absent duplicate menu/filter and the 48dp touch target. The regression verifies that a synthetic URL query token is not printed in Favorites, and cleans up only its own test record in `finally`, never wiping unrelated history.
 
 ## Unchanged
 
