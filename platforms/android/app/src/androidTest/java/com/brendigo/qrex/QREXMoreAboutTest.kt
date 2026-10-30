@@ -94,7 +94,8 @@ class QREXMoreAboutTest {
         // never an assumed release number or a static mock-up.
         rule.onNodeWithTag("qrex-about-brand", useUnmergedTree = true)
             .assertIsDisplayed()
-        val version = @Suppress("DEPRECATION") rule.activity.packageManager
+        @Suppress("DEPRECATION")
+        val version = rule.activity.packageManager
             .getPackageInfo(rule.activity.packageName, 0).versionName.orEmpty()
         if (version.isNotBlank()) {
             rule.onNodeWithTag("qrex-about-version", useUnmergedTree = true)
