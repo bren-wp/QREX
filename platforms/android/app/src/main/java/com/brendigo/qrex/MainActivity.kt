@@ -1968,14 +1968,27 @@ private fun MoreScreen(
             Text(tr("cancel"))
         } }
     )
-    if (showDelete) AlertDialog(onDismissRequest = { showDelete = false },
+    if (showDelete) AlertDialog(
+        onDismissRequest = { showDelete = false },
+        modifier = Modifier.testTag("qrex-clear-history-dialog"),
         title = { Text(tr("confirm_clear_history")) },
         text = { Text(tr("clear_history_warning")) },
-        confirmButton = { TextButton(onClick = {
-            if (store.clearHistory()) showDelete = false
-            else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
-        }) { Text(tr("clear_history")) } },
-        dismissButton = { TextButton(onClick = { showDelete = false }) { Text(tr("cancel")) } })
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    if (store.clearHistory()) showDelete = false
+                    else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier.testTag("qrex-clear-history-confirm")
+            ) { Text(tr("clear_history")) }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { showDelete = false },
+                modifier = Modifier.testTag("qrex-clear-history-cancel")
+            ) { Text(tr("cancel")) }
+        }
+    )
     if (showPrivacy) AlertDialog(onDismissRequest = { showPrivacy = false },
         title = { Text(tr("privacy_policy")) },
         text = {
