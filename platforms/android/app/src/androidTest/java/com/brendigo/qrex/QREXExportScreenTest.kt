@@ -70,6 +70,12 @@ class QREXExportScreenTest {
             awaitTag("qrex-create-content")
             rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
                 .performTextReplacement(raw)
+            rule.waitUntil(timeoutMillis = 45_000L) {
+                runCatching {
+                    rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
+                        .assertIsEnabled()
+                }.isSuccess
+            }
             rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
                 .performClick()
             awaitTag("qrex-result-save-favorite")
