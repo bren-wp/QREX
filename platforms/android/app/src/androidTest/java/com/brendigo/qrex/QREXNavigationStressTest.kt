@@ -352,8 +352,22 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-create-screen", 0, "open Create for Result navigation")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://brendigo.com")
-        rule.onNodeWithTag("qrex-create-show").performClick()
+        awaitCreateAction(0, "Result tab-bar transition")
+        rule.onNodeWithTag("qrex-create-show").assertIsEnabled().performClick()
         requireScreenTag("qrex-result-screen", 0, "open Result with bottom navigation")
+        // On API 31 the IME and bottom system insets can animate on
+        // independent frames. Validate the final geometry after keyboard
+        // dismissal rather than an intermediate animation frame.
+        rule.waitUntil(timeoutMillis = 15_000L) {
+            runCatching {
+                val tab = rule.onNodeWithTag("qrex-tab-1", useUnmergedTree = true)
+                    .getUnclippedBoundsInRoot()
+                val viewport = rule.onNodeWithTag(
+                    "qrex-result-scroll", useUnmergedTree = true
+                ).getUnclippedBoundsInRoot()
+                viewport.bottom <= tab.top + 1.dp
+            }.getOrDefault(false)
+        }
         val nav = rule.onNodeWithTag("qrex-tab-1", useUnmergedTree = true)
         nav.assertIsDisplayed().assertIsSelected()
         val navTop = nav.getUnclippedBoundsInRoot().top
@@ -361,8 +375,11 @@ class QREXNavigationStressTest {
         back.assertIsDisplayed()
         val scroll = rule.onNodeWithTag("qrex-result-scroll", useUnmergedTree = true)
             .getUnclippedBoundsInRoot()
-        assertTrue("Result scrolling area must stay above navigation",
-            scroll.bottom <= navTop + 1.dp)
+        assertTrue(
+            "Result scroll bottom ${scroll.bottom.value}dp must stay at or " +
+                "above nav top ${navTop.value}dp",
+            scroll.bottom <= navTop + 1.dp
+        )
         for (index in 0..4) {
             rule.onNodeWithTag("qrex-tab-$index").assertIsDisplayed()
         }
@@ -381,7 +398,11 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/qrex/result-design")
         awaitCreateAction(0, "reference Result Generate")
-        rule.onNodeWithTag("qrex-create-show").performClick()
+        // Compose semantics trigger the same real onClick without allowing
+        // the Android 12 IME overlay to swallow a synthetic coordinate tap.
+        // Separate physical-tap tests exercise touchscreen hit testing.
+        rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            .performSemanticsAction(SemanticsActions.OnClick)
         requireScreenTag("qrex-result-summary", 0, "reference Result content card")
         rule.onNodeWithTag("qrex-result-summary", useUnmergedTree = true)
             .assertIsDisplayed()
