@@ -2,6 +2,7 @@ package com.brendigo.qrex
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import android.widget.Toast
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,8 +60,14 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
     )
     Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)
         .testTag("qrex-language-screen")) {
+        // The back control stays pinned while all 24 options scroll beneath it.
         QrexDetailHeader(tr("language"), onBack)
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(7.dp)) {
+        LazyColumn(
+            modifier = Modifier.weight(1f).fillMaxWidth()
+                .testTag("qrex-language-list"),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(top = 4.dp, bottom = 20.dp)
+        ) {
             items(listOf("system") + QREXStrings.languages, key = { it }) { code ->
                 val label = if (code == "system") tr("system") else {
                     val locale = Locale.forLanguageTag(code)
@@ -73,7 +83,10 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                         }
                     },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)
-                        .testTag("qrex-language-option-$code"),
+                        .testTag("qrex-language-option-$code")
+                        // Expose the selected row to TalkBack and Compose UI tests
+                        // without making the radio icon another independent button.
+                        .semantics { this.selected = selected },
                     shape = RoundedCornerShape(13.dp),
                     color = if (selected) MaterialTheme.colorScheme.primaryContainer
                         else MaterialTheme.colorScheme.surface,
@@ -82,16 +95,26 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                         if (selected) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.outlineVariant)
                 ) {
-                    Row(Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                    Row(Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text(flags[code] ?: "🌐", fontSize = 23.sp)
+                        // A consistent 36dp flag slot keeps all names and radio
+                        // controls aligned despite variable emoji glyph widths.
+                        androidx.compose.foundation.layout.Box(
+                            Modifier.size(36.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(flags[code] ?: "🌐", fontSize = 23.sp, maxLines = 1)
+                        }
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
                             Text(label, fontWeight = FontWeight.SemiBold,
+                                maxLines = 2, overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface)
                             Text(if (code == "system") "Android" else code.uppercase(Locale.ROOT),
-                                fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                maxLines = 1, fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
+                        Spacer(Modifier.width(8.dp))
                         RadioButton(selected = selected, onClick = null)
                     }
                 }
@@ -109,31 +132,75 @@ internal fun QrexExportDetails(
     onBack: () -> Unit,
     onPdf: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(horizontal = 16.dp).testTag("qrex-export-screen")) {
+    Column(
+        Modifier.fillMaxSize().padding(horizontal = 16.dp)
+            .testTag("qrex-export-screen")
+    ) {
+        // Keep navigation in place; only the two privacy disclosures scroll.
+        // This also preserves a visible Back target on compact devices and
+        // at high accessibility font scales.
         QrexDetailHeader(tr("export_archive"), onBack)
-        QrexResultAction(
-            label = "PDF", icon = Icons.Default.PictureAsPdf,
-            enabled = hasSaved,
-            modifier = Modifier.testTag("qrex-export-pdf"),
-            onClick = onPdf
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(tr("export_archive_warning"), fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(vertical = 8.dp))
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
+                .testTag("qrex-export-content")
         ) {
-            Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Shield, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
-                Spacer(Modifier.width(10.dp))
-                Text(tr("privacy_summary"), fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Spacer(Modifier.height(8.dp))
+            QrexResultAction(
+                label = "PDF", icon = Icons.Default.PictureAsPdf,
+                enabled = hasSaved,
+                modifier = Modifier.testTag("qrex-export-pdf"),
+                onClick = onPdf
+            )
+            if (!hasSaved) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    tr("no_saved"), fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                        .testTag("qrex-export-no-saved")
+                )
             }
+            Spacer(Modifier.height(16.dp))
+            Surface(
+                shape = RoundedCornerShape(QrexDesign.cardRadius),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                modifier = Modifier.fillMaxWidth().testTag("qrex-export-warning")
+            ) {
+                Row(
+                    Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(
+                        Icons.Default.PictureAsPdf, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        tr("export_archive_warning"), fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(QrexDesign.cardRadius),
+                modifier = Modifier.fillMaxWidth().testTag("qrex-export-privacy")
+            ) {
+                Row(
+                    Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(Icons.Default.Shield, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
+                    Spacer(Modifier.width(12.dp))
+                    Text(tr("privacy_summary"), fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                }
+            }
+            Spacer(Modifier.height(20.dp))
         }
     }
 }

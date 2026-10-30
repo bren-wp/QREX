@@ -82,7 +82,7 @@ fi
 # Capture each screen from the *installed QREX debug APK*. The intent extra
 # chooses a screen and injects only in-memory, non-sensitive demo records.
 # Debug routing is forbidden by MainActivity in production builds.
-for screen in splash scan wifi result history saved more language export; do
+for screen in splash scan wifi result history saved more language export about privacy; do
   screenshot="docs/screenshots/android-${screen}.png"
   hierarchy="docs/screenshots/android-${screen}-hierarchy.xml"
   rm -f "$screenshot" "$hierarchy"
@@ -110,8 +110,8 @@ done
 python3 tool/verify_screenshots.py docs/screenshots/android-*.png
 # Verify the real frame is dark, not just a dark-themed filename. The PNG
 # samples come from the actual emulator capture, not marketing artwork.
-python3 tool/check_dark_screenshots.py docs/screenshots/android-{create,scan,wifi,result,history,saved,more,language,export}.png
+python3 tool/check_dark_screenshots.py docs/screenshots/android-{create,scan,wifi,result,history,saved,more,language,export,about,privacy}.png
 # Capture separate real phone-size screenshots. These do not enter the
 # Play-sized public release screenshot list or alter user settings.
 bash tool/capture_responsive_android.sh
-echo "Ten real QREX Android screens (dark only) captured and verified."
+echo "Twelve real QREX Android screens (dark only) captured and verified."

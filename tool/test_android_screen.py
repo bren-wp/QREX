@@ -86,6 +86,46 @@ class ForegroundTests(unittest.TestCase):
                 validate(screen('<node package="com.brendigo.qrex" text="' +
                                 content + '" />'), mode)
 
+    def test_real_about_dialog_requires_branded_content_and_close(self):
+        hierarchy = screen(
+            '<node package="com.brendigo.qrex" text="O aplikaciji" />'
+            '<node package="com.brendigo.qrex" content-desc="QREX" />'
+            '<node package="com.brendigo.qrex" text="Razvio Brendigo" />'
+            '<node package="com.brendigo.qrex" text="Zatvori" />'
+        )
+        for mode in ("about", "responsive-about"):
+            with self.subTest(mode=mode):
+                validate(hierarchy, mode)
+        with self.assertRaisesRegex(ValueError, "razvio brendigo"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="O aplikaciji" />'
+                '<node package="com.brendigo.qrex" content-desc="QREX" />'
+                '<node package="com.brendigo.qrex" text="Zatvori" />'
+            ), "about")
+
+    def test_privacy_requires_real_localized_dialog_and_close(self):
+        hierarchy = screen(
+            '<node package="com.brendigo.qrex" text="Politika privatnosti" />'
+            '<node package="com.brendigo.qrex" text="QR kodovi obrađuju se na uređaju" />'
+            '<node package="com.brendigo.qrex" text="Zatvori" />'
+        )
+        validate(hierarchy, "privacy")
+        validate(hierarchy, "responsive-privacy")
+        # Merely opening More must not satisfy the Privacy screenshot gate.
+        for mode in ("privacy", "responsive-privacy"):
+            with self.subTest(mode=mode):
+                with self.assertRaisesRegex(ValueError, "politika privatnosti"):
+                    validate(screen(
+                        '<node package="com.brendigo.qrex" text="Postavke" />'
+                        '<node package="com.brendigo.qrex" text="Jezik" />'
+                        '<node package="com.brendigo.qrex" text="Zatvori" />'
+                    ), mode)
+        with self.assertRaisesRegex(ValueError, "qr kodovi obrađuju se"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="Politika privatnosti" />'
+                '<node package="com.brendigo.qrex" text="Zatvori" />'
+            ), "privacy")
+
     def test_wifi_create_fixture_is_visible(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Stvori QR kod" />'

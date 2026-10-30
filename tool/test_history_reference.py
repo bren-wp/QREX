@@ -46,7 +46,10 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.source)
         self.assertIn("itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) })", self.source)
         self.assertNotIn("items(found, key = { it.raw })", self.source)
-        self.assertIn('testTag("qrex-history-empty")', self.source)
+        # History and Favorites have separate semantic empty-state tags.
+        self.assertIn('"qrex-history-empty"', self.source)
+        self.assertIn('"qrex-favorites-empty"', self.source)
+        self.assertIn('if (favoritesPage) "qrex-favorites-empty"', self.source)
         self.assertIn("largeHistoryText = LocalDensity.current.fontScale >= 1.35f", self.source)
         self.assertIn("maxLines = if (largeHistoryText) 2 else 1", self.source)
         self.assertIn("confirm_delete", self.source)

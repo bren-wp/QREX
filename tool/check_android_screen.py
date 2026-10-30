@@ -44,12 +44,18 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "history": ("povijest", "brendigo.com", "pretraži povijest..."),
         "saved": ("favoriti", "brendigo.com", "spremljeno"),
         "more": ("postavke", "pdf", "jezik"),
+        "about": ("o aplikaciji", "qrex", "razvio brendigo", "zatvori"),
+        "privacy": ("politika privatnosti", "qr kodovi obrađuju se", "zatvori"),
         "language": ("jezik", "hrvatski", "english"),
         "export": ("izvoz arhive", "pdf"),
         "responsive-create": ("stvori qr kod", "generiraj qr kod",
                               "spremi na uređaj"),
         "responsive-scan": ("skener. stvara. dijeli.", "iz galerije"),
         "responsive-more": ("postavke", "jezik"),
+        # Large-font dialogs can scroll their informational text; require
+        # the pinned title, brand and close action, not offscreen prose.
+        "responsive-about": ("o aplikaciji", "qrex", "zatvori"),
+        "responsive-privacy": ("politika privatnosti", "zatvori"),
         "responsive-splash": ("qrex", "skener. stvara. dijeli."),
         "responsive-wifi": ("stvori qr kod", "qrex-demo", "wi-fi"),
         "responsive-result": ("rezultat", "https://brendigo.com", "natrag"),
