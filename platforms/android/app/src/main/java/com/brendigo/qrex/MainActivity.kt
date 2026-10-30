@@ -163,7 +163,7 @@ class MainActivity : ComponentActivity() {
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
                 it in setOf("splash", "create", "scan", "result", "history",
-                    "saved", "more", "wifi", "language", "export", "about")
+                    "saved", "more", "wifi", "language", "export", "about", "privacy")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
@@ -205,7 +205,7 @@ private fun QREXApp(
             "create", "wifi", "result" -> 1
             "history" -> 2
             "saved" -> 3
-            "more", "language", "export", "about" -> 4
+            "more", "language", "export", "about", "privacy" -> 4
             else -> 0
         })
     }
@@ -364,7 +364,8 @@ private fun QREXApp(
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root",
                             isDarkAppearance = darkUi,
-                            initialShowAbout = screenshotMode == "about")
+                            initialShowAbout = screenshotMode == "about",
+                            initialShowPrivacy = screenshotMode == "privacy")
                     }
                 }
             }
@@ -1733,13 +1734,15 @@ private fun MoreScreen(
     store: QREXStore,
     initialDetailPage: String = "root",
     isDarkAppearance: Boolean = true,
-    initialShowAbout: Boolean = false
+    initialShowAbout: Boolean = false,
+    initialShowPrivacy: Boolean = false
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
     var showTheme by remember { mutableStateOf(false) }
-    var showPrivacy by remember { mutableStateOf(false) }
+    // The real privacy dialog can be captured in debug-only screenshot mode.
+    var showPrivacy by remember(initialShowPrivacy) { mutableStateOf(initialShowPrivacy) }
     var showTerms by remember { mutableStateOf(false) }
     // Debug screenshot routing can open the real About dialog without
     // tapping approximate screen coordinates. Normal launches stay closed.
@@ -2043,33 +2046,98 @@ private fun MoreScreen(
             ) { Text(tr("cancel")) }
         }
     )
-    if (showPrivacy) AlertDialog(onDismissRequest = { showPrivacy = false },
-        title = { Text(tr("privacy_policy")) },
+    if (showPrivacy) AlertDialog(
+        onDismissRequest = { showPrivacy = false },
+        modifier = Modifier.testTag("qrex-privacy-dialog"),
+        title = {
+            Text(tr("privacy_policy"), fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface)
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(tr("privacy_summary"))
-                Row(
-                    Modifier.fillMaxWidth().heightIn(min = 48.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            // Large translations scroll independently of the title and actions.
+            // Nothing is truncated, including the disclosure about saved Wi-Fi.
+            Column(
+                Modifier.fillMaxWidth().heightIn(max = 340.dp)
+                    .verticalScroll(rememberScrollState())
+                    .testTag("qrex-privacy-content"),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(QrexDesign.cardRadius),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-privacy-summary")
                 ) {
-                    Text(tr("save_history"), Modifier.weight(1f),
-                        color = MaterialTheme.colorScheme.onSurface)
-                    Switch(checked = store.historyEnabled,
-                        onCheckedChange = { enabled ->
-                            if (!store.updateHistoryEnabled(enabled)) {
-                                Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                    Row(
+                        Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Icon(
+                            Icons.Default.Shield, contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            tr("privacy_summary"),
+                            fontSize = 14.sp, softWrap = true,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(QrexDesign.cardRadius),
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-privacy-history-row")
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth().heightIn(min = 64.dp)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            tr("save_history"), Modifier.weight(1f),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 3, overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Switch(
+                            checked = store.historyEnabled,
+                            modifier = Modifier.heightIn(min = 48.dp)
+                                .testTag("qrex-privacy-history-switch"),
+                            onCheckedChange = { enabled ->
+                                // Commit the local preference first. Existing
+                                // history/favorites are never deleted here.
+                                if (!store.updateHistoryEnabled(enabled)) {
+                                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                                }
                             }
-                        })
+                        )
+                    }
                 }
             }
         },
-        confirmButton = { TextButton(onClick = { showPrivacy = false }) {
-            Text(tr("close"))
-        } },
-        dismissButton = { TextButton(onClick = {
-            showPrivacy = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md"))
-        }) { Text(tr("read_full_policy")) } })
+        confirmButton = {
+            TextButton(
+                onClick = { showPrivacy = false },
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-privacy-close")
+            ) { Text(tr("close")) }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showPrivacy = false
+                    openLink(context, Uri.parse(
+                        "https://github.com/bren-wp/QREX/blob/main/docs/PRIVACY.md"
+                    ))
+                },
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-privacy-full-policy")
+            ) { Text(tr("read_full_policy")) }
+        }
+    )
     if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
         title = { Text(tr("terms_of_use")) },
         text = { Text(tr("terms_summary")) },
