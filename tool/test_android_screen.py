@@ -86,6 +86,23 @@ class ForegroundTests(unittest.TestCase):
                 validate(screen('<node package="com.brendigo.qrex" text="' +
                                 content + '" />'), mode)
 
+    def test_real_about_dialog_requires_branded_content_and_close(self):
+        hierarchy = screen(
+            '<node package="com.brendigo.qrex" text="O aplikaciji" />'
+            '<node package="com.brendigo.qrex" content-desc="QREX" />'
+            '<node package="com.brendigo.qrex" text="Razvio Brendigo" />'
+            '<node package="com.brendigo.qrex" text="Zatvori" />'
+        )
+        for mode in ("about", "responsive-about"):
+            with self.subTest(mode=mode):
+                validate(hierarchy, mode)
+        with self.assertRaisesRegex(ValueError, "razvio brendigo"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="O aplikaciji" />'
+                '<node package="com.brendigo.qrex" content-desc="QREX" />'
+                '<node package="com.brendigo.qrex" text="Zatvori" />'
+            ), "about")
+
     def test_wifi_create_fixture_is_visible(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Stvori QR kod" />'
