@@ -1,0 +1,1 @@
+Unified headers, typography, buttons and accents across Scan, Create, Result, History, Settings and Language. Native camera border and QR type selection improved without affecting offline privacy or stored QR data.

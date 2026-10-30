@@ -1,8 +1,14 @@
-## Prepared: v1.0.24 · Android versionCode 124
+## Prepared: v1.0.25 · Android versionCode 125
 
-Native card elevation and dark depth are now consistent across More tiles and Result actions. The settings grid switches to readable full-width rows starting at 1.30× font scale. Phone and contact history glyphs use an informational green instead of destructive red. Header and tile typography share design tokens, with Kotlin and Python regression tests. All five API-level stress tests, exact-commit Android CI, real 10-screen emulator captures, Lint/R8, 23-language checks, signed GitHub artifacts and SHA256 remain mandatory before publication.
+A source-code visual pass across all ten real Android screens: plain History/Favorites/More titles, improved scanner frame, consistent native blue action depth, QR type selection states, readable Result/Language text hierarchy, and grounded QA contracts. Existing private history, QR data, signing, offline operation and Android API 26–36 support are preserved. The public release requires exact-commit green CI, 23-language checks, R8/Lint, authentic emulator screenshots, SHA256 and cert verification.
 
-[Release preparation](docs/releases/v1.0.24.md)
+[Release preparation](docs/releases/v1.0.25.md)
+
+## Published: v1.0.24 · Android versionCode 124
+
+Native card elevation, accessible More layout at increased font scale, and semantic category glyph colors, with verified APK/AAB and ten emulator screenshots. GitHub signing does not match existing Play installation keys.
+
+[Release notes](docs/releases/v1.0.24.md)
 
 ## Published: v1.0.23 · Android versionCode 123
 
