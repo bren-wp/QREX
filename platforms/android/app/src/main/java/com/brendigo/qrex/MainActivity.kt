@@ -663,6 +663,7 @@ private fun ResultScreen(
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
             if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            modifier = Modifier.testTag("qrex-result-save-favorite"),
             showChevron = false
         ) {
             if (wifi && !alreadySaved) confirmWifiSave = true
