@@ -17,7 +17,7 @@ import zlib
 SIGNATURE = b"\x89PNG\r\n\x1a\n"
 SCREENS = (
     "splash", "scan", "create", "wifi", "result",
-    "history", "saved", "more", "language", "export",
+    "history", "saved", "more", "language", "export", "about",
 )
 
 
@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--reference-dir", type=Path, required=True)
     parser.add_argument("--actual-dir", type=Path, required=True)
     parser.add_argument("--screen", action="append", choices=SCREENS,
-                        help="Repeat to check a subset; all ten by default")
+                        help="Repeat to check a subset; all eleven by default")
     parser.add_argument("--channel-tolerance", type=int, default=0)
     parser.add_argument("--max-mismatch-percent", type=float, default=0.0)
     args = parser.parse_args(argv)
