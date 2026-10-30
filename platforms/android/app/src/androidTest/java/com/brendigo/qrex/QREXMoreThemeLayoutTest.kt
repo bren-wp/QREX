@@ -1,7 +1,7 @@
 package com.brendigo.qrex
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertDoesNotExist
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -67,8 +67,8 @@ class QREXMoreThemeLayoutTest {
                 .assertIsDisplayed()
             rule.onNodeWithTag("qrex-clear-history-cancel", useUnmergedTree = true)
                 .assertIsDisplayed().performClick()
-            rule.onNodeWithTag("qrex-clear-history-dialog", useUnmergedTree = true)
-                .assertDoesNotExist()
+            rule.onAllNodesWithTag("qrex-clear-history-dialog", useUnmergedTree = true)
+                .assertCountEquals(0)
             assertTrue("cancelling clear history must not delete records",
                 QREXStore(context).items.size == originalHistoryCount)
         } finally {
