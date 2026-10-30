@@ -73,6 +73,23 @@ class PixelAuditTests(unittest.TestCase):
             self.assertEqual(main(args), 1)
             self.assertEqual(main(args + ["--channel-tolerance", "1"]), 0)
 
+    def test_about_modal_is_a_selectable_exact_pixel_audit_target(self):
+        with tempfile.TemporaryDirectory() as td:
+            folder = Path(td)
+            ref, actual = folder / "target", folder / "emulator"
+            ref.mkdir()
+            actual.mkdir()
+            target = sample_png(2, 1, bytes((6, 11, 31, 255)) * 2)
+            (ref / "android-about.png").write_bytes(target)
+            (actual / "android-about.png").write_bytes(target)
+            flags = ["--reference-dir", str(ref), "--actual-dir", str(actual),
+                     "--screen", "about", "--max-mismatch-percent", "0"]
+            self.assertEqual(main(flags), 0)
+            (actual / "android-about.png").write_bytes(
+                sample_png(2, 1, bytes((6, 11, 31, 255)) +
+                           bytes((7, 11, 31, 255))))
+            self.assertEqual(main(flags), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
