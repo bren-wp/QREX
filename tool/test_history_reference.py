@@ -37,6 +37,24 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
                     "qrex-history-search"):
             self.assertIn(f'testTag("{tag}")', self.source)
 
+    def test_history_cards_redact_private_qr_details_and_guard_delete(self):
+        history = self.source.split("private fun HistoryScreen(", 1)[1].split(
+            "internal fun useCompactMoreList(", 1
+        )[0]
+        self.assertIn('val detail = when {', history)
+        self.assertIn('QRContent.isEvent(item.raw) -> tr("event")', history)
+        self.assertIn('QRContent.safeUrl(item.raw) != null -> tr("url")', history)
+        self.assertIn('else -> tr("text")', history)
+        self.assertNotIn('else -> item.raw', history)
+        self.assertNotIn('QRContent.eventField(item.raw, "LOCATION").orEmpty()', history)
+        self.assertIn('if (favoritesPage) date else', history)
+        for tag in ("qrex-history-menu-delete", "qrex-history-delete-dialog",
+                    "qrex-history-delete-confirm", "qrex-history-delete-cancel"):
+            self.assertIn(f'testTag("{tag}")', history)
+        self.assertIn("store.remove(actual)", history)
+        self.assertIn("onDismissRequest = { pendingDelete = null }", history)
+        self.assertIn("modifier = Modifier.heightIn(min = 48.dp)", history)
+
     def test_controls_remain_functional_and_responsive(self):
         self.assertIn("savedOnly = false", self.source)
         self.assertIn("savedOnly = true", self.source)
