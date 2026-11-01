@@ -30,6 +30,28 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertIn("showAdvancedTypes = true", self.source)
         self.assertIn("selected = kind == index", self.source)
 
+    def test_create_reference_header_navigates_and_preview_is_private(self):
+        create = self.source.split("private fun CreateScreen(", 1)[1].split(
+            "private fun HistoryScreen(", 1
+        )[0]
+        header = create.split("val quickTypes = listOf(0, 1, 2, 6)", 1)[0]
+        self.assertIn("onBack: () -> Unit", create)
+        self.assertIn('testTag("qrex-create-back")', header)
+        self.assertIn('testTag("qrex-create-title")', header)
+        self.assertIn('testTag("qrex-create-overflow")', header)
+        self.assertIn('testTag("qrex-create-overflow-type-$type")', header)
+        self.assertIn("onBack()", header)
+        self.assertNotIn("QrexBrandMark(", header,
+                         "Create reference has a centered title, not a second app logo")
+        self.assertIn('Modifier.fillMaxWidth(0.60f).widthIn(max = 208.dp)', create)
+        self.assertIn('testTag("qrex-create-preview-ready")', create)
+        self.assertNotIn("QRContent.label(payload)", create,
+                         "The preview must not redundantly reveal sensitive QR content")
+        self.assertLess(create.index('testTag("qrex-create-title")'),
+                        create.index('testTag("qrex-create-content")'))
+        self.assertLess(create.index('testTag("qrex-create-preview-ready")'),
+                        create.index('testTag("qrex-create-show")'))
+
     def test_accessible_disclosure_and_pinned_actions(self):
         self.assertIn(".heightIn(min = 52.dp)", self.source)
         self.assertIn(".heightIn(min = 54.dp).semantics", self.source)
