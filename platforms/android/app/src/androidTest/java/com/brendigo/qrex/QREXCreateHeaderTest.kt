@@ -9,6 +9,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNotEquals
+import androidx.compose.ui.semantics.SemanticsProperties
 import org.junit.Rule
 import org.junit.Test
 
@@ -57,5 +59,35 @@ class QREXCreateHeaderTest {
         rule.onNodeWithTag("qrex-tab-0").assertIsSelected()
         rule.onNodeWithTag("qrex-scan-gallery", useUnmergedTree = true)
             .assertIsDisplayed()
+    }
+
+    @Test fun wifiPasswordRevealIsAccessibleAndChangesActualLabel() {
+        await("qrex-tab-1")
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        await("qrex-create-type-2")
+        rule.onNodeWithTag("qrex-create-type-2", useUnmergedTree = true)
+            .performClick()
+        await("qrex-create-wifi-password")
+        rule.onNodeWithTag("qrex-create-wifi-password", useUnmergedTree = true)
+            .assertIsDisplayed()
+        val toggle = rule.onNodeWithTag("qrex-wifi-visibility", useUnmergedTree = true)
+            .assertIsDisplayed()
+        val rect = toggle.getUnclippedBoundsInRoot()
+        assertTrue("Wi-Fi visibility action must be at least 48dp high",
+            rect.bottom - rect.top >= 48.dp)
+        fun label(): String = rule.onNodeWithTag(
+            "qrex-wifi-visibility-label", useUnmergedTree = true
+        ).fetchSemanticsNode().config[SemanticsProperties.Text]
+            .joinToString(separator = "") { it.text }
+        val initiallyMasked = label()
+        toggle.performClick()
+        rule.waitForIdle()
+        assertNotEquals("Wi-Fi visibility toggle must change its actual label",
+            initiallyMasked, label())
+        rule.onNodeWithTag("qrex-wifi-visibility", useUnmergedTree = true)
+            .performClick()
+        rule.waitForIdle()
+        assertTrue("Visibility toggle must restore its original masked mode",
+            initiallyMasked == label())
     }
 }
