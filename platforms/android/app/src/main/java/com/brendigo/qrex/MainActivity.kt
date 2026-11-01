@@ -1096,7 +1096,10 @@ private fun CreateScreen(
                         // All four advanced types remain real, reachable actions.
                         val overflowTypes = listOf(3, 4, 5, 7)
                         overflowTypes.forEach { type ->
-                            DropdownMenuItem(text = { Text(types[type]) }, onClick = {
+                            DropdownMenuItem(
+                                text = { Text(types[type]) },
+                                modifier = Modifier.testTag("qrex-create-overflow-type-$type"),
+                                onClick = {
                                 kind = type
                                 content = ""
                                 password = ""
