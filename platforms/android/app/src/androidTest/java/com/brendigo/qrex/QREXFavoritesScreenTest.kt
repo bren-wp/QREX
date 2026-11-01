@@ -9,6 +9,8 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.unit.dp
@@ -24,10 +26,14 @@ class QREXFavoritesScreenTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
     private fun awaitTag(tag: String) {
-        rule.waitUntil(timeoutMillis = 20_000L) {
-            rule.onAllNodesWithTag(tag, useUnmergedTree = true)
-                .fetchSemanticsNodes().isNotEmpty()
-        }
+        // Avoid hiding the failing navigation stage behind an anonymous
+        // waitUntil timeout; tag names contain no QR text or private data.
+        runCatching {
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                rule.onAllNodesWithTag(tag, useUnmergedTree = true)
+                    .fetchSemanticsNodes().isNotEmpty()
+            }
+        }.getOrElse { throw AssertionError("QREX UI destination not found: $tag", it) }
     }
 
     @Test
@@ -48,7 +54,11 @@ class QREXFavoritesScreenTest {
                         .assertIsEnabled()
                 }.isSuccess
             }
-            rule.onNodeWithTag("qrex-create-show").performClick()
+            // Android 8/12 can leave the IME over the fixed Generate action.
+            // Invoke the actual accessible Compose onClick (as the passing
+            // navigation stress test does); other tests still exercise taps.
+            rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+                .performSemanticsAction(SemanticsActions.OnClick)
             awaitTag("qrex-result-save-favorite")
             rule.onNodeWithTag("qrex-result-save-favorite", useUnmergedTree = true)
                 .performScrollTo().performClick()

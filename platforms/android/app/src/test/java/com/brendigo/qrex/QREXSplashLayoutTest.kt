@@ -2,6 +2,7 @@ package com.brendigo.qrex
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -39,4 +40,15 @@ class QREXSplashLayoutTest {
         assertTrue(qrexSplashUsesScrollLayout(640, 1.5f))
         assertFalse(qrexSplashUsesScrollLayout(640, 1.49f))
     }
+    @Test
+    fun localisedSplashAccentsOnlyTheMiddleBrandWord() {
+        val croatian = "Skener. Stvara. Dijeli."
+        val english = "Scan. Create. Share."
+        assertEquals("Stvara.", croatian.substring(qrexSplashAccentRange(croatian)!!))
+        assertEquals("Create.", english.substring(qrexSplashAccentRange(english)!!))
+        assertNull(qrexSplashAccentRange("Only two"))
+        assertNull(qrexSplashAccentRange("One two three four"))
+        assertNull(qrexSplashAccentRange(""))
+    }
+
 }

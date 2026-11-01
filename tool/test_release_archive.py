@@ -40,7 +40,7 @@ class ArchivedPublisherTests(unittest.TestCase):
         self.assertIn(f"releases/tag/v{version}", readme)
         self.assertNotIn("Next QA candidate —", readme)
 
-        # All ten real Android captures must point at the *same* release.
+        # All twelve verified Android captures must point at the *same* release.
         screens = re.findall(
             r"/releases/download/v([0-9.]+)/android-([a-z]+)\.png", readme
         )
@@ -48,6 +48,7 @@ class ArchivedPublisherTests(unittest.TestCase):
             (version, name) for name in (
                 "splash", "scan", "create", "wifi", "result",
                 "history", "saved", "more", "language", "export",
+                "about", "privacy",
             )
         }
         self.assertEqual(expected, set(screens))

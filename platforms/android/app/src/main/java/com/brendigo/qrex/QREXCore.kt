@@ -154,14 +154,40 @@ object QRContent {
         return result.toString()
     }
 
+    /**
+     * iCalendar uses UTC only when a timestamp ends in Z. A floating local
+     * time has no Z; DTSTART/DTEND;TZID=... explicitly names a time zone.
+     * Treating either as UTC shifts real appointments in Calendar.
+     */
     fun eventTimeMillis(raw: String, name: String): Long? {
-        val value = eventField(raw, name) ?: return null
+        if (!isEvent(raw) || name !in setOf("DTSTART", "DTEND")) return null
+        val line = raw.lineSequence().map { it.trimEnd('\r') }.firstOrNull {
+            it.substringBefore(':').substringBefore(';').equals(name, ignoreCase = true)
+        } ?: return null
+        val colon = line.indexOf(':')
+        if (colon < 0) return null
+        val header = line.substring(0, colon)
+        val value = line.substring(colon + 1)
+        val tzid = header.split(';').drop(1).firstOrNull {
+            it.substringBefore('=').equals("TZID", ignoreCase = true)
+        }?.substringAfter('=', "")
+        val isUtc = value.endsWith('Z')
+        // Reject ambiguous or non-date-time values instead of silently
+        // inventing an offset for an unsupported calendar representation.
+        if (value.length != (if (isUtc) 16 else 15)) return null
+        if (isUtc && tzid != null) return null
         return runCatching {
-            val utc = LocalDateTime.parse(
-                value.removeSuffix("Z"),
-                DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss", Locale.ROOT)
+            val dateTime = LocalDateTime.parse(
+                if (isUtc) value.dropLast(1) else value,
+                DateTimeFormatter.ofPattern("uuuuMMdd'T'HHmmss", Locale.ROOT)
+                    .withResolverStyle(java.time.format.ResolverStyle.STRICT)
             )
-            utc.toInstant(ZoneOffset.UTC).toEpochMilli()
+            val zone = when {
+                isUtc -> ZoneOffset.UTC
+                tzid != null -> ZoneId.of(tzid)
+                else -> ZoneId.systemDefault()
+            }
+            dateTime.atZone(zone).toInstant().toEpochMilli()
         }.getOrNull()
     }
 
