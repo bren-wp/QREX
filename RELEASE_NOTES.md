@@ -1,3 +1,7 @@
+## Candidate: v1.0.27 · Android versionCode 127
+
+Splash/Scanner reference-aligned native UI with offline scanner subtitle in 23 languages, accessible controls, actual emulator capture, and protected GitHub-only release candidate. [Release details](docs/releases/v1.0.27.md). GitHub publisher must verify all exact-main checks before publishing.
+
 ## Published: v1.0.26 · Android versionCode 126
 
 Merged PR #80: improved Favorites, More, Language, PDF Export, About and Privacy UI; durable and non-destructive History toggle, responsive 12-screen Android capture coverage and 23-language validation. Published on 30 October 2026 after exact-commit CI, signing/checksum checks and creation of the immutable v1.0.26 release, including 12 actual emulator screenshots. Play upload packages require the authorized existing signing key.
