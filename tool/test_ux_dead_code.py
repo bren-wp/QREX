@@ -236,7 +236,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('focusManager.clearFocus(force = true)', self.main)
 
     def test_result_actions_have_full_width_real_callbacks(self):
-        self.assertIn('QrexResultAction(tr("copy"), Icons.Default.ContentCopy)', self.main)
+        result = self.main.split("private fun ResultScreen(", 1)[1].split(
+            "fun openLink(", 1
+        )[0]
+        self.assertIn('tr("copy"), Icons.Default.ContentCopy,', result)
+        self.assertIn('testTag("qrex-result-copy")', result)
+        self.assertIn('testTag("qrex-result-menu-copy")', result)
+        self.assertEqual(result.count("if (wifi) confirmWifiCopy = true else {"), 2)
+        self.assertIn('testTag("qrex-result-wifi-copy-warning")', result)
         self.assertIn('QrexResultAction(tr("share"), Icons.Default.Share)', self.main)
         self.assertIn('testTag("qrex-result-toggle-qr")', self.main)
         self.assertIn('if (alreadySaved) tr("remove_favorite") else tr("add_favorite")', self.main)
