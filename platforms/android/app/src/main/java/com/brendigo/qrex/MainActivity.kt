@@ -1332,32 +1332,36 @@ private fun CreateScreen(
             // Render a card only after there is a real generated QR bitmap.
             if (previewVisible && qr != null) {
                 Spacer(Modifier.height(12.dp))
+                // Centered thumbnail card matches the Create reference; never
+                // repeat an arbitrary QR payload (possibly containing a private
+                // URL token) as decorative preview text beneath the image.
                 QrexPanel(
-                    Modifier.fillMaxWidth().testTag("qrex-create-preview-card")
+                    Modifier.fillMaxWidth(0.60f).widthIn(max = 208.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .testTag("qrex-create-preview-card")
                 ) {
                     Column(
-                        Modifier.fillMaxWidth().padding(12.dp),
+                        Modifier.fillMaxWidth().padding(11.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            tr("qr_preview"), fontWeight = FontWeight.SemiBold,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
                         Image(
                             qr.asImageBitmap(),
                             contentDescription = tr("qr_preview"),
                             modifier = Modifier.testTag("qrex-create-preview-ready")
                                 .size(qrSize).background(Color.White).padding(9.dp)
                         )
-                        Text(
-                            QRContent.label(payload),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant
+                        ) {
+                            Text(
+                                tr("qr_preview"),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Medium, fontSize = 11.sp
+                            )
+                        }
                     }
                 }
             }
