@@ -767,13 +767,13 @@ private fun ResultScreen(
                         copyQrToClipboard(context, raw)
                         Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
                     },
-                    modifier = Modifier.testTag("qrex-result-wifi-copy-confirm")
+                    modifier = Modifier.heightIn(min = 48.dp).testTag("qrex-result-wifi-copy-confirm")
                 ) { Text(tr("copy")) }
             },
             dismissButton = {
                 TextButton(
                     onClick = { confirmWifiCopy = false },
-                    modifier = Modifier.testTag("qrex-result-wifi-copy-cancel")
+                    modifier = Modifier.heightIn(min = 48.dp).testTag("qrex-result-wifi-copy-cancel")
                 ) { Text(tr("cancel")) }
             }
         )
