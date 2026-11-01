@@ -37,8 +37,13 @@ class QREXCreateHeaderTest {
         }
         rule.onNodeWithTag("qrex-create-overflow", useUnmergedTree = true)
             .performClick()
-        // Advanced types remain available through a real Android menu.
-        rule.onNodeWithTag("qrex-create-overflow", useUnmergedTree = true)
+        // Select the real E-mail overflow action; this must reveal its
+        // advanced type chip and not just dismiss an inert popup.
+        await("qrex-create-overflow-type-3")
+        rule.onNodeWithTag("qrex-create-overflow-type-3", useUnmergedTree = true)
+            .performClick()
+        await("qrex-create-type-3")
+        rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
