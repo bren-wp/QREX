@@ -34,6 +34,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -80,6 +82,16 @@ internal fun qrexSplashMetrics(
  */
 internal fun qrexSplashUsesScrollLayout(heightDp: Int, fontScale: Float): Boolean =
     heightDp < 640 || fontScale >= 1.5f
+
+/**
+ * The supplied splash reference accents the middle verb (e.g. "Stvara."
+ * or "Create.") in cyan. Use the localized word boundaries rather than
+ * hardcoding translated text, and leave longer slogans unchanged.
+ */
+internal fun qrexSplashAccentRange(subtitle: String): IntRange? {
+    val words = Regex("""\\S+""").findAll(subtitle).toList()
+    return if (words.size == 3) words[1].range else null
+}
 
 /**
  * Reference 01: real Compose Android dark splash — rounded Q/QR logo, two-tone
@@ -250,7 +262,16 @@ private fun QrexSplashBrand(
         }
         Spacer(Modifier.height(3.dp))
         Text(
-            subtitle, color = Color.White, fontSize = metrics.taglineSp.sp,
+            buildAnnotatedString {
+                append(subtitle)
+                qrexSplashAccentRange(subtitle)?.let { middle ->
+                    addStyle(
+                        SpanStyle(color = QrexDesign.cyan),
+                        start = middle.first, end = middle.last + 1
+                    )
+                }
+            },
+            color = Color.White, fontSize = metrics.taglineSp.sp,
             fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center,
             maxLines = 3,
             modifier = Modifier.testTag("qrex-splash-tagline")
