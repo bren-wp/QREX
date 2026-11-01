@@ -27,6 +27,26 @@ class QREXPrivacyStabilityTests(unittest.TestCase):
         self.assertIn("Text(tr(\"wifi_warning\"))", android)
         self.assertIn("Text(tr(\"cancel\"))", android)
 
+    def test_result_wifi_copy_requires_opt_in_on_both_action_paths(self):
+        source = (ANDROID / "MainActivity.kt").read_text("utf-8")
+        result = source.split("private fun ResultScreen(", 1)[1].split(
+            "fun openLink(", 1
+        )[0]
+        self.assertIn("var confirmWifiCopy by remember(raw)", result)
+        self.assertIn('testTag("qrex-result-copy")', result)
+        self.assertIn('testTag("qrex-result-menu-copy")', result)
+        self.assertEqual(result.count("if (wifi) confirmWifiCopy = true else {"), 2)
+        self.assertIn('testTag("qrex-result-wifi-copy-warning")', result)
+        self.assertIn('testTag("qrex-result-wifi-copy-confirm")', result)
+        self.assertIn('testTag("qrex-result-wifi-copy-cancel")', result)
+        self.assertIn("Text(tr(\"wifi_warning\"))", result)
+        self.assertIn("copyQrToClipboard(context, raw)", result)
+        self.assertIn("makeQrClipboardClip(raw)", source)
+        self.assertIn("if (showQrPreview) tr(\"hide\") else tr(\"show_qr\")", result)
+        # An arbitrary URL QR is visible in the summary only once; no
+        # second URL copy that might unnecessarily expose private tokens.
+        self.assertNotIn("url.toString(),", result)
+
     def test_android_gallery_bitmap_cleanup_on_all_completion_paths(self):
         scanner = (ANDROID / "QREXScanner.kt").read_text("utf-8")
         reader = (ANDROID / "QREXQrDecoder.kt").read_text("utf-8")
