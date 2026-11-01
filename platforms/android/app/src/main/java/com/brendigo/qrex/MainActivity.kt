@@ -576,7 +576,7 @@ private fun ResultScreen(
                         if (wifi) confirmWifiShare = true
                         else shareQrText(context, raw, shareTitle, sharingFailed)
                     })
-                    DropdownMenuItem(text = { Text(tr("show_qr")) }, onClick = {
+                    DropdownMenuItem(text = { Text(if (showQrPreview) tr("hide") else tr("show_qr")) }, onClick = {
                         showResultMenu = false
                         showQrPreview = !showQrPreview
                     })
@@ -678,7 +678,7 @@ private fun ResultScreen(
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
         Spacer(Modifier.height(8.dp))
-        QrexResultAction(tr("show_qr"), Icons.Default.QrCode,
+        QrexResultAction(if (showQrPreview) tr("hide") else tr("show_qr"), Icons.Default.QrCode,
             modifier = Modifier.testTag("qrex-result-toggle-qr"),
             showChevron = false) {
             showQrPreview = !showQrPreview
