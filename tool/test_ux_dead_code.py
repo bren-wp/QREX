@@ -145,11 +145,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.backgroundDeep", splash)
         self.assertIn("R.drawable.qrex_icon", splash)
         self.assertIn("screenshotMode != \"splash\"", self.main)
-        # Create is a root tab in the reference; its app bar starts with
-        # the QREX wordmark, then privacy and overflow actions, with no extra
-        # navigation arrow before the brand.
-        self.assertNotIn('testTag("qrex-create-back")', self.main)
-        self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
+        # Reference 03 shows a real Back arrow, centered Create title, and
+        # overflow menu. Ensure Back calls the Scanner navigation callback.
+        create = self.main.split("private fun CreateScreen(", 1)[1].split(
+            "private fun HistoryScreen(", 1
+        )[0]
+        self.assertIn('testTag("qrex-create-back")', create)
+        self.assertIn('testTag("qrex-create-title")', create)
+        self.assertIn('testTag("qrex-create-overflow")', create)
+        self.assertIn("onBack()", create)
+        self.assertIn("selected = 0", self.main)
         # Plain History and More headings must not duplicate launcher artwork.
         self.assertIn("private fun AppHeader(", self.main)
         self.assertNotIn("painter = painterResource(R.drawable.qrex_icon)", self.main)
@@ -186,7 +191,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("icon = { Icon(icons[index], contentDescription = null) }", self.main)
         self.assertIn('role = Role.Button, onClick = onClick', design)
         self.assertIn('if (wifiPassword.isNotEmpty()) {', self.main)
-        self.assertIn('IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp))',
+        self.assertIn("onClick = { createMenu = true }", self.main)
+        self.assertIn('Modifier.size(48.dp).testTag("qrex-create-overflow")',
                       self.main)
         self.assertIn("private fun openCalendarEvent(context: Context, raw: String): Boolean", self.main)
         self.assertIn("if (end <= start) return false", self.main)
