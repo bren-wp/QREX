@@ -1250,11 +1250,21 @@ private fun CreateScreen(
                     modifier = Modifier.fillMaxWidth().testTag("qrex-create-wifi-password"),
                     label = { Text(tr("optional_password")) },
                     singleLine = true,
+                    // Use Android's password IME to avoid suggestions and
+                    // personalized learning for private Wi-Fi credentials.
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (reveal) VisualTransformation.None
                         else PasswordVisualTransformation(),
                     trailingIcon = {
-                        TextButton(onClick = { reveal = !reveal }) {
-                            Text(if (reveal) tr("hide") else tr("show"))
+                        TextButton(
+                            onClick = { reveal = !reveal },
+                            modifier = Modifier.heightIn(min = 48.dp)
+                                .testTag("qrex-wifi-visibility")
+                        ) {
+                            Text(
+                                if (reveal) tr("hide") else tr("show"),
+                                modifier = Modifier.testTag("qrex-wifi-visibility-label")
+                            )
                         }
                     }
                 )
