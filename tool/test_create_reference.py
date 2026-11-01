@@ -76,6 +76,21 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertIn("if (!shouldGenerateCreateQrPreview(", self.source)
         self.assertNotIn("BoxWithConstraints(", self.source)
 
+    def test_wifi_password_privacy_and_exact_ssid_round_trip(self):
+        create = self.source.split("private fun CreateScreen(", 1)[1].split(
+            "private fun HistoryScreen(", 1
+        )[0]
+        self.assertIn("createQrInputText(kind, content)", create)
+        self.assertIn("if (kind == 2) enteredText else enteredText.trim()", self.source)
+        self.assertIn('testTag("qrex-create-wifi-password")', create)
+        self.assertIn('keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)', create)
+        self.assertIn("else PasswordVisualTransformation()", create)
+        self.assertIn('testTag("qrex-wifi-visibility")', create)
+        self.assertIn('testTag("qrex-wifi-visibility-label")', create)
+        self.assertIn('Modifier.heightIn(min = 48.dp)', create)
+        self.assertIn("confirmWifiSave = true", create)
+        self.assertIn("pendingWifiExportPayload = requested", create)
+
     def test_email_phone_ime_and_user_selected_locale(self):
         self.assertIn("3 -> KeyboardType.Email", self.source)
         self.assertIn("4 -> KeyboardType.Phone", self.source)
