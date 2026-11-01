@@ -174,7 +174,7 @@ object QRContent {
         val isUtc = value.endsWith('Z')
         // Reject ambiguous or non-date-time values instead of silently
         // inventing an offset for an unsupported calendar representation.
-        if (value.length != if (isUtc) 16 else 15) return null
+        if (value.length != (if (isUtc) 16 else 15)) return null
         if (isUtc && tzid != null) return null
         return runCatching {
             val dateTime = LocalDateTime.parse(
