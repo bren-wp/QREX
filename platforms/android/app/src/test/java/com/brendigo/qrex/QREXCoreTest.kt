@@ -240,9 +240,9 @@ class QREXCoreTest {
 
 
     @Test fun externalCalendarUtcTimestampsRemainExactInstants() {
-        val event = "BEGIN:VCALENDAR\\r\\nBEGIN:VEVENT\\r\\n" +
-            "DTSTART:20260712T083000Z\\r\\nDTEND:20260712T093000Z\\r\\n" +
-            "END:VEVENT\\r\\nEND:VCALENDAR"
+        val event = "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\n" +
+            "DTSTART:20260712T083000Z\r\nDTEND:20260712T093000Z\r\n" +
+            "END:VEVENT\r\nEND:VCALENDAR"
         val utc = java.time.ZoneOffset.UTC
         assertEquals(
             java.time.LocalDateTime.of(2026, 7, 12, 8, 30)
@@ -257,8 +257,8 @@ class QREXCoreTest {
     }
 
     @Test fun externalCalendarFloatingTimesUseDeviceZoneNotUtc() {
-        val event = "BEGIN:VEVENT\\r\\nDTSTART:20260712T103000\\r\\n" +
-            "DTEND:20260712T113000\\r\\nEND:VEVENT"
+        val event = "BEGIN:VEVENT\r\nDTSTART:20260712T103000\r\n" +
+            "DTEND:20260712T113000\r\nEND:VEVENT"
         val localZone = java.time.ZoneId.systemDefault()
         assertEquals(
             java.time.LocalDateTime.of(2026, 7, 12, 10, 30)
@@ -269,9 +269,9 @@ class QREXCoreTest {
 
     @Test fun externalCalendarTzidHandlesSummerAndWinterOffsets() {
         val zone = java.time.ZoneId.of("Europe/Zagreb")
-        val event = "BEGIN:VEVENT\\r\\n" +
-            "DTSTART;TZID=Europe/Zagreb:20260712T103000\\r\\n" +
-            "DTEND;VALUE=DATE-TIME;TZID=Europe/Zagreb:20261212T103000\\r\\n" +
+        val event = "BEGIN:VEVENT\r\n" +
+            "DTSTART;TZID=Europe/Zagreb:20260712T103000\r\n" +
+            "DTEND;VALUE=DATE-TIME;TZID=Europe/Zagreb:20261212T103000\r\n" +
             "END:VEVENT"
         assertEquals(
             java.time.LocalDateTime.of(2026, 7, 12, 10, 30)
@@ -286,7 +286,7 @@ class QREXCoreTest {
     }
 
     @Test fun externalCalendarMalformedTimezonesAndDatesFailClosed() {
-        val prefix = "BEGIN:VEVENT\\n"
+        val prefix = "BEGIN:VEVENT\n"
         assertNull(QRContent.eventTimeMillis(
             prefix + "DTSTART;TZID=Unknown/Zone:20260712T103000", "DTSTART"
         ))
