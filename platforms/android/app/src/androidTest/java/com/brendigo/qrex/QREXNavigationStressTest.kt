@@ -113,9 +113,15 @@ class QREXNavigationStressTest {
             awaitCreateAction(cycle, "30-cycle stress")
             rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
                 .performSemanticsAction(SemanticsActions.OnClick)
+            // A rapid callback changes Compose navigation while the emulator's
+            // rendering thread may still be retiring the previous layout.
+            // Drain pending main-thread composition before querying the new
+            // semantics tree. Keep all 30 real navigation and recreate cycles.
+            rule.waitForIdle()
             requireScreenTag("qrex-result-close", cycle, "await pinned Result close")
             rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
                 .performSemanticsAction(SemanticsActions.OnClick)
+            rule.waitForIdle()
             requireScreenTag("qrex-create-screen", cycle, "await return to Create")
             requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
