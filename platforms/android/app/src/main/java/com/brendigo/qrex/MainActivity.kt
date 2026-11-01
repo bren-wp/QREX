@@ -461,6 +461,7 @@ private fun ResultScreen(
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
+    var confirmWifiCopy by remember(raw) { mutableStateOf(false) }
     var confirmWifiPngExport by remember(raw) { mutableStateOf(false) }
     // SAF may return after a different result has been selected. Export only
     // the payload that launched the picker; never use a subsequently changed QR.
@@ -559,11 +560,17 @@ private fun ResultScreen(
                 }
                 DropdownMenu(expanded = showResultMenu,
                     onDismissRequest = { showResultMenu = false }) {
-                    DropdownMenuItem(text = { Text(tr("copy")) }, onClick = {
-                        showResultMenu = false
-                        copyQrToClipboard(context, raw)
-                        Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
-                    })
+                    DropdownMenuItem(
+                        text = { Text(tr("copy")) },
+                        modifier = Modifier.testTag("qrex-result-menu-copy"),
+                        onClick = {
+                            showResultMenu = false
+                            if (wifi) confirmWifiCopy = true else {
+                                copyQrToClipboard(context, raw)
+                                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
                     DropdownMenuItem(text = { Text(tr("share")) }, onClick = {
                         showResultMenu = false
                         if (wifi) confirmWifiShare = true
@@ -637,15 +644,8 @@ private fun ResultScreen(
                         maxLines = 2, overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    if (url != null) {
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            url.toString(),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 12.sp, textAlign = TextAlign.Center,
-                            maxLines = 1, overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    // URL text is already shown above. A second copy
+                    // needlessly exposes token-bearing links in screenshots.
                 }
             }
         }
@@ -663,9 +663,14 @@ private fun ResultScreen(
             }
             Spacer(Modifier.height(10.dp))
         }
-        QrexResultAction(tr("copy"), Icons.Default.ContentCopy) {
-            copyQrToClipboard(context, raw)
-            Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+        QrexResultAction(
+            tr("copy"), Icons.Default.ContentCopy,
+            modifier = Modifier.testTag("qrex-result-copy")
+        ) {
+            if (wifi) confirmWifiCopy = true else {
+                copyQrToClipboard(context, raw)
+                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+            }
         }
         Spacer(Modifier.height(8.dp))
         QrexResultAction(tr("share"), Icons.Default.Share) {
@@ -748,6 +753,30 @@ private fun ResultScreen(
             dismissButton = { TextButton(onClick = { confirmResultDelete = false }) {
                 Text(tr("cancel"))
             } })
+    }
+    if (confirmWifiCopy) {
+        AlertDialog(
+            modifier = Modifier.testTag("qrex-result-wifi-copy-warning"),
+            onDismissRequest = { confirmWifiCopy = false },
+            title = { Text(tr("copy")) },
+            text = { Text(tr("wifi_warning")) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirmWifiCopy = false
+                        copyQrToClipboard(context, raw)
+                        Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier.testTag("qrex-result-wifi-copy-confirm")
+                ) { Text(tr("copy")) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { confirmWifiCopy = false },
+                    modifier = Modifier.testTag("qrex-result-wifi-copy-cancel")
+                ) { Text(tr("cancel")) }
+            }
+        )
     }
     if (confirmWifiPngExport) {
         AlertDialog(
