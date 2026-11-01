@@ -17,11 +17,11 @@ class ForegroundTests(unittest.TestCase):
         ), "splash")
 
     def test_splash_is_not_confused_with_normal_qrex_header(self):
-        # Scan and Create repeat QREX + tagline, but not the Splash footer.
-        with self.assertRaisesRegex(ValueError, "sve što može qr"):
+        # Scanner has a local-processing caption, not Splash's 3-word slogan.
+        with self.assertRaisesRegex(ValueError, "skener. stvara. dijeli."):
             validate(screen(
                 '<node package="com.brendigo.qrex" content-desc="QREX" />'
-                '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+                '<node package="com.brendigo.qrex" text="Skeniranje se događa na vašem uređaju." />'
                 '<node package="com.brendigo.qrex" text="Iz galerije" />'
             ), "splash")
 
@@ -134,11 +134,23 @@ class ForegroundTests(unittest.TestCase):
         ), "wifi")
 
     def test_live_scan_screen_has_camera_actions(self):
-        validate(screen(
-            '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+        actual_scan = screen(
+            '<node package="com.brendigo.qrex" content-desc="QREX" />'
+            '<node package="com.brendigo.qrex" text="Skeniranje se događa na vašem uređaju." />'
             '<node package="com.brendigo.qrex" text="Iz galerije" />'
             '<node package="com.brendigo.qrex" text="Usmjeri kameru prema QR kodu" />'
-        ), "scan")
+        )
+        validate(actual_scan, "scan")
+        validate(actual_scan, "responsive-scan")
+
+    def test_old_splash_tagline_cannot_impersonate_scanner(self):
+        with self.assertRaisesRegex(ValueError, "skeniranje se događa na vašem uređaju"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" content-desc="QREX" />'
+                '<node package="com.brendigo.qrex" text="Skener. Stvara. Dijeli." />'
+                '<node package="com.brendigo.qrex" text="Iz galerije" />'
+                '<node package="com.brendigo.qrex" text="Usmjeri kameru prema QR kodu" />'
+            ), "scan")
 
     def test_wrong_screen_or_anr_is_rejected_even_with_qrex_package(self):
         with self.assertRaises(ValueError):

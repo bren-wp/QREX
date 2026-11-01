@@ -50,7 +50,7 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "export": ("izvoz arhive", "pdf"),
         "responsive-create": ("stvori qr kod", "generiraj qr kod",
                               "spremi na uređaj"),
-        "responsive-scan": ("skener. stvara. dijeli.", "iz galerije"),
+        "responsive-scan": ("qrex", "skeniranje se događa na vašem uređaju.", "iz galerije"),
         "responsive-more": ("postavke", "jezik"),
         # Large-font dialogs can scroll their informational text; require
         # the pinned title, brand and close action, not offscreen prose.
@@ -63,7 +63,7 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "responsive-saved": ("favoriti", "brendigo.com", "spremljeno"),
         "responsive-language": ("jezik", "hrvatski", "english"),
         "responsive-export": ("izvoz arhive", "pdf"),
-        "scan": ("skener. stvara. dijeli.", "iz galerije", "usmjeri kameru prema qr kodu"),
+        "scan": ("qrex", "skeniranje se događa na vašem uređaju.", "iz galerije", "usmjeri kameru prema qr kodu"),
     }
     if screen not in expected:
         raise ValueError("Unsupported screenshot screen")
