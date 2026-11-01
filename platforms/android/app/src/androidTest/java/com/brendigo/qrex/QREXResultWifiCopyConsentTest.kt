@@ -2,6 +2,9 @@ package com.brendigo.qrex
 
 import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.unit.dp
+import org.junit.Assert.assertTrue
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -49,6 +52,13 @@ class QREXResultWifiCopyConsentTest {
             .performScrollTo().performClick()
         rule.onNodeWithTag("qrex-result-wifi-copy-warning", useUnmergedTree = true)
             .assertIsDisplayed()
+        for (tag in listOf("qrex-result-wifi-copy-confirm",
+                           "qrex-result-wifi-copy-cancel")) {
+            val bounds = rule.onNodeWithTag(tag, useUnmergedTree = true)
+                .assertIsDisplayed().getUnclippedBoundsInRoot()
+            assertTrue("$tag must have at least 48dp touch height",
+                bounds.bottom - bounds.top >= 48.dp)
+        }
         rule.onNodeWithTag("qrex-result-wifi-copy-cancel", useUnmergedTree = true)
             .performClick()
         rule.onNodeWithTag("qrex-result-wifi-copy-warning", useUnmergedTree = true)
