@@ -351,6 +351,10 @@ private fun QREXApp(
                         })
                         1 -> CreateScreen(screenshotMode = screenshotMode,
                             initialValue = editPayload,
+                            onBack = {
+                                focusManager.clearFocus(force = true)
+                                selected = 0
+                            },
                             onResult = {
                                 // Android 12 can keep the IME in flight while
                                 // the Result and bottom NavigationBar remeasure.
@@ -869,6 +873,7 @@ internal fun approvedWifiQrExport(candidate: String?): String? =
 private fun CreateScreen(
     screenshotMode: String? = null,
     initialValue: String? = null,
+    onBack: () -> Unit,
     onResult: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -1050,39 +1055,45 @@ private fun CreateScreen(
                 .testTag("qrex-create-scroll")
                 .padding(horizontal = horizontalPadding, vertical = 8.dp)
         ) {
+            // Reference 03: a compact navigation header rather than a second
+            // launcher logo. Back returns to Scanner; neither QR data nor
+            // pending exports are copied to logs or another application.
             Row(
-                Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                Modifier.fillMaxWidth().heightIn(min = 52.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                    QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)
-                    Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                }
-                Icon(Icons.Default.Shield, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                // Visible advanced QR disclosure shares the existing header
-                // row. It adds NO vertical space ahead of the real URL form:
-                // emulator screenshot verification requires the input visible.
-                TextButton(
-                    onClick = { showAdvancedTypes = !showAdvancedTypes },
-                    modifier = Modifier.heightIn(min = 52.dp)
-                        .testTag("qrex-create-more-types"),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                IconButton(
+                    onClick = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus(force = true)
+                        onBack()
+                    },
+                    modifier = Modifier.size(48.dp).testTag("qrex-create-back")
                 ) {
-                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
-                        modifier = Modifier.size(18.dp))
-                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
-                        fontSize = 11.sp)
+                    Icon(Icons.Default.ArrowBack, contentDescription = tr("back"),
+                        tint = MaterialTheme.colorScheme.onBackground)
                 }
+                Text(
+                    tr("create_qr"),
+                    modifier = Modifier.weight(1f).testTag("qrex-create-title"),
+                    textAlign = TextAlign.Center, maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold, fontSize = QrexDesign.titleTextSize,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 Box {
-                    IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp)) {
+                    IconButton(
+                        onClick = { createMenu = true },
+                        modifier = Modifier.size(48.dp).testTag("qrex-create-overflow")
+                    ) {
                         Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    DropdownMenu(expanded = createMenu, onDismissRequest = { createMenu = false }) {
-                        // Only advanced/unpinned types belong in the
-                        // overflow; never duplicate the visible quick choices.
+                    DropdownMenu(
+                        expanded = createMenu,
+                        onDismissRequest = { createMenu = false }
+                    ) {
+                        // All four advanced types remain real, reachable actions.
                         val overflowTypes = listOf(3, 4, 5, 7)
                         overflowTypes.forEach { type ->
                             DropdownMenuItem(text = { Text(types[type]) }, onClick = {
@@ -1101,12 +1112,29 @@ private fun CreateScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(7.dp))
-            Text(tr("create_qr"), color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold, fontSize = QrexDesign.titleTextSize)
-            Text(tr("enter_details"), modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = QrexDesign.supportingTextSize)
+            Row(
+                Modifier.fillMaxWidth().padding(bottom = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    tr("enter_details"), modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = QrexDesign.supportingTextSize,
+                    maxLines = 3, overflow = TextOverflow.Ellipsis
+                )
+                // Expose advanced QR formats without a second line of tabs.
+                TextButton(
+                    onClick = { showAdvancedTypes = !showAdvancedTypes },
+                    modifier = Modifier.heightIn(min = 52.dp)
+                        .testTag("qrex-create-more-types"),
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
+                        modifier = Modifier.size(18.dp))
+                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        fontSize = 11.sp)
+                }
+            }
 
             val quickTypes = listOf(0, 1, 2, 6)
             val selectType: (Int) -> Unit = { index ->
