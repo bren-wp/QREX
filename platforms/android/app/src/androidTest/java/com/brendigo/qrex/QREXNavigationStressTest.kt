@@ -152,7 +152,11 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-result-screen", 0, "show Result")
         // QR bitmap generation is intentionally deferred until the user
         // opens the real preview. Test the physical touch and decoded image.
-        rule.onNodeWithTag("qrex-result-toggle-qr").assertIsDisplayed().performClick()
+        // API 26 uses a shorter Result viewport after the IME transition.
+        // The QR preview action is in the real scrollable action list: reach
+        // it with the user's normal scroll gesture before testing a tap.
+        rule.onNodeWithTag("qrex-result-toggle-qr", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed().performClick()
         try {
             rule.waitUntil(timeoutMillis = 45_000L) {
                 rule.onAllNodesWithTag("qrex-result-qr-ready", useUnmergedTree = true)
