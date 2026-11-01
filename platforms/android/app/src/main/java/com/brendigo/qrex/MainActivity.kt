@@ -1649,14 +1649,19 @@ private fun HistoryScreen(
                         )
                     else -> absoluteDateFormatter.format(Date(item.timestamp))
                 }
+                // The History list is an index, not a payload preview.
+                // Arbitrary text and URLs can contain access tokens, contact
+                // details or other secrets. Only show a localized QR category;
+                // the user can open the Result for the full value.
                 val detail = when {
                     QRContent.isWifi(item.raw) -> tr("wifi")
-                    QRContent.isEvent(item.raw) -> QRContent.eventField(item.raw, "LOCATION").orEmpty()
+                    QRContent.isEvent(item.raw) -> tr("event")
                     item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> tr("contact")
                     item.raw.startsWith("mailto:", ignoreCase = true) -> tr("email")
                     item.raw.startsWith("tel:", ignoreCase = true) -> tr("phone")
                     item.raw.startsWith("geo:", ignoreCase = true) -> tr("location")
-                    else -> item.raw
+                    QRContent.safeUrl(item.raw) != null -> tr("url")
+                    else -> tr("text")
                 }
                 Surface(
                     onClick = { onOpen(item.raw) },
@@ -1771,6 +1776,8 @@ private fun HistoryScreen(
                                     DropdownMenuItem(
                                         text = { Text(tr("delete")) },
                                         onClick = { historyMenu = false; pendingDelete = item },
+                                        modifier = Modifier.heightIn(min = 52.dp)
+                                            .testTag("qrex-history-menu-delete"),
                                         leadingIcon = {
                                             Icon(Icons.Default.Delete, contentDescription = null,
                                                 tint = MaterialTheme.colorScheme.error)
@@ -1787,6 +1794,7 @@ private fun HistoryScreen(
     val target = pendingDelete
     if (target != null) {
         AlertDialog(
+            modifier = Modifier.testTag("qrex-history-delete-dialog"),
             onDismissRequest = { pendingDelete = null },
             title = { Text(tr("delete")) },
             text = { Text(tr("confirm_delete")) },
@@ -1799,10 +1807,15 @@ private fun HistoryScreen(
                         }
                     }
                     pendingDelete = null
-                }) { Text(tr("delete")) }
+                }, modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-history-delete-confirm")) { Text(tr("delete")) }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDelete = null }) { Text(tr("cancel")) }
+                TextButton(
+                    onClick = { pendingDelete = null },
+                    modifier = Modifier.heightIn(min = 48.dp)
+                        .testTag("qrex-history-delete-cancel")
+                ) { Text(tr("cancel")) }
             }
         )
     }
