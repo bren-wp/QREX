@@ -1,6 +1,6 @@
-## Candidate: v1.0.26 · Android versionCode 126
+## Published: v1.0.26 · Android versionCode 126
 
-Merged PR #80: improved Favorites, More, Language, PDF Export, About and Privacy UI; durable and non-destructive History toggle, responsive 12-screen Android capture coverage and 23-language validation. GitHub APK/AAB artifacts require successful exact-commit CI, signing/checksum checks and publication of the new tag. Play upload packages require the authorized existing signing key.
+Merged PR #80: improved Favorites, More, Language, PDF Export, About and Privacy UI; durable and non-destructive History toggle, responsive 12-screen Android capture coverage and 23-language validation. Published on 30 October 2026 after exact-commit CI, signing/checksum checks and creation of the immutable v1.0.26 release, including 12 actual emulator screenshots. Play upload packages require the authorized existing signing key.
 
 [Release notes](docs/releases/v1.0.26.md)
 
