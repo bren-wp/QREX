@@ -322,7 +322,11 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/qrex/touch-check")
         awaitCreateAction(0, "touch target Result")
-        rule.onNodeWithTag("qrex-create-show").performClick()
+        // The IME can intercept coordinate taps on API 35 while hiding.
+        // Exercise the real Compose click callback; separate tests cover taps.
+        rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            .performSemanticsAction(SemanticsActions.OnClick)
+        rule.waitForIdle()
         requireScreenTag("qrex-result-close", 0, "touch target Result back")
         assertTouchTarget("qrex-result-close")
     }
