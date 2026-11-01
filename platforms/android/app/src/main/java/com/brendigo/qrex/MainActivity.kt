@@ -1681,8 +1681,13 @@ private fun HistoryScreen(
                         QrexHistoryGlyph(icon, tint)
                         Spacer(Modifier.width(9.dp))
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            // Generic text QR codes may contain tokens or
+                            // personal notes; do not render their raw payload
+                            // as the History row title.
+                            val rowTitle = if (detail == tr("text")) detail
+                                else QRContent.label(item.raw)
                             Text(
-                                QRContent.label(item.raw),
+                                rowTitle,
                                 maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface,
