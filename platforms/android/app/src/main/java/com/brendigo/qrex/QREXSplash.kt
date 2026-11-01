@@ -89,7 +89,7 @@ internal fun qrexSplashUsesScrollLayout(heightDp: Int, fontScale: Float): Boolea
  * hardcoding translated text, and leave longer slogans unchanged.
  */
 internal fun qrexSplashAccentRange(subtitle: String): IntRange? {
-    val words = Regex("""\\S+""").findAll(subtitle).toList()
+    val words = Regex("""\S+""").findAll(subtitle).toList()
     return if (words.size == 3) words[1].range else null
 }
 
