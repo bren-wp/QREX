@@ -97,7 +97,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)", design)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
-        self.assertIn("QRContent.label(item.raw),\n                                maxLines = if (largeHistoryText) 2 else 1", self.main)
+        self.assertIn('val rowTitle = if (detail == tr("text")) detail', self.main)
+        self.assertIn("Text(\n                                rowTitle,", self.main)
+        self.assertIn("maxLines = if (largeHistoryText) 2 else 1", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
         # The reference uses a real overflow menu and favorite heart rather
         # than an always-visible trash icon on each History row.

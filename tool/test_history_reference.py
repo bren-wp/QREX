@@ -48,6 +48,8 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertNotIn('else -> item.raw', history)
         self.assertNotIn('QRContent.eventField(item.raw, "LOCATION").orEmpty()', history)
         self.assertIn('if (favoritesPage) date else', history)
+        self.assertIn('val rowTitle = if (detail == tr("text")) detail', history)
+        self.assertIn("Text(\n                                rowTitle,", history)
         for tag in ("qrex-history-menu-delete", "qrex-history-delete-dialog",
                     "qrex-history-delete-confirm", "qrex-history-delete-cancel"):
             self.assertIn(f'testTag("{tag}")', history)
