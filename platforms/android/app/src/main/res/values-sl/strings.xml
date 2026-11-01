@@ -68,6 +68,7 @@
     <string name="terms_summary">Pred odpiranjem povezav preverite cilj kode QR. Delite ali izvažajte le dovoljene kode. Izvoženi PDF-ji lahko vsebujejo shranjena gesla za Wi-Fi. QREX je na voljo brez jamstev v zakonsko dovoljenem obsegu. Podpora: brendigo.com.</string>
     <string name="read_full_policy">Preberi celoten pravilnik</string>
     <string name="tagline">Skeniraj. Ustvari. Deli.</string>
+    <string name="scanner_local_message">Skeniranje poteka v vaši napravi.</string>
     <string name="event">Dogodek</string>
     <string name="event_title">Naslov dogodka</string>
     <string name="event_start">Začetek</string>

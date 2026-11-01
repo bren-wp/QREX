@@ -68,6 +68,7 @@
     <string name="terms_summary">Pred otvorením odkazu skontrolujte cieľ QR kódu. Zdieľajte len kódy, na ktoré máte oprávnenie. Exportované PDF môžu obsahovať uložené heslá Wi-Fi. QREX je poskytovaný bez záruk v rozsahu povolenom zákonom. Podpora: brendigo.com.</string>
     <string name="read_full_policy">Prečítať celé zásady</string>
     <string name="tagline">Skenuj. Vytváraj. Zdieľaj.</string>
+    <string name="scanner_local_message">Skenovanie prebieha vo vašom zariadení.</string>
     <string name="event">Udalosť</string>
     <string name="event_title">Názov udalosti</string>
     <string name="event_start">Začiatok</string>

@@ -68,6 +68,7 @@
     <string name="terms_summary">Controleer QR-bestemmingen voordat je links opent. Deel of exporteer alleen codes waarvoor je toestemming hebt. Geëxporteerde PDF\'s kunnen opgeslagen wifiwachtwoorden bevatten. QREX wordt zonder garanties geleverd voor zover wettelijk toegestaan. Hulp: brendigo.com.</string>
     <string name="read_full_policy">Volledig beleid lezen</string>
     <string name="tagline">Scan. Maak. Deel.</string>
+    <string name="scanner_local_message">Scannen gebeurt op je apparaat.</string>
     <string name="event">Gebeurtenis</string>
     <string name="event_title">Naam van de gebeurtenis</string>
     <string name="event_start">Start</string>

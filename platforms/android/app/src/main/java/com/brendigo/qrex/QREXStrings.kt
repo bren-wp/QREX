@@ -77,6 +77,7 @@ object QREXStrings {
         "terms_summary" -> R.string.terms_summary
         "read_full_policy" -> R.string.read_full_policy
         "tagline" -> R.string.tagline
+        "scanner_local_message" -> R.string.scanner_local_message
         "event" -> R.string.event
         "event_title" -> R.string.event_title
         "event_start" -> R.string.event_start

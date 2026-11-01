@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Arrangement
@@ -129,8 +130,9 @@ internal fun QrexBrandHeader(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
-        Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(tr("scanner_local_message"), color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.testTag("qrex-scanner-local-message"))
     }
 }
 

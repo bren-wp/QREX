@@ -68,6 +68,7 @@
     <string name="terms_summary">Sprawdzaj adresy QR przed otwarciem. Udostępniaj lub eksportuj tylko kody, do których masz prawa. Wyeksportowane pliki PDF mogą zawierać zapisane hasła Wi-Fi. QREX jest udostępniany bez gwarancji w zakresie dozwolonym prawem. Pomoc: brendigo.com.</string>
     <string name="read_full_policy">Przeczytaj pełną politykę</string>
     <string name="tagline">Skanuj. Twórz. Udostępniaj.</string>
+    <string name="scanner_local_message">Skanowanie odbywa się na Twoim urządzeniu.</string>
     <string name="event">Wydarzenie</string>
     <string name="event_title">Nazwa wydarzenia</string>
     <string name="event_start">Początek</string>

@@ -68,6 +68,7 @@
     <string name="terms_summary">Verifică destinațiile QR înainte de a deschide linkuri. Distribuie doar codurile pentru care ai permisiune. PDF-urile exportate pot conține parole Wi-Fi salvate. QREX este oferit fără garanții în limitele legii. Suport: brendigo.com.</string>
     <string name="read_full_policy">Citește politica integrală</string>
     <string name="tagline">Scanează. Creează. Distribuie.</string>
+    <string name="scanner_local_message">Scanarea are loc pe dispozitivul tău.</string>
     <string name="event">Eveniment</string>
     <string name="event_title">Titlul evenimentului</string>
     <string name="event_start">Început</string>

@@ -68,6 +68,7 @@
     <string name="terms_summary">Kontrollera QR-mål innan du öppnar länkar. Dela eller exportera endast koder du har tillstånd att dela. Exporterade PDF-filer kan innehålla sparade wifi-lösenord. QREX erbjuds utan garantier i den mån lagen tillåter. Support: brendigo.com.</string>
     <string name="read_full_policy">Läs hela policyn</string>
     <string name="tagline">Skanna. Skapa. Dela.</string>
+    <string name="scanner_local_message">Skanningen sker på din enhet.</string>
     <string name="event">Händelse</string>
     <string name="event_title">Händelsens titel</string>
     <string name="event_start">Start</string>
