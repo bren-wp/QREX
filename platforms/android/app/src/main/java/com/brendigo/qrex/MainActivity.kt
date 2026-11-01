@@ -118,6 +118,10 @@ private val white = Color.White
 /** QR navigation remains available while the preview bitmap is rendering. */
 internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
 
+/** Wi-Fi SSIDs are byte-sensitive; spaces at either edge are part of the name. */
+internal fun createQrInputText(kind: Int, enteredText: String): String =
+    if (kind == 2) enteredText else enteredText.trim()
+
 /**
  * QR contents can carry secrets even when they aren't Wi-Fi codes: e.g.
  * login links, contacts, calendar notes or arbitrary text. Never expose
@@ -949,7 +953,7 @@ private fun CreateScreen(
             else Locale.forLanguageTag(displayLanguage)
         DateTimeFormatter.ofPattern("dd.MM.yyyy · HH:mm", locale)
     }
-    val input = content.trim()
+    val input = createQrInputText(kind, content)
     val payload = when (kind) {
         0 -> if (QRContent.safeUrl(input) != null) input else ""
         1 -> input
