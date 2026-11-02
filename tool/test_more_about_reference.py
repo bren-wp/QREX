@@ -28,6 +28,23 @@ class MoreAboutRegressionTests(unittest.TestCase):
         self.assertIn('onClick = { showDelete = false }', more)
         self.assertIn('snapshotSavedQrForPdf(store.items)', more)
 
+    def test_language_reference_uses_aligned_noninteractive_flag_and_radio(self):
+        language = self.detail.split("internal fun QrexLanguageDetails(", 1)[1].split(
+            "internal fun QrexExportDetails(", 1
+        )[0]
+        self.assertIn('testTag("qrex-language-screen")', language)
+        self.assertIn('testTag("qrex-language-list")', language)
+        self.assertIn('testTag("qrex-language-option-$code")', language)
+        self.assertIn('testTag("qrex-language-flag-$code")', language)
+        self.assertIn('Modifier.size(36.dp)', language)
+        self.assertIn('Modifier.fillMaxWidth().heightIn(min = 64.dp)', language)
+        self.assertIn('.semantics { this.selected = selected }', language)
+        self.assertGreaterEqual(language.count('.clearAndSetSemantics {}'), 2)
+        self.assertIn('RadioButton(', language)
+        self.assertIn('onClick = null,', language)
+        self.assertIn('store.updateLanguage(code)', language)
+        self.assertIn('items(listOf("system") + QREXStrings.languages, key = { it })', language)
+
     def test_about_is_native_and_site_is_optional(self):
         self.assertIn("var showAbout by remember", self.main)
         self.assertIn('testTag("qrex-more-about")', self.main)
