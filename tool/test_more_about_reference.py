@@ -45,6 +45,20 @@ class MoreAboutRegressionTests(unittest.TestCase):
         self.assertIn('store.updateLanguage(code)', language)
         self.assertIn('items(listOf("system") + QREXStrings.languages, key = { it })', language)
 
+    def test_about_privacy_and_terms_are_responsive_native_dialogs(self):
+        more = self.main.split("private fun MoreScreen(", 1)[1]
+        for tag in ("qrex-about-dialog", "qrex-about-version",
+                    "qrex-about-close", "qrex-privacy-summary-text",
+                    "qrex-privacy-content", "qrex-terms-dialog",
+                    "qrex-terms-content", "qrex-terms-summary",
+                    "qrex-terms-close", "qrex-terms-full-document"):
+            self.assertIn('testTag("' + tag + '")', more)
+        self.assertIn('initialShowTerms = screenshotMode == "terms"', self.main)
+        self.assertIn('showTerms by remember(initialShowTerms)', more)
+        self.assertIn("Modifier.fillMaxWidth().heightIn(max = 340.dp)", more)
+        self.assertIn('Modifier.weight(1f)', more)
+        self.assertIn('"https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"', more)
+
     def test_about_is_native_and_site_is_optional(self):
         self.assertIn("var showAbout by remember", self.main)
         self.assertIn('testTag("qrex-more-about")', self.main)
