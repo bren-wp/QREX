@@ -107,7 +107,7 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertIn('tr("wifi_save_warning")', self.source)
         self.assertIn('CreateDocument("image/png")', self.source)
         self.assertIn("reveal = false", self.source)
-        self.assertIn("val stackChoices = widthDp < 400 || fontScale >= 1.30f",
+        self.assertIn("val stackChoices = widthDp < 340 || fontScale >= 1.30f",
                       self.design)
 
 
