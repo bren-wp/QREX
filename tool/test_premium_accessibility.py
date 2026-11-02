@@ -56,7 +56,7 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
         result = self.main.split("val resultGlyphBrush = when {", 1)[1].split(
             "val resultGlyphStroke = when {", 1
         )[0]
-        values = re.findall(r"Color\\(0xFF([A-Fa-f0-9]{6})\\)", result)
+        values = re.findall(r"Color\(0xFF([A-Fa-f0-9]{6})\)", result)
         self.assertEqual(len(values), 9, "Wi-Fi, telephone, event: three stops each")
         for color in values:
             with self.subTest(glyph_stop=color):
