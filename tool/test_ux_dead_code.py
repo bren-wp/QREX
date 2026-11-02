@@ -273,7 +273,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         )[0]
         self.assertIn("shape = RoundedCornerShape(14.dp)", result)
         self.assertIn("color = QrexDesign.actionBlue", result)
-        self.assertIn("Modifier.size(62.dp).background(QrexDesign.referenceGlyphBrush)", result)
+        self.assertIn("Modifier.size(62.dp).background(resultGlyphBrush)", result)
+        self.assertIn("val resultGlyphBrush = when {", result)
+        self.assertIn("val resultGlyphStroke = when {", result)
         self.assertIn('testTag("qrex-result-glyph")', result)
         self.assertIn("shadowElevation = 5.dp", result)
         self.assertIn("modifier = Modifier.size(52.dp).testTag(\"qrex-result-close\")", self.main)

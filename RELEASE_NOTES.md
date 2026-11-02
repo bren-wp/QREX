@@ -1,3 +1,13 @@
+## Candidate: v1.0.28 · Android versionCode 128
+
+Result-screen category-specific 3D icons (URL blue, Wi-Fi green, Phone red, Event purple), with secure QR actions preserved. This is a candidate until the v1.0.28 tag, APK/AAB assets, checksums, actual screenshots and exact-commit CI are verified. GitHub artifacts are not Play-upload signed.
+
+[Release notes](docs/releases/v1.0.28.md)
+
+## Published: v1.0.27 · Android versionCode 127
+
+GitHub release provides APK/AAB and checksums; screenshot assets were absent from the published v1.0.27 release, so the README still links the real v1.0.26 screen captures.
+
 ## Candidate: v1.0.27 · Android versionCode 127
 
 Splash/Scanner reference-aligned native UI with offline scanner subtitle in 23 languages, accessible controls, actual emulator capture, and protected GitHub-only release candidate. [Release details](docs/releases/v1.0.27.md). GitHub publisher must verify all exact-main checks before publishing.

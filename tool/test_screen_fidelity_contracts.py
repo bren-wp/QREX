@@ -32,6 +32,8 @@ class ScreenFidelityContracts(unittest.TestCase):
         self.assertIn("shadowElevation = if (selected) 4.dp else 1.dp", self.main)
         self.assertIn("QrexDesign.referenceButtonBrush", self.main)
         self.assertIn('testTag("qrex-result-glyph")', self.main)
+        self.assertIn("val resultGlyphBrush = when {", self.main)
+        self.assertIn("val resultGlyphStroke = when {", self.main)
         self.assertIn("shadowElevation = 5.dp", self.main)
         self.assertIn("val referenceButtonBrush = Brush.verticalGradient(", self.files["QREXDesign.kt"])
         self.assertIn("val referenceGlyphBrush = Brush.verticalGradient(", self.files["QREXDesign.kt"])
