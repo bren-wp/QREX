@@ -48,7 +48,8 @@ class QREXCreateReferenceTest {
     @Test fun quickTypeTabsFitSingleRowOnReferenceWidth() {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
-        val bounds = (0..3).map { index ->
+        // Actual quick IDs: Link, Text, Wi-Fi, Contact (not advanced E-mail).
+        val bounds = listOf(0, 1, 2, 6).map { index ->
             val tag = "qrex-create-type-$index"
             await(tag)
             rule.onNodeWithTag(tag, useUnmergedTree = true)
