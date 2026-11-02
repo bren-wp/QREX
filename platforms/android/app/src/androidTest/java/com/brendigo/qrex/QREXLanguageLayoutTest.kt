@@ -41,6 +41,22 @@ class QREXLanguageLayoutTest {
             rule.onNodeWithTag("qrex-language-option-$code", useUnmergedTree = true)
                 .getUnclippedBoundsInRoot()
         }
+        // All language icons occupy exactly one 36dp layout slot;
+        // actual emulator bounds catch regressions that static checks miss.
+        val flagSlots = tags.map { code ->
+            rule.onNodeWithTag("qrex-language-flag-$code", useUnmergedTree = true)
+                .getUnclippedBoundsInRoot()
+        }
+        flagSlots.forEachIndexed { index, flag ->
+            assertTrue("language glyph must use the 36dp reference width",
+                kotlin.math.abs((flag.right - flag.left - 36.dp).value) <= 1f)
+            assertTrue("language glyph must use the 36dp reference height",
+                kotlin.math.abs((flag.bottom - flag.top - 36.dp).value) <= 1f)
+            assertTrue("language glyph slot must align at a constant x",
+                kotlin.math.abs((flag.left - flagSlots.first().left).value) <= 1f)
+            assertTrue("language glyph must stay inside the tappable row",
+                flag.top >= bounds[index].top && flag.bottom <= bounds[index].bottom)
+        }
         bounds.forEachIndexed { index, rect ->
             assertTrue("language row must be at least 48dp tall", rect.bottom - rect.top >= 48.dp)
             assertTrue("language row must be at least 48dp wide", rect.right - rect.left >= 48.dp)

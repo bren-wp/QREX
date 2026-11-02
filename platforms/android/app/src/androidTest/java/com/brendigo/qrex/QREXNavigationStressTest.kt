@@ -113,9 +113,15 @@ class QREXNavigationStressTest {
             awaitCreateAction(cycle, "30-cycle stress")
             rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
                 .performSemanticsAction(SemanticsActions.OnClick)
+            // A rapid callback changes Compose navigation while the emulator's
+            // rendering thread may still be retiring the previous layout.
+            // Drain pending main-thread composition before querying the new
+            // semantics tree. Keep all 30 real navigation and recreate cycles.
+            rule.waitForIdle()
             requireScreenTag("qrex-result-close", cycle, "await pinned Result close")
             rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
                 .performSemanticsAction(SemanticsActions.OnClick)
+            rule.waitForIdle()
             requireScreenTag("qrex-create-screen", cycle, "await return to Create")
             requireScreenTag("qrex-create-content", cycle, "await returned Create input")
         }
@@ -146,7 +152,11 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-result-screen", 0, "show Result")
         // QR bitmap generation is intentionally deferred until the user
         // opens the real preview. Test the physical touch and decoded image.
-        rule.onNodeWithTag("qrex-result-toggle-qr").assertIsDisplayed().performClick()
+        // API 26 uses a shorter Result viewport after the IME transition.
+        // The QR preview action is in the real scrollable action list: reach
+        // it with the user's normal scroll gesture before testing a tap.
+        rule.onNodeWithTag("qrex-result-toggle-qr", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed().performClick()
         try {
             rule.waitUntil(timeoutMillis = 45_000L) {
                 rule.onAllNodesWithTag("qrex-result-qr-ready", useUnmergedTree = true)
@@ -316,7 +326,11 @@ class QREXNavigationStressTest {
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/qrex/touch-check")
         awaitCreateAction(0, "touch target Result")
-        rule.onNodeWithTag("qrex-create-show").performClick()
+        // The IME can intercept coordinate taps on API 35 while hiding.
+        // Exercise the real Compose click callback; separate tests cover taps.
+        rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            .performSemanticsAction(SemanticsActions.OnClick)
+        rule.waitForIdle()
         requireScreenTag("qrex-result-close", 0, "touch target Result back")
         assertTouchTarget("qrex-result-close")
     }

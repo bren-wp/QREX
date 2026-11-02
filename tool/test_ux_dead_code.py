@@ -97,7 +97,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)", design)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
-        self.assertIn("QRContent.label(item.raw),\n                                maxLines = if (largeHistoryText) 2 else 1", self.main)
+        self.assertIn('val rowTitle = if (detail == tr("text")) detail', self.main)
+        self.assertIn("Text(\n                                rowTitle,", self.main)
+        self.assertIn("maxLines = if (largeHistoryText) 2 else 1", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
         # The reference uses a real overflow menu and favorite heart rather
         # than an always-visible trash icon on each History row.
@@ -145,11 +147,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("QrexDesign.backgroundDeep", splash)
         self.assertIn("R.drawable.qrex_icon", splash)
         self.assertIn("screenshotMode != \"splash\"", self.main)
-        # Create is a root tab in the reference; its app bar starts with
-        # the QREX wordmark, then privacy and overflow actions, with no extra
-        # navigation arrow before the brand.
-        self.assertNotIn('testTag("qrex-create-back")', self.main)
-        self.assertIn("QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)", self.main)
+        # Reference 03 shows a real Back arrow, centered Create title, and
+        # overflow menu. Ensure Back calls the Scanner navigation callback.
+        create = self.main.split("private fun CreateScreen(", 1)[1].split(
+            "private fun HistoryScreen(", 1
+        )[0]
+        self.assertIn('testTag("qrex-create-back")', create)
+        self.assertIn('testTag("qrex-create-title")', create)
+        self.assertIn('testTag("qrex-create-overflow")', create)
+        self.assertIn("onBack()", create)
+        self.assertIn("selected = 0", self.main)
         # Plain History and More headings must not duplicate launcher artwork.
         self.assertIn("private fun AppHeader(", self.main)
         self.assertNotIn("painter = painterResource(R.drawable.qrex_icon)", self.main)
@@ -186,7 +193,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("icon = { Icon(icons[index], contentDescription = null) }", self.main)
         self.assertIn('role = Role.Button, onClick = onClick', design)
         self.assertIn('if (wifiPassword.isNotEmpty()) {', self.main)
-        self.assertIn('IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp))',
+        self.assertIn("onClick = { createMenu = true }", self.main)
+        self.assertIn('Modifier.size(48.dp).testTag("qrex-create-overflow")',
                       self.main)
         self.assertIn("private fun openCalendarEvent(context: Context, raw: String): Boolean", self.main)
         self.assertIn("if (end <= start) return false", self.main)
@@ -230,7 +238,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('focusManager.clearFocus(force = true)', self.main)
 
     def test_result_actions_have_full_width_real_callbacks(self):
-        self.assertIn('QrexResultAction(tr("copy"), Icons.Default.ContentCopy)', self.main)
+        result = self.main.split("private fun ResultScreen(", 1)[1].split(
+            "fun openLink(", 1
+        )[0]
+        self.assertIn('tr("copy"), Icons.Default.ContentCopy,', result)
+        self.assertIn('testTag("qrex-result-copy")', result)
+        self.assertIn('testTag("qrex-result-menu-copy")', result)
+        self.assertEqual(result.count("if (wifi) confirmWifiCopy = true else {"), 2)
+        self.assertIn('testTag("qrex-result-wifi-copy-warning")', result)
         self.assertIn('QrexResultAction(tr("share"), Icons.Default.Share)', self.main)
         self.assertIn('testTag("qrex-result-toggle-qr")', self.main)
         self.assertIn('if (alreadySaved) tr("remove_favorite") else tr("add_favorite")', self.main)

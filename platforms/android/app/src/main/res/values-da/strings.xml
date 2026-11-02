@@ -68,6 +68,7 @@
     <string name="terms_summary">Kontrollér QR-mål, før du åbner links. Del kun koder, du har tilladelse til at dele. Eksporterede PDF-filer kan indeholde gemte Wi-Fi-adgangskoder. QREX leveres uden garantier i lovens omfang. Support: brendigo.com.</string>
     <string name="read_full_policy">Læs hele politikken</string>
     <string name="tagline">Scan. Opret. Del.</string>
+    <string name="scanner_local_message">Scanning foregår på din enhed.</string>
     <string name="event">Begivenhed</string>
     <string name="event_title">Begivenhedens titel</string>
     <string name="event_start">Start</string>

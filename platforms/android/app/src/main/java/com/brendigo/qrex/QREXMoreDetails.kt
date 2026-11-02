@@ -35,6 +35,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
 import android.widget.Toast
 import androidx.compose.ui.text.font.FontWeight
@@ -100,10 +102,16 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                         // A consistent 36dp flag slot keeps all names and radio
                         // controls aligned despite variable emoji glyph widths.
                         androidx.compose.foundation.layout.Box(
-                            Modifier.size(36.dp),
+                            Modifier.size(36.dp)
+                                .testTag("qrex-language-flag-$code"),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(flags[code] ?: "🌐", fontSize = 23.sp, maxLines = 1)
+                            Text(
+                                flags[code] ?: "🌐",
+                                modifier = Modifier.clearAndSetSemantics {},
+                                fontSize = 23.sp,
+                                maxLines = 1
+                            )
                         }
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
@@ -115,7 +123,14 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                                 color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Spacer(Modifier.width(8.dp))
-                        RadioButton(selected = selected, onClick = null)
+                        // Selection is announced by the real clickable row.
+                        // The radio glyph is decorative, not a second
+                        // focusable/readable control for TalkBack.
+                        RadioButton(
+                            selected = selected,
+                            onClick = null,
+                            modifier = Modifier.clearAndSetSemantics {}
+                        )
                     }
                 }
             }
@@ -132,6 +147,9 @@ internal fun QrexExportDetails(
     onBack: () -> Unit,
     onPdf: () -> Unit
 ) {
+    // The native disabled button alone cannot explain why PDF is unavailable
+    // to assistive technology. Expose the same localized empty-state reason.
+    val pdfAvailability = if (hasSaved) null else tr("no_saved")
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp)
             .testTag("qrex-export-screen")
@@ -148,7 +166,10 @@ internal fun QrexExportDetails(
             QrexResultAction(
                 label = "PDF", icon = Icons.Default.PictureAsPdf,
                 enabled = hasSaved,
-                modifier = Modifier.testTag("qrex-export-pdf"),
+                modifier = Modifier.testTag("qrex-export-pdf")
+                    .semantics {
+                        if (pdfAvailability != null) stateDescription = pdfAvailability
+                    },
                 onClick = onPdf
             )
             if (!hasSaved) {
@@ -179,6 +200,7 @@ internal fun QrexExportDetails(
                     Spacer(Modifier.width(12.dp))
                     Text(
                         tr("export_archive_warning"), fontSize = 14.sp,
+                        modifier = Modifier.weight(1f).testTag("qrex-export-warning-text"),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -197,6 +219,7 @@ internal fun QrexExportDetails(
                         tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
                     Spacer(Modifier.width(12.dp))
                     Text(tr("privacy_summary"), fontSize = 14.sp,
+                        modifier = Modifier.weight(1f).testTag("qrex-export-privacy-text"),
                         color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
             }

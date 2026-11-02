@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.SemanticsProperties
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -46,13 +47,22 @@ class QREXExportScreenTest {
         assertTrue("PDF action must be >=48dp tall", bounds.bottom - bounds.top >= 48.dp)
         if (QREXStore(rule.activity.applicationContext).items.none { it.saved }) {
             pdf.assertIsNotEnabled()
+            val reason = pdf.fetchSemanticsNode().config[
+                SemanticsProperties.StateDescription
+            ]
+            assertTrue("Disabled PDF must explain why there are no saved QR codes",
+                !reason.isNullOrBlank())
             rule.onNodeWithTag("qrex-export-no-saved", useUnmergedTree = true)
                 .assertIsDisplayed()
         }
         rule.onNodeWithTag("qrex-export-warning", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
+        rule.onNodeWithTag("qrex-export-warning-text", useUnmergedTree = true)
+            .assertIsDisplayed()
         rule.onNodeWithTag("qrex-export-privacy", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
+        rule.onNodeWithTag("qrex-export-privacy-text", useUnmergedTree = true)
+            .assertIsDisplayed()
         rule.onNodeWithTag("qrex-detail-back", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
@@ -86,6 +96,13 @@ class QREXExportScreenTest {
                 .assertIsEnabled().performClick()
             rule.onNodeWithTag("qrex-export-consent", useUnmergedTree = true)
                 .assertIsDisplayed()
+            for (tag in listOf("qrex-export-consent-confirm",
+                               "qrex-export-consent-cancel")) {
+                val bounds = rule.onNodeWithTag(tag, useUnmergedTree = true)
+                    .assertIsDisplayed().getUnclippedBoundsInRoot()
+                assertTrue("$tag must be at least 48dp tall",
+                    bounds.bottom - bounds.top >= 48.dp)
+            }
             rule.onNodeWithTag("qrex-export-consent-cancel", useUnmergedTree = true)
                 .assertIsDisplayed().performClick()
             rule.onAllNodesWithTag("qrex-export-consent", useUnmergedTree = true)

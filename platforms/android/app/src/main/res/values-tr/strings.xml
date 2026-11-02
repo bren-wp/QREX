@@ -68,6 +68,7 @@
     <string name="terms_summary">Bağlantıları açmadan önce QR hedeflerini kontrol et. Yalnızca izinli kodları paylaş veya dışa aktar. Dışa aktarılan PDF\'ler kayıtlı Wi-Fi parolaları içerebilir. QREX yasanın izin verdiği ölçüde garantisiz sunulur. Destek: brendigo.com.</string>
     <string name="read_full_policy">Politikanın tamamını oku</string>
     <string name="tagline">Tara. Oluştur. Paylaş.</string>
+    <string name="scanner_local_message">Tarama cihazınızda gerçekleşir.</string>
     <string name="event">Etkinlik</string>
     <string name="event_title">Etkinlik başlığı</string>
     <string name="event_start">Başlangıç</string>

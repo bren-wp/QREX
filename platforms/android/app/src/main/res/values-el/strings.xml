@@ -68,6 +68,7 @@
     <string name="terms_summary">Ελέγχετε τους προορισμούς QR πριν ανοίξετε συνδέσμους. Μοιραστείτε μόνο κωδικούς που επιτρέπεται. Τα εξαγόμενα PDF μπορεί να περιέχουν αποθηκευμένους κωδικούς Wi-Fi. Το QREX παρέχεται χωρίς εγγυήσεις στον βαθμό που επιτρέπει ο νόμος. Υποστήριξη: brendigo.com.</string>
     <string name="read_full_policy">Διαβάστε όλη την πολιτική</string>
     <string name="tagline">Σάρωση. Δημιουργία. Κοινοποίηση.</string>
+    <string name="scanner_local_message">Η σάρωση γίνεται στη συσκευή σας.</string>
     <string name="event">Εκδήλωση</string>
     <string name="event_title">Τίτλος εκδήλωσης</string>
     <string name="event_start">Έναρξη</string>

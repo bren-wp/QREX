@@ -118,6 +118,10 @@ private val white = Color.White
 /** QR navigation remains available while the preview bitmap is rendering. */
 internal fun canOpenQrResult(payload: String): Boolean = QRContent.canRender(payload)
 
+/** Wi-Fi SSIDs are byte-sensitive; spaces at either edge are part of the name. */
+internal fun createQrInputText(kind: Int, enteredText: String): String =
+    if (kind == 2) enteredText else enteredText.trim()
+
 /**
  * QR contents can carry secrets even when they aren't Wi-Fi codes: e.g.
  * login links, contacts, calendar notes or arbitrary text. Never expose
@@ -164,7 +168,7 @@ class MainActivity : ComponentActivity() {
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
                 it in setOf("splash", "create", "scan", "result", "history",
-                    "saved", "more", "wifi", "language", "export", "about", "privacy")
+                    "saved", "more", "wifi", "language", "export", "about", "privacy", "terms")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
@@ -207,7 +211,7 @@ private fun QREXApp(
             "create", "wifi", "result" -> 1
             "history" -> 2
             "saved" -> 3
-            "more", "language", "export", "about", "privacy" -> 4
+            "more", "language", "export", "about", "privacy", "terms" -> 4
             else -> 0
         })
     }
@@ -351,6 +355,10 @@ private fun QREXApp(
                         })
                         1 -> CreateScreen(screenshotMode = screenshotMode,
                             initialValue = editPayload,
+                            onBack = {
+                                focusManager.clearFocus(force = true)
+                                selected = 0
+                            },
                             onResult = {
                                 // Android 12 can keep the IME in flight while
                                 // the Result and bottom NavigationBar remeasure.
@@ -373,7 +381,8 @@ private fun QREXApp(
                                 screenshotMode == "export") screenshotMode else "root",
                             isDarkAppearance = darkUi,
                             initialShowAbout = screenshotMode == "about",
-                            initialShowPrivacy = screenshotMode == "privacy")
+                            initialShowPrivacy = screenshotMode == "privacy",
+                            initialShowTerms = screenshotMode == "terms")
                     }
                 }
             }
@@ -453,6 +462,7 @@ private fun ResultScreen(
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
+    var confirmWifiCopy by remember(raw) { mutableStateOf(false) }
     var confirmWifiPngExport by remember(raw) { mutableStateOf(false) }
     // SAF may return after a different result has been selected. Export only
     // the payload that launched the picker; never use a subsequently changed QR.
@@ -551,17 +561,23 @@ private fun ResultScreen(
                 }
                 DropdownMenu(expanded = showResultMenu,
                     onDismissRequest = { showResultMenu = false }) {
-                    DropdownMenuItem(text = { Text(tr("copy")) }, onClick = {
-                        showResultMenu = false
-                        copyQrToClipboard(context, raw)
-                        Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
-                    })
+                    DropdownMenuItem(
+                        text = { Text(tr("copy")) },
+                        modifier = Modifier.testTag("qrex-result-menu-copy"),
+                        onClick = {
+                            showResultMenu = false
+                            if (wifi) confirmWifiCopy = true else {
+                                copyQrToClipboard(context, raw)
+                                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
                     DropdownMenuItem(text = { Text(tr("share")) }, onClick = {
                         showResultMenu = false
                         if (wifi) confirmWifiShare = true
                         else shareQrText(context, raw, shareTitle, sharingFailed)
                     })
-                    DropdownMenuItem(text = { Text(tr("show_qr")) }, onClick = {
+                    DropdownMenuItem(text = { Text(if (showQrPreview) tr("hide") else tr("show_qr")) }, onClick = {
                         showResultMenu = false
                         showQrPreview = !showQrPreview
                     })
@@ -629,15 +645,8 @@ private fun ResultScreen(
                         maxLines = 2, overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    if (url != null) {
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            url.toString(),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 12.sp, textAlign = TextAlign.Center,
-                            maxLines = 1, overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    // URL text is already shown above. A second copy
+                    // needlessly exposes token-bearing links in screenshots.
                 }
             }
         }
@@ -655,9 +664,14 @@ private fun ResultScreen(
             }
             Spacer(Modifier.height(10.dp))
         }
-        QrexResultAction(tr("copy"), Icons.Default.ContentCopy) {
-            copyQrToClipboard(context, raw)
-            Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+        QrexResultAction(
+            tr("copy"), Icons.Default.ContentCopy,
+            modifier = Modifier.testTag("qrex-result-copy")
+        ) {
+            if (wifi) confirmWifiCopy = true else {
+                copyQrToClipboard(context, raw)
+                Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+            }
         }
         Spacer(Modifier.height(8.dp))
         QrexResultAction(tr("share"), Icons.Default.Share) {
@@ -665,7 +679,7 @@ private fun ResultScreen(
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
         Spacer(Modifier.height(8.dp))
-        QrexResultAction(tr("show_qr"), Icons.Default.QrCode,
+        QrexResultAction(if (showQrPreview) tr("hide") else tr("show_qr"), Icons.Default.QrCode,
             modifier = Modifier.testTag("qrex-result-toggle-qr"),
             showChevron = false) {
             showQrPreview = !showQrPreview
@@ -740,6 +754,30 @@ private fun ResultScreen(
             dismissButton = { TextButton(onClick = { confirmResultDelete = false }) {
                 Text(tr("cancel"))
             } })
+    }
+    if (confirmWifiCopy) {
+        AlertDialog(
+            modifier = Modifier.testTag("qrex-result-wifi-copy-warning"),
+            onDismissRequest = { confirmWifiCopy = false },
+            title = { Text(tr("copy")) },
+            text = { Text(tr("wifi_warning")) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirmWifiCopy = false
+                        copyQrToClipboard(context, raw)
+                        Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier.heightIn(min = 48.dp).testTag("qrex-result-wifi-copy-confirm")
+                ) { Text(tr("copy")) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { confirmWifiCopy = false },
+                    modifier = Modifier.heightIn(min = 48.dp).testTag("qrex-result-wifi-copy-cancel")
+                ) { Text(tr("cancel")) }
+            }
+        )
     }
     if (confirmWifiPngExport) {
         AlertDialog(
@@ -869,6 +907,7 @@ internal fun approvedWifiQrExport(candidate: String?): String? =
 private fun CreateScreen(
     screenshotMode: String? = null,
     initialValue: String? = null,
+    onBack: () -> Unit,
     onResult: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -944,7 +983,7 @@ private fun CreateScreen(
             else Locale.forLanguageTag(displayLanguage)
         DateTimeFormatter.ofPattern("dd.MM.yyyy · HH:mm", locale)
     }
-    val input = content.trim()
+    val input = createQrInputText(kind, content)
     val payload = when (kind) {
         0 -> if (QRContent.safeUrl(input) != null) input else ""
         1 -> input
@@ -1050,42 +1089,51 @@ private fun CreateScreen(
                 .testTag("qrex-create-scroll")
                 .padding(horizontal = horizontalPadding, vertical = 8.dp)
         ) {
+            // Reference 03: a compact navigation header rather than a second
+            // launcher logo. Back returns to Scanner; neither QR data nor
+            // pending exports are copied to logs or another application.
             Row(
-                Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                Modifier.fillMaxWidth().heightIn(min = 52.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
-                    QrexBrandMark(logoSize = 32.dp, textSize = 18.sp)
-                    Text(tr("tagline"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                }
-                Icon(Icons.Default.Shield, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                // Visible advanced QR disclosure shares the existing header
-                // row. It adds NO vertical space ahead of the real URL form:
-                // emulator screenshot verification requires the input visible.
-                TextButton(
-                    onClick = { showAdvancedTypes = !showAdvancedTypes },
-                    modifier = Modifier.heightIn(min = 52.dp)
-                        .testTag("qrex-create-more-types"),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                IconButton(
+                    onClick = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus(force = true)
+                        onBack()
+                    },
+                    modifier = Modifier.size(48.dp).testTag("qrex-create-back")
                 ) {
-                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
-                        modifier = Modifier.size(18.dp))
-                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
-                        fontSize = 11.sp)
+                    Icon(Icons.Default.ArrowBack, contentDescription = tr("back"),
+                        tint = MaterialTheme.colorScheme.onBackground)
                 }
+                Text(
+                    tr("create_qr"),
+                    modifier = Modifier.weight(1f).testTag("qrex-create-title"),
+                    textAlign = TextAlign.Center, maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold, fontSize = QrexDesign.titleTextSize,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 Box {
-                    IconButton(onClick = { createMenu = true }, modifier = Modifier.size(48.dp)) {
+                    IconButton(
+                        onClick = { createMenu = true },
+                        modifier = Modifier.size(48.dp).testTag("qrex-create-overflow")
+                    ) {
                         Icon(Icons.Default.MoreVert, contentDescription = tr("more"),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    DropdownMenu(expanded = createMenu, onDismissRequest = { createMenu = false }) {
-                        // Only advanced/unpinned types belong in the
-                        // overflow; never duplicate the visible quick choices.
+                    DropdownMenu(
+                        expanded = createMenu,
+                        onDismissRequest = { createMenu = false }
+                    ) {
+                        // All four advanced types remain real, reachable actions.
                         val overflowTypes = listOf(3, 4, 5, 7)
                         overflowTypes.forEach { type ->
-                            DropdownMenuItem(text = { Text(types[type]) }, onClick = {
+                            DropdownMenuItem(
+                                text = { Text(types[type]) },
+                                modifier = Modifier.testTag("qrex-create-overflow-type-$type"),
+                                onClick = {
                                 kind = type
                                 content = ""
                                 password = ""
@@ -1101,12 +1149,29 @@ private fun CreateScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(7.dp))
-            Text(tr("create_qr"), color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold, fontSize = QrexDesign.titleTextSize)
-            Text(tr("enter_details"), modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = QrexDesign.supportingTextSize)
+            Row(
+                Modifier.fillMaxWidth().padding(bottom = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    tr("enter_details"), modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = QrexDesign.supportingTextSize,
+                    maxLines = 3, overflow = TextOverflow.Ellipsis
+                )
+                // Expose advanced QR formats without a second line of tabs.
+                TextButton(
+                    onClick = { showAdvancedTypes = !showAdvancedTypes },
+                    modifier = Modifier.heightIn(min = 52.dp)
+                        .testTag("qrex-create-more-types"),
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
+                        modifier = Modifier.size(18.dp))
+                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        fontSize = 11.sp)
+                }
+            }
 
             val quickTypes = listOf(0, 1, 2, 6)
             val selectType: (Int) -> Unit = { index ->
@@ -1219,11 +1284,21 @@ private fun CreateScreen(
                     modifier = Modifier.fillMaxWidth().testTag("qrex-create-wifi-password"),
                     label = { Text(tr("optional_password")) },
                     singleLine = true,
+                    // Use Android's password IME to avoid suggestions and
+                    // personalized learning for private Wi-Fi credentials.
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (reveal) VisualTransformation.None
                         else PasswordVisualTransformation(),
                     trailingIcon = {
-                        TextButton(onClick = { reveal = !reveal }) {
-                            Text(if (reveal) tr("hide") else tr("show"))
+                        TextButton(
+                            onClick = { reveal = !reveal },
+                            modifier = Modifier.heightIn(min = 48.dp)
+                                .testTag("qrex-wifi-visibility")
+                        ) {
+                            Text(
+                                if (reveal) tr("hide") else tr("show"),
+                                modifier = Modifier.testTag("qrex-wifi-visibility-label")
+                            )
                         }
                     }
                 )
@@ -1301,32 +1376,36 @@ private fun CreateScreen(
             // Render a card only after there is a real generated QR bitmap.
             if (previewVisible && qr != null) {
                 Spacer(Modifier.height(12.dp))
+                // Centered thumbnail card matches the Create reference; never
+                // repeat an arbitrary QR payload (possibly containing a private
+                // URL token) as decorative preview text beneath the image.
                 QrexPanel(
-                    Modifier.fillMaxWidth().testTag("qrex-create-preview-card")
+                    Modifier.fillMaxWidth(0.60f).widthIn(max = 208.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .testTag("qrex-create-preview-card")
                 ) {
                     Column(
-                        Modifier.fillMaxWidth().padding(12.dp),
+                        Modifier.fillMaxWidth().padding(11.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            tr("qr_preview"), fontWeight = FontWeight.SemiBold,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
                         Image(
                             qr.asImageBitmap(),
                             contentDescription = tr("qr_preview"),
                             modifier = Modifier.testTag("qrex-create-preview-ready")
                                 .size(qrSize).background(Color.White).padding(9.dp)
                         )
-                        Text(
-                            QRContent.label(payload),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(9.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant
+                        ) {
+                            Text(
+                                tr("qr_preview"),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Medium, fontSize = 11.sp
+                            )
+                        }
                     }
                 }
             }
@@ -1571,14 +1650,19 @@ private fun HistoryScreen(
                         )
                     else -> absoluteDateFormatter.format(Date(item.timestamp))
                 }
+                // The History list is an index, not a payload preview.
+                // Arbitrary text and URLs can contain access tokens, contact
+                // details or other secrets. Only show a localized QR category;
+                // the user can open the Result for the full value.
                 val detail = when {
                     QRContent.isWifi(item.raw) -> tr("wifi")
-                    QRContent.isEvent(item.raw) -> QRContent.eventField(item.raw, "LOCATION").orEmpty()
+                    QRContent.isEvent(item.raw) -> tr("event")
                     item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> tr("contact")
                     item.raw.startsWith("mailto:", ignoreCase = true) -> tr("email")
                     item.raw.startsWith("tel:", ignoreCase = true) -> tr("phone")
                     item.raw.startsWith("geo:", ignoreCase = true) -> tr("location")
-                    else -> item.raw
+                    QRContent.safeUrl(item.raw) != null -> tr("url")
+                    else -> tr("text")
                 }
                 Surface(
                     onClick = { onOpen(item.raw) },
@@ -1598,26 +1682,41 @@ private fun HistoryScreen(
                         QrexHistoryGlyph(icon, tint)
                         Spacer(Modifier.width(9.dp))
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            // Generic text QR codes may contain tokens or
+                            // personal notes; do not render their raw payload
+                            // as the History row title.
+                            val rowTitle = if (detail == tr("text")) detail
+                                else QRContent.label(item.raw)
                             Text(
-                                QRContent.label(item.raw),
+                                rowTitle,
                                 maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = QrexDesign.actionTextSize
                             )
-                            // Favorites is a quick index, not a preview of secret tokens or
-                            // long QR payloads. Full details remain on the Result screen.
-                            val subtitle = if (favoritesPage) date else
-                                listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
+                            // Both History and Favorites identify the QR
+                            // category and its timestamp without ever echoing
+                            // a password, URL query token or raw note.
+                            val subtitle = listOf(detail, date)
+                                .filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
                                 subtitle,
+                                modifier = Modifier.testTag(
+                                    if (favoritesPage) "qrex-favorites-subtitle"
+                                    else "qrex-history-subtitle"
+                                ),
                                 maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
                             )
                         }
+                        // Compose translations must be resolved during
+                        // composition, not inside the non-composable semantics
+                        // modifier lambda on older Android builds.
+                        val savedStateDescription =
+                            if (item.saved) tr("saved") else tr("add_favorite")
                         IconButton(
                             onClick = {
                                 // Favorite is a direct, visible action on every row.
@@ -1632,7 +1731,9 @@ private fun HistoryScreen(
                             modifier = Modifier.size(48.dp).testTag(
                                 if (favoritesPage) "qrex-favorites-remove"
                                 else "qrex-history-favorite"
-                            )
+                            ).semantics {
+                                stateDescription = savedStateDescription
+                            }
                         ) {
                             Icon(
                                 if (item.saved) Icons.Default.Favorite
@@ -1693,6 +1794,8 @@ private fun HistoryScreen(
                                     DropdownMenuItem(
                                         text = { Text(tr("delete")) },
                                         onClick = { historyMenu = false; pendingDelete = item },
+                                        modifier = Modifier.heightIn(min = 52.dp)
+                                            .testTag("qrex-history-menu-delete"),
                                         leadingIcon = {
                                             Icon(Icons.Default.Delete, contentDescription = null,
                                                 tint = MaterialTheme.colorScheme.error)
@@ -1709,6 +1812,7 @@ private fun HistoryScreen(
     val target = pendingDelete
     if (target != null) {
         AlertDialog(
+            modifier = Modifier.testTag("qrex-history-delete-dialog"),
             onDismissRequest = { pendingDelete = null },
             title = { Text(tr("delete")) },
             text = { Text(tr("confirm_delete")) },
@@ -1721,10 +1825,15 @@ private fun HistoryScreen(
                         }
                     }
                     pendingDelete = null
-                }) { Text(tr("delete")) }
+                }, modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-history-delete-confirm")) { Text(tr("delete")) }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDelete = null }) { Text(tr("cancel")) }
+                TextButton(
+                    onClick = { pendingDelete = null },
+                    modifier = Modifier.heightIn(min = 48.dp)
+                        .testTag("qrex-history-delete-cancel")
+                ) { Text(tr("cancel")) }
             }
         )
     }
@@ -1745,7 +1854,8 @@ private fun MoreScreen(
     initialDetailPage: String = "root",
     isDarkAppearance: Boolean = true,
     initialShowAbout: Boolean = false,
-    initialShowPrivacy: Boolean = false
+    initialShowPrivacy: Boolean = false,
+    initialShowTerms: Boolean = false
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
@@ -1753,7 +1863,7 @@ private fun MoreScreen(
     var showTheme by remember { mutableStateOf(false) }
     // The real privacy dialog can be captured in debug-only screenshot mode.
     var showPrivacy by remember(initialShowPrivacy) { mutableStateOf(initialShowPrivacy) }
-    var showTerms by remember { mutableStateOf(false) }
+    var showTerms by remember(initialShowTerms) { mutableStateOf(initialShowTerms) }
     // Debug screenshot routing can open the real About dialog without
     // tapping approximate screen coordinates. Normal launches stay closed.
     var showAbout by remember(initialShowAbout) { mutableStateOf(initialShowAbout) }
@@ -1907,7 +2017,8 @@ private fun MoreScreen(
                                 else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                                .testTag("qrex-theme-choice-$mode"),
+                                .testTag("qrex-theme-choice-$mode")
+                                .semantics { selected = store.themeMode == mode },
                             color = MaterialTheme.colorScheme.surface
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically,
@@ -1921,7 +2032,11 @@ private fun MoreScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showTheme = false }) { Text(tr("close")) }
+                TextButton(
+                    onClick = { showTheme = false },
+                    modifier = Modifier.heightIn(min = 48.dp)
+                        .testTag("qrex-theme-close")
+                ) { Text(tr("close")) }
             }
         )
     }
@@ -2025,13 +2140,15 @@ private fun MoreScreen(
                         exportPdf.launch("QREX-Saved-Codes.pdf")
                     }
                 },
-                modifier = Modifier.testTag("qrex-export-consent-confirm")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-export-consent-confirm")
             ) { Text("PDF") }
         },
         dismissButton = {
             TextButton(
                 onClick = { confirmPdfExport = false },
-                modifier = Modifier.testTag("qrex-export-consent-cancel")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-export-consent-cancel")
             ) { Text(tr("cancel")) }
         }
     )
@@ -2046,13 +2163,15 @@ private fun MoreScreen(
                     if (store.clearHistory()) showDelete = false
                     else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 },
-                modifier = Modifier.testTag("qrex-clear-history-confirm")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-clear-history-confirm")
             ) { Text(tr("clear_history")) }
         },
         dismissButton = {
             TextButton(
                 onClick = { showDelete = false },
-                modifier = Modifier.testTag("qrex-clear-history-cancel")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-clear-history-cancel")
             ) { Text(tr("cancel")) }
         }
     )
@@ -2090,6 +2209,8 @@ private fun MoreScreen(
                         Spacer(Modifier.width(12.dp))
                         Text(
                             tr("privacy_summary"),
+                            modifier = Modifier.weight(1f)
+                                .testTag("qrex-privacy-summary-text"),
                             fontSize = 14.sp, softWrap = true,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -2148,14 +2269,45 @@ private fun MoreScreen(
             ) { Text(tr("read_full_policy")) }
         }
     )
-    if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
-        title = { Text(tr("terms_of_use")) },
-        text = { Text(tr("terms_summary")) },
-        confirmButton = { TextButton(onClick = { showTerms = false }) {
-            Text(tr("close"))
-        } },
-        dismissButton = { TextButton(onClick = {
-            showTerms = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"))
-        }) { Text(tr("terms_of_use")) } })
+    if (showTerms) AlertDialog(
+        onDismissRequest = { showTerms = false },
+        modifier = Modifier.testTag("qrex-terms-dialog"),
+        title = { Text(tr("terms_of_use"), fontWeight = FontWeight.Bold) },
+        text = {
+            // Keep the full localized terms readable at 200% font scale
+            // and in landscape; actions stay outside the scroll area.
+            Column(
+                Modifier.fillMaxWidth().heightIn(max = 340.dp)
+                    .verticalScroll(rememberScrollState())
+                    .testTag("qrex-terms-content")
+            ) {
+                Text(
+                    tr("terms_summary"),
+                    modifier = Modifier.fillMaxWidth()
+                        .testTag("qrex-terms-summary"),
+                    softWrap = true,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { showTerms = false },
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-terms-close")
+            ) { Text(tr("close")) }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showTerms = false
+                    openLink(context, Uri.parse(
+                        "https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"
+                    ))
+                },
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-terms-full-document")
+            ) { Text(tr("terms_of_use")) }
+        }
+    )
 }

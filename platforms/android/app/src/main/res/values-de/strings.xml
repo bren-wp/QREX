@@ -68,6 +68,7 @@
     <string name="terms_summary">Prüfe QR-Ziele vor dem Öffnen. Teile oder exportiere nur Codes, für die du eine Berechtigung hast. Exportierte PDFs können gespeicherte WLAN-Passwörter enthalten. QREX wird ohne Gewährleistung bereitgestellt, soweit gesetzlich zulässig. Hilfe: brendigo.com.</string>
     <string name="read_full_policy">Vollständige Erklärung lesen</string>
     <string name="tagline">Scannen. Erstellen. Teilen.</string>
+    <string name="scanner_local_message">Das Scannen erfolgt auf deinem Gerät.</string>
     <string name="event">Termin</string>
     <string name="event_title">Titel des Termins</string>
     <string name="event_start">Beginn</string>

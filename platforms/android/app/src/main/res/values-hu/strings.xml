@@ -68,6 +68,7 @@
     <string name="terms_summary">A hivatkozások megnyitása előtt ellenőrizd a QR-célcímet. Csak engedélyezett kódokat ossz meg. Az exportált PDF-ek mentett Wi-Fi-jelszavakat tartalmazhatnak. A QREX jogszabály szerint megengedett mértékig garancia nélkül érhető el. Támogatás: brendigo.com.</string>
     <string name="read_full_policy">Teljes szabályzat</string>
     <string name="tagline">Olvass be. Hozz létre. Ossz meg.</string>
+    <string name="scanner_local_message">A beolvasás az eszközödön történik.</string>
     <string name="event">Esemény</string>
     <string name="event_title">Esemény címe</string>
     <string name="event_start">Kezdés</string>

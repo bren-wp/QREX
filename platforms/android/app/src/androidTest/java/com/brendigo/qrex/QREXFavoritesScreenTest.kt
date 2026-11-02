@@ -75,6 +75,10 @@ class QREXFavoritesScreenTest {
                 .performTextReplacement(host)
             val row = rule.onNodeWithTag("qrex-favorites-row", useUnmergedTree = true)
             row.assertIsDisplayed()
+            // Saved cards expose their localized QR category and age, without
+            // requiring a tap or duplicating credential/token-bearing payloads.
+            rule.onNodeWithTag("qrex-favorites-subtitle", useUnmergedTree = true)
+                .assertIsDisplayed()
             // Favorites previews do not print whole URLs or private query tokens.
             rule.onAllNodesWithText("private-fixture-marker", substring = true,
                 useUnmergedTree = true).assertCountEquals(0)

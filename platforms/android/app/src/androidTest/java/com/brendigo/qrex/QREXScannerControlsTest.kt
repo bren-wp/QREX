@@ -20,6 +20,8 @@ class QREXScannerControlsTest {
             rule.onAllNodesWithTag("qrex-scan-gallery", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
+        rule.onNodeWithTag("qrex-scanner-local-message", useUnmergedTree = true)
+            .assertIsDisplayed()
         for (tag in listOf("qrex-scan-gallery", "qrex-scan-torch")) {
             val button = rule.onNodeWithTag(tag, useUnmergedTree = true)
                 .assertIsDisplayed()

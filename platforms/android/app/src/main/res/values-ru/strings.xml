@@ -68,6 +68,7 @@
     <string name="terms_summary">Проверяйте QR-адреса перед открытием ссылок. Делитесь только разрешёнными кодами. Экспортированные PDF могут содержать сохранённые пароли Wi-Fi. QREX предоставляется без гарантий в пределах закона. Поддержка: brendigo.com.</string>
     <string name="read_full_policy">Читать политику полностью</string>
     <string name="tagline">Сканируй. Создавай. Делись.</string>
+    <string name="scanner_local_message">Сканирование выполняется на вашем устройстве.</string>
     <string name="event">Событие</string>
     <string name="event_title">Название события</string>
     <string name="event_start">Начало</string>

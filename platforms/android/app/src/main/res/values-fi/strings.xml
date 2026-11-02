@@ -68,6 +68,7 @@
     <string name="terms_summary">Tarkista QR-kohteet ennen linkkien avaamista. Jaa tai vie vain koodeja, joihin sinulla on lupa. Viedyt PDF-tiedostot voivat sisältää tallennettuja Wi-Fi-salasanoja. QREX tarjotaan ilman takuita lain sallimissa rajoissa. Tuki: brendigo.com.</string>
     <string name="read_full_policy">Lue koko käytäntö</string>
     <string name="tagline">Skannaa. Luo. Jaa.</string>
+    <string name="scanner_local_message">Skannaus tapahtuu laitteellasi.</string>
     <string name="event">Tapahtuma</string>
     <string name="event_title">Tapahtuman nimi</string>
     <string name="event_start">Alku</string>

@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -101,6 +102,10 @@ class QREXMoreAboutTest {
             rule.onNodeWithTag("qrex-about-version", useUnmergedTree = true)
                 .assertIsDisplayed()
         }
+        rule.onNodeWithTag("qrex-about-tagline", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
+        rule.onNodeWithTag("qrex-about-domain", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
 
         // Only the secondary user action may open the website; do not open
         // the browser during this regression. Measure both real controls.
