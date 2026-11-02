@@ -47,8 +47,9 @@ class QREXExportScreenTest {
         assertTrue("PDF action must be >=48dp tall", bounds.bottom - bounds.top >= 48.dp)
         if (QREXStore(rule.activity.applicationContext).items.none { it.saved }) {
             pdf.assertIsNotEnabled()
-            val reason = pdf.fetchSemanticsNode().config
-                .getOrNull(SemanticsProperties.StateDescription)
+            val reason = pdf.fetchSemanticsNode().config[
+                SemanticsProperties.StateDescription
+            ]
             assertTrue("Disabled PDF must explain why there are no saved QR codes",
                 !reason.isNullOrBlank())
             rule.onNodeWithTag("qrex-export-no-saved", useUnmergedTree = true)
