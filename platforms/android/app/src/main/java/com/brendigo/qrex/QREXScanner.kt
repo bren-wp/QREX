@@ -336,6 +336,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         else if (compactScan) 64.dp else 80.dp)
                     .testTag("qrex-scan-gallery"),
                 shape = RoundedCornerShape(15.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = if (inCamera) 4.dp else 2.dp,
+                    pressedElevation = 1.dp,
+                    disabledElevation = 0.dp
+                ),
                 border = if (inCamera) BorderStroke(
                     1.dp, QrexDesign.accentBright.copy(alpha = .55f)
                 ) else null,
@@ -374,6 +379,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         else if (compactScan) 64.dp else 80.dp)
                     .testTag("qrex-scan-torch"),
                 shape = RoundedCornerShape(15.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = if (inCamera) 4.dp else 2.dp,
+                    pressedElevation = 1.dp,
+                    disabledElevation = 0.dp
+                ),
                 border = BorderStroke(
                     1.dp, if (inCamera) Color.White.copy(alpha = .19f)
                     else MaterialTheme.colorScheme.outlineVariant
