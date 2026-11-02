@@ -72,6 +72,8 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
             self.assertIn(color, history)
         self.assertIn('testTag("qrex-history-category-glyph")', design)
         self.assertIn("Modifier.size(38.dp).background(Brush.verticalGradient(", design)
+        self.assertIn("listOf(Color.White.copy(alpha = .14f), Color.Transparent)", design)
+        self.assertNotIn("listOf(background.copy(alpha = .78f), background)", design)
         self.assertIn("tint = Color.White", design)
         self.assertIn("shadowElevation = 3.dp", design)
 
