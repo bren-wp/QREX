@@ -2207,6 +2207,8 @@ private fun MoreScreen(
                         Spacer(Modifier.width(12.dp))
                         Text(
                             tr("privacy_summary"),
+                            modifier = Modifier.weight(1f)
+                                .testTag("qrex-privacy-summary-text"),
                             fontSize = 14.sp, softWrap = true,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -2265,14 +2267,45 @@ private fun MoreScreen(
             ) { Text(tr("read_full_policy")) }
         }
     )
-    if (showTerms) AlertDialog(onDismissRequest = { showTerms = false },
-        title = { Text(tr("terms_of_use")) },
-        text = { Text(tr("terms_summary")) },
-        confirmButton = { TextButton(onClick = { showTerms = false }) {
-            Text(tr("close"))
-        } },
-        dismissButton = { TextButton(onClick = {
-            showTerms = false
-            openLink(context, Uri.parse("https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"))
-        }) { Text(tr("terms_of_use")) } })
+    if (showTerms) AlertDialog(
+        onDismissRequest = { showTerms = false },
+        modifier = Modifier.testTag("qrex-terms-dialog"),
+        title = { Text(tr("terms_of_use"), fontWeight = FontWeight.Bold) },
+        text = {
+            // Keep the full localized terms readable at 200% font scale
+            // and in landscape; actions stay outside the scroll area.
+            Column(
+                Modifier.fillMaxWidth().heightIn(max = 340.dp)
+                    .verticalScroll(rememberScrollState())
+                    .testTag("qrex-terms-content")
+            ) {
+                Text(
+                    tr("terms_summary"),
+                    modifier = Modifier.fillMaxWidth()
+                        .testTag("qrex-terms-summary"),
+                    softWrap = true,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { showTerms = false },
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-terms-close")
+            ) { Text(tr("close")) }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    showTerms = false
+                    openLink(context, Uri.parse(
+                        "https://github.com/bren-wp/QREX/blob/main/docs/TERMS.md"
+                    ))
+                },
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-terms-full-document")
+            ) { Text(tr("terms_of_use")) }
+        }
+    )
 }
