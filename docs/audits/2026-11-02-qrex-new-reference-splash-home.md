@@ -63,6 +63,59 @@ be asserted from this composite.
 - Earlier failed CI runs are not evidence that the new head is green;
   final exact-head CI must succeed before merge.
 
+## Additional native screen-by-screen visual pass
+
+### 03 — Result
+
+- The active type glyph keeps the reference's 62dp icon plate and 32dp
+  category vector, now with a vertical blue gradient, 1dp illuminated
+  edge and 5dp native elevation; QR values and sensitive Wi-Fi rules remain
+  unchanged.
+- Primary blue actions use a three-stop vertical gradient, 1dp colored
+  rim and pressed-state elevation. They remain real Material buttons,
+  with the same callbacks and minimum 54dp touch height.
+- The Summary / action cards gain only restrained surface shadows; result
+  Copy, Share, QR, Favorite, Edit and Delete actions remain independently
+  accessible and guarded by their existing consent checks.
+
+### 04 — Create
+
+- The selected QR type (Link, Text, Wi-Fi, Contact or advanced type) uses
+  the shared gradient, highlighted border and raised card shadow.
+- Compact and enlarged-text layouts still use 2x2 choices to avoid
+  truncating translated labels. Selection resets the correct form state.
+- QR previews remain bounded and never generated for an off-screen keyboard
+  state; Wi-Fi export still requires explicit approval.
+
+### 05 — History / 06 — Favorites
+
+- History rows use 3dp surface depth, while category glyphs have their own
+  subtle edge and 2dp elevation. Live card taps and favorite/menu affordances
+  are not overlaid by decorative layers.
+- Privacy-preserving category labels remain intentional: arbitrary QR
+  credentials/tokens must not appear in a preview just to mimic illustrative
+  text on the marketing composite.
+
+### 07 — More
+
+- Settings cards retain the existing two-column responsive layout with real
+  actions, now with 36dp category icon plates, subtle tinted borders and
+  2dp native elevation for the intended 3D hierarchy.
+- Destructive clearing remains separate and confirmation-gated.
+
+### Verification and status
+
+- The previous API 26/31 instrumentation failure was a test-host issue:
+  `createComposeRule` tried to launch an undeclared default
+  `androidx.activity.ComponentActivity`. The test now uses the registered
+  QREX `MainActivity` and replaces its Compose content on the UI thread.
+- Screenshot references supplied here are perspective-composited marketing
+  images, **not** independently aligned source screenshots. This code pass
+  does not establish measured zero-pixel difference.
+- Tests now assert the resulting gradients, depth tokens, and both working
+  scanner flash callbacks. The final exact-commit CI status must be reviewed
+  before the draft PR can be merged or a release created.
+
 ## Unchanged
 
 Application ID `com.brendigo.qrex`, versionCode 127, signing keys, history,
