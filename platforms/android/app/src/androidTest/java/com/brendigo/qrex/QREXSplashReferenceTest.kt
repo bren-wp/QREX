@@ -34,8 +34,10 @@ class QREXSplashReferenceTest {
         assertTrue("Logo and wordmark overlap", logo.bottom <= title.top)
         assertTrue("Wordmark and slogan overlap", title.bottom <= slogan.top)
         assertTrue("Slogan and footer overlap", slogan.bottom <= footer.top)
-        assertTrue("Track exceeds available width", progress.width < viewport.width)
-        assertTrue("Track too small versus supplied reference", progress.width >= 80.dp)
+        val trackWidth = progress.right - progress.left
+        val viewportWidth = viewport.right - viewport.left
+        assertTrue("Track exceeds available width", trackWidth < viewportWidth)
+        assertTrue("Track too small versus supplied reference", trackWidth >= 80.dp)
         assertTrue("Footer must remain above viewport bottom", footer.bottom <= viewport.bottom)
     }
 }
