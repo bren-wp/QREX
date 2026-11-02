@@ -54,13 +54,11 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
         # The native reference button has transparent Material container over
         # an opaque three-stop Compose gradient. Verify every declared stop,
         # not just a removed flat-color literal. White text must remain AA.
-        gradient = re.search(
-            r"val referenceButtonBrush = Brush\.verticalGradient\(.*?"
-            r"listOf\((.*?)\)\s*\)",
-            self.design, re.DOTALL,
-        )
-        self.assertIsNotNone(gradient, "Primary gradient missing")
-        stops = re.findall(r"Color\(0xFF([A-Fa-f0-9]{6})\)", gradient.group(1))
+        self.assertIn("val referenceButtonBrush = Brush.verticalGradient(", self.design)
+        gradient = self.design.split(
+            "val referenceButtonBrush = Brush.verticalGradient(", 1
+        )[1].split("val referenceGlyphBrush", 1)[0]
+        stops = re.findall(r"Color\(0xFF([A-Fa-f0-9]{6})\)", gradient)
         self.assertEqual(len(stops), 3, "Expected three explicit gradient stops")
         for color in stops:
             with self.subTest(stop=color):
