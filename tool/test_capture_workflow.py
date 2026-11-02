@@ -113,6 +113,15 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("compact|720x1280|360|1.0|" + all_screens, responsive)
         self.assertIn("reference|1080x2340|440|1.0|" + all_screens, responsive)
         self.assertIn("largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export,about,privacy", responsive)
+        for profile in (
+            "tiny|700x1280|400|1.0|create,result,history,saved,more,language,export",
+            "tablet|1600x2560|320|1.0|create,result,history,saved,more,language,export",
+            "landscape|1280x720|320|1.0|create,result,more,language,export",
+            "xlfont|720x1280|360|2.0|result,more,language,export",
+        ):
+            self.assertIn(profile, responsive)
+        self.assertIn("verify(Path(sys.argv[2]), responsive=True)", responsive)
+        self.assertIn("--responsive", WORKFLOW.read_text("utf-8"))
         self.assertIn("--es qrex_theme light", responsive)
         self.assertIn("theme_args=(--es qrex_theme dark)", responsive)
         self.assertIn("--es qrex_theme dark", body)

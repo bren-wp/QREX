@@ -21,6 +21,10 @@ profiles=(
   "reference|1080x2340|440|1.0|splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy"
   "largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export,about,privacy"
   "light|1080x2340|440|1.0|create,scan,more,about,privacy"
+  "tiny|700x1280|400|1.0|create,result,history,saved,more,language,export"
+  "tablet|1600x2560|320|1.0|create,result,history,saved,more,language,export"
+  "landscape|1280x720|320|1.0|create,result,more,language,export"
+  "xlfont|720x1280|360|2.0|result,more,language,export"
 )
 
 for spec in "${profiles[@]}"; do
@@ -48,7 +52,7 @@ for spec in "${profiles[@]}"; do
         && test -s "$hierarchy" \
         && python3 tool/check_android_screen.py "$hierarchy" "responsive-${screen}" \
         && timeout -k 3s 20s adb exec-out screencap -p > "$file" \
-        && python3 tool/verify_screenshots.py "$file"; then
+        && python3 tool/verify_screenshots.py --responsive "$file"; then
         break
       fi
       rm -f "$file" "$hierarchy"
@@ -64,11 +68,15 @@ from tool.verify_screenshots import verify
 expected = {"compact": (720, 1280),
             "reference": (1080, 2340),
             "largefont": (1080, 2340),
-            "light": (1080, 2340)}
-actual = verify(Path(sys.argv[2]))
+            "light": (1080, 2340),
+            "tiny": (700, 1280),
+            "tablet": (1600, 2560),
+            "landscape": (1280, 720),
+            "xlfont": (720, 1280)}
+actual = verify(Path(sys.argv[2]), responsive=True)
 if actual != expected[sys.argv[1]]:
     raise ValueError(f"Wrong responsive device size: {actual}")
 PY
   done
 done
-echo "Verified twelve real Android screens at compact/reference sizes, ten large-font and five light variants."
+echo "Verified 12 compact, 12 reference, 10 large-font, 5 light, 7 tiny-phone, 7 tablet, 5 landscape and 4 200%-font actual Android screens."

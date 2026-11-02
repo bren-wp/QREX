@@ -113,7 +113,18 @@ jobs:
           for screen in create scan more about privacy; do
             test -s "docs/screenshots/responsive/light-${screen}.png"
           done
-          python3 tool/verify_screenshots.py docs/screenshots/responsive/*.png
+          for profile in tiny tablet; do
+            for screen in create result history saved more language export; do
+              test -s "docs/screenshots/responsive/${profile}-${screen}.png"
+            done
+          done
+          for screen in create result more language export; do
+            test -s "docs/screenshots/responsive/landscape-${screen}.png"
+          done
+          for screen in result more language export; do
+            test -s "docs/screenshots/responsive/xlfont-${screen}.png"
+          done
+          python3 tool/verify_screenshots.py --responsive docs/screenshots/responsive/*.png
       - uses: actions/upload-artifact@v4
         with:
           name: qrex-responsive-android

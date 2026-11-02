@@ -14,7 +14,7 @@ from pathlib import Path
 SIGNATURE = bytes((137, 80, 78, 71, 13, 10, 26, 10))
 
 
-def verify(path: Path) -> tuple[int, int]:
+def verify(path: Path, *, responsive: bool = False) -> tuple[int, int]:
     data = path.read_bytes()
     if len(data) < 20000 or not data.startswith(SIGNATURE):
         raise ValueError(f"{path}: missing or unexpectedly small PNG")
@@ -36,7 +36,14 @@ def verify(path: Path) -> tuple[int, int]:
         if name == b"IEND":
             has_end = True
             break
-    if not has_end or offset != len(data) or width < 700 or height < 1200:
+    if not has_end or offset != len(data):
+        raise ValueError(f"{path}: incomplete or invalid PNG")
+    if responsive:
+        # Legitimate landscape/tablet captures must be verified at their real
+        # resolution, not resized to meet portrait-only Google Play limits.
+        if width < 480 or height < 600 or width * height < 500_000:
+            raise ValueError(f"{path}: implausible responsive screen capture")
+    elif width < 700 or height < 1200:
         raise ValueError(f"{path}: incomplete or implausible phone capture")
     return width, height
 
@@ -44,8 +51,12 @@ def verify(path: Path) -> tuple[int, int]:
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         raise SystemExit("Provide one or more screenshot filenames.")
-    for arg in sys.argv[1:]:
+    responsive = sys.argv[1] == "--responsive"
+    filenames = sys.argv[2:] if responsive else sys.argv[1:]
+    if not filenames:
+        raise SystemExit("Provide screenshot filenames.")
+    for arg in filenames:
         path = Path(arg)
-        w, h = verify(path)
+        w, h = verify(path, responsive=responsive)
         print(f"Verified genuine PNG structure: {path} ({w} x {h})")
 
