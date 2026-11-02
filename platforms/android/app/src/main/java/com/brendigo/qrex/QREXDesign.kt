@@ -357,8 +357,10 @@ internal fun QrexHistoryGlyph(
         shadowElevation = 3.dp
     ) {
         Box(
+            // A translucent white highlight over an opaque darker Surface
+            // changes RGB at the top; varying background alpha alone does not.
             Modifier.size(38.dp).background(Brush.verticalGradient(
-                listOf(background.copy(alpha = .78f), background)
+                listOf(Color.White.copy(alpha = .14f), Color.Transparent)
             )),
             contentAlignment = Alignment.Center
         ) {
