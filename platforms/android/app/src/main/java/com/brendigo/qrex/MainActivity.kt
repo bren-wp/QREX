@@ -1694,12 +1694,17 @@ private fun HistoryScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = QrexDesign.actionTextSize
                             )
-                            // Favorites is a quick index, not a preview of secret tokens or
-                            // long QR payloads. Full details remain on the Result screen.
-                            val subtitle = if (favoritesPage) date else
-                                listOf(detail, date).filter { it.isNotBlank() }.joinToString(" · ")
+                            // Both History and Favorites identify the QR
+                            // category and its timestamp without ever echoing
+                            // a password, URL query token or raw note.
+                            val subtitle = listOf(detail, date)
+                                .filter { it.isNotBlank() }.joinToString(" · ")
                             Text(
                                 subtitle,
+                                modifier = Modifier.testTag(
+                                    if (favoritesPage) "qrex-favorites-subtitle"
+                                    else "qrex-history-subtitle"
+                                ),
                                 maxLines = if (largeHistoryText) 2 else 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1720,7 +1725,10 @@ private fun HistoryScreen(
                             modifier = Modifier.size(48.dp).testTag(
                                 if (favoritesPage) "qrex-favorites-remove"
                                 else "qrex-history-favorite"
-                            )
+                            ).semantics {
+                                stateDescription = if (item.saved) tr("saved")
+                                    else tr("add_favorite")
+                            }
                         ) {
                             Icon(
                                 if (item.saved) Icons.Default.Favorite
