@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
 import android.widget.Toast
 import androidx.compose.ui.text.font.FontWeight
@@ -100,7 +101,9 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                         // A consistent 36dp flag slot keeps all names and radio
                         // controls aligned despite variable emoji glyph widths.
                         androidx.compose.foundation.layout.Box(
-                            Modifier.size(36.dp),
+                            Modifier.size(36.dp)
+                                .testTag("qrex-language-flag-$code")
+                                .clearAndSetSemantics {},
                             contentAlignment = Alignment.Center
                         ) {
                             Text(flags[code] ?: "🌐", fontSize = 23.sp, maxLines = 1)
@@ -115,7 +118,14 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                                 color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Spacer(Modifier.width(8.dp))
-                        RadioButton(selected = selected, onClick = null)
+                        // Selection is announced by the real clickable row.
+                        // The radio glyph is decorative, not a second
+                        // focusable/readable control for TalkBack.
+                        RadioButton(
+                            selected = selected,
+                            onClick = null,
+                            modifier = Modifier.clearAndSetSemantics {}
+                        )
                     }
                 }
             }
