@@ -102,8 +102,8 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                         // controls aligned despite variable emoji glyph widths.
                         androidx.compose.foundation.layout.Box(
                             Modifier.size(36.dp)
-                                .testTag("qrex-language-flag-$code")
-                                .clearAndSetSemantics {},
+                                .clearAndSetSemantics {}
+                                .testTag("qrex-language-flag-$code"),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(flags[code] ?: "🌐", fontSize = 23.sp, maxLines = 1)
