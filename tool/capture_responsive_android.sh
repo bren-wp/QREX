@@ -17,14 +17,14 @@ trap restore_device EXIT
 # plus a large-font
 # accessibility sample of every functional destination.
 profiles=(
-  "compact|720x1280|360|1.0|splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy"
-  "reference|1080x2340|440|1.0|splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy"
-  "largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export,about,privacy"
-  "light|1080x2340|440|1.0|create,scan,more,about,privacy"
-  "tiny|700x1280|400|1.0|create,result,history,saved,more,language,export"
-  "tablet|1600x2560|320|1.0|create,result,history,saved,more,language,export"
-  "landscape|1280x720|320|1.0|create,result,more,language,export"
-  "xlfont|720x1280|360|2.0|result,more,language,export"
+  "compact|720x1280|360|1.0|splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy,terms"
+  "reference|1080x2340|440|1.0|splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy,terms"
+  "largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export,about,privacy,terms"
+  "light|1080x2340|440|1.0|create,scan,more,about,privacy,terms"
+  "tiny|700x1280|400|1.0|create,result,history,saved,more,language,export,terms"
+  "tablet|1600x2560|320|1.0|create,result,history,saved,more,language,export,terms"
+  "landscape|1280x720|320|1.0|create,result,more,language,export,terms"
+  "xlfont|720x1280|360|2.0|result,more,language,export,terms"
 )
 
 for spec in "${profiles[@]}"; do
@@ -83,4 +83,4 @@ if actual != expected[sys.argv[1]]:
 PY
   done
 done
-echo "Verified 12 compact, 12 reference, 10 large-font, 5 light, 7 tiny-phone, 7 tablet, 5 landscape and 4 200%-font actual Android screens."
+echo "Verified 13 compact, 13 reference, 11 large-font, 6 light, 8 tiny-phone, 8 tablet, 6 landscape and 5 200%-font actual Android screens."

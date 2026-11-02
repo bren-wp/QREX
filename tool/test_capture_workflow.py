@@ -108,16 +108,16 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn('qrex-responsive-android', WORKFLOW.read_text("utf-8"))
         self.assertIn("capture_responsive_android.sh", body)
         self.assertNotIn("qrex_light", responsive)
-        self.assertIn("light|1080x2340|440|1.0|create,scan,more,about,privacy", responsive)
-        all_screens = "splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy"
+        self.assertIn("light|1080x2340|440|1.0|create,scan,more,about,privacy,terms", responsive)
+        all_screens = "splash,scan,create,wifi,result,history,saved,more,language,export,about,privacy,terms"
         self.assertIn("compact|720x1280|360|1.0|" + all_screens, responsive)
         self.assertIn("reference|1080x2340|440|1.0|" + all_screens, responsive)
-        self.assertIn("largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export,about,privacy", responsive)
+        self.assertIn("largefont|1080x2340|440|1.6|scan,create,result,history,saved,more,language,export,about,privacy,terms", responsive)
         for profile in (
-            "tiny|700x1280|400|1.0|create,result,history,saved,more,language,export",
-            "tablet|1600x2560|320|1.0|create,result,history,saved,more,language,export",
-            "landscape|1280x720|320|1.0|create,result,more,language,export",
-            "xlfont|720x1280|360|2.0|result,more,language,export",
+            "tiny|700x1280|400|1.0|create,result,history,saved,more,language,export,terms",
+            "tablet|1600x2560|320|1.0|create,result,history,saved,more,language,export,terms",
+            "landscape|1280x720|320|1.0|create,result,more,language,export,terms",
+            "xlfont|720x1280|360|2.0|result,more,language,export,terms",
         ):
             self.assertIn(profile, responsive)
         self.assertIn("verify(Path(sys.argv[2]), responsive=True)", responsive)
@@ -126,7 +126,7 @@ class ScreenshotWorkflowTests(unittest.TestCase):
         self.assertIn("theme_args=(--es qrex_theme dark)", responsive)
         self.assertIn("--es qrex_theme dark", body)
 
-        self.assertIn("for screen in create scan more about privacy; do", WORKFLOW.read_text("utf-8"))
+        self.assertIn("for screen in create scan more about privacy terms; do", WORKFLOW.read_text("utf-8"))
         app = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/MainActivity.kt").read_text("utf-8")
         self.assertIn("val screenshotTheme = if (isDebug && screenshotMode != null)", app)
         self.assertIn("screenshotTheme ?: store.themeMode", app)

@@ -102,6 +102,18 @@ class ForegroundTests(unittest.TestCase):
                 '<node package="com.brendigo.qrex" text="English" />'
             ), "responsive-language-landscape")
 
+    def test_real_terms_dialog_requires_localized_summary_and_close(self):
+        validate(screen(
+            '<node package="com.brendigo.qrex" text="Uvjeti korištenja" />'
+            '<node package="com.brendigo.qrex" text="Provjerite odredište QR koda" />'
+            '<node package="com.brendigo.qrex" text="Zatvori" />'
+        ), "responsive-terms")
+        with self.assertRaisesRegex(ValueError, "provjerite odredište"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="Uvjeti korištenja" />'
+                '<node package="com.brendigo.qrex" text="Zatvori" />'
+            ), "responsive-terms")
+
     def test_real_about_dialog_requires_branded_content_and_close(self):
         hierarchy = screen(
             '<node package="com.brendigo.qrex" text="O aplikaciji" />'

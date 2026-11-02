@@ -103,25 +103,25 @@ jobs:
       - name: Verify compact, reference and large-font device captures
         run: |
           for profile in compact reference; do
-            for screen in splash scan create wifi result history saved more language export about privacy; do
+            for screen in splash scan create wifi result history saved more language export about privacy terms; do
               test -s "docs/screenshots/responsive/${profile}-${screen}.png"
             done
           done
-          for screen in scan create result history saved more language export about privacy; do
+          for screen in scan create result history saved more language export about privacy terms; do
             test -s "docs/screenshots/responsive/largefont-${screen}.png"
           done
-          for screen in create scan more about privacy; do
+          for screen in create scan more about privacy terms; do
             test -s "docs/screenshots/responsive/light-${screen}.png"
           done
           for profile in tiny tablet; do
-            for screen in create result history saved more language export; do
+            for screen in create result history saved more language export terms; do
               test -s "docs/screenshots/responsive/${profile}-${screen}.png"
             done
           done
-          for screen in create result more language export; do
+          for screen in create result more language export terms; do
             test -s "docs/screenshots/responsive/landscape-${screen}.png"
           done
-          for screen in result more language export; do
+          for screen in result more language export terms; do
             test -s "docs/screenshots/responsive/xlfont-${screen}.png"
           done
           python3 tool/verify_screenshots.py --responsive docs/screenshots/responsive/*.png

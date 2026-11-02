@@ -168,7 +168,7 @@ class MainActivity : ComponentActivity() {
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
                 it in setOf("splash", "create", "scan", "result", "history",
-                    "saved", "more", "wifi", "language", "export", "about", "privacy")
+                    "saved", "more", "wifi", "language", "export", "about", "privacy", "terms")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
@@ -211,7 +211,7 @@ private fun QREXApp(
             "create", "wifi", "result" -> 1
             "history" -> 2
             "saved" -> 3
-            "more", "language", "export", "about", "privacy" -> 4
+            "more", "language", "export", "about", "privacy", "terms" -> 4
             else -> 0
         })
     }
@@ -381,7 +381,8 @@ private fun QREXApp(
                                 screenshotMode == "export") screenshotMode else "root",
                             isDarkAppearance = darkUi,
                             initialShowAbout = screenshotMode == "about",
-                            initialShowPrivacy = screenshotMode == "privacy")
+                            initialShowPrivacy = screenshotMode == "privacy",
+                            initialShowTerms = screenshotMode == "terms")
                     }
                 }
             }
@@ -1853,7 +1854,8 @@ private fun MoreScreen(
     initialDetailPage: String = "root",
     isDarkAppearance: Boolean = true,
     initialShowAbout: Boolean = false,
-    initialShowPrivacy: Boolean = false
+    initialShowPrivacy: Boolean = false,
+    initialShowTerms: Boolean = false
 ) {
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
@@ -1861,7 +1863,7 @@ private fun MoreScreen(
     var showTheme by remember { mutableStateOf(false) }
     // The real privacy dialog can be captured in debug-only screenshot mode.
     var showPrivacy by remember(initialShowPrivacy) { mutableStateOf(initialShowPrivacy) }
-    var showTerms by remember { mutableStateOf(false) }
+    var showTerms by remember(initialShowTerms) { mutableStateOf(initialShowTerms) }
     // Debug screenshot routing can open the real About dialog without
     // tapping approximate screen coordinates. Normal launches stay closed.
     var showAbout by remember(initialShowAbout) { mutableStateOf(initialShowAbout) }
