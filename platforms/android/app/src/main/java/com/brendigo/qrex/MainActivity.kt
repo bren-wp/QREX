@@ -413,14 +413,30 @@ private fun PrimaryAction(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val actionShape = RoundedCornerShape(14.dp)
     Button(onClick = onClick, enabled = enabled,
-        modifier = modifier.fillMaxWidth().heightIn(min = 54.dp),
-        shape = RoundedCornerShape(14.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 54.dp)
+            .clip(actionShape)
+            .background(
+                if (enabled) QrexDesign.referenceButtonBrush
+                else androidx.compose.ui.graphics.Brush.verticalGradient(
+                    listOf(MaterialTheme.colorScheme.surfaceVariant,
+                        MaterialTheme.colorScheme.surfaceVariant)
+                )
+            )
+            .border(
+                BorderStroke(1.dp, if (enabled) Color(0xFF258FF4)
+                    else MaterialTheme.colorScheme.outlineVariant),
+                actionShape
+            ),
+        shape = actionShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = QrexDesign.actionBlue, contentColor = Color.White),
+            containerColor = Color.Transparent, contentColor = Color.White,
+            disabledContainerColor = Color.Transparent
+        ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp,
             pressedElevation = 1.dp, disabledElevation = 0.dp)) {
-        Text(text, fontWeight = FontWeight.Bold)
+        Text(text, fontWeight = FontWeight.Bold, fontSize = QrexDesign.actionTextSize)
     }
 }
 
@@ -607,8 +623,19 @@ private fun ResultScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Surface(shape = RoundedCornerShape(14.dp), color = QrexDesign.actionBlue) {
-                    Box(Modifier.size(62.dp), contentAlignment = Alignment.Center) {
+                // 3D-depth glyph from the reference: the actual vector icon
+                // is composited over a native gradient, never a static image.
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = QrexDesign.actionBlue,
+                    border = BorderStroke(1.dp, Color(0xFF248DF9)),
+                    shadowElevation = 5.dp,
+                    modifier = Modifier.testTag("qrex-result-glyph")
+                ) {
+                    Box(
+                        Modifier.size(62.dp).background(QrexDesign.referenceGlyphBrush),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Icon(resultIcon, contentDescription = null,
                             tint = Color.White, modifier = Modifier.size(32.dp))
                     }
