@@ -27,7 +27,12 @@ class ScreenFidelityContracts(unittest.TestCase):
                       self.main)
         self.assertIn("QrexDesign.actionTextSize",
                       self.files["QREXDesign.kt"])
-        self.assertIn("shadowElevation = if (selected) 3.dp else 0.dp", self.main)
+        self.assertIn("shadowElevation = if (selected) 4.dp else 1.dp", self.main)
+        self.assertIn("QrexDesign.referenceButtonBrush", self.main)
+        self.assertIn('testTag("qrex-result-glyph")', self.main)
+        self.assertIn("shadowElevation = 5.dp", self.main)
+        self.assertIn("val referenceButtonBrush = Brush.verticalGradient(", self.files["QREXDesign.kt"])
+        self.assertIn("val referenceGlyphBrush = Brush.verticalGradient(", self.files["QREXDesign.kt"])
         self.assertNotIn("InfiniteTransition", self.files["QREXDesign.kt"])
 
     def test_scanner_border_and_live_camera_are_preserved(self):
@@ -35,6 +40,9 @@ class ScreenFidelityContracts(unittest.TestCase):
         self.assertIn(".border(1.dp, QrexDesign.stroke, RoundedCornerShape(24.dp))", scanner)
         self.assertIn("AndroidView(factory = { preview }", scanner)
         self.assertIn("ScannerCornerOverlay(", scanner)
+        self.assertIn('testTag("qrex-scan-floating-torch")', scanner)
+        self.assertEqual(scanner.count("onClick = toggleTorch"), 2)
+        self.assertIn("elevation = ButtonDefaults.buttonElevation(", scanner)
 
     def test_all_ten_screen_routes_keep_real_controls(self):
         for tag in ("qrex-result-screen", "qrex-create-screen",
