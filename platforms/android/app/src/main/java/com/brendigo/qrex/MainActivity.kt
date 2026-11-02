@@ -1722,12 +1722,21 @@ private fun HistoryScreen(
                     else -> Icons.Default.QrCode
                 }
                 val tint = when {
-                    QRContent.isWifi(item.raw) -> QrexDesign.cyan
+                    QRContent.isWifi(item.raw) -> QrexDesign.success
                     item.raw.startsWith("mailto:", ignoreCase = true) -> QrexDesign.accentBright
-                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.success
+                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.danger
                     item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> QrexDesign.success
                     QRContent.isEvent(item.raw) -> QrexDesign.purple
                     else -> MaterialTheme.colorScheme.primary
+                }
+                // Reference category palette: green Wi-Fi, blue link/mail,
+                // red telephone and violet event, with white vector symbols.
+                val glyphBackground = when {
+                    QRContent.isWifi(item.raw) -> Color(0xFF056E64)
+                    item.raw.startsWith("tel:", ignoreCase = true) -> Color(0xFFAF214B)
+                    QRContent.isEvent(item.raw) -> Color(0xFF5534AD)
+                    item.raw.startsWith("mailto:", ignoreCase = true) -> Color(0xFF0753C4)
+                    else -> Color(0xFF0753C4)
                 }
                 val ageMillis = (System.currentTimeMillis() - item.timestamp).coerceAtLeast(0L)
                 val date = when {
@@ -1785,7 +1794,7 @@ private fun HistoryScreen(
                             .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        QrexHistoryGlyph(icon, tint)
+                        QrexHistoryGlyph(icon, tint, background = glyphBackground)
                         Spacer(Modifier.width(9.dp))
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             // Generic text QR codes may contain tokens or
