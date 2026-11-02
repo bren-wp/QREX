@@ -177,11 +177,17 @@ internal fun QrexSettingsTile(
     )) {
         Column(Modifier.fillMaxWidth().heightIn(min = 104.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            Surface(shape = RoundedCornerShape(12.dp),
-                color = foreground.copy(alpha = 0.14f)) {
-                Box(Modifier.size(32.dp), contentAlignment = Alignment.Center) {
+            // Slightly raised brand-tinted icon plate, matching the More
+            // screen reference without expensive runtime blur or raster art.
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = foreground.copy(alpha = 0.14f),
+                border = BorderStroke(1.dp, foreground.copy(alpha = .30f)),
+                shadowElevation = 2.dp
+            ) {
+                Box(Modifier.size(36.dp), contentAlignment = Alignment.Center) {
                     Icon(icon, contentDescription = null, tint = foreground,
-                        modifier = Modifier.size(20.dp))
+                        modifier = Modifier.size(21.dp))
                 }
             }
             Text(label, fontWeight = FontWeight.SemiBold,
