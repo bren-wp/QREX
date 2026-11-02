@@ -2015,7 +2015,8 @@ private fun MoreScreen(
                                 else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                                .testTag("qrex-theme-choice-$mode"),
+                                .testTag("qrex-theme-choice-$mode")
+                                .semantics { selected = store.themeMode == mode },
                             color = MaterialTheme.colorScheme.surface
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically,
@@ -2029,7 +2030,11 @@ private fun MoreScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showTheme = false }) { Text(tr("close")) }
+                TextButton(
+                    onClick = { showTheme = false },
+                    modifier = Modifier.heightIn(min = 48.dp)
+                        .testTag("qrex-theme-close")
+                ) { Text(tr("close")) }
             }
         )
     }
@@ -2133,13 +2138,15 @@ private fun MoreScreen(
                         exportPdf.launch("QREX-Saved-Codes.pdf")
                     }
                 },
-                modifier = Modifier.testTag("qrex-export-consent-confirm")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-export-consent-confirm")
             ) { Text("PDF") }
         },
         dismissButton = {
             TextButton(
                 onClick = { confirmPdfExport = false },
-                modifier = Modifier.testTag("qrex-export-consent-cancel")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-export-consent-cancel")
             ) { Text(tr("cancel")) }
         }
     )
@@ -2154,13 +2161,15 @@ private fun MoreScreen(
                     if (store.clearHistory()) showDelete = false
                     else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 },
-                modifier = Modifier.testTag("qrex-clear-history-confirm")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-clear-history-confirm")
             ) { Text(tr("clear_history")) }
         },
         dismissButton = {
             TextButton(
                 onClick = { showDelete = false },
-                modifier = Modifier.testTag("qrex-clear-history-cancel")
+                modifier = Modifier.heightIn(min = 48.dp)
+                    .testTag("qrex-clear-history-cancel")
             ) { Text(tr("cancel")) }
         }
     )
