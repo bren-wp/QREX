@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
 import android.widget.Toast
@@ -146,6 +147,9 @@ internal fun QrexExportDetails(
     onBack: () -> Unit,
     onPdf: () -> Unit
 ) {
+    // The native disabled button alone cannot explain why PDF is unavailable
+    // to assistive technology. Expose the same localized empty-state reason.
+    val pdfAvailability = if (hasSaved) null else tr("no_saved")
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp)
             .testTag("qrex-export-screen")
@@ -162,7 +166,10 @@ internal fun QrexExportDetails(
             QrexResultAction(
                 label = "PDF", icon = Icons.Default.PictureAsPdf,
                 enabled = hasSaved,
-                modifier = Modifier.testTag("qrex-export-pdf"),
+                modifier = Modifier.testTag("qrex-export-pdf")
+                    .semantics {
+                        if (pdfAvailability != null) stateDescription = pdfAvailability
+                    },
                 onClick = onPdf
             )
             if (!hasSaved) {
@@ -193,6 +200,7 @@ internal fun QrexExportDetails(
                     Spacer(Modifier.width(12.dp))
                     Text(
                         tr("export_archive_warning"), fontSize = 14.sp,
+                        modifier = Modifier.weight(1f).testTag("qrex-export-warning-text"),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -211,6 +219,7 @@ internal fun QrexExportDetails(
                         tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(23.dp))
                     Spacer(Modifier.width(12.dp))
                     Text(tr("privacy_summary"), fontSize = 14.sp,
+                        modifier = Modifier.weight(1f).testTag("qrex-export-privacy-text"),
                         color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
             }
