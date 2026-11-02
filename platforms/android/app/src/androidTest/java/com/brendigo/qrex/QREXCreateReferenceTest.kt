@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
+import androidx.compose.ui.semantics.SemanticsProperties
 import org.junit.Rule
 import org.junit.Test
 
@@ -30,6 +31,9 @@ class QREXCreateReferenceTest {
         await("qrex-create-content")
 
         val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+        val label = input.fetchSemanticsNode().config[SemanticsProperties.ContentDescription]
+        assertTrue("URL field requires a localized accessible name",
+            label.isNotEmpty() && label.first().isNotBlank())
         input.performTextInput("https://brendigo.com")
         await("qrex-create-clear-url")
         val clear = rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
