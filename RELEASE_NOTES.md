@@ -1,6 +1,6 @@
 ## Candidate: v1.0.29 · Android versionCode 129
 
-Screen-by-screen Create QR refinement: text-only four-category navigation on standard phones (2×2 accessible compact layout), labeled URL input, 48dp URL-clear control, and native QR/Download button glyphs. Functional preview, offline QR encoding and Wi‑Fi consent are retained. Publishing requires green CI on the exact new main commit, verified APK/AAB, SHA256SUMS and 12 authentic screenshots.
+Screen-by-screen Create QR refinement and History card icon depth: text-only four-category navigation on standard phones (2×2 accessible compact layout), labeled URL input, 48dp URL-clear control, and native QR/Download button glyphs. Functional preview, offline QR encoding and Wi‑Fi consent are retained. Publishing requires green CI on the exact new main commit, verified APK/AAB, SHA256SUMS and 12 authentic screenshots.
 
 [Release details](docs/releases/v1.0.29.md)
 
