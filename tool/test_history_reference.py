@@ -50,7 +50,8 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn('val subtitle = listOf(detail, date)', history)
         self.assertIn('"qrex-favorites-subtitle"', history)
         self.assertIn('"qrex-history-subtitle"', history)
-        self.assertIn('stateDescription = if (item.saved) tr("saved")', history)
+        self.assertIn('val savedStateDescription =', history)
+        self.assertIn('stateDescription = savedStateDescription', history)
         self.assertIn('val rowTitle = if (detail == tr("text")) detail', history)
         self.assertIn("Text(\n                                rowTitle,", history)
         for tag in ("qrex-history-menu-delete", "qrex-history-delete-dialog",
