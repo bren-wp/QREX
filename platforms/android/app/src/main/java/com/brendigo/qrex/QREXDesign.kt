@@ -277,8 +277,9 @@ internal data class QrexLayoutProfile(
 internal fun qrexLayoutProfile(
     widthDp: Int, heightDp: Int, fontScale: Float
 ): QrexLayoutProfile {
-    // Localized four-way chips truncate at 360–399dp; stack them at that width.
-    val stackChoices = widthDp < 400 || fontScale >= 1.30f
+    // Quick tabs are text-only in the reference: four fit at >=340dp.
+    // Preserve 2x2 controls for truly narrow screens and large accessibility text.
+    val stackChoices = widthDp < 340 || fontScale >= 1.30f
     val narrow = widthDp < 360 || fontScale >= 1.30f
     val short = heightDp < 620 || fontScale >= 1.45f
     return QrexLayoutProfile(
