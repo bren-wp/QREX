@@ -76,6 +76,14 @@ internal object QrexDesign {
     val heroBrush = Brush.verticalGradient(
         listOf(Color(0xFF09172D), background, backgroundDeep)
     )
+    // Native gradient and lightweight elevation, not a static 3D screenshot.
+    val referenceButtonBrush = Brush.verticalGradient(
+        // Every stop is >= 4.5:1 against white, including the bright top edge.
+        listOf(Color(0xFF0974D4), Color(0xFF0867CD), Color(0xFF0558C2))
+    )
+    val referenceGlyphBrush = Brush.verticalGradient(
+        listOf(Color(0xFF148AFF), Color(0xFF0767E9), Color(0xFF1240B9))
+    )
 }
 
 /** One branded mark for actual camera/header/Create surfaces.
@@ -147,7 +155,7 @@ internal fun QrexPanel(
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         // Stable, low-cost layered depth: no runtime blur or animation.
-        shadowElevation = 3.dp,
+        shadowElevation = 4.dp,
         content = content
     )
 }
@@ -170,11 +178,17 @@ internal fun QrexSettingsTile(
     )) {
         Column(Modifier.fillMaxWidth().heightIn(min = 104.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            Surface(shape = RoundedCornerShape(12.dp),
-                color = foreground.copy(alpha = 0.14f)) {
-                Box(Modifier.size(32.dp), contentAlignment = Alignment.Center) {
+            // Slightly raised brand-tinted icon plate, matching the More
+            // screen reference without expensive runtime blur or raster art.
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = foreground.copy(alpha = 0.14f),
+                border = BorderStroke(1.dp, foreground.copy(alpha = .30f)),
+                shadowElevation = 2.dp
+            ) {
+                Box(Modifier.size(36.dp), contentAlignment = Alignment.Center) {
                     Icon(icon, contentDescription = null, tint = foreground,
-                        modifier = Modifier.size(20.dp))
+                        modifier = Modifier.size(21.dp))
                 }
             }
             Text(label, fontWeight = FontWeight.SemiBold,
@@ -214,7 +228,7 @@ internal fun QrexSettingsListRow(
         shape = RoundedCornerShape(13.dp),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
-        shadowElevation = 2.dp,
+        shadowElevation = 3.dp,
         border = BorderStroke(1.dp, if (destructive)
             MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
             else MaterialTheme.colorScheme.outlineVariant)
@@ -328,7 +342,9 @@ internal fun QrexHistoryGlyph(icon: ImageVector, tint: Color, modifier: Modifier
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
-        color = tint.copy(alpha = 0.14f)
+        color = tint.copy(alpha = 0.14f),
+        border = BorderStroke(1.dp, tint.copy(alpha = .28f)),
+        shadowElevation = 2.dp
     ) {
         Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
             Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(21.dp))

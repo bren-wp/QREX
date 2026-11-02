@@ -86,7 +86,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
             self.assertIn(symbol, foreground)
 
     def test_primary_actions_have_explicit_readable_light_text(self):
-        self.assertIn("containerColor = QrexDesign.actionBlue, contentColor = Color.White", self.main)
+        action = self.main.split("private fun PrimaryAction(", 1)[1].split(
+            "private fun shareQrText(", 1
+        )[0]
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("QrexDesign.referenceButtonBrush", action)
+        self.assertIn("containerColor = Color.Transparent, contentColor = Color.White", action)
+        self.assertIn("disabledContainerColor = Color.Transparent", action)
+        self.assertIn("if (enabled) QrexDesign.referenceButtonBrush", action)
+        self.assertIn("BorderStroke(1.dp", action)
+        self.assertIn("val referenceButtonBrush = Brush.verticalGradient(", design)
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue", self.main)
@@ -259,7 +268,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('testTag("qrex-result-primary")', self.main)
         self.assertIn('testTag("qrex-result-delete")', self.main)
         self.assertIn("heightIn(min = 178.dp)", self.main)
-        self.assertIn("RoundedCornerShape(14.dp), color = QrexDesign.actionBlue", self.main)
+        result = self.main.split("private fun ResultScreen(", 1)[1].split(
+            "fun openLink(", 1
+        )[0]
+        self.assertIn("shape = RoundedCornerShape(14.dp)", result)
+        self.assertIn("color = QrexDesign.actionBlue", result)
+        self.assertIn("Modifier.size(62.dp).background(QrexDesign.referenceGlyphBrush)", result)
+        self.assertIn('testTag("qrex-result-glyph")', result)
+        self.assertIn("shadowElevation = 5.dp", result)
         self.assertIn("modifier = Modifier.size(52.dp).testTag(\"qrex-result-close\")", self.main)
         self.assertIn("destructive = true", self.main)
         self.assertIn('showChevron = false', self.main)

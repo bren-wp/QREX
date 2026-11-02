@@ -68,6 +68,12 @@ jobs:
       - name: Build Android Kotlin APK
         working-directory: platforms/android
         run: gradle --no-daemon :app:assembleDebug
+      # Screenshot jobs hit transient corrupt upstream emulator ZIPs too.
+      # Reuse P03's bounded, error-classified preflight instead of treating
+      # infrastructure download failures as visual regressions.
+      - name: Preflight Android Emulator SDK with bounded archive retry
+        shell: bash
+        run: bash tool/prepare_android_emulator.sh
       - name: Run QREX and capture actual display pixels
         uses: reactivecircus/android-emulator-runner@v2
         with:

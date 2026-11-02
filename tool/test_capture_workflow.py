@@ -15,6 +15,14 @@ SCRIPT = ROOT / "tool/capture_android_screen.sh"
 
 
 class ScreenshotWorkflowTests(unittest.TestCase):
+    def test_screenshot_sdk_archive_retry_precedes_runner(self):
+        body = WORKFLOW.read_text(encoding="utf-8")
+        preflight = "Preflight Android Emulator SDK with bounded archive retry"
+        runner = "Run QREX and capture actual display pixels"
+        self.assertIn(preflight, body)
+        self.assertIn("run: bash tool/prepare_android_emulator.sh", body)
+        self.assertLess(body.index(preflight), body.index(runner))
+
     def test_emulator_runner_uses_one_script_invocation(self):
         body = WORKFLOW.read_text(encoding="utf-8")
         self.assertRegex(

@@ -33,11 +33,15 @@ import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
@@ -332,6 +336,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         else if (compactScan) 64.dp else 80.dp)
                     .testTag("qrex-scan-gallery"),
                 shape = RoundedCornerShape(15.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = if (inCamera) 4.dp else 2.dp,
+                    pressedElevation = 1.dp,
+                    disabledElevation = 0.dp
+                ),
                 border = if (inCamera) BorderStroke(
                     1.dp, QrexDesign.accentBright.copy(alpha = .55f)
                 ) else null,
@@ -370,6 +379,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         else if (compactScan) 64.dp else 80.dp)
                     .testTag("qrex-scan-torch"),
                 shape = RoundedCornerShape(15.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = if (inCamera) 4.dp else 2.dp,
+                    pressedElevation = 1.dp,
+                    disabledElevation = 0.dp
+                ),
                 border = BorderStroke(
                     1.dp, if (inCamera) Color.White.copy(alpha = .19f)
                     else MaterialTheme.colorScheme.outlineVariant
@@ -490,6 +504,34 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                         else -> 165
                     }
                 )
+                // Reference Home has a round flash control at the upper-right
+                // corner of the live camera, in addition to the lower action.
+                // Both controls invoke the same CameraX acknowledgement path;
+                // a tap never changes UI state before the hardware confirms.
+                IconButton(
+                    onClick = toggleTorch,
+                    enabled = !torchBusy && camera?.cameraInfo?.hasFlashUnit() == true,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .padding(14.dp).size(56.dp)
+                        .clip(CircleShape)
+                        .background(QrexDesign.backgroundDeep.copy(alpha = .79f))
+                        .border(
+                            BorderStroke(1.dp, Color.White.copy(alpha = .24f)),
+                            CircleShape
+                        )
+                        .testTag("qrex-scan-floating-torch")
+                        .semantics {
+                            toggleableState = if (torchOn) ToggleableState.On
+                                else ToggleableState.Off
+                        }
+                ) {
+                    Icon(
+                        Icons.Default.FlashOn,
+                        contentDescription = tr("flashlight"),
+                        tint = if (torchOn) QrexDesign.cyan else Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
                 // Compose measures hint, zoom and buttons together, avoiding
                 // collisions caused by absolute bottom offsets on short devices.
                 Column(

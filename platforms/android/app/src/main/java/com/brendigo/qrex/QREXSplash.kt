@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -91,6 +92,18 @@ internal fun qrexSplashUsesScrollLayout(heightDp: Int, fontScale: Float): Boolea
 internal fun qrexSplashAccentRange(subtitle: String): IntRange? {
     val words = Regex("""\S+""").findAll(subtitle).toList()
     return if (words.size == 3) words[1].range else null
+}
+
+/**
+ * Width of the decorative bottom track, measured relative to the available
+ * footer content width. The supplied reference uses roughly half the content
+ * area, rather than the fixed 94dp track used previously. Never overflow a
+ * narrow or split-screen container.
+ */
+internal fun qrexSplashProgressWidthDp(availableWidthDp: Int): Int {
+    if (availableWidthDp <= 0) return 0
+    return (availableWidthDp * .5f).toInt()
+        .coerceIn(80, 184).coerceAtMost(availableWidthDp)
 }
 
 /**
@@ -231,12 +244,29 @@ private fun QrexSplashBrand(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(R.drawable.qrex_icon),
-            contentDescription = null,
-            modifier = Modifier.size(metrics.logoDp.dp)
-                .clip(RoundedCornerShape(24.dp)).testTag("qrex-splash-logo")
-        )
+        // Cyan halo outside the canonical vector badge. Draw the illumination
+        // natively; never embed the full marketing artwork as an app screen.
+        Box(Modifier.size((metrics.logoDp + 12).dp), contentAlignment = Alignment.Center) {
+            Canvas(Modifier.matchParentSize()) {
+                val rounding = CornerRadius(27.dp.toPx())
+                drawRoundRect(
+                    color = QrexDesign.cyan.copy(alpha = .10f),
+                    cornerRadius = rounding,
+                    style = Stroke(width = 20.dp.toPx())
+                )
+                drawRoundRect(
+                    color = QrexDesign.accentBright.copy(alpha = .28f),
+                    cornerRadius = rounding,
+                    style = Stroke(width = 9.dp.toPx())
+                )
+            }
+            Image(
+                painter = painterResource(R.drawable.qrex_icon),
+                contentDescription = null,
+                modifier = Modifier.size(metrics.logoDp.dp)
+                    .clip(RoundedCornerShape(24.dp)).testTag("qrex-splash-logo")
+            )
+        }
         Spacer(Modifier.height(18.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -298,15 +328,19 @@ private fun QrexSplashFooter(
             maxLines = if (allowFullText) Int.MAX_VALUE else 3
         )
         Spacer(Modifier.height(18.dp))
-        Box(
-            Modifier.width(94.dp).height(4.dp)
-                .background(Color(0xFF435778), RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.CenterStart
-        ) {
+        BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            val widthDp = qrexSplashProgressWidthDp(maxWidth.value.toInt())
             Box(
-                Modifier.width(42.dp).height(4.dp)
-                    .background(QrexDesign.cyan, RoundedCornerShape(8.dp))
-            )
+                Modifier.width(widthDp.dp).height(4.dp)
+                    .background(Color(0xFF435778), RoundedCornerShape(8.dp))
+                    .testTag("qrex-splash-progress"),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Box(
+                    Modifier.fillMaxWidth(.51f).height(4.dp)
+                        .background(QrexDesign.cyan, RoundedCornerShape(8.dp))
+                )
+            }
         }
     }
 }
