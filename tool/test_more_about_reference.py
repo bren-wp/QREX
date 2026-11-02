@@ -13,6 +13,21 @@ class MoreAboutRegressionTests(unittest.TestCase):
         cls.main = (ANDROID / "MainActivity.kt").read_text("utf-8")
         cls.detail = (ANDROID / "QREXMoreDetails.kt").read_text("utf-8")
 
+    def test_more_theme_semantics_and_destructive_consent_targets(self):
+        more = self.main.split("private fun MoreScreen(", 1)[1]
+        self.assertIn('testTag("qrex-more-theme")', more)
+        self.assertIn('testTag("qrex-theme-dialog")', more)
+        self.assertIn('testTag("qrex-theme-choice-$mode")', more)
+        self.assertIn('selected = store.themeMode == mode', more)
+        self.assertIn('testTag("qrex-theme-close")', more)
+        for tag in ("qrex-export-consent-confirm", "qrex-export-consent-cancel",
+                    "qrex-clear-history-confirm", "qrex-clear-history-cancel"):
+            self.assertIn('testTag("' + tag + '")', more)
+        self.assertGreaterEqual(more.count("Modifier.heightIn(min = 48.dp)"), 7)
+        self.assertIn('if (store.clearHistory()) showDelete = false', more)
+        self.assertIn('onClick = { showDelete = false }', more)
+        self.assertIn('snapshotSavedQrForPdf(store.items)', more)
+
     def test_about_is_native_and_site_is_optional(self):
         self.assertIn("var showAbout by remember", self.main)
         self.assertIn('testTag("qrex-more-about")', self.main)
