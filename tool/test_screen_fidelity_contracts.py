@@ -27,6 +27,8 @@ class ScreenFidelityContracts(unittest.TestCase):
                       self.main)
         self.assertIn("QrexDesign.actionTextSize",
                       self.files["QREXDesign.kt"])
+        self.assertIn("Icons.Default.QrCodeScanner, Icons.Default.Add,", self.main)
+        self.assertNotIn("Icons.Default.AddCircle", self.main)
         self.assertIn("shadowElevation = if (selected) 4.dp else 1.dp", self.main)
         self.assertIn("QrexDesign.referenceButtonBrush", self.main)
         self.assertIn('testTag("qrex-result-glyph")', self.main)
