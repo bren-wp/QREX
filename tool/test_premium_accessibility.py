@@ -50,6 +50,18 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
             contrast(self.color("muted"), self.color("surface")), 4.5
         )
 
+    def test_result_category_glyphs_have_graphic_contrast(self):
+        # WCAG non-text contrast: all three gradient stops of each 32dp
+        # white category pictogram must be readable (>= 3:1).
+        result = self.main.split("val resultGlyphBrush = when {", 1)[1].split(
+            "val resultGlyphStroke = when {", 1
+        )[0]
+        values = re.findall(r"Color\\(0xFF([A-Fa-f0-9]{6})\\)", result)
+        self.assertEqual(len(values), 9, "Wi-Fi, telephone, event: three stops each")
+        for color in values:
+            with self.subTest(glyph_stop=color):
+                self.assertGreaterEqual(contrast(color, "FFFFFF"), 3.0)
+
     def test_primary_ctas_share_one_accessible_brand_token(self):
         # The native reference button has transparent Material container over
         # an opaque three-stop Compose gradient. Verify every declared stop,
