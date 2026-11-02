@@ -1711,6 +1711,11 @@ private fun HistoryScreen(
                                 fontSize = 11.sp
                             )
                         }
+                        // Compose translations must be resolved during
+                        // composition, not inside the non-composable semantics
+                        // modifier lambda on older Android builds.
+                        val savedStateDescription =
+                            if (item.saved) tr("saved") else tr("add_favorite")
                         IconButton(
                             onClick = {
                                 // Favorite is a direct, visible action on every row.
@@ -1726,8 +1731,7 @@ private fun HistoryScreen(
                                 if (favoritesPage) "qrex-favorites-remove"
                                 else "qrex-history-favorite"
                             ).semantics {
-                                stateDescription = if (item.saved) tr("saved")
-                                    else tr("add_favorite")
+                                stateDescription = savedStateDescription
                             }
                         ) {
                             Icon(
