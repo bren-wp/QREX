@@ -1341,7 +1341,13 @@ private fun CreateScreen(
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it.take(if (kind == 7) 160 else 2000) },
-                modifier = Modifier.fillMaxWidth().testTag("qrex-create-content"),
+                // Keep native on-screen caption external for reference fidelity,
+                // but supply an explicit localized name to accessibility services.
+                modifier = Modifier.fillMaxWidth()
+                    .then(if (kind == 0) Modifier.semantics {
+                        contentDescription = types[0]
+                    } else Modifier)
+                    .testTag("qrex-create-content"),
                 shape = RoundedCornerShape(13.dp),
                 singleLine = kind != 1,
                 minLines = if (kind == 1) 2 else 1,
