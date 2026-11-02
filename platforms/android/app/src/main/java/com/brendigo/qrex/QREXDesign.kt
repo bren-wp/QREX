@@ -339,16 +339,29 @@ internal fun QrexResultAction(
 }
 
 @Composable
-internal fun QrexHistoryGlyph(icon: ImageVector, tint: Color, modifier: Modifier = Modifier) {
+internal fun QrexHistoryGlyph(
+    icon: ImageVector,
+    tint: Color,
+    modifier: Modifier = Modifier,
+    background: Color = QrexDesign.actionBlue
+) {
+    // The category pictogram is a real Compose vector over an opaque 3D
+    // gradient. The tile does not intercept the History row's click target.
     Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
-        color = tint.copy(alpha = 0.14f),
-        border = BorderStroke(1.dp, tint.copy(alpha = .28f)),
-        shadowElevation = 2.dp
+        modifier = modifier.testTag("qrex-history-category-glyph"),
+        shape = RoundedCornerShape(12.dp),
+        color = background,
+        border = BorderStroke(1.dp, tint.copy(alpha = .66f)),
+        shadowElevation = 3.dp
     ) {
-        Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
-            Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(21.dp))
+        Box(
+            Modifier.size(38.dp).background(Brush.verticalGradient(
+                listOf(background.copy(alpha = .78f), background)
+            )),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = null, tint = Color.White,
+                modifier = Modifier.size(21.dp))
         }
     }
 }
