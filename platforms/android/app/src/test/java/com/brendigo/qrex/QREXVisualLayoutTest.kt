@@ -23,7 +23,9 @@ class QREXVisualLayoutTest {
 
     @Test fun createChoicesRemainAccessibleAtLargeFontAndCompactWidth() {
         assertFalse(qrexLayoutProfile(430, 850, 1.0f).stackTypeChoices)
-        assertTrue(qrexLayoutProfile(393, 850, 1.0f).stackTypeChoices)
+        assertFalse(qrexLayoutProfile(393, 850, 1.0f).stackTypeChoices)
+        assertFalse(qrexLayoutProfile(360, 850, 1.0f).stackTypeChoices)
+        assertTrue(qrexLayoutProfile(320, 850, 1.0f).stackTypeChoices)
         assertTrue(qrexLayoutProfile(430, 850, 1.30f).stackTypeChoices)
         assertEquals(104, qrexLayoutProfile(320, 600, 1.6f).darkQrSizeDp)
     }

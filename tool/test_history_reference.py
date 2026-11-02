@@ -61,6 +61,22 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn("onDismissRequest = { pendingDelete = null }", history)
         self.assertIn("modifier = Modifier.heightIn(min = 48.dp)", history)
 
+    def test_history_glyphs_use_real_category_color_and_three_dimensional_depth(self):
+        history = self.source.split("private fun HistoryScreen(", 1)[1].split(
+            "internal fun useCompactMoreList(", 1
+        )[0]
+        design = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXDesign.kt").read_text("utf-8")
+        self.assertIn("val glyphBackground = when {", history)
+        self.assertIn("QrexHistoryGlyph(icon, tint, background = glyphBackground)", history)
+        for color in ("0xFF056E64", "0xFFAF214B", "0xFF5534AD", "0xFF0753C4"):
+            self.assertIn(color, history)
+        self.assertIn('testTag("qrex-history-category-glyph")', design)
+        self.assertIn("Modifier.size(38.dp).background(Brush.verticalGradient(", design)
+        self.assertIn("listOf(Color.White.copy(alpha = .14f), Color.Transparent)", design)
+        self.assertNotIn("listOf(background.copy(alpha = .78f), background)", design)
+        self.assertIn("tint = Color.White", design)
+        self.assertIn("shadowElevation = 3.dp", design)
+
     def test_controls_remain_functional_and_responsive(self):
         self.assertIn("savedOnly = false", self.source)
         self.assertIn("savedOnly = true", self.source)

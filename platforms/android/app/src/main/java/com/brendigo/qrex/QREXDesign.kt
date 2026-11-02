@@ -64,6 +64,8 @@ internal object QrexDesign {
     val purple = Color(0xFF9866FF)
     val muted = Color(0xFFA9BAD2)
     val danger = Color(0xFFFF657B)
+    // Phone QR category red is informational and never a destructive-action token.
+    val phoneTint = Color(0xFFFF7488)
     // Phone and contact types are informational, not destructive actions.
     val success = Color(0xFF19CFAB)
     val titleTextSize = 21.sp
@@ -277,8 +279,9 @@ internal data class QrexLayoutProfile(
 internal fun qrexLayoutProfile(
     widthDp: Int, heightDp: Int, fontScale: Float
 ): QrexLayoutProfile {
-    // Localized four-way chips truncate at 360–399dp; stack them at that width.
-    val stackChoices = widthDp < 400 || fontScale >= 1.30f
+    // Quick tabs are text-only in the reference: four fit at >=340dp.
+    // Preserve 2x2 controls for truly narrow screens and large accessibility text.
+    val stackChoices = widthDp < 340 || fontScale >= 1.30f
     val narrow = widthDp < 360 || fontScale >= 1.30f
     val short = heightDp < 620 || fontScale >= 1.45f
     return QrexLayoutProfile(
@@ -338,16 +341,31 @@ internal fun QrexResultAction(
 }
 
 @Composable
-internal fun QrexHistoryGlyph(icon: ImageVector, tint: Color, modifier: Modifier = Modifier) {
+internal fun QrexHistoryGlyph(
+    icon: ImageVector,
+    tint: Color,
+    modifier: Modifier = Modifier,
+    background: Color = QrexDesign.actionBlue
+) {
+    // The category pictogram is a real Compose vector over an opaque 3D
+    // gradient. The tile does not intercept the History row's click target.
     Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
-        color = tint.copy(alpha = 0.14f),
-        border = BorderStroke(1.dp, tint.copy(alpha = .28f)),
-        shadowElevation = 2.dp
+        modifier = modifier.testTag("qrex-history-category-glyph"),
+        shape = RoundedCornerShape(12.dp),
+        color = background,
+        border = BorderStroke(1.dp, tint.copy(alpha = .66f)),
+        shadowElevation = 3.dp
     ) {
-        Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
-            Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(21.dp))
+        Box(
+            // A translucent white highlight over an opaque darker Surface
+            // changes RGB at the top; varying background alpha alone does not.
+            Modifier.size(38.dp).background(Brush.verticalGradient(
+                listOf(Color.White.copy(alpha = .14f), Color.Transparent)
+            )),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = null, tint = Color.White,
+                modifier = Modifier.size(21.dp))
         }
     }
 }

@@ -1,3 +1,15 @@
+## Candidate: v1.0.29 · Android versionCode 129
+
+Screen-by-screen Create QR refinement and History card icon depth: text-only four-category navigation on standard phones (2×2 accessible compact layout), labeled URL input, 48dp URL-clear control, and native QR/Download button glyphs. Functional preview, offline QR encoding and Wi‑Fi consent are retained. Publishing requires green CI on the exact new main commit, verified APK/AAB, SHA256SUMS and 12 authentic screenshots.
+
+[Release details](docs/releases/v1.0.29.md)
+
+## Published: v1.0.28 · Android versionCode 128
+
+Successfully published with APK/AAB, unsigned Play QA AAB, SHA256SUMS and 12 verified Android emulator screenshots. Native category-specific Result glyphs and privacy safeguards are preserved.
+
+[Release v1.0.28](https://github.com/bren-wp/QREX/releases/tag/v1.0.28)
+
 ## Candidate: v1.0.28 · Android versionCode 128
 
 Result-screen category-specific 3D icons (URL blue, Wi-Fi green, Phone red, Event purple), with secure QR actions preserved. This is a candidate until the v1.0.28 tag, APK/AAB assets, checksums, actual screenshots and exact-commit CI are verified. GitHub artifacts are not Play-upload signed.

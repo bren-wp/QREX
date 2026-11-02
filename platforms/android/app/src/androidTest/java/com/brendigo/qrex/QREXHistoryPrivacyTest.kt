@@ -47,6 +47,11 @@ class QREXHistoryPrivacyTest {
             rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
                 .performTextReplacement(host)
             awaitTag("qrex-history-row")
+            // The category plate is an actual rendered Compose vector surface,
+            // not a static illustration covering the working History row.
+            val glyph = rule.onNodeWithTag("qrex-history-category-glyph", useUnmergedTree = true)
+                .assertIsDisplayed().getUnclippedBoundsInRoot()
+            assertTrue("Category icon must remain legible", glyph.right - glyph.left >= 38.dp)
             rule.onAllNodesWithText(secretMarker, substring = true, useUnmergedTree = true)
                 .assertCountEquals(0)
 

@@ -17,10 +17,12 @@ class VisualDepthRegressionTests(unittest.TestCase):
         self.assertGreaterEqual(self.design.count("shadowElevation = 2.dp"), 2)
         self.assertNotIn("InfiniteTransition", self.design)
 
-    def test_contact_and_phone_are_not_destructive_red(self):
+    def test_phone_red_is_separate_from_destructive_actions(self):
         self.assertIn("val success = Color(0xFF19CFAB)", self.design)
-        self.assertIn('item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.success', self.main)
+        self.assertIn("val phoneTint = Color(0xFFFF7488)", self.design)
+        self.assertIn('item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.phoneTint', self.main)
         self.assertIn('item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> QrexDesign.success', self.main)
+        self.assertIn("color = if (destructive)", self.design)
         self.assertNotIn('item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.danger', self.main)
 
     def test_more_uses_accessible_rows_with_large_font(self):

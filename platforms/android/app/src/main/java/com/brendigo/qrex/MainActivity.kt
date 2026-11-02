@@ -39,6 +39,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Link
@@ -79,6 +81,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -413,6 +416,7 @@ private fun PrimaryAction(
     text: String,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
     onClick: () -> Unit
 ) {
     val actionShape = RoundedCornerShape(14.dp)
@@ -438,6 +442,10 @@ private fun PrimaryAction(
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp,
             pressedElevation = 1.dp, disabledElevation = 0.dp)) {
+        if (icon != null) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(19.dp))
+            Spacer(Modifier.width(8.dp))
+        }
         Text(text, fontWeight = FontWeight.Bold, fontSize = QrexDesign.actionTextSize)
     }
 }
@@ -916,7 +924,7 @@ fun generateQR(raw: String): Bitmap? {
 @Composable
 private fun QrexCreateTypeChoice(
     label: String, icon: ImageVector, selected: Boolean,
-    modifier: Modifier = Modifier, onClick: () -> Unit
+    modifier: Modifier = Modifier, showIcon: Boolean = true, onClick: () -> Unit
 ) {
     Surface(
         onClick = onClick,
@@ -934,10 +942,13 @@ private fun QrexCreateTypeChoice(
                 .padding(horizontal = 6.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp),
-                tint = if (selected) Color.White else MaterialTheme.colorScheme.primary)
-            Spacer(Modifier.width(4.dp))
-            Text(label, maxLines = 2, overflow = TextOverflow.Ellipsis,
+            if (showIcon) {
+                Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp),
+                    tint = if (selected) Color.White else MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(4.dp))
+            }
+            Text(label, maxLines = 2, textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
                 fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
                 color = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -1249,7 +1260,7 @@ private fun CreateScreen(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             pair.forEach { index ->
                                 QrexCreateTypeChoice(types[index], typeIcons[index],
-                                    selected = kind == index,
+                                    selected = kind == index, showIcon = false,
                                     modifier = Modifier.weight(1f).testTag("qrex-create-type-$index"),
                                     onClick = { selectType(index) })
                             }
@@ -1285,11 +1296,8 @@ private fun CreateScreen(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(typeIcons[index], contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                    tint = if (kind == index) Color.White
-                                        else MaterialTheme.colorScheme.primary)
-                                Spacer(Modifier.width(4.dp))
+                                // The four quick tabs in the reference are
+                                // text-only, unlike the icon-rich overflow types.
                                 Text(types[index], maxLines = 2,
                                     textAlign = TextAlign.Center,
                                     overflow = TextOverflow.Ellipsis,
@@ -1321,15 +1329,46 @@ private fun CreateScreen(
                 }
             }
             Spacer(Modifier.height(10.dp))
+            if (kind == 0) {
+                Text(
+                    "${tr("url")} (URL)",
+                    modifier = Modifier.padding(start = 7.dp, bottom = 6.dp)
+                        .testTag("qrex-create-url-caption"),
+                    color = QrexDesign.accentBright,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it.take(if (kind == 7) 160 else 2000) },
-                modifier = Modifier.fillMaxWidth().testTag("qrex-create-content"),
+                // Keep native on-screen caption external for reference fidelity,
+                // but supply an explicit localized name to accessibility services.
+                modifier = Modifier.fillMaxWidth()
+                    .then(if (kind == 0) Modifier.semantics {
+                        contentDescription = types[0]
+                    } else Modifier)
+                    .testTag("qrex-create-content"),
                 shape = RoundedCornerShape(13.dp),
                 singleLine = kind != 1,
                 minLines = if (kind == 1) 2 else 1,
                 maxLines = if (kind == 1) 4 else 1,
-                label = { Text(if (kind == 7) tr("event_title") else types[kind]) },
+                label = {
+                    if (kind != 0) Text(if (kind == 7) tr("event_title") else types[kind])
+                },
+                trailingIcon = {
+                    if (content.isNotEmpty() && kind == 0) {
+                        IconButton(
+                            onClick = { content = "" },
+                            modifier = Modifier.size(48.dp)
+                                .testTag("qrex-create-clear-url")
+                        ) {
+                            Icon(Icons.Default.Cancel,
+                                contentDescription = tr("delete"),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = when (kind) {
                     0 -> KeyboardType.Uri
                     3 -> KeyboardType.Email
@@ -1476,7 +1515,8 @@ private fun CreateScreen(
         // Their disabled state reflects payload validation, not bitmap timing.
         PrimaryAction(tr("generate_qr"), enabled = canGenerate,
             modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 3.dp)
-                .testTag("qrex-create-show")) {
+                .testTag("qrex-create-show"),
+            icon = Icons.Default.QrCode) {
             keyboardController?.hide()
             focusManager.clearFocus(force = true)
             onResult(payload)
@@ -1489,7 +1529,12 @@ private fun CreateScreen(
                 .heightIn(min = 48.dp).testTag("qrex-create-save"),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = MaterialTheme.colorScheme.surface)
-        ) { Text(tr("save_to_device")) }
+        ) {
+            Icon(Icons.Default.Download, contentDescription = null,
+                modifier = Modifier.size(19.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(tr("save_to_device"))
+        }
     }
     if (confirmWifiSave) {
         AlertDialog(
@@ -1677,12 +1722,21 @@ private fun HistoryScreen(
                     else -> Icons.Default.QrCode
                 }
                 val tint = when {
-                    QRContent.isWifi(item.raw) -> QrexDesign.cyan
+                    QRContent.isWifi(item.raw) -> QrexDesign.success
                     item.raw.startsWith("mailto:", ignoreCase = true) -> QrexDesign.accentBright
-                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.success
+                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.phoneTint
                     item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> QrexDesign.success
                     QRContent.isEvent(item.raw) -> QrexDesign.purple
                     else -> MaterialTheme.colorScheme.primary
+                }
+                // Reference category palette: green Wi-Fi, blue link/mail,
+                // red telephone and violet event, with white vector symbols.
+                val glyphBackground = when {
+                    QRContent.isWifi(item.raw) -> Color(0xFF056E64)
+                    item.raw.startsWith("tel:", ignoreCase = true) -> Color(0xFFAF214B)
+                    QRContent.isEvent(item.raw) -> Color(0xFF5534AD)
+                    item.raw.startsWith("mailto:", ignoreCase = true) -> Color(0xFF0753C4)
+                    else -> Color(0xFF0753C4)
                 }
                 val ageMillis = (System.currentTimeMillis() - item.timestamp).coerceAtLeast(0L)
                 val date = when {
@@ -1740,7 +1794,7 @@ private fun HistoryScreen(
                             .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        QrexHistoryGlyph(icon, tint)
+                        QrexHistoryGlyph(icon, tint, background = glyphBackground)
                         Spacer(Modifier.width(9.dp))
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             // Generic text QR codes may contain tokens or
