@@ -62,6 +62,10 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "responsive-history": ("povijest", "brendigo.com", "pretraži povijest..."),
         "responsive-saved": ("favoriti", "brendigo.com", "spremljeno"),
         "responsive-language": ("jezik", "hrvatski", "english"),
+        # 720px-high landscape shows the pinned Language heading plus the
+        # first rows (System and English); Croatian is below the fold.
+        # Verify real visible rows rather than falsely requiring offscreen text.
+        "responsive-language-landscape": ("jezik", "sustav", "english"),
         "responsive-export": ("izvoz arhive", "pdf"),
         "scan": ("qrex", "skeniranje se događa na vašem uređaju.", "iz galerije", "usmjeri kameru prema qr kodu"),
     }

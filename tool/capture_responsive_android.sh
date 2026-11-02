@@ -50,7 +50,7 @@ for spec in "${profiles[@]}"; do
       if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-responsive.xml >/dev/null 2>&1 \
         && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-responsive.xml > "$hierarchy" \
         && test -s "$hierarchy" \
-        && python3 tool/check_android_screen.py "$hierarchy" "responsive-${screen}" \
+        && python3 tool/check_android_screen.py "$hierarchy" "responsive-${screen}${profile:+$(if [[ $profile == landscape && $screen == language ]]; then printf -- -landscape; fi)}" \
         && timeout -k 3s 20s adb exec-out screencap -p > "$file" \
         && python3 tool/verify_screenshots.py --responsive "$file"; then
         break
