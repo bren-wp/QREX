@@ -1724,7 +1724,7 @@ private fun HistoryScreen(
                 val tint = when {
                     QRContent.isWifi(item.raw) -> QrexDesign.success
                     item.raw.startsWith("mailto:", ignoreCase = true) -> QrexDesign.accentBright
-                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.danger
+                    item.raw.startsWith("tel:", ignoreCase = true) -> QrexDesign.phoneTint
                     item.raw.contains("BEGIN:VCARD", ignoreCase = true) -> QrexDesign.success
                     QRContent.isEvent(item.raw) -> QrexDesign.purple
                     else -> MaterialTheme.colorScheme.primary
