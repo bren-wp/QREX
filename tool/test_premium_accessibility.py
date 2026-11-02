@@ -70,7 +70,7 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
         )[0]
         self.assertIn("QrexDesign.referenceButtonBrush", action)
         self.assertIn("containerColor = Color.Transparent, contentColor = Color.White", action)
-        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 54.dp)", action)
+        self.assertIn("modifier.fillMaxWidth().heightIn(min = 54.dp)", action)
         self.assertIn("onClick = onClick, enabled = enabled", action)
         # The in-camera primary Gallery button overlays a live image and has
         # a dark 88% scrim with high-contrast white text plus cyan icon/
