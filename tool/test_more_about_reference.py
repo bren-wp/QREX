@@ -71,6 +71,19 @@ class MoreAboutRegressionTests(unittest.TestCase):
         self.assertIn('tr("privacy_summary")', main)
         self.assertNotIn('maxLines = 4,\n                    color = MaterialTheme.colorScheme.onPrimaryContainer', main)
 
+    def test_export_small_screen_accessibility_without_external_storage(self):
+        export = self.detail.split("internal fun QrexExportDetails(", 1)[1].split(
+            "private fun QrexDetailHeader(", 1
+        )[0]
+        self.assertIn('val pdfAvailability = if (hasSaved) null else tr("no_saved")', export)
+        self.assertIn('stateDescription = pdfAvailability', export)
+        self.assertIn('testTag("qrex-export-warning-text")', export)
+        self.assertIn('testTag("qrex-export-privacy-text")', export)
+        self.assertGreaterEqual(export.count("Modifier.weight(1f)"), 3)
+        self.assertIn('QrexDetailHeader(tr("export_archive"), onBack)', export)
+        self.assertIn('enabled = hasSaved', export)
+        self.assertNotIn("onClick = { context.startActivity", export)
+
     def test_export_preserves_full_translated_privacy_notice(self):
         self.assertIn("Text(tr(\"privacy_summary\"), fontSize = 14.sp", self.detail)
         self.assertNotIn("maxLines = 4,\n                    color = MaterialTheme.colorScheme.onPrimaryContainer",
