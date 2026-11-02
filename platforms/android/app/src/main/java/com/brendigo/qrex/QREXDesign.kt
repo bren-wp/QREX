@@ -76,6 +76,13 @@ internal object QrexDesign {
     val heroBrush = Brush.verticalGradient(
         listOf(Color(0xFF09172D), background, backgroundDeep)
     )
+    // Native gradient and lightweight elevation, not a static 3D screenshot.
+    val referenceButtonBrush = Brush.verticalGradient(
+        listOf(Color(0xFF1499FF), Color(0xFF0876EB), Color(0xFF0753C4))
+    )
+    val referenceGlyphBrush = Brush.verticalGradient(
+        listOf(Color(0xFF148AFF), Color(0xFF0767E9), Color(0xFF1240B9))
+    )
 }
 
 /** One branded mark for actual camera/header/Create surfaces.
@@ -147,7 +154,7 @@ internal fun QrexPanel(
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         // Stable, low-cost layered depth: no runtime blur or animation.
-        shadowElevation = 3.dp,
+        shadowElevation = 4.dp,
         content = content
     )
 }
@@ -214,7 +221,7 @@ internal fun QrexSettingsListRow(
         shape = RoundedCornerShape(13.dp),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
-        shadowElevation = 2.dp,
+        shadowElevation = 3.dp,
         border = BorderStroke(1.dp, if (destructive)
             MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
             else MaterialTheme.colorScheme.outlineVariant)
@@ -328,7 +335,9 @@ internal fun QrexHistoryGlyph(icon: ImageVector, tint: Color, modifier: Modifier
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
-        color = tint.copy(alpha = 0.14f)
+        color = tint.copy(alpha = 0.14f),
+        border = BorderStroke(1.dp, tint.copy(alpha = .28f)),
+        shadowElevation = 2.dp
     ) {
         Box(Modifier.size(38.dp), contentAlignment = Alignment.Center) {
             Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(21.dp))
