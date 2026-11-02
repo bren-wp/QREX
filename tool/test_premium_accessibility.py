@@ -51,10 +51,27 @@ class PremiumAccessibilityContrastTests(unittest.TestCase):
         )
 
     def test_primary_ctas_share_one_accessible_brand_token(self):
-        self.assertIn(
-            "containerColor = QrexDesign.actionBlue, contentColor = Color.White",
-            self.main,
+        # The native reference button has transparent Material container over
+        # an opaque three-stop Compose gradient. Verify every declared stop,
+        # not just a removed flat-color literal. White text must remain AA.
+        gradient = re.search(
+            r"val referenceButtonBrush = Brush\.verticalGradient\(.*?"
+            r"listOf\((.*?)\)\s*\)",
+            self.design, re.DOTALL,
         )
+        self.assertIsNotNone(gradient, "Primary gradient missing")
+        stops = re.findall(r"Color\(0xFF([A-Fa-f0-9]{6})\)", gradient.group(1))
+        self.assertEqual(len(stops), 3, "Expected three explicit gradient stops")
+        for color in stops:
+            with self.subTest(stop=color):
+                self.assertGreaterEqual(contrast(color, "FFFFFF"), 4.5)
+        action = self.main.split("private fun PrimaryAction(", 1)[1].split(
+            "private fun shareQrText(", 1
+        )[0]
+        self.assertIn("QrexDesign.referenceButtonBrush", action)
+        self.assertIn("containerColor = Color.Transparent, contentColor = Color.White", action)
+        self.assertIn("Modifier.fillMaxWidth().heightIn(min = 54.dp)", action)
+        self.assertIn("onClick = onClick, enabled = enabled", action)
         # The in-camera primary Gallery button overlays a live image and has
         # a dark 88% scrim with high-contrast white text plus cyan icon/
         # border. Outside the preview it retains the WCAG-AA action-blue.
