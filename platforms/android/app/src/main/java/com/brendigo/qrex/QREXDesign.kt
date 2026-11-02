@@ -78,7 +78,8 @@ internal object QrexDesign {
     )
     // Native gradient and lightweight elevation, not a static 3D screenshot.
     val referenceButtonBrush = Brush.verticalGradient(
-        listOf(Color(0xFF1499FF), Color(0xFF0876EB), Color(0xFF0753C4))
+        // Every stop is >= 4.5:1 against white, including the bright top edge.
+        listOf(Color(0xFF0974D4), Color(0xFF0867CD), Color(0xFF0558C2))
     )
     val referenceGlyphBrush = Brush.verticalGradient(
         listOf(Color(0xFF148AFF), Color(0xFF0767E9), Color(0xFF1240B9))
