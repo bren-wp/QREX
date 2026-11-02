@@ -64,6 +64,8 @@ internal object QrexDesign {
     val purple = Color(0xFF9866FF)
     val muted = Color(0xFFA9BAD2)
     val danger = Color(0xFFFF657B)
+    // Phone QR category red is informational and never a destructive-action token.
+    val phoneTint = Color(0xFFFF7488)
     // Phone and contact types are informational, not destructive actions.
     val success = Color(0xFF19CFAB)
     val titleTextSize = 21.sp
