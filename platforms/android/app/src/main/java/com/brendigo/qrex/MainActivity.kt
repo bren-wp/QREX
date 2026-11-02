@@ -898,11 +898,15 @@ private fun QrexCreateTypeChoice(
         modifier = modifier.heightIn(min = 54.dp).semantics { this.selected = selected },
         shape = RoundedCornerShape(11.dp),
         color = if (selected) QrexDesign.accent else MaterialTheme.colorScheme.surface,
-        shadowElevation = if (selected) 3.dp else 0.dp,
+        shadowElevation = if (selected) 4.dp else 1.dp,
         border = BorderStroke(1.dp, if (selected) QrexDesign.accentBright
             else MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Row(Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
+        Row(Modifier.fillMaxWidth()
+                .then(if (selected) Modifier.background(QrexDesign.referenceButtonBrush)
+                    else Modifier)
+                .heightIn(min = 54.dp)
+                .padding(horizontal = 6.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp),
@@ -1242,12 +1246,17 @@ private fun CreateScreen(
                             shape = RoundedCornerShape(11.dp),
                             color = if (kind == index) QrexDesign.accent
                                 else MaterialTheme.colorScheme.surface,
-                            shadowElevation = if (kind == index) 3.dp else 0.dp,
+                            shadowElevation = if (kind == index) 4.dp else 1.dp,
                             border = BorderStroke(1.dp, if (kind == index) QrexDesign.accentBright
                                 else MaterialTheme.colorScheme.outlineVariant)
                         ) {
                             Row(
-                                Modifier.padding(horizontal = 6.dp, vertical = 7.dp),
+                                Modifier.fillMaxWidth()
+                                    .then(if (kind == index)
+                                        Modifier.background(QrexDesign.referenceButtonBrush)
+                                        else Modifier)
+                                    .heightIn(min = 60.dp)
+                                    .padding(horizontal = 6.dp, vertical = 7.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -1698,7 +1707,7 @@ private fun HistoryScreen(
                     ),
                     shape = RoundedCornerShape(QrexDesign.cardRadius),
                     color = MaterialTheme.colorScheme.surface,
-                    shadowElevation = 2.dp,
+                    shadowElevation = 3.dp,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
