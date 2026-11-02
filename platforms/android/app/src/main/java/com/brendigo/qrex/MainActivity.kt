@@ -1357,7 +1357,7 @@ private fun CreateScreen(
                                 .testTag("qrex-create-clear-url")
                         ) {
                             Icon(Icons.Default.Cancel,
-                                contentDescription = tr("clear"),
+                                contentDescription = tr("delete"),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
