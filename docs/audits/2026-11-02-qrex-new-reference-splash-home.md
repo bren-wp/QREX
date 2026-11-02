@@ -48,6 +48,21 @@ be asserted from this composite.
   on the same viewport, locale, display density, status/navigation insets and
   camera state. On devices without a flash, the control is correctly disabled.
 
+## CI incident and remediation
+
+- The initial screenshot CI failed **before emulator boot** because upstream
+  `sdkmanager` returned `Error on ZipFile unknown archive`. That same
+  screenshot job had already compiled `:app:assembleDebug` successfully.
+- The API 31 matrix exposed a **test-source compilation error**: a Compose
+  `DpRect` was queried for the nonexistent `width` property. Fixed by
+  calculating `right - left` in `QREXSplashReferenceTest`.
+- The screenshot workflow now reuses the already-existing bounded
+  `tool/prepare_android_emulator.sh` preflight from P03. It retries only
+  classified upstream package/archive failures and never ignores failed
+  Android tests or screenshot mismatches.
+- Earlier failed CI runs are not evidence that the new head is green;
+  final exact-head CI must succeed before merge.
+
 ## Unchanged
 
 Application ID `com.brendigo.qrex`, versionCode 127, signing keys, history,
