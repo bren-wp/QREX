@@ -621,16 +621,17 @@ private fun ResultScreen(
         // Real Result category glyphs match the color hierarchy of the
         // reference: URL blue, Wi-Fi green, phone red, events purple.
         // No decorative layer intercepts taps or exposes hidden QR secrets.
+        // White vector symbols must have >=3:1 graphic contrast against EVERY gradient stop.
         val resultGlyphBrush = when {
             wifi -> androidx.compose.ui.graphics.Brush.verticalGradient(
-                listOf(Color(0xFF1EE6B3), Color(0xFF08A77D), Color(0xFF056E64))
+                listOf(Color(0xFF0A987B), Color(0xFF078E70), Color(0xFF056E64))
             )
             raw.startsWith("tel:", ignoreCase = true) ->
                 androidx.compose.ui.graphics.Brush.verticalGradient(
-                    listOf(Color(0xFFFF6B80), Color(0xFFE5355A), Color(0xFFAF214B))
+                    listOf(Color(0xFFEB536B), Color(0xFFD83E58), Color(0xFFAF214B))
                 )
             QRContent.isEvent(raw) -> androidx.compose.ui.graphics.Brush.verticalGradient(
-                listOf(Color(0xFFC478FA), Color(0xFF8B56E5), Color(0xFF5534AD))
+                listOf(Color(0xFFAA70E8), Color(0xFF8B56E5), Color(0xFF5534AD))
             )
             else -> QrexDesign.referenceGlyphBrush
         }
