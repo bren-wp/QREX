@@ -38,7 +38,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Link
@@ -203,7 +203,8 @@ private fun QREXApp(
     val navTargets = listOf(0, 1, 2, 3, 4)
     val pages = listOf("scan", "create", "history", "favorites", "more")
         .map { QREXStrings.get(context, appLanguage, it) }
-    val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.AddCircle,
+    // Reference bottom Create tab uses an outlined plus, not a filled circle.
+    val icons = listOf(Icons.Default.QrCodeScanner, Icons.Default.Add,
         Icons.Default.History, Icons.Default.FavoriteBorder, Icons.Default.MoreHoriz)
     // Only persist a non-sensitive page index across Activity recreation.
     // Do not persist currentCode: it can include private Wi-Fi credentials.
