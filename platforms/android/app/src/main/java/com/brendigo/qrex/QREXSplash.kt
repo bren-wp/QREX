@@ -246,9 +246,9 @@ private fun QrexSplashBrand(
     ) {
         // Cyan halo outside the canonical vector badge. Draw the illumination
         // natively; never embed the full marketing artwork as an app screen.
-        Box(Modifier.size(metrics.logoDp.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.size((metrics.logoDp + 12).dp), contentAlignment = Alignment.Center) {
             Canvas(Modifier.matchParentSize()) {
-                val rounding = CornerRadius(24.dp.toPx())
+                val rounding = CornerRadius(27.dp.toPx())
                 drawRoundRect(
                     color = QrexDesign.cyan.copy(alpha = .10f),
                     cornerRadius = rounding,
@@ -263,7 +263,7 @@ private fun QrexSplashBrand(
             Image(
                 painter = painterResource(R.drawable.qrex_icon),
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.size(metrics.logoDp.dp)
                     .clip(RoundedCornerShape(24.dp)).testTag("qrex-splash-logo")
             )
         }
