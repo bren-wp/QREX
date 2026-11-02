@@ -42,6 +42,14 @@ class QREXScannerControlsTest {
                 .assertIsDisplayed()
             rule.onNodeWithTag("qrex-scan-hint", useUnmergedTree = true)
                 .assertIsDisplayed()
+            // The reference includes a floating flash action in the
+            // camera top-right, with the same 48dp accessibility minimum.
+            val floating = rule.onNodeWithTag(
+                "qrex-scan-floating-torch", useUnmergedTree = true
+            ).assertIsDisplayed()
+            val floatingBounds = floating.getUnclippedBoundsInRoot()
+            assertTrue(floatingBounds.right - floatingBounds.left >= 48.dp)
+            assertTrue(floatingBounds.bottom - floatingBounds.top >= 48.dp)
         }
     }
 }
