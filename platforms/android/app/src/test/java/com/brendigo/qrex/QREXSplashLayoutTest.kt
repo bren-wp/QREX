@@ -26,6 +26,16 @@ class QREXSplashLayoutTest {
     }
 
     @Test
+    fun progressTrackFollowsReferenceRatioWithoutOverflow() {
+        // Footer content width = display width minus horizontal spacing.
+        assertEquals(166, qrexSplashProgressWidthDp(333))
+        assertEquals(140, qrexSplashProgressWidthDp(280))
+        assertEquals(184, qrexSplashProgressWidthDp(800))
+        assertEquals(70, qrexSplashProgressWidthDp(70))
+        assertEquals(0, qrexSplashProgressWidthDp(0))
+    }
+
+    @Test
     fun enlargedAccessibilityTextForcesScrollEvenOnTallDevices() {
         val metrics = qrexSplashMetrics(393, 852, 1.6f)
         assertEquals(38, metrics.titleSp)
