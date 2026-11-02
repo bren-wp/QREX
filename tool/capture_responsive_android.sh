@@ -42,6 +42,10 @@ for spec in "${profiles[@]}"; do
     file="docs/screenshots/responsive/${profile}-${screen}.png"
     hierarchy="docs/screenshots/responsive/${profile}-${screen}.xml"
     rm -f "$file" "$hierarchy"
+    screen_check="responsive-${screen}"
+    if [[ "$profile" == "landscape" && "$screen" == "language" ]]; then
+      screen_check="responsive-language-landscape"
+    fi
     for attempt in 1 2 3; do
       timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
       timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
@@ -50,7 +54,7 @@ for spec in "${profiles[@]}"; do
       if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-responsive.xml >/dev/null 2>&1 \
         && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-responsive.xml > "$hierarchy" \
         && test -s "$hierarchy" \
-        && python3 tool/check_android_screen.py "$hierarchy" "responsive-${screen}${profile:+$(if [[ $profile == landscape && $screen == language ]]; then printf -- -landscape; fi)}" \
+        && python3 tool/check_android_screen.py "$hierarchy" "$screen_check" \
         && timeout -k 3s 20s adb exec-out screencap -p > "$file" \
         && python3 tool/verify_screenshots.py --responsive "$file"; then
         break
