@@ -89,14 +89,14 @@ class ForegroundTests(unittest.TestCase):
     def test_landscape_language_checks_actual_visible_rows(self):
         landscape = screen(
             '<node package="com.brendigo.qrex" text="Jezik" />'
-            '<node package="com.brendigo.qrex" text="Sustav" />'
+            '<node package="com.brendigo.qrex" text="Jezik uređaja" />'
             '<node package="com.brendigo.qrex" text="English" />'
         )
         validate(landscape, "responsive-language-landscape")
         # Portrait retains its stronger check for the Croatian row.
         with self.assertRaisesRegex(ValueError, "hrvatski"):
             validate(landscape, "responsive-language")
-        with self.assertRaisesRegex(ValueError, "sustav"):
+        with self.assertRaisesRegex(ValueError, "jezik uređaja"):
             validate(screen(
                 '<node package="com.brendigo.qrex" text="Jezik" />'
                 '<node package="com.brendigo.qrex" text="English" />'
