@@ -2060,7 +2060,8 @@ private fun MoreScreen(
                 QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
                     subtitle = themeTitle, onClick = { showTheme = true },
                     modifier = Modifier.testTag("qrex-more-theme"),
-                    accentOverride = QrexDesign.accentBright)
+                    accentOverride = if (isDarkAppearance) QrexDesign.accentBright
+                        else MaterialTheme.colorScheme.primary)
                 QrexSettingsListRow(tr("language"), Icons.Default.Language,
                     subtitle = languageName,
                     onClick = { detailPage = "language" },
@@ -2075,7 +2076,8 @@ private fun MoreScreen(
                 QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
                     onClick = { showTerms = true },
                     modifier = Modifier.testTag("qrex-more-terms"),
-                    accentOverride = QrexDesign.accentBright)
+                    accentOverride = if (isDarkAppearance) QrexDesign.accentBright
+                        else MaterialTheme.colorScheme.primary)
                 QrexSettingsListRow(tr("about"), Icons.Default.Info,
                     subtitle = currentVersionLabel,
                     onClick = { showAbout = true },
