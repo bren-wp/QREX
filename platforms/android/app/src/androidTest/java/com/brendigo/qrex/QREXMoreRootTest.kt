@@ -56,6 +56,34 @@ class QREXMoreRootTest {
             QREXStore(rule.activity.applicationContext).themeMode == initial)
     }
 
+    @Test fun referenceAboutTileOpensRealInstalledVersionWithoutChangingSettings() {
+        val settings = QREXStore(rule.activity.applicationContext)
+        val before = settings.themeMode to settings.language
+        openMore()
+        val about = rule.onNodeWithTag("qrex-more-about", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
+        val hit = about.getUnclippedBoundsInRoot()
+        assertTrue("About tile must have accessible tap height",
+            hit.bottom - hit.top >= 48.dp)
+        about.performClick()
+        await("qrex-about-dialog")
+        val version = rule.onNodeWithTag("qrex-about-version", useUnmergedTree = true)
+            .assertIsDisplayed().fetchSemanticsNode().config[
+                androidx.compose.ui.semantics.SemanticsProperties.Text
+            ].joinToString("") { it.text }
+        @Suppress("DEPRECATION")
+        val installed = rule.activity.packageManager
+            .getPackageInfo(rule.activity.packageName, 0).versionName.orEmpty()
+        assertTrue("About must show the actual installed QREX version",
+            version == "v$installed")
+        rule.onNodeWithTag("qrex-about-close", useUnmergedTree = true)
+            .performClick()
+        assertTrue("Opening About must not modify theme or language",
+            QREXStore(rule.activity.applicationContext).let {
+                it.themeMode to it.language
+            } == before)
+    }
+
     @Test fun clearHistoryDialogCancelDoesNotDeleteAnyRecords() {
         val before = QREXStore(rule.activity.applicationContext).items.toList()
         openMore()
