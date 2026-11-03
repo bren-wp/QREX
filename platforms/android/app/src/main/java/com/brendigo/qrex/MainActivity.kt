@@ -50,6 +50,10 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.filled.Brightness6
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Archive
@@ -2015,6 +2019,15 @@ private fun MoreScreen(
         uiLanguage else store.language
     val languageName = if (selectedLanguage == "system") tr("system") else
         Locale.forLanguageTag(selectedLanguage).getDisplayName(Locale.forLanguageTag(selectedLanguage))
+    // Display the true installed version on the About tile, never the v1.0.0
+    // example in the marketing screenshot or an outdated hardcoded string.
+    val currentVersionLabel = remember(context) {
+        val version = runCatching {
+            @Suppress("DEPRECATION")
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }.getOrNull().orEmpty()
+        if (version.isBlank()) "QREX" else "QREX v$version"
+    }
     val themeTitle = when (store.themeMode) {
         "system" -> tr("theme_system")
         "light" -> tr("theme_light")
@@ -2043,27 +2056,27 @@ private fun MoreScreen(
             // Light appearance always uses reference-style rows. Dark appearance
             // falls back to rows when a narrow viewport or large text needs it.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                QrexSettingsListRow(tr("theme"), Icons.Default.Palette,
+                QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
                     subtitle = themeTitle, onClick = { showTheme = true },
                     modifier = Modifier.testTag("qrex-more-theme"),
-                    accentOverride = QrexDesign.purple)
-                QrexSettingsListRow(tr("language"), Icons.Default.Translate,
+                    accentOverride = QrexDesign.accentBright)
+                QrexSettingsListRow(tr("language"), Icons.Default.Language,
                     subtitle = languageName,
                     onClick = { detailPage = "language" },
                     modifier = Modifier.testTag("qrex-more-language"))
-                QrexSettingsListRow(tr("export_archive"), Icons.Default.Archive,
+                QrexSettingsListRow(tr("export_archive"), Icons.Default.Download,
                     subtitle = "PDF",
                     onClick = { detailPage = "export" },
                     modifier = Modifier.testTag("qrex-more-export"))
-                QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Shield,
+                QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Lock,
                     onClick = { showPrivacy = true },
                     modifier = Modifier.testTag("qrex-more-privacy"))
                 QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
                     onClick = { showTerms = true },
                     modifier = Modifier.testTag("qrex-more-terms"),
-                    accentOverride = QrexDesign.purple)
+                    accentOverride = QrexDesign.accentBright)
                 QrexSettingsListRow(tr("about"), Icons.Default.Info,
-                    subtitle = tr("developed_by"),
+                    subtitle = currentVersionLabel,
                     onClick = { showAbout = true },
                     modifier = Modifier.testTag("qrex-more-about"))
                 Spacer(Modifier.height(6.dp))
@@ -2074,19 +2087,19 @@ private fun MoreScreen(
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    QrexSettingsTile(label = tr("theme"), icon = Icons.Default.Palette,
+                    QrexSettingsTile(label = tr("theme"), icon = Icons.Default.Brightness6,
                         subtitle = themeTitle, onClick = { showTheme = true },
                         modifier = Modifier.weight(1f).testTag("qrex-more-theme"),
-                        accentOverride = QrexDesign.purple)
-                    QrexSettingsTile(label = tr("language"), icon = Icons.Default.Translate,
+                        accentOverride = QrexDesign.accentBright)
+                    QrexSettingsTile(label = tr("language"), icon = Icons.Default.Language,
                         subtitle = languageName, onClick = { detailPage = "language" },
                         modifier = Modifier.weight(1f).testTag("qrex-more-language"))
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.Archive,
+                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.Download,
                         subtitle = "PDF", onClick = { detailPage = "export" },
                         modifier = Modifier.weight(1f).testTag("qrex-more-export"))
-                    QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Shield,
+                    QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Lock,
                         onClick = { showPrivacy = true },
                         modifier = Modifier.weight(1f).testTag("qrex-more-privacy"))
                 }
@@ -2094,9 +2107,9 @@ private fun MoreScreen(
                     QrexSettingsTile(label = tr("terms_of_use"), icon = Icons.Default.Description,
                         onClick = { showTerms = true },
                         modifier = Modifier.weight(1f).testTag("qrex-more-terms"),
-                        accentOverride = QrexDesign.purple)
+                        accentOverride = QrexDesign.accentBright)
                     QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
-                        subtitle = tr("developed_by"),
+                        subtitle = currentVersionLabel,
                         onClick = { showAbout = true },
                         modifier = Modifier.weight(1f).testTag("qrex-more-about"))
                 }
