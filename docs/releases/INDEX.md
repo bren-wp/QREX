@@ -33,6 +33,7 @@ Every entry below is an **existing, verified GitHub Release** with an immutable 
 | 1.0.26 | [v1.0.26](https://github.com/bren-wp/QREX/releases/tag/v1.0.26) | APK · AAB · Play-unsigned QA AAB · 12 verified Android screenshots · SHA256SUMS |
 | 1.0.27 | [v1.0.27](https://github.com/bren-wp/QREX/releases/tag/v1.0.27) | APK · AAB · Play-unsigned QA AAB · SHA256SUMS (no screenshot assets) |
 | 1.0.28 | [v1.0.28](https://github.com/bren-wp/QREX/releases/tag/v1.0.28) | APK · AAB · Play-unsigned QA AAB · 12 real Android screenshots · SHA256SUMS |
+| 1.0.29 | [v1.0.29](https://github.com/bren-wp/QREX/releases/tag/v1.0.29) | APK · AAB · Play-unsigned QA AAB · 12 real Android screenshots · SHA256SUMS |
 
 Published releases through v1.0.26 were confirmed through the GitHub release API on 2026-11-01. The v1.0.22 screenshot assets were not present in the GitHub release API during the v1.0.23 audit; do not treat README screenshot links as available until verified.
 
