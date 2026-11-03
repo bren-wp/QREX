@@ -1,9 +1,11 @@
 package com.brendigo.qrex
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -99,19 +103,34 @@ internal fun QrexLanguageDetails(store: QREXStore, onBack: () -> Unit) {
                 ) {
                     Row(Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        // A consistent 36dp flag slot keeps all names and radio
-                        // controls aligned despite variable emoji glyph widths.
-                        androidx.compose.foundation.layout.Box(
-                            Modifier.size(36.dp)
+                        // One genuine 36dp 3D plate for every locale. Its real
+                        // RGB highlight is painted over the raised Surface, not
+                        // as a static screenshot or a second touch target.
+                        Surface(
+                            modifier = Modifier.size(36.dp)
                                 .testTag("qrex-language-flag-$code"),
-                            contentAlignment = Alignment.Center
+                            shape = RoundedCornerShape(11.dp),
+                            color = if (selected) QrexDesign.actionBlue
+                                else MaterialTheme.colorScheme.surfaceVariant,
+                            border = BorderStroke(1.dp,
+                                if (selected) QrexDesign.accentBright.copy(alpha = .70f)
+                                else MaterialTheme.colorScheme.outlineVariant),
+                            shadowElevation = if (selected) 4.dp else 2.dp
                         ) {
-                            Text(
-                                flags[code] ?: "🌐",
-                                modifier = Modifier.clearAndSetSemantics {},
-                                fontSize = 23.sp,
-                                maxLines = 1
-                            )
+                            Box(
+                                Modifier.size(36.dp).background(Brush.verticalGradient(
+                                    listOf(Color.White.copy(alpha = if (selected) .20f else .10f),
+                                        Color.Transparent)
+                                )),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    flags[code] ?: "🌐",
+                                    modifier = Modifier.clearAndSetSemantics {},
+                                    fontSize = 23.sp,
+                                    maxLines = 1
+                                )
+                            }
                         }
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {

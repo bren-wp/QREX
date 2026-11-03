@@ -91,6 +91,13 @@ class QREXLanguageLayoutTest {
                 .performClick()
             rule.onNodeWithTag("qrex-language-option-$selectedCode", useUnmergedTree = true)
                 .assertIsSelected()
+            val selectedPlate = rule.onNodeWithTag(
+                "qrex-language-flag-$selectedCode", useUnmergedTree = true
+            ).assertIsDisplayed().getUnclippedBoundsInRoot()
+            assertTrue("Selected 3D flag plate should remain 36dp",
+                kotlin.math.abs((selectedPlate.right - selectedPlate.left - 36.dp).value) <= 1f)
+            assertTrue("Selected 3D flag plate should remain 36dp tall",
+                kotlin.math.abs((selectedPlate.bottom - selectedPlate.top - 36.dp).value) <= 1f)
             assertEquals("chosen language must be durable", selectedCode,
                 QREXStore(context).language)
             assertEquals("language selection must not change QR records",

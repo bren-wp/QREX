@@ -1,3 +1,15 @@
+## Candidate: v1.0.31 · Android versionCode 131
+
+Native Language screen: 24 real selectable options (system + 23 offline languages) with 36dp rounded raised flag plates, illuminated border, genuine RGB highlight and accent on selected language. Preserves locale persistence, pinned Back action, adaptive scrolling, TalkBack semantics and all stored QR records. CI-gated APK/AAB/screenshots/signatures are required; this is not yet a published release.
+
+[Release details](docs/releases/v1.0.31.md)
+
+## Published: v1.0.30 · Android versionCode 130
+
+GitHub release contains APK/AAB, QA unsigned Play AAB, SHA256SUMS and 12 real Android emulator screenshots. Improved native More / Settings tile gradients and 3D brand icons.
+
+[GitHub v1.0.30](https://github.com/bren-wp/QREX/releases/tag/v1.0.30)
+
 ## Candidate: v1.0.30 · Android versionCode 130
 
 Native pixel-reference More/Settings UI: true raised RGB-highlight icon plates with 40dp layout, reference theme/language/download/privacy symbols, the actual installed version on About, and functional 48dp+ actions. The existing QR data and privacy confirmation remain preserved. New source and Android UI regression tests. APK, AAB, 12 authentic screenshots and checksums are required by the fail-closed publisher after final main CI.
