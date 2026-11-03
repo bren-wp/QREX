@@ -14,7 +14,9 @@ class VisualDepthRegressionTests(unittest.TestCase):
 
     def test_card_depth_remains_native_and_static(self):
         self.assertIn("shadowElevation = 3.dp", self.design)
-        self.assertGreaterEqual(self.design.count("shadowElevation = 2.dp"), 2)
+        # Settings category plates intentionally have a stronger native lift.
+        self.assertIn("shadowElevation = 4.dp", self.design)
+        self.assertGreaterEqual(self.design.count("shadowElevation = 2.dp"), 1)
         self.assertNotIn("InfiniteTransition", self.design)
 
     def test_phone_red_is_separate_from_destructive_actions(self):

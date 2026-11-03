@@ -20,15 +20,15 @@ class GooglePlayReadmeBadgeTest(unittest.TestCase):
             self.assertEqual(PLAY_URL, destination)
             self.assertIn('alt="', tag)
             self.assertIn('height="64"', tag)
-        self.assertNotIn("QREX-Android-1.0.28-Play-UNSIGNED-QA.aab](%s)" % PLAY_URL, readme)
+        self.assertNotIn("QREX-Android-1.0.29-Play-UNSIGNED-QA.aab](%s)" % PLAY_URL, readme)
 
     def test_marketing_screens_use_latest_published_genuine_release(self):
         readme = README.read_text("utf-8")
-        self.assertIn("Latest published release: **[v1.0.28]", readme)
+        self.assertIn("Latest published release: **[v1.0.29]", readme)
         for screen in ("splash", "scan", "create", "wifi", "result", "history",
                        "saved", "more", "language", "export", "about", "privacy"):
             self.assertIn(
-                f"https://github.com/bren-wp/QREX/releases/download/v1.0.28/android-{screen}.png",
+                f"https://github.com/bren-wp/QREX/releases/download/v1.0.29/android-{screen}.png",
                 readme,
             )
 

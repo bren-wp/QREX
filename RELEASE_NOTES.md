@@ -1,3 +1,15 @@
+## Candidate: v1.0.30 · Android versionCode 130
+
+Native pixel-reference More/Settings UI: true raised RGB-highlight icon plates with 40dp layout, reference theme/language/download/privacy symbols, the actual installed version on About, and functional 48dp+ actions. The existing QR data and privacy confirmation remain preserved. New source and Android UI regression tests. APK, AAB, 12 authentic screenshots and checksums are required by the fail-closed publisher after final main CI.
+
+[Release details](docs/releases/v1.0.30.md)
+
+## Published: v1.0.29 · Android versionCode 129
+
+GitHub APK/AAB plus unsigned Play QA bundle, SHA256SUMS and 12 real Android emulator screenshots. PR #86 passed native Kotlin, 23 locales and Android API 26/31/34/35/36.
+
+[GitHub v1.0.29](https://github.com/bren-wp/QREX/releases/tag/v1.0.29)
+
 ## Candidate: v1.0.29 · Android versionCode 129
 
 Screen-by-screen Create QR refinement and History card icon depth: text-only four-category navigation on standard phones (2×2 accessible compact layout), labeled URL input, 48dp URL-clear control, and native QR/Download button glyphs. Functional preview, offline QR encoding and Wi‑Fi consent are retained. Publishing requires green CI on the exact new main commit, verified APK/AAB, SHA256SUMS and 12 authentic screenshots.

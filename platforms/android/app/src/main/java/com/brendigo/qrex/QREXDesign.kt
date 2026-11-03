@@ -180,17 +180,24 @@ internal fun QrexSettingsTile(
     )) {
         Column(Modifier.fillMaxWidth().heightIn(min = 104.dp).padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            // Slightly raised brand-tinted icon plate, matching the More
-            // screen reference without expensive runtime blur or raster art.
+            // Reference icon plate: a raised, 40dp rounded square with a
+            // genuine RGB highlight. All layers remain non-clickable; the
+            // entire Settings tile stays one accessible native button.
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = foreground.copy(alpha = 0.14f),
-                border = BorderStroke(1.dp, foreground.copy(alpha = .30f)),
-                shadowElevation = 2.dp
+                color = foreground.copy(alpha = .13f),
+                border = BorderStroke(1.dp, foreground.copy(alpha = .39f)),
+                shadowElevation = 4.dp,
+                modifier = Modifier.testTag("qrex-more-icon-plate")
             ) {
-                Box(Modifier.size(36.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier.size(40.dp).background(Brush.verticalGradient(
+                        listOf(Color.White.copy(alpha = .10f), Color.Transparent)
+                    )),
+                    contentAlignment = Alignment.Center
+                ) {
                     Icon(icon, contentDescription = null, tint = foreground,
-                        modifier = Modifier.size(21.dp))
+                        modifier = Modifier.size(23.dp))
                 }
             }
             Text(label, fontWeight = FontWeight.SemiBold,
