@@ -2022,10 +2022,11 @@ private fun MoreScreen(
     // Display the true installed version on the About tile, never the v1.0.0
     // example in the marketing screenshot or an outdated hardcoded string.
     val currentVersionLabel = remember(context) {
-        val version = runCatching {
-            @Suppress("DEPRECATION")
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        }.getOrNull().orEmpty()
+        @Suppress("DEPRECATION")
+        val info = runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        }.getOrNull()
+        val version = info?.versionName.orEmpty()
         if (version.isBlank()) "QREX" else "QREX v$version"
     }
     val themeTitle = when (store.themeMode) {
