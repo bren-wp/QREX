@@ -45,7 +45,7 @@ class ArchivedPublisherTests(unittest.TestCase):
             r"/releases/download/v([0-9.]+)/android-([a-z]+)\.png", readme
         )
         baseline = re.search(
-            r"Last complete screenshot release: v([0-9.]+)", readme
+            r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme
         )
         self.assertIsNotNone(baseline, "README must ground screenshot asset version")
         screenshot_version = baseline.group(1)
