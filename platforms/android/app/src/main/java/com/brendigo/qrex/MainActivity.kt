@@ -1230,17 +1230,22 @@ private fun CreateScreen(
                     fontSize = QrexDesign.supportingTextSize,
                     maxLines = 3, overflow = TextOverflow.Ellipsis
                 )
-                // Expose advanced QR formats without a second line of tabs.
-                TextButton(
-                    onClick = { showAdvancedTypes = !showAdvancedTypes },
-                    modifier = Modifier.heightIn(min = 52.dp)
-                        .testTag("qrex-create-more-types"),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
-                ) {
-                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
-                        modifier = Modifier.size(18.dp))
-                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
-                        fontSize = 11.sp)
+                // On Link/Text/Wi-Fi/Contact the reference has a full-width
+                // privacy subtitle, no competing "More" button. Advanced QR
+                // formats are always reachable from the top-right overflow;
+                // only show a collapse control after an advanced choice.
+                if (showAdvancedTypes) {
+                    TextButton(
+                        onClick = { showAdvancedTypes = false },
+                        modifier = Modifier.heightIn(min = 52.dp)
+                            .testTag("qrex-create-more-types"),
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Icon(Icons.Default.MoreHoriz, contentDescription = null,
+                            modifier = Modifier.size(18.dp))
+                        Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                            fontSize = 11.sp)
+                    }
                 }
             }
 
