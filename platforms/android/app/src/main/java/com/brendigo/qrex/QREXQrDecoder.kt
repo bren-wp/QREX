@@ -63,7 +63,8 @@ internal object QREXQrDecoder {
         plane: ByteBuffer, width: Int, height: Int, rowStride: Int, pixelStride: Int
     ): ByteArray? {
         if (width <= 0 || height <= 0 || rowStride <= 0 || pixelStride <= 0 ||
-            width.toLong() * height > MAX_PIXELS) return null
+            width.toLong() * height > MAX_PIXELS ||
+            rowStride.toLong() < (width - 1).toLong() * pixelStride + 1L) return null
         // An ImageProxy plane may expose only a positioned window of a larger
         // ByteBuffer. Rewinding would decode the prefix instead of the Y plane.
         // Duplicate so neither position nor limit of CameraX's buffer changes.
