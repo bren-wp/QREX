@@ -42,7 +42,7 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn("Require all 4 green exact-commit Android checks", release)
         self.assertIn("p03-stability.yml", release)
         p03 = (ROOT / ".github/workflows/p03-stability.yml").read_text("utf-8")
-        self.assertIn("  push:\\n    branches: [main]", p03)
+        self.assertIn("  push:\n    branches: [main]", p03)
         self.assertIn("QREX-Android-1.0.35-Play-UNSIGNED-QA.aab", release)
         # Publisher must inspect the ACTUAL new Android versionCode, not the
         # previous release's code. The v1.0.23 publisher once built correct
