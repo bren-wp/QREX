@@ -99,11 +99,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
         self.assertIn("val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue", self.main)
-        self.assertIn("NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep", self.main)
+        self.assertIn('testTag("qrex-bottom-navigation")', self.main)
+        self.assertIn("containerColor = if (darkUi) QrexDesign.backgroundDeep", self.main)
+        self.assertIn("HorizontalDivider(color = if (darkUi)", self.main)
         self.assertIn("indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
-        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)", design)
+        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(", design)
+        self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
         self.assertIn('val rowTitle = if (detail == tr("text")) detail', self.main)
@@ -199,7 +202,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("fontSize = 12.sp, fontWeight = FontWeight.SemiBold", self.main)
         self.assertIn("Text(label, maxLines = 2,", self.main)
         self.assertIn("softWrap = true, overflow = TextOverflow.Ellipsis", self.main)
-        self.assertIn("icon = { Icon(icons[index], contentDescription = null) }", self.main)
+        self.assertIn("QrexNavigationGlyph(", self.main)
+        self.assertIn('testTag("qrex-nav-glyph-$index")', self.main)
         self.assertIn('role = Role.Button, onClick = onClick', design)
         self.assertIn('if (wifiPassword.isNotEmpty()) {', self.main)
         self.assertIn("onClick = { createMenu = true }", self.main)
@@ -227,7 +231,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("M72,40 H79 V47 H72 Z", monochrome)
         self.assertIn("val stackChoices = widthDp < 340", design)
         self.assertIn("heightIn(min = 104.dp)", design)
-        self.assertIn("heightIn(min = 56.dp)", design)
+        self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
+        self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
         self.assertIn('testTag("qrex-history-menu").size(48.dp)', self.main)
         self.assertIn('if (favoritesPage) "qrex-favorites-remove"', self.main)
         self.assertIn('else "qrex-history-favorite"', self.main)
@@ -272,13 +277,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('modifier = Modifier.size(52.dp).testTag("qrex-result-menu")', self.main)
         self.assertIn('testTag("qrex-result-primary")', self.main)
         self.assertIn('testTag("qrex-result-delete")', self.main)
-        self.assertIn("heightIn(min = 178.dp)", self.main)
+        self.assertIn("heightIn(min = 154.dp)", self.main)
+        self.assertNotIn("heightIn(min = 178.dp)", self.main)
         result = self.main.split("private fun ResultScreen(", 1)[1].split(
             "fun openLink(", 1
         )[0]
         self.assertIn("shape = RoundedCornerShape(14.dp)", result)
         self.assertIn("color = QrexDesign.actionBlue", result)
-        self.assertIn("Modifier.size(62.dp).background(resultGlyphBrush)", result)
+        self.assertIn("Modifier.size(54.dp).background(resultGlyphBrush)", result)
         self.assertIn("val resultGlyphBrush = when {", result)
         self.assertIn("val resultGlyphStroke = when {", result)
         self.assertIn('testTag("qrex-result-glyph")', result)
@@ -288,7 +294,8 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('showChevron = false', self.main)
         self.assertIn("val foreground = if (destructive) MaterialTheme.colorScheme.error", design)
         self.assertIn("if (showChevron && !destructive)", design)
-        self.assertIn("heightIn(min = 56.dp)", design)
+        self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
+        self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
         self.assertIn('if (wifi) confirmWifiShare = true', self.main)
         self.assertIn('if (wifi && !alreadySaved) confirmWifiSave = true', self.main)
         self.assertIn('if (confirmResultDelete)', self.main)
