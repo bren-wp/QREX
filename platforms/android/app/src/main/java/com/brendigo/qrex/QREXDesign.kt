@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -299,6 +301,30 @@ internal fun qrexLayoutProfile(
     )
 }
 
+/** Text size never reduces result actions below an accessible 52dp target. */
+internal fun qrexResultActionHeightDp(fontScale: Float): Int =
+    if (fontScale >= 1.35f) 60 else 52
+
+/** Real brand-blue navigation icon and thin selected underline. No duplicate
+ * content description: the native NavigationBarItem label owns accessibility.
+ */
+@Composable
+internal fun QrexNavigationGlyph(
+    icon: ImageVector,
+    selected: Boolean,
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier.size(30.dp), contentAlignment = Alignment.Center) {
+        Icon(icon, contentDescription = null, tint = tint,
+            modifier = Modifier.size(22.dp))
+        if (selected) {
+            Box(Modifier.align(Alignment.BottomCenter).width(19.dp).height(2.dp)
+                .background(tint, RoundedCornerShape(2.dp)))
+        }
+    }
+}
+
 /** Reference-style result action: real full-width button with a touch target
  * >= 52dp, clear icon, legible label and chevron. Never an inert decorative card.
  */
@@ -320,7 +346,9 @@ internal fun QrexResultAction(
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.fillMaxWidth().heightIn(min = 56.dp),
+        modifier = modifier.fillMaxWidth().heightIn(
+            min = qrexResultActionHeightDp(LocalDensity.current.fontScale).dp
+        ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
@@ -329,9 +357,9 @@ internal fun QrexResultAction(
             if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.20f)
             else MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Row(Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
+        Row(Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(21.dp),
+            Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp),
                 tint = foreground)
             Spacer(Modifier.width(12.dp))
             Text(label, modifier = Modifier.weight(1f),

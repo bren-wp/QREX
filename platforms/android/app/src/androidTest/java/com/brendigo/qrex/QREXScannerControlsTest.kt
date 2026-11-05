@@ -50,6 +50,19 @@ class QREXScannerControlsTest {
             val floatingBounds = floating.getUnclippedBoundsInRoot()
             assertTrue(floatingBounds.right - floatingBounds.left >= 48.dp)
             assertTrue(floatingBounds.bottom - floatingBounds.top >= 48.dp)
+
+            val preview = rule.onNodeWithTag("qrex-camera-preview", useUnmergedTree = true)
+                .assertIsDisplayed().getUnclippedBoundsInRoot()
+            val brackets = rule.onNodeWithTag("qrex-scan-brackets", useUnmergedTree = true)
+                .assertIsDisplayed().getUnclippedBoundsInRoot()
+            // Overlay must match the actual PreviewView bounds, never become
+            // a static bitmap or move outside the rounded camera container.
+            assertTrue(brackets.left >= preview.left - 1.dp)
+            assertTrue(brackets.right <= preview.right + 1.dp)
+            assertTrue(brackets.top >= preview.top - 1.dp)
+            assertTrue(brackets.bottom <= preview.bottom + 1.dp)
+            assertTrue(floatingBounds.left >= preview.left)
+            assertTrue(floatingBounds.right <= preview.right)
         }
     }
 }
