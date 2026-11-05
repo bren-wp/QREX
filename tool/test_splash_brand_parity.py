@@ -49,6 +49,18 @@ class SplashBrandParityTest(unittest.TestCase):
         styles = (RES / "values-v31/styles.xml").read_text("utf-8")
         self.assertIn("@drawable/qrex_icon", styles)
 
+    def test_splash_reference_layers_keep_wordmark_clear_of_lower_ribbon(self):
+        splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
+        self.assertIn("moveTo(0f, h * .76f)", splash)
+        self.assertIn("w * .34f, h * .70f", splash)
+        self.assertNotIn("w * .34f, h * .54f", splash)
+        self.assertIn("moveTo(0f, h * .86f)", splash)
+        self.assertIn("style = Stroke(width = 10.dp.toPx())", splash)
+        self.assertIn("style = Stroke(width = 5.dp.toPx())", splash)
+        self.assertIn("style = Stroke(width = 1.5.dp.toPx())", splash)
+        self.assertIn("qrexSplashFooterLines(tr(\"splash_message\"), compactWidth)", splash)
+        self.assertIn("bottomPaddingDp = if (heightDp < 620) 20 else 40", splash)
+
     def test_splash_never_overlays_footer_at_high_font_scale(self):
         splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
         self.assertIn("qrexSplashUsesScrollLayout(", splash)
