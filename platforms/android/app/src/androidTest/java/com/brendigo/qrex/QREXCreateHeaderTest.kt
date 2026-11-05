@@ -29,8 +29,9 @@ class QREXCreateHeaderTest {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
         await("qrex-create-title")
-        for (tag in listOf("qrex-create-back", "qrex-create-overflow",
-                           "qrex-create-more-types")) {
+        // Default Create has a clean subtitle. Advanced actions are opened
+        // from the functional overflow, not from a competing inline button.
+        for (tag in listOf("qrex-create-back", "qrex-create-overflow")) {
             val node = rule.onNodeWithTag(tag, useUnmergedTree = true)
                 .assertIsDisplayed()
             val rect = node.getUnclippedBoundsInRoot()
@@ -47,6 +48,12 @@ class QREXCreateHeaderTest {
         await("qrex-create-type-3")
         rule.onNodeWithTag("qrex-create-type-3", useUnmergedTree = true)
             .assertIsDisplayed()
+        await("qrex-create-more-types")
+        val collapse = rule.onNodeWithTag(
+            "qrex-create-more-types", useUnmergedTree = true
+        ).assertIsDisplayed().getUnclippedBoundsInRoot()
+        assertTrue("Advanced collapse width < 48dp", collapse.right - collapse.left >= 48.dp)
+        assertTrue("Advanced collapse height < 48dp", collapse.bottom - collapse.top >= 48.dp)
     }
 
     @Test fun createBackNavigatesToLiveScanner() {

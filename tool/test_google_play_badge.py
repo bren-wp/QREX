@@ -24,7 +24,7 @@ class GooglePlayReadmeBadgeTest(unittest.TestCase):
 
     def test_marketing_screens_use_latest_published_genuine_release(self):
         readme = README.read_text("utf-8")
-        self.assertIn("Latest published release: **[v1.0.30]", readme)
+        self.assertIn("Latest published release: **[v1.0.31]", readme)
         for screen in ("splash", "scan", "create", "wifi", "result", "history",
                        "saved", "more", "language", "export", "about", "privacy"):
             self.assertIn(

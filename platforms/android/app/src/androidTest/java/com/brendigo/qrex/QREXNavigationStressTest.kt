@@ -250,11 +250,14 @@ class QREXNavigationStressTest {
     fun advancedCreateTypesAreDiscoverableSelectedAndGenerateRealQr() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create advanced types")
-        // A localized visible disclosure is the direct entry point; users do
-        // not need to guess that QR formats are hidden in the header overflow.
-        rule.onNodeWithTag("qrex-create-more-types", useUnmergedTree = true)
-            .performScrollTo().assertIsDisplayed().performClick()
+        // On the uncluttered reference layout the functional header overflow
+        // is the entry point. Selecting E-mail opens all advanced choices.
+        rule.onNodeWithTag("qrex-create-overflow", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+        rule.onNodeWithTag("qrex-create-overflow-type-3", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
         requireScreenTag("qrex-create-advanced-types", 0, "open advanced choices")
+        assertTouchTarget("qrex-create-more-types")
         for (type in listOf(3, 4, 5, 7)) {
             // Repeated gesture-based selection while the scroll container is
             // measuring can trigger a Compose SnapshotStateObserver race on
@@ -320,7 +323,7 @@ class QREXNavigationStressTest {
         for (type in listOf(0, 1, 2, 6)) {
             assertTouchTarget("qrex-create-type-$type")
         }
-        assertTouchTarget("qrex-create-more-types")
+        assertTouchTarget("qrex-create-overflow")
         assertTouchTarget("qrex-create-show")
         assertTouchTarget("qrex-create-save")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)

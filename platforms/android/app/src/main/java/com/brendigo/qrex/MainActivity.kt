@@ -1230,17 +1230,22 @@ private fun CreateScreen(
                     fontSize = QrexDesign.supportingTextSize,
                     maxLines = 3, overflow = TextOverflow.Ellipsis
                 )
-                // Expose advanced QR formats without a second line of tabs.
-                TextButton(
-                    onClick = { showAdvancedTypes = !showAdvancedTypes },
-                    modifier = Modifier.heightIn(min = 52.dp)
-                        .testTag("qrex-create-more-types"),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
-                ) {
-                    Icon(Icons.Default.MoreHoriz, contentDescription = null,
-                        modifier = Modifier.size(18.dp))
-                    Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
-                        fontSize = 11.sp)
+                // On Link/Text/Wi-Fi/Contact the reference has a full-width
+                // privacy subtitle, no competing "More" button. Advanced QR
+                // formats are always reachable from the top-right overflow;
+                // only show a collapse control after an advanced choice.
+                if (showAdvancedTypes) {
+                    TextButton(
+                        onClick = { showAdvancedTypes = false },
+                        modifier = Modifier.heightIn(min = 52.dp)
+                            .testTag("qrex-create-more-types"),
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Icon(Icons.Default.MoreHoriz, contentDescription = null,
+                            modifier = Modifier.size(18.dp))
+                        Text(tr("more"), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                            fontSize = 11.sp)
+                    }
                 }
             }
 
@@ -1333,6 +1338,16 @@ private fun CreateScreen(
                 }
             }
             Spacer(Modifier.height(10.dp))
+            // Reference Create screen presents the active form and real QR
+            // preview inside ONE raised navy card. This is a native Surface,
+            // not a marketing image, and retains working fields for all types.
+            QrexPanel(
+                Modifier.fillMaxWidth().testTag("qrex-create-unified-card")
+            ) {
+                Column(
+                    Modifier.fillMaxWidth().padding(12.dp)
+                        .testTag("qrex-create-unified-content")
+                ) {
             if (kind == 0) {
                 Text(
                     "${tr("url")} (URL)",
@@ -1513,6 +1528,8 @@ private fun CreateScreen(
                     }
                 }
             }
+                } // inner form-and-preview column
+            } // native unified Create card
         }
         // Primary actions stay in their own non-scrollable footer and can
         // never be overlapped or pushed away by the QR preview.
@@ -1532,7 +1549,11 @@ private fun CreateScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = horizontalPadding, vertical = 3.dp)
                 .heightIn(min = 48.dp).testTag("qrex-create-save"),
             colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = MaterialTheme.colorScheme.surface)
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 2.dp, pressedElevation = 1.dp)
         ) {
             Icon(Icons.Default.Download, contentDescription = null,
                 modifier = Modifier.size(19.dp))

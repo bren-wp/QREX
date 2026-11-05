@@ -28,6 +28,8 @@ class CreateReferenceRegressionTests(unittest.TestCase):
                         self.source.index("val quickTypes = listOf(0, 1, 2, 6)"))
         self.assertIn('testTag("qrex-create-advanced-types")', self.source)
         self.assertIn("showAdvancedTypes = true", self.source)
+        self.assertIn("if (showAdvancedTypes) {", self.source)
+        self.assertIn("onClick = { showAdvancedTypes = false }", self.source)
         self.assertIn("selected = kind == index", self.source)
 
     def test_create_reference_header_navigates_and_preview_is_private(self):
@@ -51,6 +53,26 @@ class CreateReferenceRegressionTests(unittest.TestCase):
                         create.index('testTag("qrex-create-content")'))
         self.assertLess(create.index('testTag("qrex-create-preview-ready")'),
                         create.index('testTag("qrex-create-show")'))
+
+    def test_reference_unifies_url_input_and_live_qr_preview(self):
+        create = self.source.split("private fun CreateScreen(", 1)[1].split(
+            "private fun HistoryScreen(", 1
+        )[0]
+        outer = create.index('testTag("qrex-create-unified-card")')
+        content = create.index('testTag("qrex-create-content")')
+        preview = create.index('testTag("qrex-create-preview-card")')
+        generate = create.index('PrimaryAction(tr("generate_qr")')
+        self.assertLess(outer, content)
+        self.assertLess(content, preview)
+        self.assertLess(preview, generate)
+        self.assertIn('testTag("qrex-create-unified-content")', create)
+        self.assertIn("QrexPanel(", create)
+        self.assertIn("Modifier.fillMaxWidth().padding(12.dp)", create)
+        self.assertIn('testTag("qrex-create-preview-ready")', create)
+        self.assertIn("onClick = ::requestImageExport", create)
+        self.assertIn("containerColor = MaterialTheme.colorScheme.surfaceVariant", create)
+        self.assertIn("defaultElevation = 2.dp, pressedElevation = 1.dp", create)
+        self.assertIn("confirmWifiSave = true", create)
 
     def test_accessible_disclosure_and_pinned_actions(self):
         self.assertIn(".heightIn(min = 52.dp)", self.source)

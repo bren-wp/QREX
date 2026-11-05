@@ -11,9 +11,9 @@ ARCHIVE = ROOT / "docs/releases/workflows"
 
 class ArchivedPublisherTests(unittest.TestCase):
     def test_all_published_publishers_are_inert_and_preserved(self):
-        self.assertEqual(["github-release-1.0.31.yml"],
+        self.assertEqual(["github-release-1.0.32.yml"],
                          sorted(p.name for p in ACTIVE.glob("github-release-1.0.*.yml")))
-        expected = {f"github-release-1.0.{n}.yml" for n in range(1, 31)}
+        expected = {f"github-release-1.0.{n}.yml" for n in range(1, 32)}
         self.assertEqual(expected, {p.name for p in ARCHIVE.glob("github-release-1.0.*.yml")})
         for name in sorted(expected):
             with self.subTest(name=name):
@@ -44,8 +44,13 @@ class ArchivedPublisherTests(unittest.TestCase):
         screens = re.findall(
             r"/releases/download/v([0-9.]+)/android-([a-z]+)\.png", readme
         )
+        baseline = re.search(
+            r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme
+        )
+        self.assertIsNotNone(baseline, "README must ground screenshot asset version")
+        screenshot_version = baseline.group(1)
         expected = {
-            (version, name) for name in (
+            (screenshot_version, name) for name in (
                 "splash", "scan", "create", "wifi", "result",
                 "history", "saved", "more", "language", "export",
                 "about", "privacy",
@@ -53,6 +58,18 @@ class ArchivedPublisherTests(unittest.TestCase):
         }
         self.assertEqual(expected, set(screens))
         self.assertEqual(len(screens), len(expected))
+        self.assertIn(
+            f"| {screenshot_version} | [v{screenshot_version}]", archive
+        )
+        self.assertLessEqual(
+            tuple(int(n) for n in screenshot_version.split(".")),
+            tuple(int(n) for n in version.split(".")),
+        )
+        if screenshot_version != version:
+            # An incomplete published release must NEVER masquerade as a
+            # verified source of screenshots; explicitly document the gap.
+            self.assertIn(f"v{version} GitHub release currently", readme)
+            self.assertIn("not present in the live release asset list", readme)
 
 
 

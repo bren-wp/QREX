@@ -1,3 +1,15 @@
+## Candidate: v1.0.32 · Android versionCode 132
+
+Create screen structural parity: one raised navy Compose panel now includes active QR entry and the genuine offline generated preview, with functional accessible actions pinned below. Source and real Android geometry tests added; eight QR types, Wi-Fi consent and stored history preserved. Must pass exact-SHA Kotlin/JVM, Lint/R8, API 26/31/34/35/36, 23 languages and genuine screenshot capture before publishing.
+
+[Release notes](docs/releases/v1.0.32.md)
+
+## Published: v1.0.31 · Android versionCode 131
+
+Published GitHub APK, AAB, checksums, and updated 23-language 3D tiles. **Asset caveat:** as verified Nov 5, the release asset list omits the 12 screenshot PNGs and Play-UNSIGNED-QA AAB. The last full screenshots are in v1.0.30.
+
+[GitHub v1.0.31](https://github.com/bren-wp/QREX/releases/tag/v1.0.31)
+
 ## Candidate: v1.0.31 · Android versionCode 131
 
 Native Language screen: 24 real selectable options (system + 23 offline languages) with 36dp rounded raised flag plates, illuminated border, genuine RGB highlight and accent on selected language. Preserves locale persistence, pinned Back action, adaptive scrolling, TalkBack semantics and all stored QR records. CI-gated APK/AAB/screenshots/signatures are required; this is not yet a published release.

@@ -152,7 +152,13 @@ class ReleaseIntegrityTests(unittest.TestCase):
         screenshot = re.search(r"/releases/download/v([0-9.]+)/android-create\.png", readme)
         self.assertIsNotNone(published, "README must identify its published release")
         self.assertIsNotNone(screenshot, "README must link a real release screenshot")
-        self.assertEqual(published.group(1), screenshot.group(1))
+        # Screenshot assets can be from an older fully verified release
+        # only when the README explicitly records the latest asset gap.
+        source = re.search(r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme)
+        self.assertIsNotNone(source)
+        self.assertEqual(screenshot.group(1), source.group(1))
+        if screenshot.group(1) != published.group(1):
+            self.assertIn(f"v{published.group(1)} GitHub release currently", readme)
         self.assertIn("1.0.5", notes)
 
     def test_new_106_publisher_requires_exact_commit_ci_and_avoids_play_keys(self):
@@ -315,8 +321,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         workflow = (ARCHIVED_RELEASES / "github-release-1.0.15.yml").read_text("utf-8")
         notes = (ROOT / "docs/releases/v1.0.15.md").read_text("utf-8")
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        self.assertIn("versionCode = 131", gradle)
-        self.assertIn('versionName = "1.0.31"', gradle)
+        self.assertIn("versionCode = 132", gradle)
+        self.assertIn('versionName = "1.0.32"', gradle)
         self.assertIn("gh release create v1.0.15", workflow)
         self.assertIn("com.brendigo.qrex 115 1.0.15", workflow)
         self.assertIn("assert len(screens) == 10", workflow)
@@ -359,10 +365,18 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn(
             f"## Published: v{version} · Android versionCode {build_code}", notes
         )
+        screenshot_source = re.search(
+            r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme
+        )
+        self.assertIsNotNone(screenshot_source)
+        screenshot_version = screenshot_source.group(1)
         for screen in ("create", "export"):
             self.assertIn(
-                f"/releases/download/v{version}/android-{screen}.png", readme
+                f"/releases/download/v{screenshot_version}/android-{screen}.png", readme
             )
+        if screenshot_version != version:
+            self.assertIn(f"v{version} GitHub release currently", readme)
+            self.assertIn("not present in the live release asset list", readme)
 
         # Historical releases must remain archived, never silently removed
         # or substituted with a different version's screenshots.
@@ -403,8 +417,8 @@ class ReleaseIntegrityTests(unittest.TestCase):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         readme = (ROOT / "README.md").read_text("utf-8")
         notes = (ROOT / "RELEASE_NOTES.md").read_text("utf-8")
-        self.assertIn("versionCode = 131", gradle)
-        self.assertIn('versionName = "1.0.31"', gradle)
+        self.assertIn("versionCode = 132", gradle)
+        self.assertIn('versionName = "1.0.32"', gradle)
         self.assertIn("1.0.5", readme)
         self.assertIn("1.0.5", notes)
         self.assertTrue((ROOT / "docs/releases/v1.0.0.md").exists())
