@@ -28,6 +28,8 @@ class CreateReferenceRegressionTests(unittest.TestCase):
                         self.source.index("val quickTypes = listOf(0, 1, 2, 6)"))
         self.assertIn('testTag("qrex-create-advanced-types")', self.source)
         self.assertIn("showAdvancedTypes = true", self.source)
+        self.assertIn("if (showAdvancedTypes) {", self.source)
+        self.assertIn("onClick = { showAdvancedTypes = false }", self.source)
         self.assertIn("selected = kind == index", self.source)
 
     def test_create_reference_header_navigates_and_preview_is_private(self):
