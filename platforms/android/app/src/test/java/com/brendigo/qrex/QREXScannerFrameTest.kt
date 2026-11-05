@@ -22,9 +22,9 @@ class QREXScannerFrameTest {
     }
 
     @Test fun invalidCanvasDimensionsCannotPaintOutsidePreview() {
-        assertEquals(0f, scannerFrameSidePx(0f, 300f))
-        assertEquals(0f, scannerFrameSidePx(300f, -2f))
-        assertEquals(0f, scannerFrameSidePx(Float.NaN, 300f))
-        assertEquals(0f, scannerFrameSidePx(300f, Float.POSITIVE_INFINITY))
+        assertEquals(0f, scannerFrameSidePx(0f, 300f), 0f)
+        assertEquals(0f, scannerFrameSidePx(300f, -2f), 0f)
+        assertEquals(0f, scannerFrameSidePx(Float.NaN, 300f), 0f)
+        assertEquals(0f, scannerFrameSidePx(300f, Float.POSITIVE_INFINITY), 0f)
     }
 }
