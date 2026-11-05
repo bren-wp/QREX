@@ -46,6 +46,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -64,6 +66,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
+/**
+ * Reference scan bracket geometry, in physical Canvas pixels. A 73% viewport
+ * target matches the reference's approximately three-quarter-width scan box.
+ * A separate 83% usable-height bound keeps the guide ABOVE bottom controls,
+ * including on 320dp / large-font devices. Pure math for JVM regression tests.
+ */
+internal fun scannerFrameSidePx(widthPx: Float, usableHeightPx: Float): Float {
+    if (!widthPx.isFinite() || !usableHeightPx.isFinite() ||
+        widthPx <= 0f || usableHeightPx <= 0f) return 0f
+    return minOf(widthPx * .73f, usableHeightPx * .83f)
+}
+
 /** Draws the actual live scanner framing guide above the CameraX PreviewView.
  * Nothing is composited into the scanned image and no camera frames are stored.
  */
@@ -78,13 +92,13 @@ private fun ScannerCornerOverlay(
         val usableHeight = size.height - minOf(
             reservedBottomDp.dp.toPx(), size.height * 0.45f
         )
-        val side = minOf(size.width, usableHeight) * 0.61f
+        val side = scannerFrameSidePx(size.width, usableHeight)
         val left = (size.width - side) / 2f
         val top = (usableHeight - side) / 2f
         val right = left + side
         val bottom = top + side
         val segment = side * 0.23f
-        val stroke = 4.dp.toPx()
+        val stroke = 3.dp.toPx()
         val tint = QrexDesign.accentBright
         val corners = listOf(
             Offset(left, top + segment) to Offset(left, top),
@@ -100,11 +114,11 @@ private fun ScannerCornerOverlay(
             // Reference's luminous blue scan corners are a visual guide over
             // the live CameraX PreviewView, never pixels substituted into a
             // decoded frame. Translucent outer strokes imitate their glow.
-            drawLine(tint.copy(alpha = .14f), from, to,
-                strokeWidth = 13.dp.toPx(), cap = StrokeCap.Round)
-            drawLine(tint.copy(alpha = .42f), from, to,
-                strokeWidth = 8.dp.toPx(), cap = StrokeCap.Round)
-            drawLine(Color.White.copy(alpha = .94f), from, to,
+            drawLine(QrexDesign.actionBlue.copy(alpha = .26f), from, to,
+                strokeWidth = 16.dp.toPx(), cap = StrokeCap.Round)
+            drawLine(tint.copy(alpha = .78f), from, to,
+                strokeWidth = 7.dp.toPx(), cap = StrokeCap.Round)
+            drawLine(Color(0xFFD9FAFF), from, to,
                 strokeWidth = stroke, cap = StrokeCap.Round)
         }
     }
@@ -496,7 +510,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 .testTag("qrex-camera-preview")) {
                 AndroidView(factory = { preview }, modifier = Modifier.fillMaxSize())
                 ScannerCornerOverlay(
-                    Modifier.fillMaxSize(),
+                    Modifier.fillMaxSize().testTag("qrex-scan-brackets"),
                     reservedBottomDp = when {
                         showZoom -> 220
                         fontScale >= 1.5f -> 190
@@ -513,8 +527,12 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     enabled = !torchBusy && camera?.cameraInfo?.hasFlashUnit() == true,
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(14.dp).size(56.dp)
+                        .shadow(4.dp, CircleShape, clip = false)
                         .clip(CircleShape)
-                        .background(QrexDesign.backgroundDeep.copy(alpha = .79f))
+                        .background(Brush.verticalGradient(listOf(
+                            QrexDesign.surface.copy(alpha = .94f),
+                            QrexDesign.backgroundDeep.copy(alpha = .90f)
+                        )))
                         .border(
                             BorderStroke(1.dp, Color.White.copy(alpha = .24f)),
                             CircleShape
