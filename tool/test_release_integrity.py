@@ -154,7 +154,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIsNotNone(screenshot, "README must link a real release screenshot")
         # Screenshot assets can be from an older fully verified release
         # only when the README explicitly records the latest asset gap.
-        source = re.search(r"Last complete screenshot release: v([0-9.]+)", readme)
+        source = re.search(r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme)
         self.assertIsNotNone(source)
         self.assertEqual(screenshot.group(1), source.group(1))
         if screenshot.group(1) != published.group(1):
@@ -366,7 +366,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
             f"## Published: v{version} · Android versionCode {build_code}", notes
         )
         screenshot_source = re.search(
-            r"Last complete screenshot release: v([0-9.]+)", readme
+            r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme
         )
         self.assertIsNotNone(screenshot_source)
         screenshot_version = screenshot_source.group(1)
