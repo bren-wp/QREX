@@ -1,3 +1,27 @@
+## Candidate: v1.0.35 · Android versionCode 135
+
+Corrected an offline CameraX Y-plane decoding error for positioned ByteBuffer
+windows; packed and interleaved planes now honor their active buffer positions,
+bounds and strides. Packed-row copies are faster. Added JVM regression cases for
+offset/padded/direct/truncated image planes, and corrected the native build
+and F-Droid signing documentation. No changes to QR storage, Wi-Fi Keystore
+records, Android permissions, UI navigation or existing 23 translations.
+
+This is a **candidate only** until exact-commit Android/JVM/lint/R8,
+API 26/31/34/35/36, translations, actual screenshots and release checks pass.
+The GitHub disposable-signed APK/AAB cannot update Google Play installs.
+
+[Candidate details](docs/releases/v1.0.35.md)
+
+## Published: v1.0.34 · Android versionCode 134
+
+The 2026-11-05 main-commit release includes the CameraX neon scan framing,
+compact Result layout and shared five-tab navigation. GitHub Actions published
+a verified GitHub APK, AAB, unsigned Play QA AAB, SHA256SUMS and 12 genuine
+Android screenshots. This is not an approved Play-signing identity.
+
+[Download QREX 1.0.34](https://github.com/bren-wp/QREX/releases/tag/v1.0.34)
+
 ## Candidate: v1.0.34 · Android versionCode 134
 
 The Home scanner retains the actual live CameraX feed, now with a larger neon cyan QR frame (73% viewport width with 83% usable-height cap), refined layered glow and a raised glass-finish torch button. The geometry is bounded to preserve tap targets and the on-device scanning, gallery, zoom and privacy controls. New JVM, instrumented Android and source tests protect this UI. GitHub APK/AAB and 12 real screenshots publish only after exact-commit CI and release checks.
