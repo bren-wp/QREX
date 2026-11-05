@@ -309,7 +309,10 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('val scannerActions: @Composable (Boolean) -> Unit', self.scanner)
         # Reserve space for real buttons; never center scan corners
         # over the footer on a short phone.
-        self.assertIn("minOf(size.width, usableHeight) * 0.61f", self.scanner)
+        self.assertIn("scannerFrameSidePx(size.width, usableHeight)", self.scanner)
+        self.assertIn("widthPx * .73f", self.scanner)
+        self.assertIn("usableHeightPx * .83f", self.scanner)
+        self.assertIn('testTag("qrex-scan-brackets")', self.scanner)
         self.assertIn("size.height * 0.45f", self.scanner)
         self.assertIn('testTag("qrex-scan-controls")', self.scanner)
         # Show only zoom values advertised by the active CameraX camera.
