@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -67,6 +68,24 @@ class QREXCreateReferenceTest {
         rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-create-save", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test fun standardCreateSubtitleIsNotCrowdedByAdvancedDisclosure() {
+        await("qrex-tab-1")
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        await("qrex-create-title")
+        rule.onNodeWithTag("qrex-create-more-types", useUnmergedTree = true)
+            .assertDoesNotExist()
+
+        // All advanced types remain discoverable via the genuine overflow.
+        rule.onNodeWithTag("qrex-create-overflow", useUnmergedTree = true)
+            .performClick()
+        await("qrex-create-overflow-type-3")
+        rule.onNodeWithTag("qrex-create-overflow-type-3", useUnmergedTree = true)
+            .performClick()
+        await("qrex-create-more-types")
+        rule.onNodeWithTag("qrex-create-more-types", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
