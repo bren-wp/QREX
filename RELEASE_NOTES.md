@@ -1,3 +1,9 @@
+## Candidate: v1.0.33 · Android versionCode 133
+
+Splash-reference native layout pass: lower luminous ribbons moved below wordmark, badge halo reduced to a thin crisp cyan rim, localized em-dash footer split into two lines at ordinary widths, and footer anchored closer to the reference. Pure JVM + source regression tests added. v1.0.33 is DRAFT and must not be released until v1.0.32 is successfully published and the new exact-commit CI/screenshot checks pass.
+
+[Release notes](docs/releases/v1.0.33.md)
+
 ## Candidate: v1.0.32 · Android versionCode 132
 
 Create screen structural parity: one raised navy Compose panel now includes active QR entry and the genuine offline generated preview, with functional accessible actions pinned below. Source and real Android geometry tests added; eight QR types, Wi-Fi consent and stored history preserved. Must pass exact-SHA Kotlin/JVM, Lint/R8, API 26/31/34/35/36, 23 languages and genuine screenshot capture before publishing.
