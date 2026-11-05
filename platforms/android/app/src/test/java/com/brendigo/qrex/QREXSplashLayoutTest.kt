@@ -54,13 +54,13 @@ class QREXSplashLayoutTest {
     fun footerUsesReferenceTwoLineWrapWithoutBreakingCompactOrLocalisedText() {
         val message = "Sve što može QR — jednostavno, brzo i bez prijave."
         assertEquals(
-            "Sve što može QR —\\njednostavno, brzo i bez prijave.",
+            "Sve što može QR —\njednostavno, brzo i bez prijave.",
             qrexSplashFooterLines(message, compactWidth = false)
         )
         assertEquals(message, qrexSplashFooterLines(message, compactWidth = true))
         assertEquals("Other languages remain unchanged",
             qrexSplashFooterLines("Other languages remain unchanged", false))
-        assertEquals("Already\\nwrapped", qrexSplashFooterLines("Already\\nwrapped", false))
+        assertEquals("Already\nwrapped", qrexSplashFooterLines("Already\nwrapped", false))
         assertEquals(40, qrexSplashMetrics(393, 852, 1f).bottomPaddingDp)
         assertEquals(20, qrexSplashMetrics(320, 568, 1f).bottomPaddingDp)
     }
