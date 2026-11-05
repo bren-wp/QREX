@@ -139,6 +139,7 @@ class QREXQrDecoderTest {
         assertNull(QREXQrDecoder.copyLuma(plane, 3, 3, 4, 1))
         assertEquals(12, plane.position())
         assertEquals(21, plane.limit())
+        assertNull(QREXQrDecoder.copyLuma(ByteBuffer.allocate(100), 10, 4, 4, 1))
     }
 
     @Test
