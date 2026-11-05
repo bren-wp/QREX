@@ -64,16 +64,27 @@ internal object QREXQrDecoder {
     ): ByteArray? {
         if (width <= 0 || height <= 0 || rowStride <= 0 || pixelStride <= 0 ||
             width.toLong() * height > MAX_PIXELS) return null
+        // An ImageProxy plane may expose only a positioned window of a larger
+        // ByteBuffer. Rewinding would decode the prefix instead of the Y plane.
+        // Duplicate so neither position nor limit of CameraX's buffer changes.
         val buffer = plane.duplicate()
-        buffer.rewind()
-        val lastIndex = (height - 1).toLong() * rowStride +
+        val base = buffer.position().toLong()
+        val lastIndex = base + (height - 1).toLong() * rowStride +
             (width - 1).toLong() * pixelStride
-        if (lastIndex >= buffer.limit()) return null
+        if (lastIndex >= buffer.limit().toLong()) return null
         val result = ByteArray(width * height)
         for (y in 0 until height) {
-            val start = y * rowStride
-            for (x in 0 until width) {
-                result[y * width + x] = buffer.get(start + x * pixelStride)
+            val start = (base + y.toLong() * rowStride).toInt()
+            if (pixelStride == 1) {
+                // Packed Y planes are the common case; use a bulk row copy
+                // rather than millions of individually indexed buffer reads.
+                buffer.position(start)
+                buffer.get(result, y * width, width)
+            } else {
+                for (x in 0 until width) {
+                    result[y * width + x] =
+                        buffer.get((start.toLong() + x.toLong() * pixelStride).toInt())
+                }
             }
         }
         return result
