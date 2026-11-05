@@ -45,7 +45,7 @@ jobs:
     needs: preflight
     if: ${{ needs.preflight.outputs.release_needed == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 85
+    timeout-minutes: 110
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
@@ -70,7 +70,7 @@ jobs:
         run: |
           set -euo pipefail
           required=(native-platforms.yml capture-screenshots.yml generate-localizations.yml p03-stability.yml)
-          for attempt in $(seq 1 90); do
+          for attempt in $(seq 1 135); do
             all_passed=true
             for workflow in "${required[@]}"; do
               result="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow/runs?branch=main&head_sha=$RELEASE_SHA&per_page=30" |
@@ -87,7 +87,7 @@ jobs:
             done
             if [ "$all_passed" = true ]; then exit 0; fi
             test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
-            echo "Waiting for all required tests (attempt $attempt/90)"
+            echo "Waiting for all required tests (attempt $attempt/135)"
             sleep 20
           done
           echo "Timed out waiting for successful exact-commit checks." >&2
