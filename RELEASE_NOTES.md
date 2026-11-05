@@ -1,3 +1,21 @@
+## Candidate: v1.0.34 · Android versionCode 134
+
+The Home scanner retains the actual live CameraX feed, now with a larger neon cyan QR frame (73% viewport width with 83% usable-height cap), refined layered glow and a raised glass-finish torch button. The geometry is bounded to preserve tap targets and the on-device scanning, gallery, zoom and privacy controls. New JVM, instrumented Android and source tests protect this UI. GitHub APK/AAB and 12 real screenshots publish only after exact-commit CI and release checks.
+
+[Release details](docs/releases/v1.0.34.md)
+
+## Published: v1.0.33 · Android versionCode 133
+
+Splash wave geometry, smaller luminous icon rim and adaptive footer. Public GitHub release has APK, AAB, separate unsigned QA AAB, SHA256SUMS and 12 verified Android screenshots.
+
+[Download QREX 1.0.33](https://github.com/bren-wp/QREX/releases/tag/v1.0.33)
+
+## Published: v1.0.32 · Android versionCode 132
+
+Unified native Create QR panel and accessible actions with authenticated APK/AAB, SHA256SUMS and 12 real screenshots.
+
+[Download QREX 1.0.32](https://github.com/bren-wp/QREX/releases/tag/v1.0.32)
+
 ## Candidate: v1.0.33 · Android versionCode 133
 
 Splash-reference native layout pass: lower luminous ribbons moved below wordmark, badge halo reduced to a thin crisp cyan rim, localized em-dash footer split into two lines at ordinary widths, and footer anchored closer to the reference. Pure JVM + source regression tests added. v1.0.33 is DRAFT and must not be released until v1.0.32 is successfully published and the new exact-commit CI/screenshot checks pass.
