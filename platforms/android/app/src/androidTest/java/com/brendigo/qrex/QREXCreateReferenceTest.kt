@@ -49,6 +49,27 @@ class QREXCreateReferenceTest {
             .assertIsDisplayed()
     }
 
+    @Test fun unifiedCardEnclosesTheRealUrlField() {
+        await("qrex-tab-1")
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        await("qrex-create-unified-card")
+        await("qrex-create-content")
+        val card = rule.onNodeWithTag("qrex-create-unified-card", useUnmergedTree = true)
+            .assertIsDisplayed().getUnclippedBoundsInRoot()
+        val field = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .assertIsDisplayed().getUnclippedBoundsInRoot()
+        assertTrue("Form must be inset within the single reference card",
+            field.left >= card.left && field.right <= card.right)
+        assertTrue("Field must be vertically contained in the reference card",
+            field.top >= card.top && field.bottom <= card.bottom)
+        assertTrue("Card must not collapse on compact devices",
+            card.right - card.left >= 200.dp)
+        rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-create-save", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
     @Test fun quickTypeTabsFitSingleRowOnReferenceWidth() {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
