@@ -71,7 +71,7 @@ internal fun qrexSplashMetrics(
             else -> 60
         },
         taglineSp = if (compact || fontScale >= 1.3f) 14 else 17,
-        bottomPaddingDp = if (heightDp < 620) 26 else 58,
+        bottomPaddingDp = if (heightDp < 620) 20 else 40,
         centerOffsetDp = if (heightDp < 620) -12 else -30
     )
 }
@@ -100,6 +100,15 @@ internal fun qrexSplashAccentRange(subtitle: String): IntRange? {
  * area, rather than the fixed 94dp track used previously. Never overflow a
  * narrow or split-screen container.
  */
+internal fun qrexSplashFooterLines(message: String, compactWidth: Boolean): String {
+    // The reference separates its lead phrase and supporting promise after
+    // the em dash. Keep the original localized text when the phone is narrow.
+    val divider = " — "
+    return if (!compactWidth && !message.contains('\n') && message.contains(divider)) {
+        message.replaceFirst(divider, " —\n")
+    } else message
+}
+
 internal fun qrexSplashProgressWidthDp(availableWidthDp: Int): Int {
     if (availableWidthDp <= 0) return 0
     return (availableWidthDp * .5f).toInt()
@@ -159,8 +168,10 @@ internal fun QrexSplashScreen(
                 style = Stroke(width = 1.25.dp.toPx())
             )
             val lowerRibbon = Path().apply {
-                moveTo(0f, h * .65f)
-                cubicTo(w * .34f, h * .54f, w * .55f, h * .64f, w, h * .76f)
+                // Keep the luminous ribbon BELOW the wordmark/tagline, as in
+                // the supplied screenshot; the old .54 crest crossed QREX.
+                moveTo(0f, h * .76f)
+                cubicTo(w * .34f, h * .70f, w * .57f, h * .74f, w, h * .82f)
                 lineTo(w, h)
                 lineTo(0f, h)
                 close()
@@ -169,22 +180,22 @@ internal fun QrexSplashScreen(
                 lowerRibbon,
                 brush = Brush.linearGradient(
                     listOf(Color(0xFF0D67EB), Color(0xFF062CB2), Color(0xFF020B38)),
-                    start = Offset(0f, h * .62f),
+                    start = Offset(0f, h * .72f),
                     end = Offset(w, h)
                 ),
                 alpha = .87f
             )
             val lowerEdge = Path().apply {
-                moveTo(0f, h * .65f)
-                cubicTo(w * .34f, h * .54f, w * .55f, h * .64f, w, h * .76f)
+                moveTo(0f, h * .76f)
+                cubicTo(w * .34f, h * .70f, w * .57f, h * .74f, w, h * .82f)
             }
             drawPath(
                 lowerEdge, color = Color(0xFF16B6FE).copy(alpha = .7f),
                 style = Stroke(width = 1.5.dp.toPx())
             )
             val secondWave = Path().apply {
-                moveTo(0f, h * .80f)
-                cubicTo(w * .40f, h * .72f, w * .68f, h * .88f, w, h * .84f)
+                moveTo(0f, h * .86f)
+                cubicTo(w * .40f, h * .78f, w * .68f, h * .92f, w, h * .88f)
             }
             drawPath(
                 secondWave, color = Color(0xFF1F71FB).copy(alpha = .54f),
@@ -252,12 +263,18 @@ private fun QrexSplashBrand(
                 drawRoundRect(
                     color = QrexDesign.cyan.copy(alpha = .10f),
                     cornerRadius = rounding,
-                    style = Stroke(width = 20.dp.toPx())
+                    style = Stroke(width = 10.dp.toPx())
                 )
                 drawRoundRect(
                     color = QrexDesign.accentBright.copy(alpha = .28f),
                     cornerRadius = rounding,
-                    style = Stroke(width = 9.dp.toPx())
+                    style = Stroke(width = 5.dp.toPx())
+                )
+                // Thin luminous edge over soft halos, like the original badge.
+                drawRoundRect(
+                    color = QrexDesign.cyan.copy(alpha = .65f),
+                    cornerRadius = rounding,
+                    style = Stroke(width = 1.5.dp.toPx())
                 )
             }
             Image(
@@ -320,7 +337,7 @@ private fun QrexSplashFooter(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            tr("splash_message"),
+            qrexSplashFooterLines(tr("splash_message"), compactWidth),
             color = Color(0xFFB9CFF4),
             fontSize = if (compactWidth) 12.sp else 13.sp,
             lineHeight = 19.sp,
