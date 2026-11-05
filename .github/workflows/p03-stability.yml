@@ -1,6 +1,11 @@
 name: QREX P03 Android API lifecycle matrix
 
 on:
+  # The stable GitHub publisher verifies P03 on the exact merged main SHA.
+  # Run this matrix for every main update, including documentation-only merges,
+  # so release gating never accepts an absent or stale test result.
+  push:
+    branches: [main]
   pull_request:
     paths:
       - "platforms/android/**"
