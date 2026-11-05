@@ -300,8 +300,14 @@ private fun QREXApp(
         Scaffold(containerColor = colors.background, bottomBar = {
             // Keep reference five-tab navigation visible on Result too. The
             // system bottom inset is owned by Scaffold so actions remain above it.
-            NavigationBar(containerColor = if (darkUi) QrexDesign.backgroundDeep else Color(0xFFF0F5FD),
-                tonalElevation = 0.dp) {
+            Column(Modifier.fillMaxWidth()) {
+                HorizontalDivider(color = if (darkUi) QrexDesign.stroke else colors.outlineVariant,
+                    thickness = 1.dp)
+                NavigationBar(
+                    modifier = Modifier.fillMaxWidth().testTag("qrex-bottom-navigation"),
+                    containerColor = if (darkUi) QrexDesign.backgroundDeep else Color(0xFFF0F5FD),
+                    tonalElevation = 0.dp
+                ) {
                 pages.forEachIndexed { index, label ->
                     val target = navTargets[index]
                     val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue
@@ -320,7 +326,15 @@ private fun QREXApp(
                         },
                         // The adjacent text label is the accessible name;
                         // repeating it on the icon causes double announcements.
-                        icon = { Icon(icons[index], contentDescription = null) },
+                        icon = {
+                            QrexNavigationGlyph(
+                                icon = icons[index],
+                                selected = selected == target,
+                                tint = if (selected == target) selectedNavigationColor
+                                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.testTag("qrex-nav-glyph-$index")
+                            )
+                        },
                         // Do not hide every tab label on narrow screens or larger fonts.
                         alwaysShowLabel = true,
                         label = {
@@ -336,7 +350,8 @@ private fun QREXApp(
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer))
                 }
-            }
+                }
+            } // Divider and consistent five-tab navigation on every screen
         }) { padding ->
             Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
                 androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
@@ -567,7 +582,7 @@ private fun ResultScreen(
     // Leave a real 20dp separation between the Result scroll viewport and
     // Scaffold's pinned navigation on API 26+; font/inset differences must
     // not allow result actions to paint into the bottom tab hit region.
-    Column(Modifier.fillMaxSize().imePadding().padding(bottom = 20.dp)
+    Column(Modifier.fillMaxSize().imePadding().padding(bottom = 8.dp)
         .testTag("qrex-result-screen")) {
         // Keep the primary Close action outside the scrolling Result content.
         // Scroll restoration and keyboard resizing must not hide navigation.
@@ -616,7 +631,7 @@ private fun ResultScreen(
         }
         Column(Modifier.weight(1f).fillMaxWidth()
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll")
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
         // Reference screens use ONE large navy content card. Previously the
         // icon floated above a second panel, wasting height and misaligning
@@ -655,8 +670,8 @@ private fun ResultScreen(
         }
         QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
             Column(
-                Modifier.fillMaxWidth().heightIn(min = 178.dp)
-                    .padding(horizontal = 16.dp, vertical = 18.dp),
+                Modifier.fillMaxWidth().heightIn(min = 154.dp)
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -670,14 +685,14 @@ private fun ResultScreen(
                     modifier = Modifier.testTag("qrex-result-glyph")
                 ) {
                     Box(
-                        Modifier.size(62.dp).background(resultGlyphBrush),
+                        Modifier.size(54.dp).background(resultGlyphBrush),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(resultIcon, contentDescription = null,
-                            tint = Color.White, modifier = Modifier.size(32.dp))
+                            tint = Color.White, modifier = Modifier.size(28.dp))
                     }
                 }
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(10.dp))
                 if (wifi) {
                     Text(
                         "${tr("network")}: ${QRContent.wifiField(raw, "S") ?: tr("wifi")}",
@@ -714,19 +729,19 @@ private fun ResultScreen(
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         if (url != null) {
             PrimaryAction(
                 tr("open_link"), modifier = Modifier.testTag("qrex-result-primary")
             ) { openLink(context, url) }
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(6.dp))
         } else if (QRContent.isEvent(raw)) {
             PrimaryAction(tr("add_to_calendar")) {
                 if (!openCalendarEvent(context, raw)) {
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(6.dp))
         }
         QrexResultAction(
             tr("copy"), Icons.Default.ContentCopy,
@@ -737,18 +752,18 @@ private fun ResultScreen(
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         QrexResultAction(tr("share"), Icons.Default.Share) {
             if (wifi) confirmWifiShare = true
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         QrexResultAction(if (showQrPreview) tr("hide") else tr("show_qr"), Icons.Default.QrCode,
             modifier = Modifier.testTag("qrex-result-toggle-qr"),
             showChevron = false) {
             showQrPreview = !showQrPreview
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
             if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -785,7 +800,7 @@ private fun ResultScreen(
                 ) { Text(tr("export_png")) }
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         QrexResultAction(tr("edit"), Icons.Default.Edit) { onEdit(raw) }
         if (hasHistoryRecord) {
             Spacer(Modifier.height(8.dp))
