@@ -1,3 +1,30 @@
+## Candidate: v1.0.36 · Android versionCode 136
+
+Screen-by-screen reference work targets the largest verified structural difference in
+Settings / More: the dark theme previously used a two-column grid while the
+requested consistent arrangement is **one full-width card per row** in every
+theme and display size. Seven functional native cards now use aligned 72dp+
+touch surfaces, 40dp raised vector icon plates, uniform 15dp corner radius,
+10dp vertical gaps and a separate destructive action. Privacy, Terms, About,
+Language, Theme and Export retain the real in-app controls and confirmations.
+Source and Android instrumentation tests protect both dark and light geometry.
+
+This is a candidate until exact-main Kotlin/JVM/Lint/R8, all five P03 Android
+API emulators, 23 offline languages, genuine screen capture, signing and
+SHA-256 checks complete. Pixel-exact equivalence with a perspective
+marketing reference is not asserted without aligned flat reference images.
+
+[Release candidate details](docs/releases/v1.0.36.md)
+
+## Published: v1.0.35 · Android versionCode 135
+
+GitHub APK/AAB and separate unsigned Play QA AAB, SHA256SUMS and twelve
+genuine emulator captures were published on 2026-11-05. CameraX QR Y-plane
+position/stride decoding, packed transfer and regression tests were improved.
+GitHub's disposable certificate does not sign Play uploads.
+
+[Download QREX 1.0.35](https://github.com/bren-wp/QREX/releases/tag/v1.0.35)
+
 ## Candidate: v1.0.35 · Android versionCode 135
 
 Corrected an offline CameraX Y-plane decoding error for positioned ByteBuffer
