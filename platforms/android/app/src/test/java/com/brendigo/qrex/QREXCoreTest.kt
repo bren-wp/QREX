@@ -4,15 +4,13 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class QREXCoreTest {
-    @Test fun moreLayoutFitsNormalSmallPhoneAndProtectsAccessibilityText() {
-        // 3x2 More cards should fit the ordinary 320dp screen without an
-        // unnecessary seven-row scroll list. Very narrow/high-font layouts
-        // intentionally keep accessible rows to avoid overlapping labels.
-        assertFalse(useCompactMoreList(320, 1.0f))
-        assertFalse(useCompactMoreList(393, 1.0f))
-        assertTrue(useCompactMoreList(280, 1.0f))
-        assertTrue(useCompactMoreList(393, 1.6f))
-        assertTrue(useCompactMoreList(320, 1.45f))
+    @Test fun settingsFullWidthCardsExpandAtAccessibilityFontScale() {
+        // Actual row geometry in dark/light is verified by an Android UI test.
+        // This pure helper guarantees taller actions without a grid fallback.
+        assertEquals(72, qrexSettingsCardHeightDp(1.0f))
+        assertEquals(72, qrexSettingsCardHeightDp(1.30f))
+        assertEquals(88, qrexSettingsCardHeightDp(1.35f))
+        assertEquals(88, qrexSettingsCardHeightDp(1.60f))
     }
 
     @Test fun pdfSnapshotKeepsExactlyTheApprovedFavoritesAfterHistoryChanges() {
