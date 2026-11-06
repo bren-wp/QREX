@@ -182,7 +182,9 @@ internal fun QrexSettingsListRow(
         else accentOverride ?: MaterialTheme.colorScheme.primary
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().heightIn(min = 72.dp),
+        modifier = modifier.fillMaxWidth().heightIn(
+            min = qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
+        ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
@@ -232,6 +234,10 @@ internal fun QrexSettingsListRow(
         }
     }
 }
+
+/** Accessible card height for Settings, independent of display width or theme. */
+internal fun qrexSettingsCardHeightDp(fontScale: Float): Int =
+    if (fontScale >= 1.35f) 88 else 72
 
 /** Window-class layout rules for phones: source of truth for responsive
  * Compose sizing. Width/height refer to the available content viewport in dp,
