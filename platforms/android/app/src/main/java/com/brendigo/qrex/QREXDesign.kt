@@ -3,8 +3,6 @@ package com.brendigo.qrex
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -72,7 +70,6 @@ internal object QrexDesign {
     val success = Color(0xFF19CFAB)
     val titleTextSize = 21.sp
     val supportingTextSize = 11.sp
-    val tileTitleTextSize = 13.sp
     val tileSupportingTextSize = 12.sp
     val sectionSpacing = 12.dp
     val cardRadius = 15.dp
@@ -164,61 +161,11 @@ internal fun QrexPanel(
     )
 }
 
-@Composable
-internal fun QrexSettingsTile(
-    label: String,
-    icon: ImageVector,
-    onClick: () -> Unit,
-    subtitle: String? = null,
-    destructive: Boolean = false,
-    enabled: Boolean = true,
-    modifier: Modifier = Modifier,
-    accentOverride: Color? = null
-) {
-    val foreground = if (destructive) MaterialTheme.colorScheme.error
-        else accentOverride ?: MaterialTheme.colorScheme.primary
-    QrexPanel(modifier = modifier.clickable(
-        enabled = enabled, role = Role.Button, onClick = onClick
-    )) {
-        Column(Modifier.fillMaxWidth().heightIn(min = 104.dp).padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            // Reference icon plate: a raised, 40dp rounded square with a
-            // genuine RGB highlight. All layers remain non-clickable; the
-            // entire Settings tile stays one accessible native button.
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = foreground.copy(alpha = .13f),
-                border = BorderStroke(1.dp, foreground.copy(alpha = .39f)),
-                shadowElevation = 4.dp,
-                modifier = Modifier.testTag("qrex-more-icon-plate")
-            ) {
-                Box(
-                    Modifier.size(40.dp).background(Brush.verticalGradient(
-                        listOf(Color.White.copy(alpha = .10f), Color.Transparent)
-                    )),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(icon, contentDescription = null, tint = foreground,
-                        modifier = Modifier.size(23.dp))
-                }
-            }
-            Text(label, fontWeight = FontWeight.SemiBold,
-                color = if (!enabled) MaterialTheme.colorScheme.onSurfaceVariant
-                    else if (destructive) foreground else MaterialTheme.colorScheme.onSurface,
-                maxLines = 2, overflow = TextOverflow.Ellipsis,
-                fontSize = QrexDesign.tileTitleTextSize)
-            if (subtitle != null) {
-                Text(subtitle, fontSize = QrexDesign.tileSupportingTextSize,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2, overflow = TextOverflow.Ellipsis)
-            }
-        }
-    }
-}
-
-/** Reference light-mode More page uses compact *rows* rather than the
- * dark design's two-column tiles. A single real surface is the touch target;
- * no nested decorative clickable elements or fake menu controls.
+/**
+ * A single full-width settings card in every appearance and window size.
+ * The raised icon plate is decorative: the parent Surface is the only
+ * accessible click target, with a native ripple and an actionable chevron.
+ * Height expands with translations and large accessibility font settings.
  */
 @Composable
 internal fun QrexSettingsListRow(
@@ -235,40 +182,52 @@ internal fun QrexSettingsListRow(
         else accentOverride ?: MaterialTheme.colorScheme.primary
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().heightIn(min = 60.dp),
-        shape = RoundedCornerShape(13.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 72.dp),
+        shape = RoundedCornerShape(QrexDesign.cardRadius),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
             else MaterialTheme.colorScheme.surface,
         shadowElevation = 3.dp,
         border = BorderStroke(1.dp, if (destructive)
-            MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
+            MaterialTheme.colorScheme.error.copy(alpha = 0.30f)
             else MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        Row(Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            Surface(shape = RoundedCornerShape(11.dp),
-                color = accent.copy(alpha = .10f)) {
-                Box(Modifier.size(34.dp), contentAlignment = Alignment.Center) {
+            Surface(
+                modifier = Modifier.testTag("qrex-more-icon-plate"),
+                shape = RoundedCornerShape(12.dp),
+                color = accent.copy(alpha = .13f),
+                border = BorderStroke(1.dp, accent.copy(alpha = .39f)),
+                shadowElevation = 4.dp
+            ) {
+                Box(
+                    Modifier.size(40.dp).background(Brush.verticalGradient(
+                        listOf(Color.White.copy(alpha = .10f), Color.Transparent)
+                    )),
+                    contentAlignment = Alignment.Center
+                ) {
                     Icon(icon, contentDescription = null, tint = accent,
-                        modifier = Modifier.size(19.dp))
+                        modifier = Modifier.size(22.dp))
                 }
             }
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(label, fontWeight = FontWeight.SemiBold,
-                    color = if (destructive) accent
-                        else MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    fontSize = 15.sp,
+                    color = if (destructive) accent else MaterialTheme.colorScheme.onSurface,
+                    maxLines = 3, overflow = TextOverflow.Ellipsis)
                 if (subtitle != null) {
-                    Text(subtitle, fontSize = 12.sp,
+                    Text(subtitle, fontSize = QrexDesign.tileSupportingTextSize,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
             if (showChevron && !destructive) {
+                Spacer(Modifier.width(8.dp))
                 Icon(Icons.Default.ChevronRight, contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp))
+                    modifier = Modifier.size(20.dp))
             }
         }
     }
