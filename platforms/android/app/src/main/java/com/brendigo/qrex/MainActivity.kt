@@ -1994,15 +1994,7 @@ private fun HistoryScreen(
     }
 }
 
-/** Dark QREX uses a 3×2 grid; light QREX uses reference-style full-width rows.
- * Always fall back to rows on narrow devices or with accessibility text scaling.
- */
-internal fun useCompactMoreList(
-    screenWidthDp: Int,
-    fontScale: Float,
-    preferRows: Boolean = false
-): Boolean = preferRows || screenWidthDp < 300 || fontScale >= 1.30f
-
+/** Settings always uses one accessible full-width card per action, in both themes. */
 @Composable
 private fun MoreScreen(
     store: QREXStore,
@@ -2070,14 +2062,6 @@ private fun MoreScreen(
         "light" -> tr("theme_light")
         else -> tr("theme_dark")
     }
-    // Dark reference: six tiles in three aligned pairs. Light reference:
-    // native full-width rows. Both themes become rows at narrow widths /
-    // larger font scales so translated labels never overlap.
-    val compactSettings = useCompactMoreList(
-        LocalConfiguration.current.screenWidthDp,
-        LocalDensity.current.fontScale,
-        preferRows = !isDarkAppearance
-    )
     when (detailPage) {
     "language" -> QrexLanguageDetails(store, onBack = { detailPage = "root" })
     "export" -> QrexExportDetails(
@@ -2089,78 +2073,40 @@ private fun MoreScreen(
         .padding(horizontal = 14.dp, vertical = 12.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
-        if (compactSettings) {
-            // Light appearance always uses reference-style rows. Dark appearance
-            // falls back to rows when a narrow viewport or large text needs it.
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
-                    subtitle = themeTitle, onClick = { showTheme = true },
-                    modifier = Modifier.testTag("qrex-more-theme"),
-                    accentOverride = if (isDarkAppearance) QrexDesign.accentBright
-                        else MaterialTheme.colorScheme.primary)
-                QrexSettingsListRow(tr("language"), Icons.Default.Language,
-                    subtitle = languageName,
-                    onClick = { detailPage = "language" },
-                    modifier = Modifier.testTag("qrex-more-language"))
-                QrexSettingsListRow(tr("export_archive"), Icons.Default.Download,
-                    subtitle = "PDF",
-                    onClick = { detailPage = "export" },
-                    modifier = Modifier.testTag("qrex-more-export"))
-                QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Lock,
-                    onClick = { showPrivacy = true },
-                    modifier = Modifier.testTag("qrex-more-privacy"))
-                QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
-                    onClick = { showTerms = true },
-                    modifier = Modifier.testTag("qrex-more-terms"),
-                    accentOverride = if (isDarkAppearance) QrexDesign.accentBright
-                        else MaterialTheme.colorScheme.primary)
-                QrexSettingsListRow(tr("about"), Icons.Default.Info,
-                    subtitle = currentVersionLabel,
-                    onClick = { showAbout = true },
-                    modifier = Modifier.testTag("qrex-more-about"))
-                Spacer(Modifier.height(6.dp))
-                QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
-                    destructive = true, onClick = { showDelete = true },
-                    modifier = Modifier.testTag("qrex-more-delete"))
-            }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    QrexSettingsTile(label = tr("theme"), icon = Icons.Default.Brightness6,
-                        subtitle = themeTitle, onClick = { showTheme = true },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-theme"),
-                        accentOverride = QrexDesign.accentBright)
-                    QrexSettingsTile(label = tr("language"), icon = Icons.Default.Language,
-                        subtitle = languageName, onClick = { detailPage = "language" },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-language"))
-                }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    QrexSettingsTile(label = tr("export_archive"), icon = Icons.Default.Download,
-                        subtitle = "PDF", onClick = { detailPage = "export" },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-export"))
-                    QrexSettingsTile(label = tr("privacy_policy"), icon = Icons.Default.Lock,
-                        onClick = { showPrivacy = true },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-privacy"))
-                }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    QrexSettingsTile(label = tr("terms_of_use"), icon = Icons.Default.Description,
-                        onClick = { showTerms = true },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-terms"),
-                        accentOverride = QrexDesign.accentBright)
-                    QrexSettingsTile(label = tr("about"), icon = Icons.Default.Info,
-                        subtitle = currentVersionLabel,
-                        onClick = { showAbout = true },
-                        modifier = Modifier.weight(1f).testTag("qrex-more-about"))
-                }
-                QrexSettingsListRow(
-                    label = tr("clear_history"),
-                    icon = Icons.Default.DeleteForever,
-                    onClick = { showDelete = true },
-                    destructive = true,
-                    showChevron = false,
-                    modifier = Modifier.testTag("qrex-more-delete")
-                )
-            }
+        // One column for dark, light, narrow and large-text modes.
+        // Each Surface is a complete accessible click target; icons are decorative.
+        Column(
+            modifier = Modifier.fillMaxWidth().testTag("qrex-more-settings-stack"),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
+                subtitle = themeTitle, onClick = { showTheme = true },
+                modifier = Modifier.testTag("qrex-more-theme"),
+                accentOverride = if (isDarkAppearance) QrexDesign.accentBright
+                    else MaterialTheme.colorScheme.primary)
+            QrexSettingsListRow(tr("language"), Icons.Default.Language,
+                subtitle = languageName, onClick = { detailPage = "language" },
+                modifier = Modifier.testTag("qrex-more-language"))
+            QrexSettingsListRow(tr("export_archive"), Icons.Default.Download,
+                subtitle = "PDF", onClick = { detailPage = "export" },
+                modifier = Modifier.testTag("qrex-more-export"))
+            QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Lock,
+                onClick = { showPrivacy = true },
+                modifier = Modifier.testTag("qrex-more-privacy"))
+            QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
+                onClick = { showTerms = true },
+                modifier = Modifier.testTag("qrex-more-terms"),
+                accentOverride = if (isDarkAppearance) QrexDesign.accentBright
+                    else MaterialTheme.colorScheme.primary)
+            QrexSettingsListRow(tr("about"), Icons.Default.Info,
+                subtitle = currentVersionLabel, onClick = { showAbout = true },
+                modifier = Modifier.testTag("qrex-more-about"))
+            // Destructive history deletion remains separated and confirmed.
+            Spacer(Modifier.height(8.dp))
+            QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
+                destructive = true, showChevron = false,
+                onClick = { showDelete = true },
+                modifier = Modifier.testTag("qrex-more-delete"))
         }
         Spacer(Modifier.height(8.dp))
     }
