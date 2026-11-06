@@ -44,8 +44,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('"system" -> isSystemInDarkTheme()', self.main)
         self.assertIn('store.themeMode', self.main)
         self.assertIn('testTag("qrex-more-theme")', self.main)
-        self.assertIn("useCompactMoreList(", self.main)
-        self.assertIn("screenWidthDp < 300 || fontScale >= 1.30f", self.main)
+        self.assertIn('testTag("qrex-more-settings-stack")', self.main)
+        self.assertNotIn("useCompactMoreList(", self.main)
+        self.assertIn('testTag("qrex-more-settings-stack")', self.main)
         self.assertIn('testTag("qrex-theme-dialog")', self.main)
         self.assertNotIn("updateLightMode(", self.main)
         self.assertNotIn("updateLightMode(", self.core)
@@ -124,14 +125,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("pendingDelete = item", self.main)
         self.assertIn("store.remove(actual)", self.main)
 
-    def test_settings_grid_has_real_actions_and_accessible_touch_targets(self):
+    def test_settings_stack_has_real_actions_and_accessible_touch_targets(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
-        self.assertIn("QrexSettingsTile(", self.main)
+        self.assertNotIn("QrexSettingsTile(", self.main)
+        self.assertNotIn("QrexSettingsTile(", design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn('tr("save_history"), Modifier.weight(1f)', self.main)
         self.assertIn('testTag("qrex-privacy-history-switch")', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 64.dp)", self.main)
         self.assertIn("Modifier.heightIn(min = 48.dp)", self.main)
-        self.assertIn("heightIn(min = 104.dp)", design)
+        self.assertIn('testTag("qrex-more-icon-plate")', design)
         self.assertNotIn("store.updateLightMode(", self.main)
         self.assertIn("QrexSettingsListRow(", self.main)
         self.assertIn('store.updateLanguage(code)', self.details)
@@ -204,7 +207,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("softWrap = true, overflow = TextOverflow.Ellipsis", self.main)
         self.assertIn("QrexNavigationGlyph(", self.main)
         self.assertIn('testTag("qrex-nav-glyph-$index")', self.main)
-        self.assertIn('role = Role.Button, onClick = onClick', design)
+        # A clickable Material Surface gives each settings card its single
+        # accessible Button role; the icon plate has no nested click handler.
+        self.assertIn("onClick = onClick", design)
         self.assertIn('if (wifiPassword.isNotEmpty()) {', self.main)
         self.assertIn("onClick = { createMenu = true }", self.main)
         self.assertIn('Modifier.size(48.dp).testTag("qrex-create-overflow")',
@@ -213,7 +218,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("if (end <= start) return false", self.main)
         self.assertIn("if (!openCalendarEvent(context, raw))", self.main)
         self.assertIn("Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()", self.main)
-        self.assertIn("heightIn(min = 104.dp)", design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
 
     def test_pixel_audit_icons_buttons_compact_options_and_language(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
@@ -230,7 +235,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('android:pivotX="54"', monochrome)
         self.assertIn("M72,40 H79 V47 H72 Z", monochrome)
         self.assertIn("val stackChoices = widthDp < 340", design)
-        self.assertIn("heightIn(min = 104.dp)", design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
         self.assertIn('testTag("qrex-history-menu").size(48.dp)', self.main)

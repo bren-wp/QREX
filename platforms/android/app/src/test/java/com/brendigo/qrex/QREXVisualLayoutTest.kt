@@ -7,18 +7,12 @@ import org.junit.Test
 
 /** Pure responsive-layout checks: no emulator, device or QR data required. */
 class QREXVisualLayoutTest {
-    @Test fun settingsSwitchToRowsBeforeLargeTextIsTruncated() {
-        assertFalse(useCompactMoreList(393, 1.0f))
-        assertFalse(useCompactMoreList(320, 1.0f))
-        assertTrue(useCompactMoreList(299, 1.0f))
-        assertTrue(useCompactMoreList(393, 1.30f))
-        assertTrue(useCompactMoreList(320, 1.60f))
-        // Light reference always uses accessible full-width rows.
-        assertTrue(useCompactMoreList(393, 1.0f, preferRows = true))
-        assertTrue(useCompactMoreList(430, 1.0f, preferRows = true))
-        // System/dark appearance keeps the original six-tile grid when safe.
-        assertFalse(useCompactMoreList(393, 1.0f, preferRows = false))
-        assertTrue(useCompactMoreList(300, 1.45f, preferRows = false))
+    @Test fun settingsCardMinHeightIsIndependentOfScreenClass() {
+        // The previous grid-versus-row switch no longer exists. Actual
+        // seven-card stacking is tested in QREXMoreVerticalStackTest.
+        assertEquals(72, qrexSettingsCardHeightDp(1.0f))
+        assertEquals(88, qrexSettingsCardHeightDp(1.45f))
+        assertTrue(qrexSettingsCardHeightDp(1.45f) >= qrexSettingsCardHeightDp(1.0f))
     }
 
     @Test fun createChoicesRemainAccessibleAtLargeFontAndCompactWidth() {

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Native QREX More screen regression checks for the supplied visual reference.
+"""QREX More / Settings: single-column native reference and action contracts.
 
-Source contracts complement (not replace) real emulator screenshots, touch
-semantics, and Android instrumentation tests.
+Source guards supplement emulator geometry and genuine captured screenshots.
+They do not establish pixel equality with perspective marketing imagery.
 """
 from pathlib import Path
 import unittest
@@ -20,38 +20,53 @@ class MoreReferenceTests(unittest.TestCase):
         cls.more = cls.main.split("private fun MoreScreen(", 1)[1].split(
             "    if (showTheme) {", 1
         )[0]
-        cls.tiles = cls.design.split("internal fun QrexSettingsTile(", 1)[1].split(
-            "internal fun QrexSettingsListRow(", 1
+        cls.cards = cls.design.split("internal fun QrexSettingsListRow(", 1)[1].split(
+            "/** Window-class layout rules", 1
         )[0]
 
-    def test_six_tiles_use_reference_icons_with_real_callbacks(self):
+    def test_all_seven_cards_have_unique_real_callbacks(self):
         mapping = (
-            ("theme", "Brightness6"),
-            ("language", "Language"),
-            ("export", "Download"),
-            ("privacy", "Lock"),
-            ("terms", "Description"),
-            ("about", "Info"),
+            ("theme", "Brightness6", "showTheme = true"),
+            ("language", "Language", 'detailPage = "language"'),
+            ("export", "Download", 'detailPage = "export"'),
+            ("privacy", "Lock", "showPrivacy = true"),
+            ("terms", "Description", "showTerms = true"),
+            ("about", "Info", "showAbout = true"),
+            ("delete", "DeleteForever", "showDelete = true"),
         )
-        for tag, icon in mapping:
-            with self.subTest(tile=tag):
-                self.assertIn('testTag("qrex-more-%s")' % tag, self.more)
-                self.assertIn("Icons.Default.%s" % icon, self.more)
-        for callback in ("showTheme = true", 'detailPage = "language"',
-                         'detailPage = "export"', "showPrivacy = true",
-                         "showTerms = true", "showAbout = true"):
-            self.assertIn(callback, self.more)
-        self.assertIn('testTag("qrex-more-delete")', self.more)
-        self.assertIn("showDelete = true", self.more)
+        self.assertEqual(self.more.count("QrexSettingsListRow("), 7)
+        for tag, icon, callback in mapping:
+            with self.subTest(card=tag):
+                self.assertEqual(
+                    self.more.count(f'testTag("qrex-more-{tag}")'), 1
+                )
+                self.assertIn(f"Icons.Default.{icon}", self.more)
+                self.assertIn(callback, self.more)
 
-    def test_native_3d_plate_has_true_rgb_highlight_and_no_fake_click_layer(self):
-        self.assertIn('testTag("qrex-more-icon-plate")', self.tiles)
-        self.assertIn("Modifier.size(40.dp).background(Brush.verticalGradient(", self.tiles)
-        self.assertIn("listOf(Color.White.copy(alpha = .10f), Color.Transparent)", self.tiles)
-        self.assertIn("shadowElevation = 4.dp", self.tiles)
-        self.assertIn("border = BorderStroke(1.dp, foreground.copy(alpha = .39f))", self.tiles)
-        self.assertIn("role = Role.Button, onClick = onClick", self.tiles)
-        self.assertNotIn("IconButton(", self.tiles)
+    def test_one_full_width_card_per_row_in_both_appearances(self):
+        self.assertIn('testTag("qrex-more-settings-stack")', self.more)
+        self.assertIn("verticalArrangement = Arrangement.spacedBy(10.dp)", self.more)
+        self.assertNotIn("QrexSettingsTile(", self.main)
+        self.assertNotIn("useCompactMoreList(", self.main)
+        self.assertNotIn("if (compactSettings)", self.more)
+        self.assertNotIn("QrexSettingsTile(", self.design)
+        self.assertNotIn("Modifier.weight(1f).testTag(\"qrex-more-privacy\")", self.main)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", self.cards)
+        self.assertIn("if (fontScale >= 1.35f) 88 else 72", self.design)
+        self.assertIn("shape = RoundedCornerShape(QrexDesign.cardRadius)", self.cards)
+        self.assertIn("Spacer(Modifier.height(8.dp))", self.more)
+        self.assertIn("destructive = true, showChevron = false", self.more)
+
+    def test_raised_3d_icon_plate_is_decorative_not_an_extra_button(self):
+        self.assertIn('testTag("qrex-more-icon-plate")', self.cards)
+        self.assertIn("Modifier.size(40.dp).background(Brush.verticalGradient(", self.cards)
+        self.assertIn("listOf(Color.White.copy(alpha = .10f), Color.Transparent)", self.cards)
+        self.assertIn("shadowElevation = 4.dp", self.cards)
+        self.assertIn("border = BorderStroke(1.dp, accent.copy(alpha = .39f))", self.cards)
+        self.assertIn("onClick = onClick", self.cards)
+        self.assertIn("Icon(icon, contentDescription = null", self.cards)
+        self.assertNotIn("IconButton(", self.cards)
+        self.assertNotIn(".clickable(", self.cards)
 
     def test_about_version_is_installed_not_marketing_sample(self):
         self.assertIn("val currentVersionLabel = remember(context)", self.more)
@@ -60,15 +75,12 @@ class MoreReferenceTests(unittest.TestCase):
         self.assertIn("subtitle = currentVersionLabel", self.more)
         self.assertNotIn('subtitle = "QREX v1.0.0"', self.more)
 
-    def test_small_screen_fallback_preserves_actions_and_privacy(self):
-        self.assertIn("val compactSettings = useCompactMoreList(", self.more)
-        self.assertIn("preferRows = !isDarkAppearance", self.more)
-        self.assertIn("if (compactSettings)", self.more)
-        self.assertIn("QrexSettingsListRow(", self.more)
-        self.assertIn("QrexSettingsTile(", self.more)
-        self.assertIn('modifier = Modifier.testTag("qrex-more-delete")', self.more)
-        self.assertIn("confirmPdfExport = true", self.main)
+    def test_confirmations_and_local_only_actions_survive(self):
+        for action in ('confirmPdfExport = true', "showPrivacy = true",
+                       "showTerms = true", "showDelete = true"):
+            self.assertIn(action, self.main)
         self.assertIn("if (store.clearHistory()) showDelete = false", self.main)
+        self.assertIn("QrexSettingsListRow(", self.more)
 
 
 if __name__ == "__main__":
