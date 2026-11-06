@@ -19,7 +19,7 @@ existing tests were therefore inconsistent between themes.
 - Order: Theme → Language → Export → Privacy → Terms → About →
   separated Clear History. All existing localized strings, routes and
   confirmation callbacks remain, no fake buttons or mock screenshots.
-- Card geometry: `fillMaxWidth`, `heightIn(min=72.dp)`, 15dp radius,
+- Card geometry: `fillMaxWidth`, `heightIn(min=qrexSettingsCardHeightDp(fontScale).dp)`, 15dp radius,
   3dp elevation, 10dp vertical inter-card gap; destructive action has
   an additional spacer.
 - Icon depth: 40dp icon plate, 12dp radius, native 4dp elevation, 22dp
