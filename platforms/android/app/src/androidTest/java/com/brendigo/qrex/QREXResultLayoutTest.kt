@@ -69,11 +69,23 @@ class QREXResultLayoutTest {
         assertTrue("Primary action should fit above navigation", open.bottom <= nav.top)
 
         // Verify long action stacks scroll instead of covering a navigation tab.
+        rule.onNodeWithTag(
+            "qrex-result-save-favorite", useUnmergedTree = true
+        ).performScrollTo().assertIsDisplayed()
+        rule.waitForIdle()
+        // On API 26 the IME may finish resizing Scaffold *after* Result
+        // first appears. Compare both nodes in the same settled UI frame,
+        // rather than using the navigation bounds captured before scrolling.
         val favorite = rule.onNodeWithTag(
             "qrex-result-save-favorite", useUnmergedTree = true
-        ).performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-        assertTrue("Favorite action must scroll above persistent navigation",
-            favorite.bottom <= nav.top)
+        ).getUnclippedBoundsInRoot()
+        val currentNavigation = rule.onNodeWithTag(
+            "qrex-bottom-navigation", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        assertTrue(
+            "Favorite must remain above live navigation (favorite=$favorite, nav=$currentNavigation)",
+            favorite.bottom <= currentNavigation.top
+        )
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
             .assertIsDisplayed()
     }
