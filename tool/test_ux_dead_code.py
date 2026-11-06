@@ -218,7 +218,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("if (end <= start) return false", self.main)
         self.assertIn("if (!openCalendarEvent(context, raw))", self.main)
         self.assertIn("Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()", self.main)
-        self.assertIn("heightIn(min = 72.dp)", design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
 
     def test_pixel_audit_icons_buttons_compact_options_and_language(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
@@ -235,7 +235,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('android:pivotX="54"', monochrome)
         self.assertIn("M72,40 H79 V47 H72 Z", monochrome)
         self.assertIn("val stackChoices = widthDp < 340", design)
-        self.assertIn("heightIn(min = 72.dp)", design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
         self.assertIn('testTag("qrex-history-menu").size(48.dp)', self.main)
