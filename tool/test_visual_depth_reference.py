@@ -30,7 +30,7 @@ class VisualDepthRegressionTests(unittest.TestCase):
     def test_more_uses_accessible_rows_with_large_font(self):
         self.assertIn('testTag("qrex-more-settings-stack")', self.main)
         self.assertNotIn("useCompactMoreList(", self.main)
-        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 72.dp)", self.design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", self.design)
         self.assertIn('testTag("qrex-more-delete")', self.main)
         self.assertIn("titleTextSize", self.design)
         self.assertIn("supportingTextSize", self.design)
