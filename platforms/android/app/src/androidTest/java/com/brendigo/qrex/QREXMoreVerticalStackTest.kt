@@ -45,28 +45,40 @@ class QREXMoreVerticalStackTest {
 
     private fun assertStackLayout() {
         rule.onNodeWithTag("qrex-more-settings-stack", useUnmergedTree = true)
-            .assertIsDisplayed()
+            .assertExists()
         rule.onAllNodesWithTag("qrex-more-icon-plate", useUnmergedTree = true)
             .assertCountEquals(7)
-        val cards = tags.map {
-            rule.onNodeWithTag(it, useUnmergedTree = true).getUnclippedBoundsInRoot()
-        }
-        val left = cards.first().left
-        val width = cards.first().right - left
-        for ((index, rect) in cards.withIndex()) {
-            assertTrue("card ${tags[index]} must be >= 72dp high",
+
+        // A Column, unlike a LazyColumn, keeps all seven semantics nodes.
+        // However their *visible root bounds* may be truncated by the parent
+        // scroll viewport. Scroll each card into view before testing height.
+        val first = rule.onNodeWithTag(tags.first(), useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
+        val left = first.left
+        val width = first.right - first.left
+
+        tags.forEachIndexed { index, tag ->
+            val rect = rule.onNodeWithTag(tag, useUnmergedTree = true)
+                .performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
+            assertTrue("visible card $tag must be >= 72dp high",
                 rect.bottom - rect.top >= 72.dp)
             assertTrue("full-width cards must align on the left",
                 abs((rect.left - left).value) <= 2f)
             assertTrue("all cards must have the same width",
                 abs(((rect.right - rect.left) - width).value) <= 2f)
             if (index > 0) {
+                // Both measurements are now taken at the *same* scroll offset.
+                val previous = rule.onNodeWithTag(
+                    tags[index - 1], useUnmergedTree = true
+                ).getUnclippedBoundsInRoot()
                 assertTrue("cards must not overlap, including terms and privacy",
-                    cards[index - 1].bottom <= rect.top)
+                    previous.bottom <= rect.top)
+                if (index == tags.lastIndex) {
+                    assertTrue("destructive history action must be separated",
+                        rect.top - previous.bottom >= 16.dp)
+                }
             }
         }
-        assertTrue("destructive history action must be separated",
-            cards.last().top - cards[cards.lastIndex - 1].bottom >= 16.dp)
     }
 
     @Test
