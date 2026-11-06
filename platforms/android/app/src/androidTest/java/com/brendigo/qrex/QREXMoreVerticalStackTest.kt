@@ -60,8 +60,17 @@ class QREXMoreVerticalStackTest {
         tags.forEachIndexed { index, tag ->
             val rect = rule.onNodeWithTag(tag, useUnmergedTree = true)
                 .performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-            assertTrue("visible card $tag must be >= 72dp high",
-                rect.bottom - rect.top >= 72.dp)
+            // Visible bounds may be clipped by the scroll viewport on
+            // compact Android API 26/31 devices. SemanticsNode.size is the
+            // actually measured, unclipped native touch target size.
+            val measuredHeightPx = rule.onNodeWithTag(
+                tag, useUnmergedTree = true
+            ).fetchSemanticsNode().size.height
+            val minimumHeightPx = with(rule.density) { 72.dp.roundToPx() }
+            assertTrue(
+                "card $tag must measure >= 72dp (measured=$measuredHeightPx px, minimum=$minimumHeightPx px)",
+                measuredHeightPx >= minimumHeightPx
+            )
             assertTrue("full-width cards must align on the left",
                 abs((rect.left - left).value) <= 2f)
             assertTrue("all cards must have the same width",
