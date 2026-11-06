@@ -129,7 +129,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertNotIn("QrexSettingsTile(", self.main)
         self.assertNotIn("QrexSettingsTile(", design)
-        self.assertIn("modifier = modifier.fillMaxWidth().heightIn(min = 72.dp)", design)
+        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn('tr("save_history"), Modifier.weight(1f)', self.main)
         self.assertIn('testTag("qrex-privacy-history-switch")', self.main)
         self.assertIn("Modifier.fillMaxWidth().heightIn(min = 64.dp)", self.main)
