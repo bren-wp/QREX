@@ -2209,10 +2209,33 @@ private fun MoreScreen(
                             )
                         }
                     }
-                    Text(tr("developed_by"), fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface)
-                    Text("brendigo.com", modifier = Modifier.testTag("qrex-about-domain"),
-                        color = MaterialTheme.colorScheme.primary)
+                    // Explicit developer identity is visually grouped but
+                    // not clickable; the separate 48dp Open Link button below
+                    // remains the only way to leave the offline application.
+                    Surface(
+                        modifier = Modifier.fillMaxWidth()
+                            .testTag("qrex-about-developer-card"),
+                        shape = RoundedCornerShape(QrexDesign.cardRadius),
+                        border = BorderStroke(
+                            1.dp, MaterialTheme.colorScheme.outlineVariant
+                        ),
+                        color = MaterialTheme.colorScheme.surface,
+                        shadowElevation = 2.dp
+                    ) {
+                        Column(
+                            Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            Text(tr("developed_by"), fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface)
+                            Text(
+                                "brendigo.com",
+                                modifier = Modifier.testTag("qrex-about-domain"),
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             },
             confirmButton = {
@@ -2314,11 +2337,35 @@ private fun MoreScreen(
                         Modifier.padding(14.dp),
                         verticalAlignment = Alignment.Top
                     ) {
-                        Icon(
-                            Icons.Default.Shield, contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(22.dp)
-                        )
+                        // Raised policy pictogram: visual depth without a
+                        // second touch target or misleading spoken icon.
+                        Surface(
+                            shape = RoundedCornerShape(11.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            border = BorderStroke(
+                                1.dp, MaterialTheme.colorScheme.primary.copy(alpha = .35f)
+                            ),
+                            shadowElevation = 3.dp,
+                            modifier = Modifier.testTag("qrex-privacy-icon-plate")
+                        ) {
+                            Box(
+                                Modifier.size(40.dp).background(
+                                    androidx.compose.ui.graphics.Brush.verticalGradient(
+                                        listOf(
+                                            Color.White.copy(alpha = .11f),
+                                            Color.Transparent
+                                        )
+                                    )
+                                ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Shield, contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
                         Spacer(Modifier.width(12.dp))
                         Text(
                             tr("privacy_summary"),
@@ -2392,15 +2439,64 @@ private fun MoreScreen(
             Column(
                 Modifier.fillMaxWidth().heightIn(max = 340.dp)
                     .verticalScroll(rememberScrollState())
-                    .testTag("qrex-terms-content")
+                    .testTag("qrex-terms-content"),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    tr("terms_summary"),
+                // Match Privacy disclosure: independently scrollable native
+                // card, visible icon depth, no clipped legal summary.
+                Surface(
                     modifier = Modifier.fillMaxWidth()
-                        .testTag("qrex-terms-summary"),
-                    softWrap = true,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                        .testTag("qrex-terms-summary-card"),
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(QrexDesign.cardRadius),
+                    shadowElevation = 2.dp,
+                    border = BorderStroke(
+                        1.dp, MaterialTheme.colorScheme.outlineVariant
+                    )
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth().padding(14.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(11.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            border = BorderStroke(
+                                1.dp, MaterialTheme.colorScheme.primary.copy(alpha = .35f)
+                            ),
+                            shadowElevation = 3.dp,
+                            modifier = Modifier.testTag("qrex-terms-icon-plate")
+                        ) {
+                            Box(
+                                Modifier.size(40.dp).background(
+                                    androidx.compose.ui.graphics.Brush.verticalGradient(
+                                        listOf(
+                                            Color.White.copy(alpha = .11f),
+                                            Color.Transparent
+                                        )
+                                    )
+                                ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Description,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            tr("terms_summary"),
+                            modifier = Modifier.weight(1f)
+                                .testTag("qrex-terms-summary"),
+                            fontSize = 14.sp,
+                            softWrap = true,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
