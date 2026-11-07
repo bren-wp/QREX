@@ -26,6 +26,10 @@ class QREXSplashReferenceTest {
             }
         }
         rule.waitForIdle()
+        rule.onNodeWithTag("qrex-splash-native-waves", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-splash-brand-halo", useUnmergedTree = true)
+            .assertIsDisplayed()
         val logo = rule.onNodeWithTag("qrex-splash-logo", useUnmergedTree = true)
             .assertIsDisplayed().getUnclippedBoundsInRoot()
         val title = rule.onNodeWithTag("qrex-splash-wordmark", useUnmergedTree = true)
