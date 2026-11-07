@@ -147,6 +147,9 @@ internal fun QrexSplashScreen(
             maxWidth.value.toInt(), maxHeight.value.toInt(), LocalDensity.current.fontScale
         )
         val compactWidth = maxWidth < 360.dp
+        // Capture the outer BoxWithConstraints receiver before entering
+        // ColumnScope; Kotlin's Compose DSL markers intentionally hide it.
+        val viewportHeight = maxHeight
         Canvas(Modifier.fillMaxSize().testTag("qrex-splash-native-waves")) {
             val w = size.width
             val h = size.height
@@ -249,7 +252,7 @@ internal fun QrexSplashScreen(
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth()
-                        .heightIn(min = maxHeight)
+                        .heightIn(min = viewportHeight)
                         .padding(horizontal = 20.dp, vertical = 24.dp)
                         .testTag("qrex-splash-viewport-distribution"),
                     horizontalAlignment = Alignment.CenterHorizontally,
