@@ -38,6 +38,9 @@ class QREXScannerFrameTest {
         assertEquals(378, qrexScannerScrollablePreviewHeightDp(800, 600))
         assertEquals(440, qrexScannerScrollablePreviewHeightDp(800, 1280))
         assertEquals(228, qrexScannerScrollablePreviewHeightDp(240, 420))
+        assertEquals(300, qrexScannerScrollablePreviewHeightDp(240, 420, 1.5f))
+        assertEquals(360, qrexScannerScrollablePreviewHeightDp(240, 420, 2.0f))
+        assertEquals(520, qrexScannerScrollablePreviewHeightDp(800, 1280, 2.0f))
     }
 
     @Test fun invalidCanvasDimensionsCannotPaintOutsidePreview() {
