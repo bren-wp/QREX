@@ -7,9 +7,18 @@ import org.junit.Test
 
 /** Pure responsive-layout checks: no emulator, device or QR data required. */
 class QREXVisualLayoutTest {
+    @Test fun moreTilesMatchReferenceAndRemainReadableAtSmallSizes() {
+        assertEquals(1, qrexMoreTileColumns(320, 568, 1f))
+        assertEquals(2, qrexMoreTileColumns(360, 740, 1f))
+        assertEquals(2, qrexMoreTileColumns(393, 852, 1f))
+        assertEquals(2, qrexMoreTileColumns(800, 1280, 1f))
+        assertEquals(1, qrexMoreTileColumns(393, 852, 1.30f))
+        assertEquals(1, qrexMoreTileColumns(393, 852, 2f))
+        assertEquals(1, qrexMoreTileColumns(800, 420, 1f))
+    }
+
     @Test fun settingsCardMinHeightIsIndependentOfScreenClass() {
-        // The previous grid-versus-row switch no longer exists. Actual
-        // seven-card stacking is tested in QREXMoreVerticalStackTest.
+        // Full-width accessible rows retain 72dp normal and 88dp large-font targets.
         assertEquals(72, qrexSettingsCardHeightDp(1.0f))
         assertEquals(88, qrexSettingsCardHeightDp(1.45f))
         assertTrue(qrexSettingsCardHeightDp(1.45f) >= qrexSettingsCardHeightDp(1.0f))
