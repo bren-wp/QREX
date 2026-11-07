@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -50,5 +51,21 @@ class QREXSplashReferenceTest {
         assertTrue("Track exceeds available width", trackWidth < viewportWidth)
         assertTrue("Track too small versus supplied reference", trackWidth >= 80.dp)
         assertTrue("Footer must remain above viewport bottom", footer.bottom <= viewport.bottom)
+        val scrollLayout = rule.onAllNodesWithTag(
+            "qrex-splash-viewport-distribution", useUnmergedTree = true
+        ).fetchSemanticsNodes()
+        if (scrollLayout.isNotEmpty()) {
+            // The original v1.0.38 genuine capture put the progress indicator
+            // far above the bottom of a compact 1080×1920 screen, leaving a
+            // large empty region. A scroll layout that fits must retain the
+            // same bottom anchoring as the regular centered reference layout.
+            val bottomGap = viewport.bottom - footer.bottom
+            assertTrue(
+                "Compact splash footer must be near the safe viewport bottom, gap=$bottomGap",
+                bottomGap >= 0.dp && bottomGap <= 64.dp
+            )
+            rule.onNodeWithTag("qrex-splash-viewport-distribution", useUnmergedTree = true)
+                .assertExists()
+        }
     }
 }
