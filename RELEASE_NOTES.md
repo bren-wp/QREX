@@ -1,3 +1,29 @@
+## Candidate: v1.0.40 · Android versionCode 140
+
+Screen 03 Result: preserve small phone layout, and cap the action/content
+column at 520dp on tablets and unfolded Android windows. The larger tablet
+preview and category glyph remain native Compose and real locally generated
+QR output; five-tab navigation, IME insets and Wi-Fi disclosure confirmations
+are unchanged. Tests include width fractions for 320/393/520/800/1024dp,
+tablet horizontal centering, and existing Kotlin/Android privacy checks.
+Full exact-commit CI and public APK/AAB release still require validation.
+Zero-pixel comparison needs aligned, flat reference PNGs.
+
+[Candidate v1.0.40](docs/releases/v1.0.40.md) ·
+[Result screen audit](docs/audits/2026-11-07-qrex-result-tablet-responsive-v140.md)
+
+## Published: v1.0.39 · Android versionCode 139
+
+Published on 2026-11-07 with the exact tested main commit
+`2029b9c602d3f88e48bafa555d92059e23b6edd6`.
+All four merged-main Android workflows passed and the public GitHub
+release includes verified APK, AAB, unsigned Play QA AAB, SHA256SUMS and
+12 genuine Android screenshot PNGs. The compact Splash footer spacing was
+corrected without altering QR data or CameraX behavior.
+GitHub CI signatures do not replace the Play upload certificate.
+
+[Download QREX v1.0.39](https://github.com/bren-wp/QREX/releases/tag/v1.0.39)
+
 ## Candidate: v1.0.39 · Android versionCode 139
 
 Screen 01 Splash: fix a confirmed visual difference in the genuine
