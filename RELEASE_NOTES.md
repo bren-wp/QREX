@@ -1,3 +1,44 @@
+## Candidate: v1.0.38 · Android versionCode 138
+
+Splash → Home / Scanner → adaptive launcher only: refine the actual native
+QREX identity without replacing real CameraX preview or using pre-rendered
+marketing screenshots. Original 393×852dp Splash geometry is retained,
+while 800dp+ tablets gain a proportionally larger 256dp vector badge,
+72sp wordmark and 20sp tagline. The halo and logo clipping use the same
+proportional corner radius. Short-height (under 700dp) and high-font (1.4×+)
+Splash layouts use scroll and do not truncate the localized footer.
+
+Scanner now scrolls as a complete screen under 620dp height or when system
+font size reaches 1.5×; this prevents camera controls from collapsing into
+the bottom navigation. A fixed camera panel height is used only inside the
+unbounded scroll layout, with the live CameraX PreviewView and real torch,
+gallery and zoom controls unchanged. The viewfinder is capped at 440dp on
+wide tablet previews. Full-color adaptive and themed launcher foreground
+symbols retain identical white Q / QR cells and inset luminous edges within
+the Android launcher mask safe zone.
+
+Verification requires all 23 locales, Kotlin/JVM/Android Lint/R8, five API
+emulators (26/31/34/35/36), genuine Android screenshot capture, full APK/AAB
+signing and checksums, then the automatic exact-main release workflow.
+This work does not claim mathematical 0% pixel error versus an unaligned
+marketing collage. GitHub signing is distinct from the Google Play upload
+certificate.
+
+[Full candidate details](docs/releases/v1.0.38.md)
+
+## Published: v1.0.37 · Android versionCode 137
+
+Published 2026-11-07 with the five-screen Privacy, Terms, About, live
+Scanner/Home and Splash pass, confirmed by real Android tests and twelve
+authentic emulator screenshots. The API 36 Compose layout-test exception on
+the merged commit did not recur during a complete same-commit P03 rerun;
+the GitHub publisher then passed all exact-SHA gates and verified 16 assets.
+A successful rerun is not conclusive proof the transient issue can never
+reappear. Public APK/AAB use disposable GitHub CI signing, not a Google
+Play update key.
+
+[Download QREX v1.0.37](https://github.com/bren-wp/QREX/releases/tag/v1.0.37)
+
 ## Candidate: v1.0.37 · Android versionCode 137
 
 Five-screen native reference pass: Privacy and Terms now share bordered
