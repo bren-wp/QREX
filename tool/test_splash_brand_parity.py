@@ -80,7 +80,8 @@ class SplashBrandParityTest(unittest.TestCase):
     def test_compact_scroll_brand_and_footer_use_entire_viewport(self):
         splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
         self.assertIn('testTag("qrex-splash-viewport-distribution")', splash)
-        self.assertIn(".heightIn(min = maxHeight)", splash)
+        self.assertIn("val viewportHeight = maxHeight", splash)
+        self.assertIn(".heightIn(min = viewportHeight)", splash)
         self.assertIn("verticalArrangement = Arrangement.SpaceBetween", splash)
         self.assertIn("Spacer(Modifier.height(0.dp))", splash)
         self.assertIn(".verticalScroll(rememberScrollState())", splash)
