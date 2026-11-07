@@ -18,37 +18,38 @@ class QREXMoreAboutTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun darkReferenceMoreUsesSixFunctionalCardsInOneFullWidthColumn() {
+    fun darkReferenceMoreUsesSixFunctionalTilesInResponsiveRows() {
         rule.waitUntil(timeoutMillis = 15_000L) {
             rule.onAllNodesWithTag("qrex-tab-4", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
         rule.onNodeWithTag("qrex-tab-4").performClick()
-        val tags = listOf(
-            "qrex-more-theme", "qrex-more-language", "qrex-more-export",
-            "qrex-more-privacy", "qrex-more-terms", "qrex-more-about"
-        )
-        // Inspect *visible* geometry. A scrollable full-width card below the
-        // viewport can have clipped bounds until performScrollTo is invoked.
-        val first = rule.onNodeWithTag(tags.first(), useUnmergedTree = true)
+        val tags = listOf("qrex-more-theme", "qrex-more-language",
+            "qrex-more-export", "qrex-more-privacy",
+            "qrex-more-terms", "qrex-more-about")
+        val config = rule.activity.resources.configuration
+        val columns = qrexMoreTileColumns(config.screenWidthDp,
+            config.screenHeightDp, config.fontScale)
+        tags.forEach { tag ->
+            val node = rule.onNodeWithTag(tag, useUnmergedTree = true)
+                .performScrollTo().assertIsDisplayed()
+            assertTrue("Every reference card must be a real touch target",
+                node.fetchSemanticsNode().size.height >= with(rule.density) {
+                    48.dp.roundToPx()
+                })
+        }
+        val first = rule.onNodeWithTag(tags[0], useUnmergedTree = true)
             .performScrollTo().getUnclippedBoundsInRoot()
-        val referenceWidth = first.right - first.left
-        tags.forEachIndexed { index, tag ->
-            val bounds = rule.onNodeWithTag(tag, useUnmergedTree = true)
-                .performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-            assertTrue("$tag needs >=48dp width", bounds.right - bounds.left >= 48.dp)
-            assertTrue("$tag needs >=48dp height", bounds.bottom - bounds.top >= 48.dp)
-            assertTrue("$tag must align with the first full-width card",
-                kotlin.math.abs((bounds.left - first.left).value) <= 2f)
-            assertTrue("$tag must share the same width",
-                kotlin.math.abs(((bounds.right - bounds.left) - referenceWidth).value) <= 2f)
-            if (index > 0) {
-                val previous = rule.onNodeWithTag(
-                    tags[index - 1], useUnmergedTree = true
-                ).getUnclippedBoundsInRoot()
-                assertTrue("$tag may not overlap the previous card",
-                    previous.bottom <= bounds.top)
-            }
+        val second = rule.onNodeWithTag(tags[1], useUnmergedTree = true)
+            .performScrollTo().getUnclippedBoundsInRoot()
+        if (columns == 2) {
+            assertTrue("theme and language are in the same reference row",
+                kotlin.math.abs((first.top - second.top).value) <= 2f)
+            assertTrue("reference pair has distinct non-overlapping columns",
+                first.right <= second.left)
+        } else {
+            assertTrue("large font and narrow phones use non-overlapping rows",
+                first.bottom <= second.top)
         }
     }
 
