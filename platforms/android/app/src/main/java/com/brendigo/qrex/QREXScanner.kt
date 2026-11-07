@@ -72,11 +72,25 @@ import kotlinx.coroutines.withContext
  * A separate 83% usable-height bound keeps the guide ABOVE bottom controls,
  * including on 320dp / large-font devices. Pure math for JVM regression tests.
  */
-internal fun scannerFrameSidePx(widthPx: Float, usableHeightPx: Float): Float {
+internal fun scannerFrameSidePx(
+    widthPx: Float, usableHeightPx: Float,
+    maxSidePx: Float = Float.POSITIVE_INFINITY
+): Float {
     if (!widthPx.isFinite() || !usableHeightPx.isFinite() ||
+        maxSidePx.isNaN() || maxSidePx <= 0f ||
         widthPx <= 0f || usableHeightPx <= 0f) return 0f
-    return minOf(widthPx * .73f, usableHeightPx * .83f)
+    // The tablet viewfinder should not become a giant unscannable rectangle.
+    return minOf(widthPx * .73f, usableHeightPx * .83f, maxSidePx)
 }
+
+/** Landscape/short and accessibility-sized Home screens scroll rather than
+ * squeezing CameraX controls into a clipped zero-height preview. */
+internal fun qrexScannerNeedsScrollLayout(heightDp: Int, fontScale: Float): Boolean =
+    heightDp < 620 || fontScale >= 1.5f
+
+internal fun qrexScannerScrollablePreviewHeightDp(widthDp: Int, heightDp: Int): Int =
+    minOf((widthDp * .95f).toInt(), (heightDp * .63f).toInt())
+        .coerceIn(228, 440)
 
 /** Draws the actual live scanner framing guide above the CameraX PreviewView.
  * Nothing is composited into the scanned image and no camera frames are stored.
@@ -92,7 +106,9 @@ private fun ScannerCornerOverlay(
         val usableHeight = size.height - minOf(
             reservedBottomDp.dp.toPx(), size.height * 0.45f
         )
-        val side = scannerFrameSidePx(size.width, usableHeight)
+        val side = scannerFrameSidePx(
+            size.width, usableHeight, maxSidePx = 440.dp.toPx()
+        )
         val left = (size.width - side) / 2f
         val top = (usableHeight - side) / 2f
         val right = left + side
@@ -322,6 +338,18 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     val compactScan = window.screenWidthDp < 360 ||
         window.screenHeightDp < 670 ||
         fontScale >= 1.35f
+    val scrollHome = qrexScannerNeedsScrollLayout(
+        window.screenHeightDp, fontScale
+    )
+    val previewModifier = if (scrollHome) {
+        Modifier.fillMaxWidth().height(qrexScannerScrollablePreviewHeightDp(
+            window.screenWidthDp, window.screenHeightDp
+        ).dp)
+    } else {
+        // In a bounded Column the preview flexes with the available space.
+        // Never apply weight inside verticalScroll's unbounded constraints.
+        Modifier.fillMaxWidth()
+    }
     // A single composable action row is reused in the preview and in the
     // permission-denied state. Gallery never depends on camera permission.
     // Neither action is a decorative graphic; each retains the original
@@ -423,8 +451,17 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
             }
         }
     }
-    Column(Modifier.fillMaxSize().padding(if (compactScan) 10.dp else 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        (if (scrollHome) Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .testTag("qrex-scan-scroll-root")
+        else Modifier.fillMaxSize()
+            .testTag("qrex-scan-fixed-root"))
+            .padding(if (compactScan) 10.dp else 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val cameraPanel = if (scrollHome) previewModifier
+            else previewModifier.weight(1f)
         QrexBrandHeader(onMore = onMore)
         Spacer(Modifier.height(if (compactScan) 4.dp else 8.dp))
         if (allowed) {
@@ -503,7 +540,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 scannerZoomPresets(it.minZoomRatio, it.maxZoomRatio)
             }.orEmpty()
             val showZoom = !compactScan && zoomPresets.size > 1
-            Box(Modifier.fillMaxWidth().weight(1f)
+            Box(cameraPanel
                 .clip(RoundedCornerShape(24.dp))
                 .background(QrexDesign.surface)
                 .border(1.dp, QrexDesign.stroke, RoundedCornerShape(24.dp))
@@ -623,7 +660,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 }
             }
         } else {
-            Box(Modifier.fillMaxWidth().weight(1f)
+            Box(cameraPanel
                 .background(QrexDesign.surface, shape = RoundedCornerShape(28.dp)),
                 contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
