@@ -503,6 +503,10 @@ private fun ResultScreen(
     onEdit: (String) -> Unit
 ) {
     val context = LocalContext.current
+    // Preserve phone reference geometry, center a readable column on tablets.
+    val windowWidthDp = LocalConfiguration.current.screenWidthDp
+    val resultContentFraction = qrexResultContentFraction(windowWidthDp)
+    val wideResult = windowWidthDp >= 600
     val url = QRContent.safeUrl(raw)
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
@@ -583,7 +587,8 @@ private fun ResultScreen(
     // Scaffold's pinned navigation on API 26+; font/inset differences must
     // not allow result actions to paint into the bottom tab hit region.
     Column(Modifier.fillMaxSize().imePadding().padding(bottom = 8.dp)
-        .testTag("qrex-result-screen")) {
+        .testTag("qrex-result-screen"),
+        horizontalAlignment = Alignment.CenterHorizontally) {
         // Keep the primary Close action outside the scrolling Result content.
         // Scroll restoration and keyboard resizing must not hide navigation.
         Row(
@@ -629,7 +634,7 @@ private fun ResultScreen(
                 }
             }
         }
-        Column(Modifier.weight(1f).fillMaxWidth()
+        Column(Modifier.weight(1f).fillMaxWidth(resultContentFraction)
             .verticalScroll(rememberScrollState()).testTag("qrex-result-scroll")
             .padding(horizontal = 12.dp, vertical = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -670,7 +675,7 @@ private fun ResultScreen(
         }
         QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
             Column(
-                Modifier.fillMaxWidth().heightIn(min = 154.dp)
+                Modifier.fillMaxWidth().heightIn(min = if (wideResult) 178.dp else 154.dp)
                     .padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -685,11 +690,11 @@ private fun ResultScreen(
                     modifier = Modifier.testTag("qrex-result-glyph")
                 ) {
                     Box(
-                        Modifier.size(54.dp).background(resultGlyphBrush),
+                        Modifier.size(if (wideResult) 62.dp else 54.dp).background(resultGlyphBrush),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(resultIcon, contentDescription = null,
-                            tint = Color.White, modifier = Modifier.size(28.dp))
+                            tint = Color.White, modifier = Modifier.size(if (wideResult) 32.dp else 28.dp))
                     }
                 }
                 Spacer(Modifier.height(10.dp))
@@ -789,7 +794,7 @@ private fun ResultScreen(
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Image(bitmap.asImageBitmap(), contentDescription = tr("qr_preview"),
                         modifier = Modifier.testTag("qrex-result-qr-ready")
-                            .widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)
+                            .widthIn(max = if (wideResult) 290.dp else 230.dp).fillMaxWidth().aspectRatio(1f)
                             .background(white).padding(12.dp))
                 }
                 Spacer(Modifier.height(10.dp))
