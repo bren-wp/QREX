@@ -7,6 +7,12 @@
          foreground: Android applies its own circle/squircle launcher mask. -->
     <group android:scaleX="0.91" android:scaleY="0.91"
         android:pivotX="54" android:pivotY="54">
+        <!-- The inset illuminated badge rim stays inside Android's 66dp safe zone,
+             matching the Splash Q/QR identity under OEM launcher masks. -->
+        <path android:fillColor="#00000000"
+            android:strokeColor="#54E9FF" android:strokeAlpha="0.36"
+            android:strokeWidth="0.8"
+            android:pathData="M29,17 H79 C86,17 91,22 91,29 V79 C91,86 86,91 79,91 H29 C22,91 17,86 17,79 V29 C17,22 22,17 29,17 Z"/>
         <path android:fillColor="#00000000"
             android:strokeColor="#E5F9FF" android:strokeWidth="5.6"
             android:strokeLineCap="round" android:strokeLineJoin="round"
