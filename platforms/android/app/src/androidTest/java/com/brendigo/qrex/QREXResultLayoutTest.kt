@@ -63,6 +63,20 @@ class QREXResultLayoutTest {
             glyph.top >= card.top && glyph.bottom <= card.bottom)
         assertTrue("Summary must fit the reference-style compact layout",
             card.bottom - card.top <= 250.dp)
+        // On wide Android windows the Result remains a centered, phone-like
+        // readable panel; on small phones it still fills the available width.
+        val viewport = rule.onNodeWithTag(
+            "qrex-result-screen", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        assertTrue("Result card must remain capped to a readable tablet width",
+            card.right - card.left <= 520.dp)
+        if (viewport.right - viewport.left >= 600.dp) {
+            val centerDelta = kotlin.math.abs(
+                (card.left.value + card.right.value) -
+                    (viewport.left.value + viewport.right.value)
+            )
+            assertTrue("Tablet result panel must be horizontally centered", centerDelta < 4f)
+        }
         val open = rule.onNodeWithTag(
             "qrex-result-primary", useUnmergedTree = true
         ).assertIsDisplayed().getUnclippedBoundsInRoot()
