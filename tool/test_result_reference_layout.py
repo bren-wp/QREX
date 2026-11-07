@@ -23,9 +23,9 @@ class ResultNavigationReferenceTest(unittest.TestCase):
     def test_result_has_compact_panel_and_working_actions(self):
         s = self.result
         self.assertIn('testTag("qrex-result-summary")', s)
-        self.assertIn("heightIn(min = 154.dp)", s)
-        self.assertIn("Modifier.size(54.dp).background(resultGlyphBrush)", s)
-        self.assertIn("modifier = Modifier.size(28.dp)", s)
+        self.assertIn("heightIn(min = if (wideResult) 178.dp else 154.dp)", s)
+        self.assertIn("Modifier.size(if (wideResult) 62.dp else 54.dp).background(resultGlyphBrush)", s)
+        self.assertIn("modifier = Modifier.size(if (wideResult) 32.dp else 28.dp)", s)
         self.assertIn("padding(horizontal = 12.dp, vertical = 12.dp)", s)
         self.assertIn('testTag("qrex-result-primary")', s)
         self.assertIn('testTag("qrex-result-copy")', s)
@@ -34,6 +34,10 @@ class ResultNavigationReferenceTest(unittest.TestCase):
         self.assertIn('testTag("qrex-result-delete")', s)
         self.assertIn("verticalScroll(rememberScrollState())", s)
         self.assertIn("imePadding().padding(bottom = 8.dp)", s)
+        self.assertIn("fillMaxWidth(resultContentFraction)", s)
+        self.assertIn("horizontalAlignment = Alignment.CenterHorizontally)", s)
+        self.assertIn("qrexResultContentFraction(windowWidthDp)", s)
+        self.assertIn("widthIn(max = if (wideResult) 290.dp else 230.dp)", s)
         self.assertNotIn("heightIn(min = 178.dp)", s)
 
     def test_result_rows_keep_native_accessibility_and_compact_spacing(self):

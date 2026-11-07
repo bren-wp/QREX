@@ -266,6 +266,13 @@ internal fun qrexLayoutProfile(
     )
 }
 
+/** Keep Result cards at phone width on compact devices and cap the
+ * readable content column to 520dp on tablets and large foldable windows.
+ * Unlike a fixed 520dp width, this never overflows a 320dp viewport.
+ */
+internal fun qrexResultContentFraction(viewportWidthDp: Int): Float =
+    (520f / viewportWidthDp.coerceAtLeast(1)).coerceAtMost(1f)
+
 /** Text size never reduces result actions below an accessible 52dp target. */
 internal fun qrexResultActionHeightDp(fontScale: Float): Int =
     if (fontScale >= 1.35f) 60 else 52
