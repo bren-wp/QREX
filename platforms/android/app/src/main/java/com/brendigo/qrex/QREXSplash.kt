@@ -133,7 +133,7 @@ internal fun QrexSplashScreen(
             maxWidth.value.toInt(), maxHeight.value.toInt(), LocalDensity.current.fontScale
         )
         val compactWidth = maxWidth < 360.dp
-        Canvas(Modifier.fillMaxSize()) {
+        Canvas(Modifier.fillMaxSize().testTag("qrex-splash-native-waves")) {
             val w = size.width
             val h = size.height
             drawRect(
@@ -201,6 +201,17 @@ internal fun QrexSplashScreen(
                 secondWave, color = Color(0xFF1F71FB).copy(alpha = .54f),
                 style = Stroke(width = 1.dp.toPx())
             )
+            // A thin foreground reflection is drawn into the same native
+            // canvas. It never covers the QREX wordmark or footer touch area.
+            val foregroundReflection = Path().apply {
+                moveTo(0f, h * .92f)
+                cubicTo(w * .30f, h * .85f, w * .72f, h * .96f, w, h * .91f)
+            }
+            drawPath(
+                foregroundReflection,
+                color = QrexDesign.cyan.copy(alpha = .30f),
+                style = Stroke(width = 1.dp.toPx())
+            )
         }
         // The original absolute positions must never obscure localized
         // branding or the footer when Android font scaling is increased.
@@ -257,7 +268,11 @@ private fun QrexSplashBrand(
     ) {
         // Cyan halo outside the canonical vector badge. Draw the illumination
         // natively; never embed the full marketing artwork as an app screen.
-        Box(Modifier.size((metrics.logoDp + 12).dp), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.size((metrics.logoDp + 12).dp)
+                .testTag("qrex-splash-brand-halo"),
+            contentAlignment = Alignment.Center
+        ) {
             Canvas(Modifier.matchParentSize()) {
                 val rounding = CornerRadius(27.dp.toPx())
                 drawRoundRect(

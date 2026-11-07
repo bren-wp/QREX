@@ -35,6 +35,10 @@ class QREXTermsScreenTest {
             .assertIsDisplayed()
         rule.onNodeWithTag("qrex-terms-summary", useUnmergedTree = true)
             .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-terms-summary-card", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-terms-icon-plate", useUnmergedTree = true)
+            .assertIsDisplayed()
 
         for (tag in listOf("qrex-terms-close", "qrex-terms-full-document")) {
             val bounds = rule.onNodeWithTag(tag, useUnmergedTree = true)

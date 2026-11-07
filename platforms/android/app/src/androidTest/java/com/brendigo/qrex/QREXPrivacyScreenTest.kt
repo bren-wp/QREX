@@ -39,6 +39,8 @@ class QREXPrivacyScreenTest {
             .performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("qrex-privacy-summary-text", useUnmergedTree = true)
             .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-privacy-icon-plate", useUnmergedTree = true)
+            .assertIsDisplayed()
         rule.onNodeWithTag("qrex-privacy-history-row", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
 

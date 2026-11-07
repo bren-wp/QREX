@@ -596,17 +596,29 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                             }
                         }
                     }
-                    Text(
-                        tr("point_camera"),
-                        modifier = Modifier.background(
-                            QrexDesign.backgroundDeep.copy(alpha = .78f),
-                            RoundedCornerShape(9.dp)
-                        ).padding(horizontal = 12.dp, vertical = 8.dp)
-                            .testTag("qrex-scan-hint"),
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        maxLines = if (fontScale >= 1.5f) 3 else 2
-                    )
+                    // Native raised hint over the genuine camera preview;
+                    // never substitute a stock scanner photo or overlay an
+                    // inaccessible text element on the camera action buttons.
+                    Surface(
+                        modifier = Modifier.testTag("qrex-scan-hint-card"),
+                        color = QrexDesign.backgroundDeep.copy(alpha = .88f),
+                        shape = RoundedCornerShape(11.dp),
+                        border = BorderStroke(
+                            1.dp, QrexDesign.accentBright.copy(alpha = .46f)
+                        ),
+                        shadowElevation = 3.dp
+                    ) {
+                        Text(
+                            tr("point_camera"),
+                            modifier = Modifier.padding(
+                                horizontal = 14.dp, vertical = 9.dp
+                            ).testTag("qrex-scan-hint"),
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            fontSize = if (compactScan) 12.sp else 14.sp,
+                            maxLines = if (fontScale >= 1.5f) 3 else 2
+                        )
+                    }
                     scannerActions(true)
                 }
             }

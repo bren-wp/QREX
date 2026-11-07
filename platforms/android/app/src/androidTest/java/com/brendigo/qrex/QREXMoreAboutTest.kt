@@ -97,6 +97,8 @@ class QREXMoreAboutTest {
             .performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("qrex-about-domain", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
+        rule.onNodeWithTag("qrex-about-developer-card", useUnmergedTree = true)
+            .assertIsDisplayed()
 
         // Only the secondary user action may open the website; do not open
         // the browser during this regression. Measure both real controls.

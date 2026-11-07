@@ -1,3 +1,33 @@
+## Candidate: v1.0.37 · Android versionCode 137
+
+Five-screen native reference pass: Privacy and Terms now share bordered
+native summary cards, 40dp elevated policy icon plates and fully scrollable
+disclosures; About groups actual installed-version and Brendigo author details
+in accessible cards without automatically opening the browser. Scanner/Home
+uses a raised, readable live-camera hint without replacing camera frames.
+Splash retains its own vector logo, localized QREX wordmark and safe scroll
+layout while refining cyan wave highlights and logo halo. All data, local QR
+decoding, history, AES-GCM Wi-Fi protection, permissions and consent actions
+are preserved.
+
+No mathematical pixel-perfect claim is made from the perspective marketing
+collage. The full Android emulator suite, screenshot capture and four exact
+main-commit workflows must pass before GitHub release publishing.
+
+[Release candidate details](docs/releases/v1.0.37.md)
+
+## Published: v1.0.36 · Android versionCode 136
+
+Published 2026-11-07 after all four exact-main CI workflows completed
+successfully. The update unified dark and light Settings into seven
+individually actionable full-width cards, with 40dp raised vector glyphs,
+responsive spacing, and preserved Privacy/Terms/About/history controls.
+GitHub release contains APK, AAB, unsigned Play QA AAB, 12 genuine emulator
+screenshots and SHA256SUMS. Public GitHub binaries use disposable signing,
+not a recognized Google Play upload certificate.
+
+[Download QREX 1.0.36](https://github.com/bren-wp/QREX/releases/tag/v1.0.36)
+
 ## Candidate: v1.0.36 · Android versionCode 136
 
 Screen-by-screen reference work targets the largest verified structural difference in
