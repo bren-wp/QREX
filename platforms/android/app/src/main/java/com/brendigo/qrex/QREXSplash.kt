@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -146,6 +147,9 @@ internal fun QrexSplashScreen(
             maxWidth.value.toInt(), maxHeight.value.toInt(), LocalDensity.current.fontScale
         )
         val compactWidth = maxWidth < 360.dp
+        // Capture the outer BoxWithConstraints receiver before entering
+        // ColumnScope; Kotlin's Compose DSL markers intentionally hide it.
+        val viewportHeight = maxHeight
         Canvas(Modifier.fillMaxSize().testTag("qrex-splash-native-waves")) {
             val w = size.width
             val h = size.height
@@ -231,24 +235,43 @@ internal fun QrexSplashScreen(
         if (qrexSplashUsesScrollLayout(
                 maxHeight.value.toInt(), LocalDensity.current.fontScale
             )) {
+            // On a compact but *otherwise fitting* viewport the previous
+            // scroll Column started the logo at the top and stranded the
+            // footer/progress around mid-screen. The real 1080×1920 emulator
+            // capture exposed a large empty region below that progress bar.
+            // Keep one scroll container, but let its measured content occupy
+            // at least the viewport. SpaceBetween then places the footer
+            // at the bottom and the brand in the remaining central area.
+            // If font scaling or long translations exceed the viewport,
+            // the inner Column expands naturally and the user can scroll.
             Column(
                 modifier = Modifier.fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 24.dp)
                     .testTag("qrex-splash-scroll-content"),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(26.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                QrexSplashBrand(
-                    subtitle = subtitle,
-                    metrics = metrics,
+                Column(
                     modifier = Modifier.fillMaxWidth()
-                )
-                QrexSplashFooter(
-                    compactWidth = compactWidth,
-                    modifier = Modifier.fillMaxWidth(),
-                    allowFullText = true
-                )
+                        .heightIn(min = viewportHeight)
+                        .padding(horizontal = 20.dp, vertical = 24.dp)
+                        .testTag("qrex-splash-viewport-distribution"),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // The leading flexible gap keeps the logo visually centered
+                    // while the footer is pinned close to the lower safe edge.
+                    Spacer(Modifier.height(0.dp))
+                    QrexSplashBrand(
+                        subtitle = subtitle,
+                        metrics = metrics,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    QrexSplashFooter(
+                        compactWidth = compactWidth,
+                        modifier = Modifier.fillMaxWidth(),
+                        allowFullText = true
+                    )
+                }
             }
         } else {
             QrexSplashBrand(

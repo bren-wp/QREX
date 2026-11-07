@@ -1,3 +1,36 @@
+## Candidate: v1.0.39 · Android versionCode 139
+
+Screen 01 Splash: fix a confirmed visual difference in the genuine
+v1.0.38 1080×1920 emulator capture. The short-window scroll layout
+previously packed the brand and footer near the top and left a large
+empty bottom area. A viewport-sized inner scroll Column now uses
+SpaceBetween to place the QREX mark in the available central space
+and the localized footer/progress near the lower safe inset, without
+overlap or clipping when text grows. Added actual Compose UI regression
+assertion requiring the footer within 64dp of the viewport bottom on
+fitting short-window devices.
+
+All native QREX vector assets, actual camera/ZXing functionality,
+launcher foregrounds, sensitive Wi-Fi storage, and permissions are
+unchanged. Branch and exact-main 4-workflow gates are mandatory before
+publishing real APK/AAB/SHA256SUMS/12 emulator screenshots.
+Numerical zero-difference parity cannot be proven from an angled
+marketing composition.
+
+[Detailed v1.0.39 release](docs/releases/v1.0.39.md)
+[Splash capture audit](docs/audits/2026-11-07-qrex-v138-splash-capture-geometry.md)
+
+## Published: v1.0.38 · Android versionCode 138
+
+Published 2026-11-07 at exact main SHA
+`a2445aca479e0aa9e0f53076c707cbc263c37e37` with all four
+workflow checks, full P03 Android API matrix and 16 nonempty
+release artifacts. Splash, Home/Scanner and adaptive/themed launcher
+geometry were refined for compact and large displays.
+Public GitHub CI signing differs from Google Play upload signing.
+
+[Download QREX v1.0.38](https://github.com/bren-wp/QREX/releases/tag/v1.0.38)
+
 ## Candidate: v1.0.38 · Android versionCode 138
 
 Splash → Home / Scanner → adaptive launcher only: refine the actual native

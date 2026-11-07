@@ -77,6 +77,16 @@ class SplashBrandParityTest(unittest.TestCase):
         self.assertIn("qrexSplashFooterLines(tr(\"splash_message\"), compactWidth)", splash)
         self.assertIn("bottomPaddingDp = if (heightDp < 620) 20 else 40", splash)
 
+    def test_compact_scroll_brand_and_footer_use_entire_viewport(self):
+        splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
+        self.assertIn('testTag("qrex-splash-viewport-distribution")', splash)
+        self.assertIn("val viewportHeight = maxHeight", splash)
+        self.assertIn(".heightIn(min = viewportHeight)", splash)
+        self.assertIn("verticalArrangement = Arrangement.SpaceBetween", splash)
+        self.assertIn("Spacer(Modifier.height(0.dp))", splash)
+        self.assertIn(".verticalScroll(rememberScrollState())", splash)
+        self.assertNotIn("verticalArrangement = Arrangement.spacedBy(26.dp)", splash)
+
     def test_splash_never_overlays_footer_at_high_font_scale(self):
         splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
         self.assertIn("qrexSplashUsesScrollLayout(", splash)
