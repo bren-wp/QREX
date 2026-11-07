@@ -32,7 +32,7 @@ symbol already present in the app and reference brand SVG.
 | 320×568, font 1× | 156 | Scroll, full footer | Scroll, 304dp |
 | 393×852, font 1× | 214 | Centered reference | Flex / fill remaining height |
 | 800×1280, font 1× | 256 | Centered tablet | Flex, finder <=440dp |
-| 393×852, font 1.6× | 214 | Scroll, full footer | Scroll, responsive panel |
+| 393×852, font 1.6× | 214 | Scroll, full footer | Scroll, up to 520dp panel |
 | 800×600 landscape, font 1× | 214 | Scroll, full footer | Scroll, 378dp |
 
 ## Preserved behavior
