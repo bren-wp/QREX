@@ -88,9 +88,21 @@ internal fun scannerFrameSidePx(
 internal fun qrexScannerNeedsScrollLayout(heightDp: Int, fontScale: Float): Boolean =
     heightDp < 620 || fontScale >= 1.5f
 
-internal fun qrexScannerScrollablePreviewHeightDp(widthDp: Int, heightDp: Int): Int =
-    minOf((widthDp * .95f).toInt(), (heightDp * .63f).toInt())
-        .coerceIn(228, 440)
+internal fun qrexScannerScrollablePreviewHeightDp(
+    widthDp: Int, heightDp: Int, fontScale: Float = 1f
+): Int {
+    // Extra room is necessary for two 3-line native action buttons plus
+    // their localized hint at accessibility font scales. Parent scroll keeps
+    // every control reachable even if this panel exceeds window height.
+    val minimum = when {
+        fontScale >= 1.8f -> 360
+        fontScale >= 1.5f -> 300
+        else -> 228
+    }
+    val maximum = if (fontScale >= 1.8f) 520 else 440
+    return minOf((widthDp * .95f).toInt(), (heightDp * .63f).toInt())
+        .coerceIn(minimum, maximum)
+}
 
 /** Draws the actual live scanner framing guide above the CameraX PreviewView.
  * Nothing is composited into the scanned image and no camera frames are stored.
@@ -343,7 +355,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     )
     val previewModifier = if (scrollHome) {
         Modifier.fillMaxWidth().height(qrexScannerScrollablePreviewHeightDp(
-            window.screenWidthDp, window.screenHeightDp
+            window.screenWidthDp, window.screenHeightDp, fontScale
         ).dp)
     } else {
         // In a bounded Column the preview flexes with the available space.
