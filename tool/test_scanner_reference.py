@@ -21,13 +21,26 @@ class ScannerReferenceTests(unittest.TestCase):
         self.assertIn("internal fun scannerFrameSidePx(", s)
         self.assertIn("widthPx * .73f", s)
         self.assertIn("usableHeightPx * .83f", s)
-        self.assertIn("scannerFrameSidePx(size.width, usableHeight)", s)
+        self.assertIn("maxSidePx = 440.dp.toPx()", s)
+        self.assertIn("widthPx * .73f, usableHeightPx * .83f, maxSidePx", s)
         self.assertIn("reservedBottomDp.dp.toPx()", s)
         self.assertIn("size.height * 0.45f", s)
         self.assertIn("Color(0xFFD9FAFF)", s)
         self.assertIn("QrexDesign.actionBlue.copy(alpha = .26f)", s)
         self.assertIn("tint.copy(alpha = .78f)", s)
         self.assertIn('testTag("qrex-scan-brackets")', s)
+
+    def test_short_and_large_font_scanner_never_weights_unbounded_scroll(self):
+        s = self.scanner
+        self.assertIn("qrexScannerNeedsScrollLayout(", s)
+        self.assertIn("heightDp < 620 || fontScale >= 1.5f", s)
+        self.assertIn('testTag("qrex-scan-scroll-root")', s)
+        self.assertIn('testTag("qrex-scan-fixed-root")', s)
+        self.assertIn("Modifier.fillMaxWidth().height(qrexScannerScrollablePreviewHeightDp(", s)
+        self.assertIn("else previewModifier.weight(1f)", s)
+        self.assertIn("Box(cameraPanel", s)
+        self.assertIn("scannerActions(true)", s)
+        self.assertIn("scannerActions(false)", s)
 
     def test_3d_torch_is_a_real_camera_action_and_gallery_stays_local(self):
         s = self.scanner

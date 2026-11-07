@@ -26,6 +26,19 @@ class QREXSplashLayoutTest {
     }
 
     @Test
+    fun tabletAndFoldableKeepReadableNativeBrandWithoutDistortingPhoneReference() {
+        val tablet = qrexSplashMetrics(800, 1280, 1f)
+        assertEquals(256, tablet.logoDp)
+        assertEquals(72, tablet.titleSp)
+        assertEquals(20, tablet.taglineSp)
+        assertFalse(qrexSplashUsesScrollLayout(1280, 1f))
+        val compactFold = qrexSplashMetrics(320, 700, 1f)
+        assertEquals(176, compactFold.logoDp)
+        assertEquals(50, compactFold.titleSp)
+        assertFalse(qrexSplashUsesScrollLayout(700, 1f))
+    }
+
+    @Test
     fun progressTrackFollowsReferenceRatioWithoutOverflow() {
         // Footer content width = display width minus horizontal spacing.
         assertEquals(166, qrexSplashProgressWidthDp(333))
@@ -46,9 +59,11 @@ class QREXSplashLayoutTest {
     @Test
     fun thresholdsAreDeterministic() {
         assertTrue(qrexSplashUsesScrollLayout(639, 1f))
-        assertFalse(qrexSplashUsesScrollLayout(640, 1f))
-        assertTrue(qrexSplashUsesScrollLayout(640, 1.5f))
-        assertFalse(qrexSplashUsesScrollLayout(640, 1.49f))
+        assertTrue(qrexSplashUsesScrollLayout(640, 1f))
+        assertTrue(qrexSplashUsesScrollLayout(699, 1f))
+        assertFalse(qrexSplashUsesScrollLayout(700, 1f))
+        assertTrue(qrexSplashUsesScrollLayout(700, 1.4f))
+        assertFalse(qrexSplashUsesScrollLayout(700, 1.39f))
     }
     @Test
     fun footerUsesReferenceTwoLineWrapWithoutBreakingCompactOrLocalisedText() {

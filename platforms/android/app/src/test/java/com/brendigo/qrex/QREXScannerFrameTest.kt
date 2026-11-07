@@ -21,6 +21,28 @@ class QREXScannerFrameTest {
         assertTrue(tiny < 85f)
     }
 
+    @Test fun tabletViewfinderCapsAt440DpAndKeepsCanonicalPhoneRatio() {
+        assertEquals(440f, scannerFrameSidePx(900f, 700f, 440f), 0.1f)
+        assertEquals(248.2f, scannerFrameSidePx(340f, 400f, 440f), 0.1f)
+        assertEquals(0f, scannerFrameSidePx(900f, 700f, Float.NaN), 0f)
+        assertEquals(0f, scannerFrameSidePx(900f, 700f, -1f), 0f)
+    }
+
+    @Test fun shortLandscapeAndLargeFontUseScrollInsteadOfSqueezedCameraPanel() {
+        assertTrue(qrexScannerNeedsScrollLayout(568, 1f))
+        assertTrue(qrexScannerNeedsScrollLayout(619, 1f))
+        assertTrue(!qrexScannerNeedsScrollLayout(620, 1f))
+        assertTrue(!qrexScannerNeedsScrollLayout(852, 1.49f))
+        assertTrue(qrexScannerNeedsScrollLayout(852, 1.5f))
+        assertEquals(304, qrexScannerScrollablePreviewHeightDp(320, 568))
+        assertEquals(378, qrexScannerScrollablePreviewHeightDp(800, 600))
+        assertEquals(440, qrexScannerScrollablePreviewHeightDp(800, 1280))
+        assertEquals(228, qrexScannerScrollablePreviewHeightDp(240, 420))
+        assertEquals(300, qrexScannerScrollablePreviewHeightDp(240, 420, 1.5f))
+        assertEquals(360, qrexScannerScrollablePreviewHeightDp(240, 420, 2.0f))
+        assertEquals(520, qrexScannerScrollablePreviewHeightDp(800, 1280, 2.0f))
+    }
+
     @Test fun invalidCanvasDimensionsCannotPaintOutsidePreview() {
         assertEquals(0f, scannerFrameSidePx(0f, 300f), 0f)
         assertEquals(0f, scannerFrameSidePx(300f, -2f), 0f)

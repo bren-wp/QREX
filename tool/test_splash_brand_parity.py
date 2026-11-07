@@ -49,6 +49,22 @@ class SplashBrandParityTest(unittest.TestCase):
         styles = (RES / "values-v31/styles.xml").read_text("utf-8")
         self.assertIn("@drawable/qrex_icon", styles)
 
+    def test_round_adaptive_and_monochrome_icons_keep_matching_safe_zone(self):
+        foreground = (RES / "drawable/qrex_launcher_foreground.xml").read_text("utf-8")
+        monochrome = (RES / "drawable/qrex_icon_monochrome.xml").read_text("utf-8")
+        contour = (
+            "M29,17 H79 C86,17 91,22 91,29 V79 C91,86 86,91 79,91 "
+            "H29 C22,91 17,86 17,79 V29 C17,22 22,17 29,17 Z"
+        )
+        for icon in (foreground, monochrome):
+            self.assertIn('android:scaleX="0.91"', icon)
+            self.assertIn(contour, icon)
+            self.assertIn('android:strokeWidth="0.8"', icon)
+            self.assertIn("M44,39 C34.1,39", icon)
+        splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
+        self.assertIn("CornerRadius((metrics.logoDp * .22f).dp.toPx())", splash)
+        self.assertIn(".clip(RoundedCornerShape((metrics.logoDp * .22f).dp))", splash)
+
     def test_splash_reference_layers_keep_wordmark_clear_of_lower_ribbon(self):
         splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
         self.assertIn("moveTo(0f, h * .76f)", splash)
@@ -64,7 +80,7 @@ class SplashBrandParityTest(unittest.TestCase):
     def test_splash_never_overlays_footer_at_high_font_scale(self):
         splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
         self.assertIn("qrexSplashUsesScrollLayout(", splash)
-        self.assertIn("heightDp < 640 || fontScale >= 1.5f", splash)
+        self.assertIn("heightDp < 700 || fontScale >= 1.4f", splash)
         self.assertIn(".verticalScroll(rememberScrollState())", splash)
         self.assertIn('testTag("qrex-splash-scroll-content")', splash)
         self.assertIn("allowFullText = true", splash)

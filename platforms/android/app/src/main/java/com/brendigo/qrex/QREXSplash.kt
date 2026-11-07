@@ -61,16 +61,27 @@ internal fun qrexSplashMetrics(
     fontScale: Float
 ): QrexSplashMetrics {
     val compact = widthDp < 360 || heightDp < 640
+    val largeScreen = widthDp >= 600 && heightDp >= 820
     return QrexSplashMetrics(
-        logoDp = minOf((widthDp * 0.55f).toInt(), if (heightDp < 620) 156 else 214)
-            .coerceAtLeast(96),
+        // Retain the approved 393×852 phone geometry. On large tablets
+        // scale the same vector instead of presenting a tiny phone-sized badge.
+        logoDp = minOf((widthDp * 0.55f).toInt(), when {
+            heightDp < 620 -> 156
+            largeScreen -> 256
+            else -> 214
+        }).coerceAtLeast(96),
         titleSp = when {
             fontScale >= 1.6f -> 38
             fontScale >= 1.3f -> 45
             compact -> 50
+            largeScreen -> 72
             else -> 60
         },
-        taglineSp = if (compact || fontScale >= 1.3f) 14 else 17,
+        taglineSp = when {
+            compact || fontScale >= 1.3f -> 14
+            largeScreen -> 20
+            else -> 17
+        },
         bottomPaddingDp = if (heightDp < 620) 20 else 40,
         centerOffsetDp = if (heightDp < 620) -12 else -30
     )
@@ -82,7 +93,9 @@ internal fun qrexSplashMetrics(
  * overlap; switch to a single vertically scrollable column instead.
  */
 internal fun qrexSplashUsesScrollLayout(heightDp: Int, fontScale: Float): Boolean =
-    heightDp < 640 || fontScale >= 1.5f
+    // Footer and wordmark may touch on 640–699dp windows. At 1.4× font
+    // scale even a tall phone can need more vertical breathing room.
+    heightDp < 700 || fontScale >= 1.4f
 
 /**
  * The supplied splash reference accents the middle verb (e.g. "Stvara."
@@ -249,7 +262,8 @@ internal fun QrexSplashScreen(
                 compactWidth = compactWidth,
                 modifier = Modifier.align(Alignment.BottomCenter)
                     .fillMaxWidth().padding(horizontal = 30.dp)
-                    .padding(bottom = metrics.bottomPaddingDp.dp)
+                    .padding(bottom = metrics.bottomPaddingDp.dp),
+                allowFullText = true
             )
         }
     }
@@ -274,7 +288,9 @@ private fun QrexSplashBrand(
             contentAlignment = Alignment.Center
         ) {
             Canvas(Modifier.matchParentSize()) {
-                val rounding = CornerRadius(27.dp.toPx())
+                // Match the actual rounded vector badge radius at each
+                // density, including large-tablet and compact layouts.
+                val rounding = CornerRadius((metrics.logoDp * .22f).dp.toPx())
                 drawRoundRect(
                     color = QrexDesign.cyan.copy(alpha = .10f),
                     cornerRadius = rounding,
@@ -296,7 +312,8 @@ private fun QrexSplashBrand(
                 painter = painterResource(R.drawable.qrex_icon),
                 contentDescription = null,
                 modifier = Modifier.size(metrics.logoDp.dp)
-                    .clip(RoundedCornerShape(24.dp)).testTag("qrex-splash-logo")
+                    .clip(RoundedCornerShape((metrics.logoDp * .22f).dp))
+                    .testTag("qrex-splash-logo")
             )
         }
         Spacer(Modifier.height(18.dp))
