@@ -18,7 +18,7 @@ class QREXMoreThemeLayoutTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun lightMoreUsesSixNonOverlappingFullWidthRowsAndSafeDeleteConfirmation() {
+    fun lightMoreUsesResponsiveReferenceGridAndSafeDeleteConfirmation() {
         val context = rule.activity.applicationContext
         val store = QREXStore(context)
         val original = store.themeMode
@@ -45,17 +45,25 @@ class QREXMoreThemeLayoutTest {
                 rule.onNodeWithTag(tag, useUnmergedTree = true)
                     .getUnclippedBoundsInRoot()
             }
-            val width = positions.first().right - positions.first().left
+            val cfg = rule.activity.resources.configuration
+            val columns = qrexMoreTileColumns(cfg.screenWidthDp,
+                cfg.screenHeightDp, cfg.fontScale)
             for ((index, rect) in positions.withIndex()) {
-                assertTrue("light row must have >=48dp width", rect.right - rect.left >= 48.dp)
-                assertTrue("light row must have >=48dp height", rect.bottom - rect.top >= 48.dp)
-                assertTrue("all light rows share a leading edge",
-                    kotlin.math.abs((rect.left - positions.first().left).value) <= 2f)
-                assertTrue("all light rows fill the same available width",
-                    kotlin.math.abs(((rect.right - rect.left) - width).value) <= 2f)
+                assertTrue("light card must have an accessible width",
+                    rect.right - rect.left >= 48.dp)
+                assertTrue("light card must have an accessible height",
+                    rect.bottom - rect.top >= 48.dp)
                 if (index > 0) {
-                    assertTrue("light More rows must not overlap",
-                        positions[index - 1].bottom <= rect.top)
+                    val previous = positions[index - 1]
+                    if (columns == 2 && index % 2 == 1) {
+                        assertTrue("two light-theme reference tiles share a row",
+                            kotlin.math.abs((previous.top - rect.top).value) <= 2f)
+                        assertTrue("light-theme tiles must be separate columns",
+                            previous.right <= rect.left)
+                    } else {
+                        assertTrue("next tile row stays below previous row",
+                            previous.bottom <= rect.top)
+                    }
                 }
             }
 
