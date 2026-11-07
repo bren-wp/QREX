@@ -31,7 +31,7 @@ class NativeReleaseGateTests(unittest.TestCase):
     def test_release_workflow_uses_registered_agp9_unit_test_task(self):
         # A missing Gradle task previously blocked a fully green CI build
         # from publishing the signed GitHub-only APK/AAB.
-        release = (ROOT / ".github/workflows/github-release-1.0.38.yml").read_text(
+        release = (ROOT / ".github/workflows/github-release-1.0.39.yml").read_text(
             "utf-8"
         )
         ci = (ROOT / ".github/workflows/native-platforms.yml").read_text("utf-8")
@@ -43,12 +43,12 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn("p03-stability.yml", release)
         p03 = (ROOT / ".github/workflows/p03-stability.yml").read_text("utf-8")
         self.assertIn("  push:\n    branches: [main]", p03)
-        self.assertIn("QREX-Android-1.0.38-Play-UNSIGNED-QA.aab", release)
+        self.assertIn("QREX-Android-1.0.39-Play-UNSIGNED-QA.aab", release)
         # Publisher must inspect the ACTUAL new Android versionCode, not the
         # previous release's code. The v1.0.23 publisher once built correct
         # packages and then failed only at this stale aapt badging assertion.
-        self.assertIn('= "com.brendigo.qrex 138 1.0.38"', release)
-        self.assertNotIn('= "com.brendigo.qrex 125 1.0.38"', release)
+        self.assertIn('= "com.brendigo.qrex 139 1.0.39"', release)
+        self.assertNotIn('= "com.brendigo.qrex 125 1.0.39"', release)
 
     def test_github_publisher_requires_exact_android_identity(self):
         # The 1.0.23 publisher once compiled and signed both packages but
@@ -61,12 +61,12 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIsNotNone(code)
         self.assertIsNotNone(version)
         workflow = (
-            ROOT / ".github/workflows/github-release-1.0.38.yml"
+            ROOT / ".github/workflows/github-release-1.0.39.yml"
         ).read_text("utf-8")
         self.assertIn(
             f'com.brendigo.qrex {code.group(1)} {version.group(1)}', workflow
         )
-        self.assertNotIn('com.brendigo.qrex 124 1.0.38', workflow)
+        self.assertNotIn('com.brendigo.qrex 124 1.0.39', workflow)
 
     def test_valid_repo_config(self):
         self.assertEqual(self.check(), [])
@@ -76,12 +76,12 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
     def test_published_version_code_is_rejected(self):
-        issues = self.check(android=self.android.replace("versionCode = 138", "versionCode = 137"))
+        issues = self.check(android=self.android.replace("versionCode = 139", "versionCode = 138"))
         self.assertTrue(any("published QREX build 137" in issue for issue in issues), issues)
 
     def test_prerelease_version_metadata_is_rejected(self):
         issues = self.check(
-            android=self.android.replace('versionName = "1.0.38"', 'versionName = "0.2.4"')
+            android=self.android.replace('versionName = "1.0.39"', 'versionName = "0.2.4"')
         )
         self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
 
