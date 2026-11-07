@@ -21,7 +21,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
 
     def test_obsolete_viewport_helper_is_removed_but_compose_layout_remains(self):
         self.assertNotIn("responsiveQrSideDp", self.main)
-        self.assertIn(".widthIn(max = 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
+        self.assertIn(".widthIn(max = if (wideResult) 290.dp else 230.dp).fillMaxWidth().aspectRatio(1f)", self.main)
         self.assertIn(".size(qrSize).background(Color.White).padding(9.dp)", self.main)
         self.assertIn("qrexLayoutProfile(", self.main)
         self.assertNotIn("BoxWithConstraints(", self.main)
@@ -282,14 +282,14 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('modifier = Modifier.size(52.dp).testTag("qrex-result-menu")', self.main)
         self.assertIn('testTag("qrex-result-primary")', self.main)
         self.assertIn('testTag("qrex-result-delete")', self.main)
-        self.assertIn("heightIn(min = 154.dp)", self.main)
+        self.assertIn("heightIn(min = if (wideResult) 178.dp else 154.dp)", self.main)
         self.assertNotIn("heightIn(min = 178.dp)", self.main)
         result = self.main.split("private fun ResultScreen(", 1)[1].split(
             "fun openLink(", 1
         )[0]
         self.assertIn("shape = RoundedCornerShape(14.dp)", result)
         self.assertIn("color = QrexDesign.actionBlue", result)
-        self.assertIn("Modifier.size(54.dp).background(resultGlyphBrush)", result)
+        self.assertIn("Modifier.size(if (wideResult) 62.dp else 54.dp).background(resultGlyphBrush)", result)
         self.assertIn("val resultGlyphBrush = when {", result)
         self.assertIn("val resultGlyphStroke = when {", result)
         self.assertIn('testTag("qrex-result-glyph")', result)
