@@ -34,7 +34,10 @@ class ResponsiveLayoutRegressionTests(unittest.TestCase):
 
     def test_android_scanner_scales_and_supports_gallery_without_permission(self):
         android = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXScanner.kt").read_text("utf-8")
-        self.assertIn(".fillMaxWidth().weight(1f)", android)
+        self.assertIn("else previewModifier.weight(1f)", android)
+        self.assertIn("qrexScannerNeedsScrollLayout(", android)
+        self.assertIn('testTag("qrex-scan-scroll-root")', android)
+        self.assertIn("Box(cameraPanel", android)
         self.assertIn("PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)", android)
         self.assertIn("if (allowed) {", android)
         self.assertNotIn("BoxWithConstraints(", android)
