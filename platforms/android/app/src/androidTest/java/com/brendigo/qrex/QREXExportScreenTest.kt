@@ -91,6 +91,11 @@ class QREXExportScreenTest {
             awaitTag("qrex-result-save-favorite")
             rule.onNodeWithTag("qrex-result-save-favorite", useUnmergedTree = true)
                 .performScrollTo().performClick()
+            // The standalone Result reference deliberately hides bottom tabs.
+            // Return via its real Back action before opening More → Export.
+            rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
+                .assertIsDisplayed().performClick()
+            awaitTag("qrex-tab-4")
             openExport()
             rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
                 .assertIsEnabled().performClick()
