@@ -76,8 +76,10 @@ QREX asks before sharing or exporting Wi-Fi credentials. Saved Wi-Fi QR contents
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Install QREX from Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-**QREX v1.0.41:** restored the reference 2×3 More/Settings tile grid with a separate destructive History action, an accessible single-column fallback on small and large-font screens, responsive native Result screen and verified genuine Android UI screenshots. AndroidX Fragment 1.9.1, Android Gradle Plugin 9.0.1 and optimized R8 shrinking remain in use. Local CameraX/ZXing scanning, 23 offline languages and protected Wi-Fi data are unchanged. GitHub binaries are **not** signed with the Google Play upload certificate.
+**QREX v1.0.41:** restored the reference 2×3 More/Settings tile grid with a separate destructive History action, an accessible single-column fallback on small and large-font screens, responsive native Result screen and verified genuine Android UI screenshots. AndroidX Fragment 1.9.1, Android Gradle Plugin 9.5.0 and optimized R8 shrinking remain in use. Local CameraX/ZXing scanning, 23 offline languages and protected Wi-Fi data are unchanged. GitHub binaries are **not** signed with the Google Play upload certificate.
 
+
+**QREX v1.0.42 candidate:** standalone QR Result with safe URL origin, fixed navigation tests, upgraded stable CameraX 1.6.2, Lifecycle 2.11.0, Activity Compose 1.13.0, ZXing 3.5.4, Android Gradle Plugin 9.5.0, Kotlin Compose 2.4.21 and Gradle 9.9.0. Source-level security/dead-code audit and CI signing gates are included; **this candidate is not a published release until exact-commit CI is green**. See [full security and dead-code report](docs/audits/2026-11-08-qrex-v142-full-security-deadcode-dependencies.md).
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
