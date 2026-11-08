@@ -950,8 +950,11 @@ private fun ResultScreen(
 }
 
 fun openLink(context: Context, url: Uri) {
+    // Defense in depth: even if a new caller bypasses QRContent.safeUrl,
+    // never dispatch file/content/intent/javascript/custom-scheme links.
+    val verified = QRContent.safeUrl(url.toString()) ?: return
     runCatching {
-        context.startActivity(Intent(Intent.ACTION_VIEW, url))
+        context.startActivity(Intent(Intent.ACTION_VIEW, verified))
     }.onFailure {
         // User preferences can have an invalid type after an interrupted old
         // migration. The error handler itself must never crash or rewrite them.

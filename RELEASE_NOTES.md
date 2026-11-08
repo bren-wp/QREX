@@ -1,3 +1,34 @@
+## Candidate: v1.0.42 · Android versionCode 142
+
+Result reference alignment and regression repairs from merged PR #100:
+standalone Result (no five-tab navigation while QR data is open),
+accessible Back and overflow Edit, URL hostname-only secondary label,
+responsive summary layout and real Copy/Share/Show/Favorite/Delete actions.
+Four Android UI tests were updated to navigate via the real pinned Back
+before opening main tabs, restoring the API 26/31/34/35/36 P03 green
+instrumentation matrix. Kotlin/JVM/Lint/R8, 23 translations and 12
+real Android emulator screenshots remain mandatory for publication.
+
+**Distribution safety:** GitHub APK/AAB use a disposable CI identity and
+cannot update differently signed Android installs or serve as Play uploads.
+Exact Android app ID `com.brendigo.qrex`, versionCode 142 / v1.0.42, 4 CI
+checks, cert integrity and SHA256 hashes are release-gated. 0% pixel
+difference is not mathematically established against angled artwork.
+
+[QREX v1.0.42 release notes](docs/releases/v1.0.42.md) ·
+[Result screen audit](docs/audits/2026-11-08-qrex-result-standalone-reference.md)
+
+## Published: v1.0.41 · Android versionCode 141
+
+Published 2026-11-08 from GitHub main commit
+`7888046d7ac2ac44923f875c336c308f7d340264`.
+All four required exact-commit Android checks passed; the GitHub
+release includes signed-by-disposable-key APK/AAB, unsigned Play QA
+AAB, SHA256SUMS and 12 genuine Android emulator captures.
+Published 1.0.41 predates the new versionCode 142 candidate.
+
+[Download QREX v1.0.41](https://github.com/bren-wp/QREX/releases/tag/v1.0.41)
+
 ## Candidate: v1.0.41 · Android versionCode 141
 
 Screen 06 More now matches the newly supplied 2×3 Android reference
