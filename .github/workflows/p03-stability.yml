@@ -65,10 +65,8 @@ jobs:
           else
             echo 'No /dev/kvm on hosted runner; Android guest runs without VM acceleration'
           fi
-      - name: Install current stable compile SDK 37
-        run: |
-          test -d "$ANDROID_HOME/platforms/android-37" ||
-            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
+      - name: Install Android SDK 37.0
+        run: bash tool/install_android_compile_sdk.sh
       - name: Build debug app and test APK
         working-directory: platforms/android
         shell: bash
