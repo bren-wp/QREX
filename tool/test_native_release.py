@@ -20,7 +20,7 @@ class NativeReleaseGateTests(unittest.TestCase):
     def test_androidx_fragment_updated_and_r8_optimized_with_agp9(self):
         root_gradle = (ROOT / "platforms/android/build.gradle.kts").read_text("utf-8")
         properties = (ROOT / "platforms/android/gradle.properties").read_text("utf-8")
-        self.assertIn('id("com.android.application") version "9.0.1"', root_gradle)
+        self.assertIn('id("com.android.application") version "9.5.0"', root_gradle)
         self.assertNotIn("org.jetbrains.kotlin.android", root_gradle)
         self.assertNotIn("org.jetbrains.kotlin.android", self.android)
         self.assertIn('implementation("androidx.fragment:fragment:1.9.1")', self.android)
