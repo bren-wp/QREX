@@ -105,13 +105,13 @@ jobs:
         run: |
           test -s platforms/android/app/build/outputs/apk/debug/app-debug.apk
           test -s platforms/android/app/build/outputs/bundle/release/app-release.aab
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: QREX-Kotlin-Android-debug
           path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
       - name: Upload unsigned Android AAB QA candidate (not store ready)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: QREX-Kotlin-Android-unsigned-AAB-QA
           path: platforms/android/app/build/outputs/bundle/release/app-release.aab

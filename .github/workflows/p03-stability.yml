@@ -110,7 +110,7 @@ jobs:
           script: bash tool/run_p03_emulator.sh ${{ matrix.api }}
       - name: Upload redacted crash-only summary, never raw logcat
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: p03-sanitized-api-${{ matrix.api }}
           path: p03-results/crash-summary-api-${{ matrix.api }}.md
