@@ -14,6 +14,11 @@ internal object QREXSecretCipher {
     private const val ALIAS = "com.brendigo.qrex.history.wifi.v1"
     private const val PREFIX = "qrex-gcm:v1:"
     private const val ALGORITHM = "AES/GCM/NoPadding"
+    // A corrupt local preference must not allocate an unbounded Base64
+    // ciphertext or overwhelm Android Keystore. Legitimate saved QR payloads
+    // are bounded to 10,000 UTF-16 chars in QREXStore.
+    private const val MAX_PLAINTEXT_BYTES = 48_000
+    private const val MAX_ENCODED_CHARS = 65_536
 
     fun isEncrypted(raw: String): Boolean = raw.startsWith(PREFIX)
 
@@ -33,21 +38,24 @@ internal object QREXSecretCipher {
     fun available(): Boolean = runCatching { key(); true }.getOrDefault(false)
 
     fun encrypt(raw: String): String? = runCatching {
+        val utf8 = raw.toByteArray(Charsets.UTF_8)
+        if (utf8.size > MAX_PLAINTEXT_BYTES) return null
         val cipher = Cipher.getInstance(ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, key())
         val iv = Base64.encodeToString(cipher.iv, Base64.NO_WRAP)
         val encrypted = Base64.encodeToString(
-            cipher.doFinal(raw.toByteArray(Charsets.UTF_8)), Base64.NO_WRAP)
+            cipher.doFinal(utf8), Base64.NO_WRAP)
         "$PREFIX$iv:$encrypted"
     }.getOrNull()
 
     fun decrypt(encoded: String): String? = runCatching {
-        if (!isEncrypted(encoded)) return null
+        if (!isEncrypted(encoded) || encoded.length > MAX_ENCODED_CHARS) return null
         val fields = encoded.removePrefix(PREFIX).split(':')
         if (fields.size != 2) return null
         val iv = Base64.decode(fields[0], Base64.NO_WRAP)
         if (iv.size != 12) return null
         val ciphertext = Base64.decode(fields[1], Base64.NO_WRAP)
+        if (ciphertext.size > MAX_PLAINTEXT_BYTES + 16) return null
         val cipher = Cipher.getInstance(ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, iv))
         String(cipher.doFinal(ciphertext), Charsets.UTF_8)
