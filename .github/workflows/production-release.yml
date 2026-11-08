@@ -47,7 +47,7 @@ jobs:
       DEVICE_QA_CONFIRMED: ${{ inputs.device_qa_confirmed }}
       STORE_REVIEW_CONFIRMED: ${{ inputs.store_review_confirmed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Check version metadata and exact-commit Android quality gates
@@ -73,7 +73,7 @@ jobs:
       QREX_UPLOAD_KEY_PASSWORD: ${{ secrets.QREX_UPLOAD_KEY_PASSWORD }}
       QREX_UPLOAD_CERT_SHA256: ${{ secrets.QREX_UPLOAD_CERT_SHA256 }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: actions/setup-java@v6

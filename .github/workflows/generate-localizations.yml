@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Verify all 23 Android language catalogs
         run: |
           python3 tool/generate_localizations.py --check
