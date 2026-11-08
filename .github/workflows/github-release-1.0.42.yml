@@ -93,7 +93,7 @@ jobs:
           echo "Timed out waiting for successful exact-commit checks." >&2
           exit 1
       - name: Set up Java and Android build tools
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
