@@ -62,7 +62,11 @@ class QREXFavoritesScreenTest {
             awaitTag("qrex-result-save-favorite")
             rule.onNodeWithTag("qrex-result-save-favorite", useUnmergedTree = true)
                 .performScrollTo().performClick()
-
+            // Result has no tab bar in the supplied reference; use Back to
+            // restore the five main tabs, then open the actual Favorites tab.
+            rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
+                .assertIsDisplayed().performClick()
+            awaitTag("qrex-tab-3")
             rule.onNodeWithTag("qrex-tab-3").performClick()
             awaitTag("qrex-favorites-screen")
             // Favorite-specific UI must not repeat the History dropdown/filter.
