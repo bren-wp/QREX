@@ -60,7 +60,7 @@ jobs:
           test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           bash tool/install_android_compile_sdk.sh
           test -d "$ANDROID_HOME/build-tools/36.0.0" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: "9.9.0"
       - name: Check screenshot authenticity gate
