@@ -55,7 +55,7 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '9.1.0'
+          gradle-version: '9.9.0'
       - name: Enable available KVM acceleration
         run: |
           if [ -e /dev/kvm ]; then
@@ -65,6 +65,10 @@ jobs:
             echo "No KVM device; using software emulator rendering"
           fi
       - run: python3 tool/generate_localizations.py --check
+      - name: Install current stable compile SDK 37
+        run: |
+          test -d "$ANDROID_HOME/platforms/android-37" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
       - name: Build Android Kotlin APK
         working-directory: platforms/android
         run: gradle --no-daemon :app:assembleDebug
