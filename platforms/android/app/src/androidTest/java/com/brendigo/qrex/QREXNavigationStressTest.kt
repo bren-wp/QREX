@@ -364,46 +364,47 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun allFiveTabsStayReachableOnResultWithoutOverlappingPinnedActions() {
+    fun standaloneResultHidesTabsUntilBackThenRestoresAllFiveMainDestinations() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create for Result navigation")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://brendigo.com")
-        awaitCreateAction(0, "Result tab-bar transition")
-        rule.onNodeWithTag("qrex-create-show").assertIsEnabled().performClick()
-        requireScreenTag("qrex-result-screen", 0, "open Result with bottom navigation")
-        // On API 31 the IME and bottom system insets can animate on
-        // independent frames. Validate the final geometry after keyboard
-        // dismissal rather than an intermediate animation frame.
-        rule.waitUntil(timeoutMillis = 15_000L) {
-            runCatching {
-                val tab = rule.onNodeWithTag("qrex-tab-1", useUnmergedTree = true)
-                    .getUnclippedBoundsInRoot()
-                val viewport = rule.onNodeWithTag(
-                    "qrex-result-scroll", useUnmergedTree = true
-                ).getUnclippedBoundsInRoot()
-                viewport.bottom <= tab.top + 1.dp
-            }.getOrDefault(false)
+        awaitCreateAction(0, "standalone Result transition")
+        rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
+            .performSemanticsAction(SemanticsActions.OnClick)
+        requireScreenTag("qrex-result-screen", 0, "open standalone Result")
+        // In the new supplied reference the five-tab bar is intentionally
+        // absent on Result. Test that it cannot cover or intercept QR actions.
+        rule.onAllNodesWithTag("qrex-bottom-navigation", useUnmergedTree = true)
+            .assertCountEquals(0)
+        for (index in 0..4) {
+            rule.onAllNodesWithTag("qrex-tab-$index", useUnmergedTree = true)
+                .assertCountEquals(0)
         }
-        val nav = rule.onNodeWithTag("qrex-tab-1", useUnmergedTree = true)
-        nav.assertIsDisplayed().assertIsSelected()
-        val navTop = nav.getUnclippedBoundsInRoot().top
+        val viewport = rule.onNodeWithTag(
+            "qrex-result-screen", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
         val back = rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
-        back.assertIsDisplayed()
-        val scroll = rule.onNodeWithTag("qrex-result-scroll", useUnmergedTree = true)
-            .getUnclippedBoundsInRoot()
-        assertTrue(
-            "Result scroll bottom ${scroll.bottom.value}dp must stay at or " +
-                "above nav top ${navTop.value}dp",
-            scroll.bottom <= navTop + 1.dp
-        )
+            .assertIsDisplayed()
+        val backBounds = back.getUnclippedBoundsInRoot()
+        assertTrue("Pinned Result back must stay within screen",
+            backBounds.top >= viewport.top && backBounds.bottom <= viewport.bottom)
+        rule.onNodeWithTag("qrex-result-save-favorite", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
+        rule.onNodeWithTag("qrex-result-delete", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
+        back.performSemanticsAction(SemanticsActions.OnClick)
+        requireScreenTag("qrex-create-screen", 0, "restore Create after Result Back")
+        rule.onAllNodesWithTag("qrex-result-screen", useUnmergedTree = true)
+            .assertCountEquals(0)
         for (index in 0..4) {
             rule.onNodeWithTag("qrex-tab-$index").assertIsDisplayed()
         }
-        // Changing the tab must close Result instead of showing stale
-        // sensitive QR content under another selected destination.
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+        // Real History navigation must still be available from main tabs,
+        // without a stale Result or a repeated sensitive QR payload.
         rule.onNodeWithTag("qrex-tab-2").performClick()
-        requireScreenTag("qrex-history-screen", 0, "Result to History")
+        requireScreenTag("qrex-history-screen", 0, "main tab to History")
         rule.onAllNodesWithTag("qrex-result-screen", useUnmergedTree = true)
             .assertCountEquals(0)
     }
