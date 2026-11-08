@@ -43,19 +43,24 @@ class MoreReferenceTests(unittest.TestCase):
                 self.assertIn(f"Icons.Default.{icon}", self.more)
                 self.assertIn(callback, self.more)
 
-    def test_one_full_width_card_per_row_in_both_appearances(self):
+    def test_reference_six_tiles_and_safe_accessible_fallback(self):
         self.assertIn('testTag("qrex-more-settings-stack")', self.more)
-        self.assertIn("verticalArrangement = Arrangement.spacedBy(10.dp)", self.more)
-        self.assertNotIn("QrexSettingsTile(", self.main)
-        self.assertNotIn("useCompactMoreList(", self.main)
-        self.assertNotIn("if (compactSettings)", self.more)
-        self.assertNotIn("QrexSettingsTile(", self.design)
-        self.assertNotIn("Modifier.weight(1f).testTag(\"qrex-more-privacy\")", self.main)
-        self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", self.cards)
+        self.assertIn('testTag("qrex-more-reference-grid")', self.more)
+        self.assertIn("FlowRow(", self.more)
+        self.assertIn("maxItemsInEachRow = moreColumns", self.more)
+        self.assertIn("horizontalArrangement = Arrangement.spacedBy(10.dp)", self.more)
+        self.assertIn("qrexMoreTileColumns(", self.more)
+        self.assertIn("tileMode = moreTiles", self.more)
+        self.assertEqual(self.more.count("tileMode = moreTiles"), 6)
+        self.assertEqual(self.more.count("Modifier.weight(1f).testTag"), 6)
+        self.assertIn("if (tileMode) 124.dp", self.cards)
+        self.assertIn("widthDp < 360 || heightDp < 500 || fontScale >= 1.30f", self.cards)
         self.assertIn("if (fontScale >= 1.35f) 88 else 72", self.design)
         self.assertIn("shape = RoundedCornerShape(QrexDesign.cardRadius)", self.cards)
         self.assertIn("Spacer(Modifier.height(8.dp))", self.more)
         self.assertIn("destructive = true, showChevron = false", self.more)
+        self.assertNotIn("QrexSettingsTile(", self.main)
+        self.assertNotIn("useCompactMoreList(", self.main)
 
     def test_raised_3d_icon_plate_is_decorative_not_an_extra_button(self):
         self.assertIn('testTag("qrex-more-icon-plate")', self.cards)

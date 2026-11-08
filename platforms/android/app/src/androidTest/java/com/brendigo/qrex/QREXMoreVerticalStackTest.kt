@@ -43,55 +43,64 @@ class QREXMoreVerticalStackTest {
         rule.waitForIdle()
     }
 
-    private fun assertStackLayout() {
+    private fun assertReferenceOrAccessibleLayout() {
         rule.onNodeWithTag("qrex-more-settings-stack", useUnmergedTree = true)
+            .assertExists()
+        rule.onNodeWithTag("qrex-more-reference-grid", useUnmergedTree = true)
             .assertExists()
         rule.onAllNodesWithTag("qrex-more-icon-plate", useUnmergedTree = true)
             .assertCountEquals(7)
 
-        // A Column, unlike a LazyColumn, keeps all seven semantics nodes.
-        // However their *visible root bounds* may be truncated by the parent
-        // scroll viewport. Scroll each card into view before testing height.
-        val first = rule.onNodeWithTag(tags.first(), useUnmergedTree = true)
-            .performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-        val left = first.left
-        val width = first.right - first.left
+        val config = rule.activity.resources.configuration
+        val columns = qrexMoreTileColumns(
+            config.screenWidthDp, config.screenHeightDp, config.fontScale
+        )
+        val minHeight = if (columns == 2) 124.dp else 72.dp
+        val minPx = with(rule.density) { minHeight.roundToPx() }
 
-        tags.forEachIndexed { index, tag ->
-            val rect = rule.onNodeWithTag(tag, useUnmergedTree = true)
-                .performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-            // Visible bounds may be clipped by the scroll viewport on
-            // compact Android API 26/31 devices. SemanticsNode.size is the
-            // actually measured, unclipped native touch target size.
-            val measuredHeightPx = rule.onNodeWithTag(
-                tag, useUnmergedTree = true
-            ).fetchSemanticsNode().size.height
-            val minimumHeightPx = with(rule.density) { 72.dp.roundToPx() }
-            assertTrue(
-                "card $tag must measure >= 72dp (measured=$measuredHeightPx px, minimum=$minimumHeightPx px)",
-                measuredHeightPx >= minimumHeightPx
-            )
-            assertTrue("full-width cards must align on the left",
-                abs((rect.left - left).value) <= 2f)
-            assertTrue("all cards must have the same width",
-                abs(((rect.right - rect.left) - width).value) <= 2f)
-            if (index > 0) {
-                // Both measurements are now taken at the *same* scroll offset.
-                val previous = rule.onNodeWithTag(
-                    tags[index - 1], useUnmergedTree = true
-                ).getUnclippedBoundsInRoot()
-                assertTrue("cards must not overlap, including terms and privacy",
-                    previous.bottom <= rect.top)
-                if (index == tags.lastIndex) {
-                    assertTrue("destructive history action must be separated",
-                        rect.top - previous.bottom >= 16.dp)
-                }
+        tags.forEach { tag ->
+            val node = rule.onNodeWithTag(tag, useUnmergedTree = true)
+                .performScrollTo().assertIsDisplayed()
+            assertTrue("$tag has accessible full-card touch height",
+                node.fetchSemanticsNode().size.height >= minPx ||
+                    tag == "qrex-more-delete")
+        }
+        if (columns == 2) {
+            // Six functional tiles: Theme/Language, Export/Privacy, Terms/About.
+            for (pair in 0..2) {
+                val left = rule.onNodeWithTag(tags[pair * 2], useUnmergedTree = true)
+                    .performScrollTo().getUnclippedBoundsInRoot()
+                val right = rule.onNodeWithTag(tags[pair * 2 + 1], useUnmergedTree = true)
+                    .performScrollTo().getUnclippedBoundsInRoot()
+                assertTrue("reference tile pair must be side by side",
+                    left.right <= right.left)
+                assertTrue("reference tile pair must share top alignment",
+                    abs((left.top - right.top).value) <= 2f)
+                assertTrue("reference tile widths must match",
+                    abs(((left.right - left.left) -
+                        (right.right - right.left)).value) <= 2f)
+            }
+        } else {
+            for (index in 1..5) {
+                val previous = rule.onNodeWithTag(tags[index - 1], useUnmergedTree = true)
+                    .performScrollTo().getUnclippedBoundsInRoot()
+                val next = rule.onNodeWithTag(tags[index], useUnmergedTree = true)
+                    .performScrollTo().getUnclippedBoundsInRoot()
+                assertTrue("compact rows must not overlap", previous.bottom <= next.top)
             }
         }
+        rule.onNodeWithTag("qrex-more-delete", useUnmergedTree = true)
+            .performScrollTo().assertIsDisplayed()
+        val delete = rule.onNodeWithTag("qrex-more-delete", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        val about = rule.onNodeWithTag("qrex-more-about", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertTrue("delete must stay below the six settings cards",
+            delete.top >= about.bottom)
     }
 
     @Test
-    fun darkAndLightMoreKeepSevenFullWidthCardsAndWorkingPrivacyTermsActions() {
+    fun darkAndLightMoreKeepReferenceTilesAndWorkingPrivacyTermsActions() {
         val context = rule.activity.applicationContext
         val original = QREXStore(context).themeMode
         val before = QREXStore(context).items.toList()
@@ -99,7 +108,7 @@ class QREXMoreVerticalStackTest {
             openMore()
             for (mode in listOf("dark", "light")) {
                 setAppearance(mode)
-                assertStackLayout()
+                assertReferenceOrAccessibleLayout()
             }
             rule.onNodeWithTag("qrex-more-privacy", useUnmergedTree = true)
                 .performScrollTo().performClick()

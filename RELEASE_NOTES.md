@@ -1,3 +1,31 @@
+## Candidate: v1.0.41 · Android versionCode 141
+
+Screen 06 More now matches the newly supplied 2×3 Android reference
+structure: six true clickable native settings tiles, bright raised
+40dp icons, localized titles and a separate destructive Clear History row.
+Narrow, landscape and large-font windows use accessible one-column rows.
+Tests cover 320/360/393/800dp widths, 130%/200% font scale, dark/light
+card geometry and protected history/Privacy/Terms actions. CameraX,
+ZXing, local QR data and 23 translations remain unchanged.
+Actual emulator screenshots and four exact-commit Android CI gates
+are required; 0% pixel error is not certified from a marketing collage.
+
+[Release candidate v1.0.41](docs/releases/v1.0.41.md) ·
+[More reference audit](docs/audits/2026-11-08-qrex-more-reference-grid-v141.md)
+
+## Published: v1.0.40 · Android versionCode 140
+
+Published 2026-11-07 from exact main SHA
+`efc60c11b6e6bfb7ed9a182ba1ccf09c69d824b6`, with all four
+Android CI checks successful, APK/AAB, Play unsigned QA AAB,
+SHA256SUMS and 12 genuine emulator screenshots.
+Result cards use a centered max-520dp column on tablets with larger
+glyphs and actual QR preview. Existing phone layouts and Wi-Fi
+privacy confirmations remain. GitHub signed packages do not
+upgrade Google Play installations.
+
+[Download QREX v1.0.40](https://github.com/bren-wp/QREX/releases/tag/v1.0.40)
+
 ## Candidate: v1.0.40 · Android versionCode 140
 
 Screen 03 Result: preserve small phone layout, and cap the action/content

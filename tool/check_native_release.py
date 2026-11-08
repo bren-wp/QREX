@@ -14,9 +14,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 TOOLS_NS = "http://schemas.android.com/tools"
 APP_ID = "com.brendigo.qrex"
-LAST_PUBLISHED_NATIVE_BUILD_CODE = 139
-PRODUCTION_VERSION = "1.0.40"
-PRODUCTION_BUILD_CODE = 140
+LAST_PUBLISHED_NATIVE_BUILD_CODE = 140
+PRODUCTION_VERSION = "1.0.41"
+PRODUCTION_BUILD_CODE = 141
 
 
 def field(source: str, name: str) -> str | None:
@@ -39,7 +39,7 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
             f"Android versionCode must advance beyond published QREX build "
             f"{LAST_PUBLISHED_NATIVE_BUILD_CODE}")
     if version != PRODUCTION_VERSION or code != str(PRODUCTION_BUILD_CODE):
-        issues.append("Production candidate must be QREX 1.0.40 / build 140")
+        issues.append("Production candidate must be QREX 1.0.41 / build 141")
     try:
         root = ET.fromstring(android_manifest)
         app = root.find("application")

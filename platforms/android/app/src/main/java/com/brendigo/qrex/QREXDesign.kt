@@ -176,14 +176,16 @@ internal fun QrexSettingsListRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     accentOverride: Color? = null,
-    showChevron: Boolean = true
+    showChevron: Boolean = true,
+    tileMode: Boolean = false
 ) {
     val accent = if (destructive) MaterialTheme.colorScheme.error
         else accentOverride ?: MaterialTheme.colorScheme.primary
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(
-            min = qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
+            min = if (tileMode) 124.dp
+                else qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
         ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
         color = if (destructive) MaterialTheme.colorScheme.error.copy(alpha = 0.09f)
@@ -193,8 +195,9 @@ internal fun QrexSettingsListRow(
             MaterialTheme.colorScheme.error.copy(alpha = 0.30f)
             else MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Row(Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        // Identical real RGB/vector plate in phone tiles and accessible rows.
+        // Decorative pictogram never adds a second independent touch target.
+        val plate: @Composable () -> Unit = {
             Surface(
                 modifier = Modifier.testTag("qrex-more-icon-plate"),
                 shape = RoundedCornerShape(12.dp),
@@ -212,9 +215,9 @@ internal fun QrexSettingsListRow(
                         modifier = Modifier.size(22.dp))
                 }
             }
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        }
+        val labels: @Composable () -> Unit = {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(label, fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
                     color = if (destructive) accent else MaterialTheme.colorScheme.onSurface,
@@ -225,15 +228,42 @@ internal fun QrexSettingsListRow(
                         maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
-            if (showChevron && !destructive) {
-                Spacer(Modifier.width(8.dp))
-                Icon(Icons.Default.ChevronRight, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp))
+        }
+        if (tileMode) {
+            // The user's dark Android reference has a genuine 2×3 tile grid.
+            // Content grows for longer translations; FlowRow keeps rows distinct.
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                plate()
+                labels()
+            }
+        } else {
+            // 320dp, very large font or landscape: keep all labels accessible.
+            Row(Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                plate()
+                Spacer(Modifier.width(14.dp))
+                Box(Modifier.weight(1f)) { labels() }
+                if (showChevron && !destructive) {
+                    Spacer(Modifier.width(8.dp))
+                    Icon(Icons.Default.ChevronRight, contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp))
+                }
             }
         }
     }
 }
+
+/** Two reference columns on standard phones, one wide accessible column on
+ * compact displays, large text and short landscape viewports. Never truncate
+ * a card just to match a marketing screenshot.
+ */
+internal fun qrexMoreTileColumns(widthDp: Int, heightDp: Int, fontScale: Float): Int =
+    if (widthDp < 360 || heightDp < 500 || fontScale >= 1.30f) 1 else 2
 
 /** Accessible card height for Settings, independent of display width or theme. */
 internal fun qrexSettingsCardHeightDp(fontScale: Float): Int =
