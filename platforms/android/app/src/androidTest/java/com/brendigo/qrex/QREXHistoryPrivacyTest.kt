@@ -42,6 +42,11 @@ class QREXHistoryPrivacyTest {
             rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
                 .performSemanticsAction(SemanticsActions.OnClick)
             awaitTag("qrex-result-screen")
+            // The main History tab is available after leaving standalone
+            // Result, not underneath the QR payload overlay.
+            rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
+                .assertIsDisplayed().performClick()
+            awaitTag("qrex-tab-2")
             rule.onNodeWithTag("qrex-tab-2").performClick()
             awaitTag("qrex-history-search")
             rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
