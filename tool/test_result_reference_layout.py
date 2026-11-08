@@ -23,7 +23,7 @@ class ResultNavigationReferenceTest(unittest.TestCase):
     def test_result_has_compact_panel_and_working_actions(self):
         s = self.result
         self.assertIn('testTag("qrex-result-summary")', s)
-        self.assertIn("heightIn(min = if (wideResult) 178.dp else 154.dp)", s)
+        self.assertIn("min = if (compactResult) 154.dp else if (wideResult) 192.dp else 180.dp", s)
         self.assertIn("Modifier.size(if (wideResult) 62.dp else 54.dp).background(resultGlyphBrush)", s)
         self.assertIn("modifier = Modifier.size(if (wideResult) 32.dp else 28.dp)", s)
         self.assertIn("padding(horizontal = 12.dp, vertical = 12.dp)", s)
@@ -38,6 +38,11 @@ class ResultNavigationReferenceTest(unittest.TestCase):
         self.assertIn("horizontalAlignment = Alignment.CenterHorizontally)", s)
         self.assertIn("qrexResultContentFraction(windowWidthDp)", s)
         self.assertIn("widthIn(max = if (wideResult) 290.dp else 230.dp)", s)
+        self.assertIn('testTag("qrex-result-url-origin")', s)
+        self.assertIn("publicUrlOrigin", s)
+        self.assertIn('testTag("qrex-result-menu-edit")', s)
+        self.assertIn("onEdit(raw)", s)
+        self.assertNotIn('QrexResultAction(tr("edit")', s)
         self.assertNotIn("heightIn(min = 178.dp)", s)
 
     def test_result_rows_keep_native_accessibility_and_compact_spacing(self):
@@ -51,6 +56,8 @@ class ResultNavigationReferenceTest(unittest.TestCase):
 
     def test_every_main_screen_uses_one_real_five_tab_navigation(self):
         self.assertEqual(1, self.main.count("NavigationBar("))
+        self.assertIn("if (currentCode == null) {", self.main)
+        self.assertIn("BackHandler(enabled = currentCode != null)", self.main)
         self.assertIn('testTag("qrex-bottom-navigation")', self.main)
         self.assertIn('testTag("qrex-nav-glyph-$index")', self.main)
         self.assertIn("QrexNavigationGlyph(", self.main)
