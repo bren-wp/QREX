@@ -297,9 +297,17 @@ private fun QREXApp(
         if (showSplash) {
             QrexSplashScreen(subtitle = tr("tagline"))
         } else {
+        // Result is a standalone destination in the supplied Android reference.
+        // The real Back button and system Back return to the previous tab.
+        BackHandler(enabled = currentCode != null) {
+            focusManager.clearFocus(force = true)
+            currentCode = null
+            resultShowsQr = false
+        }
         Scaffold(containerColor = colors.background, bottomBar = {
-            // Keep reference five-tab navigation visible on Result too. The
-            // system bottom inset is owned by Scaffold so actions remain above it.
+            // Main destinations retain five native tabs; Result has only its
+            // pinned Back / overflow header, so every action remains reachable.
+            if (currentCode == null) {
             Column(Modifier.fillMaxWidth()) {
                 HorizontalDivider(color = if (darkUi) QrexDesign.stroke else colors.outlineVariant,
                     thickness = 1.dp)
@@ -351,7 +359,8 @@ private fun QREXApp(
                             indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer))
                 }
                 }
-            } // Divider and consistent five-tab navigation on every screen
+            } // Divider and five-tab navigation on main destinations
+            }
         }) { padding ->
             Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
                 androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
@@ -507,7 +516,19 @@ private fun ResultScreen(
     val windowWidthDp = LocalConfiguration.current.screenWidthDp
     val resultContentFraction = qrexResultContentFraction(windowWidthDp)
     val wideResult = windowWidthDp >= 600
+    val config = LocalConfiguration.current
+    val compactResult = windowWidthDp < 360 || config.screenHeightDp < 650 ||
+        LocalDensity.current.fontScale >= 1.35f
     val url = QRContent.safeUrl(raw)
+    // Use only the public scheme and hostname for the visual subtitle:
+    // never duplicate query parameters, embedded credentials or access tokens.
+    val publicUrlOrigin = url?.let { link ->
+        val scheme = link.scheme?.lowercase()
+        val host = link.host
+        if ((scheme == "https" || scheme == "http") && !host.isNullOrBlank()) {
+            "$scheme://$host"
+        } else null
+    }
     var showPassword by remember(raw) { mutableStateOf(false) }
     var confirmWifiSave by remember(raw) { mutableStateOf(false) }
     var confirmWifiShare by remember(raw) { mutableStateOf(false) }
@@ -580,17 +601,15 @@ private fun ResultScreen(
             pngExport.launch("QREX-QR.png")
         }
     }
-    // Android 16 may keep the IME visible briefly after leaving Create. Keep
-    // the scrollable Result and its bottom Close target above the keyboard;
-    // relying only on adjustResize is not sufficient in edge-to-edge windows.
-    // Leave a real 20dp separation between the Result scroll viewport and
-    // Scaffold's pinned navigation on API 26+; font/inset differences must
-    // not allow result actions to paint into the bottom tab hit region.
+    // Android 16 may keep the IME visible briefly after leaving Create.
+    // Keep the header pinned above the independently scrollable Result body.
+    // Without the five-tab bar, short-screen and high-font Result actions
+    // remain reachable above system navigation and the IME.
     Column(Modifier.fillMaxSize().imePadding().padding(bottom = 8.dp)
         .testTag("qrex-result-screen"),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        // Keep the primary Close action outside the scrolling Result content.
-        // Scroll restoration and keyboard resizing must not hide navigation.
+        // Keep Back and overflow outside scrolling content so they remain
+        // reachable after a QR preview expands or Android resizes for IME.
         Row(
             Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -631,6 +650,16 @@ private fun ResultScreen(
                         showResultMenu = false
                         showQrPreview = !showQrPreview
                     })
+                    // Preserve Edit as a genuine action without adding a
+                    // sixth row not present in the provided Result reference.
+                    DropdownMenuItem(
+                        text = { Text(tr("edit")) },
+                        modifier = Modifier.testTag("qrex-result-menu-edit"),
+                        onClick = {
+                            showResultMenu = false
+                            onEdit(raw)
+                        }
+                    )
                 }
             }
         }
@@ -675,8 +704,9 @@ private fun ResultScreen(
         }
         QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
             Column(
-                Modifier.fillMaxWidth().heightIn(min = if (wideResult) 178.dp else 154.dp)
-                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                Modifier.fillMaxWidth().heightIn(
+                    min = if (compactResult) 154.dp else if (wideResult) 192.dp else 180.dp
+                ).padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -729,8 +759,18 @@ private fun ResultScreen(
                         maxLines = 2, overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    // URL text is already shown above. A second copy
-                    // needlessly exposes token-bearing links in screenshots.
+                    // Match the visual reference's secondary URL hierarchy,
+                    // without repeating token-bearing paths or query strings.
+                    if (publicUrlOrigin != null) {
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            publicUrlOrigin,
+                            modifier = Modifier.testTag("qrex-result-url-origin"),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp, textAlign = TextAlign.Center,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }
@@ -805,8 +845,6 @@ private fun ResultScreen(
                 ) { Text(tr("export_png")) }
             }
         }
-        Spacer(Modifier.height(6.dp))
-        QrexResultAction(tr("edit"), Icons.Default.Edit) { onEdit(raw) }
         if (hasHistoryRecord) {
             Spacer(Modifier.height(8.dp))
             QrexResultAction(
@@ -817,10 +855,8 @@ private fun ResultScreen(
         }
         Spacer(Modifier.height(12.dp))
         }
-        // This secondary Close remains reachable even if Android's IME
-        // resizes the viewport after entering Result. Keeping it outside
-        // the scrolling container prevents a stale scroll offset from
-        // hiding or clipping its real touch target on API 35/36.
+        // Header Back remains pinned while the body scrolls on compact and
+        // large-text devices; all Result actions remain keyboard accessible.
     }
     if (confirmResultDelete) {
         AlertDialog(onDismissRequest = { confirmResultDelete = false },
