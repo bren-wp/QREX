@@ -58,11 +58,11 @@ jobs:
       - name: Verify Android SDK from hosted runner
         run: |
           test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          test -d "$ANDROID_HOME/platforms/android-36" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36"
+          test -d "$ANDROID_HOME/platforms/android-37" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
           test -d "$ANDROID_HOME/build-tools/36.0.0" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "9.1.0"
+          gradle-version: "9.9.0"
       - name: Check screenshot authenticity gate
         run: python3 -m unittest discover -s tool -p 'test_*.py'
       - name: Check production UI labels
