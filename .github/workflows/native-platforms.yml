@@ -58,7 +58,7 @@ jobs:
       - name: Verify Android SDK from hosted runner
         run: |
           test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          test -d "$ANDROID_HOME/platforms/android-37" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
+          bash tool/install_android_compile_sdk.sh
           test -d "$ANDROID_HOME/build-tools/36.0.0" || "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
