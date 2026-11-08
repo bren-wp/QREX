@@ -60,6 +60,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     // Explicit minimum: prevent old 1.1.0 arriving transitively in the Play AAB.
     implementation("androidx.fragment:fragment:1.9.1")
+    // Used by gallery QR image orientation: declare directly, not transitively.
+    implementation("androidx.exifinterface:exifinterface:1.4.2")
     implementation("androidx.camera:camera-core:1.6.2")
     implementation("androidx.camera:camera-camera2:1.6.2")
     implementation("androidx.camera:camera-lifecycle:1.6.2")
