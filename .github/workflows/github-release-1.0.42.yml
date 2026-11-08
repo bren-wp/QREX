@@ -103,8 +103,7 @@ jobs:
       - name: Ensure compile SDK 37 and Android build tools 36
         run: |
           set -euo pipefail
-          test -d "$ANDROID_HOME/platforms/android-37" ||
-            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
+          bash tool/install_android_compile_sdk.sh
           test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner" ||
             "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
       - name: Build a release-mode APK and AAB without the Play upload key
