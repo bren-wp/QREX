@@ -48,7 +48,7 @@ jobs:
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "9.1.0"
+          gradle-version: "9.9.0"
       - name: Verify crash/ANR privacy redaction and runner syntax
         run: python3 -m unittest discover -s tool -p test_p03_crash_triage.py -v
       - name: Enable KVM acceleration when the runner exposes /dev/kvm
@@ -65,6 +65,10 @@ jobs:
           else
             echo 'No /dev/kvm on hosted runner; Android guest runs without VM acceleration'
           fi
+      - name: Install current stable compile SDK 37
+        run: |
+          test -d "$ANDROID_HOME/platforms/android-37" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
       - name: Build debug app and test APK
         working-directory: platforms/android
         shell: bash
