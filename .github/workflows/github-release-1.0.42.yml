@@ -97,7 +97,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '9.9.0'
       - name: Ensure compile SDK 37 and Android build tools 36
