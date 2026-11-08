@@ -99,12 +99,12 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '9.1.0'
-      - name: Ensure Android SDK 36
+          gradle-version: '9.9.0'
+      - name: Ensure compile SDK 37 and Android build tools 36
         run: |
           set -euo pipefail
-          test -d "$ANDROID_HOME/platforms/android-36" ||
-            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36"
+          test -d "$ANDROID_HOME/platforms/android-37" ||
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37"
           test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner" ||
             "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
       - name: Build a release-mode APK and AAB without the Play upload key
