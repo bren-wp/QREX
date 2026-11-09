@@ -276,7 +276,7 @@ object QRContent {
             return raw.substringAfter(':').substringBefore('?').take(56)
         }
         if (raw.startsWith("tel:", ignoreCase = true)) return raw.substringAfter(':').take(56)
-        if (raw.startsWith("geo:", ignoreCase = true)) return raw.substringAfter(':').take(56)
+        if (raw.startsWith("geo:", ignoreCase = true)) return locationInput(raw).take(56)
         if (raw.startsWith("BEGIN:VCARD", ignoreCase = true)) {
             return contactField(raw, "FN")?.takeIf { it.isNotBlank() } ?: "Contact"
         }
