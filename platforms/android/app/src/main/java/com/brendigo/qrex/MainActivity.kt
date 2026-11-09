@@ -249,13 +249,16 @@ private fun QREXApp(
         if (screenshotMode in setOf("history", "saved")) {
             val now = System.currentTimeMillis()
             listOf(
-                QRRecord("https://brendigo.com", now - 300_000, true),
-                QRRecord("WIFI:T:WPA;S:QREX-Office;P:demo-password;;", now - 600_000, true),
-                QRRecord("BEGIN:VCARD\nVERSION:3.0\nFN:QREX demo contact\nTEL:+10000000000\nEND:VCARD",
-                    now - 900_000, false),
-                QRRecord("https://maps.google.com/?q=Rijeka", now - 1_800_000, false),
-                QRRecord("QREX offline QR example", now - 3_600_000, false),
-                QRRecord("mailto:info@brendigo.com", now - 7_200_000, false)
+                // Real native History rows with representative public demo
+                // categories from the user's reference. Debug-only memory,
+                // never copied into production history or local preferences.
+                QRRecord("https://brendigo.com", now - 10_000, true),
+                QRRecord("WIFI:T:WPA;S:Brendigo_Office;P:demo-password;;",
+                    now - 300_000, true),
+                QRRecord("mailto:support@brendigo.com", now - 7_200_000, false),
+                QRRecord("tel:+15551234567", now - 10_800_000, false),
+                QRRecord(QRContent.location("Trg 128. brigade, Rijeka")!!,
+                    now - 86_400_000, false)
             )
         } else null
     }
@@ -1891,18 +1894,28 @@ private fun HistoryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 88.dp else 68.dp)
+                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 100.dp else 78.dp)
                             .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         QrexHistoryGlyph(icon, tint, background = glyphBackground)
                         Spacer(Modifier.width(9.dp))
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            // Generic text QR codes may contain tokens or
-                            // personal notes; do not render their raw payload
-                            // as the History row title.
-                            val rowTitle = if (detail == tr("text")) detail
-                                else QRContent.label(item.raw)
+                            // Three native information levels match the reference:
+                            // concise title, safe typed preview, category/time chip.
+                            // Never print an entire raw URL, QR note or Wi-Fi secret.
+                            val rowTitle = when {
+                                QRContent.isWifi(item.raw) -> tr("wifi")
+                                item.raw.startsWith("mailto:", ignoreCase = true) -> tr("email")
+                                item.raw.startsWith("tel:", ignoreCase = true) -> tr("phone")
+                                item.raw.startsWith("geo:", ignoreCase = true) -> tr("location")
+                                QRContent.isEvent(item.raw) ->
+                                    QRContent.eventField(item.raw, "SUMMARY")?.take(56) ?: tr("event")
+                                item.raw.contains("BEGIN:VCARD", ignoreCase = true) ->
+                                    QRContent.contactField(item.raw, "FN")?.take(56) ?: tr("contact")
+                                QRContent.safeUrl(item.raw) != null -> QRContent.label(item.raw)
+                                else -> tr("text")
+                            }
                             Text(
                                 rowTitle,
                                 maxLines = if (largeHistoryText) 2 else 1,
@@ -1911,31 +1924,57 @@ private fun HistoryScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = QrexDesign.actionTextSize
                             )
-                            // Both History and Favorites identify the QR
-                            // category and its timestamp without ever echoing
-                            // a password, URL query token or raw note.
+                            val safePreview = QRHistory.preview(item.raw)
+                            if (safePreview != null) {
+                                Text(
+                                    safePreview,
+                                    modifier = Modifier.testTag("qrex-history-preview"),
+                                    maxLines = if (largeHistoryText) 2 else 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp
+                                )
+                            }
                             val subtitle = listOf(detail, date)
                                 .filter { it.isNotBlank() }.joinToString(" · ")
-                            Text(
-                                subtitle,
+                            Row(
                                 modifier = Modifier.testTag(
                                     if (favoritesPage) "qrex-favorites-subtitle"
                                     else "qrex-history-subtitle"
-                                ),
-                                maxLines = if (largeHistoryText) 2 else 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 11.sp
-                            )
+                                ).semantics { contentDescription = subtitle },
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    shape = RoundedCornerShape(7.dp),
+                                    color = tint.copy(alpha = .15f)
+                                ) {
+                                    Text(
+                                        detail,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp),
+                                        maxLines = 1,
+                                        color = tint, fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Text(
+                                    date,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 11.sp
+                                )
+                            }
                         }
+
                         // Compose translations must be resolved during
                         // composition, not inside the non-composable semantics
                         // modifier lambda on older Android builds.
                         val savedStateDescription =
                             if (item.saved) tr("saved") else tr("add_favorite")
+                        if (favoritesPage) {
                         IconButton(
                             onClick = {
-                                // Favorite is a direct, visible action on every row.
+                                // Saved codes keep a direct removal control.
                                 // Debug-only screenshot fixtures must never mutate the store.
                                 if (screenshotItems == null) {
                                     val changed = store.setSaved(item, !item.saved)
@@ -1962,8 +2001,11 @@ private fun HistoryScreen(
                                     else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                        }
                         if (!favoritesPage) {
-                            // Favorites uses just the card tap and its visible heart; History retains deletion.
+                            // The reference History cards have only one overflow control.
+                            // Adding/removing favorites remains a real menu action.
+                            // Favorites keeps its direct 48dp unsave heart.
                             var historyMenu by remember(item.raw) { mutableStateOf(false) }
                             Box {
                                 IconButton(
