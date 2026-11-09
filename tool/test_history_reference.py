@@ -56,7 +56,9 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn('val safePreview = QRHistory.preview(item.raw)', history)
         self.assertIn('testTag("qrex-history-preview")', history)
         self.assertIn('color = tint.copy(alpha = .15f)', history)
-        self.assertIn('if (favoritesPage) {\n                        IconButton(', history)
+        self.assertIn('if (favoritesPage) {', history)
+        self.assertIn('testTag("qrex-favorites-remove")', history)
+        self.assertNotIn('qrex-history-favorite', history)
         self.assertIn("Text(\n                                rowTitle,", history)
         for tag in ("qrex-history-menu-delete", "qrex-history-delete-dialog",
                     "qrex-history-delete-confirm", "qrex-history-delete-cancel"):
