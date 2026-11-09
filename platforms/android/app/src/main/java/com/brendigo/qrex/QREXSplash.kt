@@ -184,6 +184,27 @@ internal fun QrexSplashScreen(
                 upperEdge, color = Color(0xFF23AEFF).copy(alpha = .62f),
                 style = Stroke(width = 1.25.dp.toPx())
             )
+            // A subdued middle ribbon fills the dark empty region between
+            // the reference's upper blue arc and its illuminated footer wave.
+            // Native Canvas gradients retain crisp layout on every density.
+            val middleRibbon = Path().apply {
+                moveTo(0f, h * .47f)
+                cubicTo(w * .22f, h * .53f, w * .43f, h * .69f, w * .64f, h * .56f)
+                cubicTo(w * .80f, h * .46f, w * .92f, h * .43f, w, h * .45f)
+                lineTo(w, h * .72f)
+                cubicTo(w * .74f, h * .78f, w * .37f, h * .86f, 0f, h * .71f)
+                close()
+            }
+            drawPath(
+                middleRibbon,
+                brush = Brush.linearGradient(
+                    listOf(Color(0xFF041333), Color(0xFF063883), Color(0xFF020E30)),
+                    start = Offset(0f, h * .50f),
+                    end = Offset(w, h * .77f)
+                ),
+                alpha = .63f
+            )
+
             val lowerRibbon = Path().apply {
                 // Keep the luminous ribbon BELOW the wordmark/tagline, as in
                 // the supplied screenshot; the old .54 crest crossed QREX.

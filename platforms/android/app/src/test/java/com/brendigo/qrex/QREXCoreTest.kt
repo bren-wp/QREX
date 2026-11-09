@@ -30,6 +30,21 @@ class QREXCoreTest {
         assertTrue(snapshotSavedQrForPdf(history).single().raw == "never-export")
     }
 
+    @Test fun historyReferencePreviewNeverRepeatsPrivateQrValues() {
+        val sensitiveUrl = "https://example.org/private?access_token=never-show-this"
+        assertEquals("https://example.org", QRHistory.preview(sensitiveUrl))
+        assertFalse(QRHistory.preview(sensitiveUrl)!!.contains("never-show-this"))
+        val wifi = QRContent.wifi("Brendigo_Office", "never-show-wifi-password")
+        assertEquals("Brendigo_Office", QRHistory.preview(wifi))
+        assertFalse(QRHistory.preview(wifi)!!.contains("never-show-wifi-password"))
+        assertEquals("support@brendigo.com",
+            QRHistory.preview("mailto:support@brendigo.com?bcc=hidden@example.com"))
+        assertEquals("+385 91 123 4567", QRHistory.preview("tel:+385 91 123 4567"))
+        val geo = QRContent.location("Trg 128. brigade, Rijeka")!!
+        assertEquals("Trg 128. brigade, Rijeka", QRHistory.preview(geo))
+        assertNull(QRHistory.preview("Arbitrary private note"))
+    }
+
     @Test fun languageChoicesContainEnglishAndCroatian() {
         assertEquals(23, QREXStrings.languages.size)
         assertEquals("en", QREXStrings.languages.first())

@@ -28,7 +28,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashOn
-import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -451,8 +450,12 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 )
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                        contentDescription = null, tint = QrexDesign.accentBright,
+                    // The reference retains an unstruck lightning glyph in
+                    // both states. Color + the existing CameraX confirmation
+                    // indicate activation without falsely implying failure.
+                    Icon(Icons.Default.FlashOn,
+                        contentDescription = null,
+                        tint = if (torchOn) QrexDesign.cyan else Color.White.copy(alpha = .86f),
                         modifier = Modifier.size(22.dp))
                     Spacer(Modifier.height(4.dp))
                     Text(tr("flashlight"), maxLines = if (fontScale >= 1.5f) 3 else 2,
@@ -645,24 +648,32 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                             }
                         }
                     }
-                    // Native raised hint over the genuine camera preview;
+                    // Reference-style plain overlay hint on the real camera;
                     // never substitute a stock scanner photo or overlay an
                     // inaccessible text element on the camera action buttons.
-                    Surface(
-                        modifier = Modifier.testTag("qrex-scan-hint-card"),
-                        color = QrexDesign.backgroundDeep.copy(alpha = .88f),
-                        shape = RoundedCornerShape(11.dp),
-                        border = BorderStroke(
-                            1.dp, QrexDesign.accentBright.copy(alpha = .46f)
-                        ),
-                        shadowElevation = 3.dp
+                    // Reference uses plain white instruction text directly
+                    // over the live viewfinder, not a bordered dark card.
+                    // A restrained scrim and shadow keep legibility in bright
+                    // camera scenes without intercepting QR preview touches.
+                    Box(
+                        modifier = Modifier.testTag("qrex-scan-hint-card")
+                            .background(Color.Black.copy(alpha = .22f),
+                                RoundedCornerShape(9.dp)),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             tr("point_camera"),
                             modifier = Modifier.padding(
-                                horizontal = 14.dp, vertical = 9.dp
+                                horizontal = 12.dp, vertical = 6.dp
                             ).testTag("qrex-scan-hint"),
                             color = Color.White,
+                            style = androidx.compose.ui.text.TextStyle(
+                                shadow = androidx.compose.ui.graphics.Shadow(
+                                    color = Color.Black.copy(alpha = .85f),
+                                    offset = Offset(0f, 2f),
+                                    blurRadius = 5f
+                                )
+                            ),
                             textAlign = TextAlign.Center,
                             fontSize = if (compactScan) 12.sp else 14.sp,
                             maxLines = if (fontScale >= 1.5f) 3 else 2

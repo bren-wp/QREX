@@ -110,12 +110,13 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
 
     def test_history_truncates_long_labels_without_removing_delete(self):
-        self.assertIn('val rowTitle = if (detail == tr("text")) detail', self.main)
+        self.assertIn('val rowTitle = when {', self.main)
+        self.assertIn('val safePreview = QRHistory.preview(item.raw)', self.main)
         self.assertIn("Text(\n                                rowTitle,", self.main)
         self.assertIn("maxLines = if (largeHistoryText) 2 else 1", self.main)
         self.assertIn("overflow = TextOverflow.Ellipsis", self.main)
-        # The reference uses a real overflow menu and favorite heart rather
-        # than an always-visible trash icon on each History row.
+        # The reference History uses a single overflow; Favorites keeps its
+        # direct heart. Both menu Favorite and Delete actions remain live.
         self.assertIn("historyMenu = true", self.main)
         self.assertIn('Text(tr("delete"))', self.main)
         self.assertIn("DropdownMenu(", self.main)
@@ -239,8 +240,10 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
         self.assertIn('testTag("qrex-history-menu").size(48.dp)', self.main)
-        self.assertIn('if (favoritesPage) "qrex-favorites-remove"', self.main)
-        self.assertIn('else "qrex-history-favorite"', self.main)
+        self.assertIn('.testTag("qrex-favorites-remove")', self.main)
+        self.assertNotIn('qrex-history-favorite', self.main)
+        self.assertIn('if (favoritesPage) {', self.main)
+        self.assertIn('.testTag("qrex-favorites-remove")', self.main)
         self.assertIn("heightIn(min = 60.dp)", self.main)
         self.assertIn("heightIn(min = 64.dp)", details)
         self.assertIn("Text(types[index], maxLines = 2", self.main)
@@ -351,7 +354,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('testTag("qrex-create-preview-ready")', self.main)
         self.assertIn('testTag("qrex-create-show")', self.main)
         self.assertIn('testTag("qrex-create-save")', self.main)
-        self.assertIn('"qrex-history-favorite"', self.main)
+        self.assertIn('val safePreview = QRHistory.preview(item.raw)', self.main)
         self.assertIn('"qrex-favorites-remove"', self.main)
         self.assertIn("store.setSaved(item, !item.saved)", self.main)
         self.assertIn("QRContent.contact(input, contactPhone, contactEmail)", self.main)
