@@ -38,6 +38,25 @@ object QRHistory {
     fun uiRowKey(record: QRRecord, visibleIndex: Int): String =
         "${record.timestamp}:$visibleIndex"
 
+    /**
+     * Reference-style History supporting line, but never a raw QR payload.
+     * URLs expose scheme/hostname, not credentials, paths or query tokens.
+     * Wi-Fi exposes SSID only; saved passwords are never previewed.
+     */
+    fun preview(raw: String): String? = when {
+        QRContent.isWifi(raw) -> QRContent.wifiField(raw, "S")?.take(72)
+        QRContent.safeUrl(raw) != null -> QRContent.safeUrl(raw)?.let {
+            "${it.scheme?.lowercase()}://${it.host}"
+        }
+        qrexExternalKind(raw) == QrexExternalKind.EMAIL ->
+            raw.substring(7).substringBefore('?').take(72)
+        qrexExternalKind(raw) == QrexExternalKind.PHONE -> raw.substring(4).take(48)
+        qrexExternalKind(raw) == QrexExternalKind.LOCATION ->
+            QRContent.locationInput(raw).take(72)
+        QRContent.isEvent(raw) -> QRContent.eventField(raw, "LOCATION")?.take(72)
+        else -> null
+    }?.takeIf { it.isNotBlank() && it.none { ch -> ch.isISOControl() } }
+
     fun matches(record: QRRecord, query: String, savedOnly: Boolean): Boolean {
         if (savedOnly && !record.saved) return false
         if (query.isBlank()) return true
