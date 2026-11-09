@@ -19,8 +19,26 @@ MAX_FILES = 1000
 MAX_IDS = 40
 
 
-def summarize(directory: pathlib.Path, api: str) -> str:
+def known_test_ids() -> set[str]:
+    """Only actual static @Test methods may appear in the release logs."""
+    root = pathlib.Path(__file__).resolve().parents[1] / (
+        "platforms/android/app/src/androidTest/java/com/brendigo/qrex"
+    )
+    allowed: set[str] = set()
+    for path in sorted(root.glob("*.kt")):
+        content = path.read_text(encoding="utf-8")
+        class_match = re.search(r"\\bclass\\s+(QREX[A-Za-z0-9_]+)\\b", content)
+        if class_match is None:
+            continue
+        class_name = "com.brendigo.qrex." + class_match.group(1)
+        for match in re.finditer(r"@Test\\s+fun\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(", content):
+            allowed.add(class_name + "." + match.group(1))
+    return allowed
+
+
+def summarize(directory: pathlib.Path, api: str, allowed_tests: set[str] | None = None) -> str:
     safe_api = api if re.fullmatch(r"(26|31|34|35|36)", api) else "unknown"
+    permitted = known_test_ids() if allowed_tests is None else allowed_tests
     cases: set[str] = set()
     xml_count = 0
     unreported = 0
@@ -40,7 +58,8 @@ def summarize(directory: pathlib.Path, api: str) -> str:
             name = case.attrib.get("name", "")
             # Suppress any dynamic or attacker-controlled QR payload in XML
             # attributes, even if it looks superficially like a test name.
-            if CLASS_ID.fullmatch(class_name) and TEST_ID.fullmatch(name):
+            if (CLASS_ID.fullmatch(class_name) and TEST_ID.fullmatch(name) and
+                    f"{class_name}.{name}" in permitted):
                 cases.add(f"{class_name}.{name}")
             else:
                 unreported += 1
