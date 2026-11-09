@@ -34,6 +34,7 @@ class QREXExternalActionsTest {
         assertTrue(generated.startsWith("geo:0,0?q="))
         assertEquals(QrexExternalKind.LOCATION, qrexExternalKind(generated))
         assertEquals(address, QRContent.locationInput(generated))
+        assertEquals(address.take(56), QRContent.label(generated))
         assertEquals(generated, QRContent.location(QRContent.locationInput(generated)))
         assertEquals("geo:45.3271,14.4422", QRContent.location("45.3271,14.4422"))
         assertNull(QRContent.location(" \n "))
