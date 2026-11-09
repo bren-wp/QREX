@@ -135,9 +135,15 @@ object QRContent {
 
     fun eventField(raw: String, name: String): String? {
         if (!isEvent(raw) || name !in setOf("SUMMARY", "DTSTART", "DTEND", "LOCATION", "DESCRIPTION")) return null
-        val value = raw.lineSequence().firstOrNull {
-            it.startsWith("$name:", ignoreCase = true)
-        }?.substringAfter(':')?.trimEnd('\r') ?: return null
+        // Other calendar applications add LANGUAGE/ALTREP parameters and
+        // fold long properties using CRLF + space/tab (RFC 5545).
+        val unfolded = raw.replace(Regex("\r?\n[ \t]"), "")
+        val value = unfolded.lineSequence().firstNotNullOfOrNull { line ->
+            val colon = line.indexOf(':')
+            if (colon < 0 || !line.substring(0, colon).substringBefore(';')
+                    .equals(name, ignoreCase = true)) null
+            else line.substring(colon + 1).trimEnd('\r')
+        } ?: return null
         val result = StringBuilder()
         var escaped = false
         for (char in value) {
@@ -223,6 +229,35 @@ object QRContent {
             }
         }
         return "WIFI:T:${if (password.isEmpty()) "nopass" else "WPA"};S:${escape(ssid)};P:${escape(password)};;"
+    }
+
+    /**
+     * Create a standards-compatible geo QR. Real coordinates remain literal,
+     * while a typed place/address becomes a map search URI (geo:0,0?q=...).
+     */
+    fun location(value: String): String? {
+        val text = value.trim()
+        if (text.isEmpty() || text.length > 500 ||
+            text.any { it.isISOControl() }) return null
+        val coordinates = text.split(',')
+        if (coordinates.size == 2 && text.none { it.isWhitespace() }) {
+            val lat = coordinates[0].toDoubleOrNull()
+            val lon = coordinates[1].toDoubleOrNull()
+            if (lat != null && lon != null && lat.isFinite() && lon.isFinite() &&
+                lat in -90.0..90.0 && lon in -180.0..180.0) return "geo:$text"
+        }
+        val encoded = java.net.URLEncoder.encode(text, "UTF-8").replace("+", "%20")
+        return "geo:0,0?q=$encoded"
+    }
+
+    /** Restores a human-readable place when editing a generated map-search QR. */
+    fun locationInput(raw: String): String {
+        if (!raw.startsWith("geo:", ignoreCase = true)) return raw
+        val data = raw.substring(4)
+        if (!data.startsWith("0,0?q=", ignoreCase = true) || '&' in data) return data
+        return runCatching {
+            java.net.URLDecoder.decode(data.substring(6), "UTF-8")
+        }.getOrDefault(data)
     }
 
     fun safeUrl(raw: String): Uri? {
