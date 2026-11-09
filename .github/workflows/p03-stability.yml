@@ -11,6 +11,8 @@ on:
       - "platforms/android/**"
       - "tool/p03_crash_triage.py"
       - "tool/test_p03_crash_triage.py"
+      - "tool/p03_failure_summary.py"
+      - "tool/test_p03_failure_summary.py"
       - "tool/run_p03_emulator.sh"
       - "tool/prepare_android_emulator.sh"
       - ".github/workflows/p03-stability.yml"
