@@ -55,7 +55,9 @@ class QREXMoreVerticalStackTest {
         val columns = qrexMoreTileColumns(
             config.screenWidthDp, config.screenHeightDp, config.fontScale
         )
-        val minHeight = if (columns == 2) 124.dp else 72.dp
+        // Match the tested production tile minimum after v1.0.43's
+        // reference layout reduction; keep the 48dp touch target checks.
+        val minHeight = if (columns == 2) 108.dp else 72.dp
         val minPx = with(rule.density) { minHeight.roundToPx() }
 
         tags.forEach { tag ->
