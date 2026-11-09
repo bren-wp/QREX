@@ -28,7 +28,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashOn
-import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -649,7 +648,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                             }
                         }
                     }
-                    // Native raised hint over the genuine camera preview;
+                    // Reference-style plain overlay hint on the real camera;
                     // never substitute a stock scanner photo or overlay an
                     // inaccessible text element on the camera action buttons.
                     // Reference uses plain white instruction text directly
