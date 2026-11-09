@@ -53,7 +53,6 @@ object QRHistory {
         qrexExternalKind(raw) == QrexExternalKind.PHONE -> raw.substring(4).take(48)
         qrexExternalKind(raw) == QrexExternalKind.LOCATION ->
             QRContent.locationInput(raw).take(72)
-        QRContent.isEvent(raw) -> QRContent.eventField(raw, "LOCATION")?.take(72)
         else -> null
     }?.takeIf { it.isNotBlank() && it.none { ch -> ch.isISOControl() } }
 
