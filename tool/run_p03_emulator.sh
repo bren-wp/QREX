@@ -44,6 +44,15 @@ test -s "$report" || {
   echo "No sanitized report produced" >&2
   exit 1
 }
+# Gradle's console suppresses individual Android instrumentation failures.
+# The JUnit XML contains potentially sensitive QR values in assertion text:
+# report ONLY fixed, allowlisted testcase names, never full XML or stacktraces.
+# Preserve a nonzero test_status; this report is diagnostic, not a bypass.
+if (( test_status != 0 )); then
+  python3 tool/p03_failure_summary.py \
+    platforms/android/app/build/outputs/androidTest-results/connected "$api" \
+    >> "$report" || true
+fi
 cat "$report"
 if (( test_status != 0 || triage_status != 0 )); then
   echo "P03 rejected: instrumentation=${test_status}, sanitized-triage=${triage_status}" >&2
