@@ -31,6 +31,9 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertIn("if (showAdvancedTypes) {", self.source)
         self.assertIn("onClick = { showAdvancedTypes = false }", self.source)
         self.assertIn("selected = kind == index", self.source)
+        # Returning from the advanced chooser to a quick type must restore
+        # the reference's four-chip layout, without removing advanced access.
+        self.assertIn("showAdvancedTypes = index !in quickTypes", self.source)
 
     def test_create_reference_header_navigates_and_preview_is_private(self):
         create = self.source.split("private fun CreateScreen(", 1)[1].split(

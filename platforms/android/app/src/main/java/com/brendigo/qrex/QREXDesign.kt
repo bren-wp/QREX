@@ -184,7 +184,7 @@ internal fun QrexSettingsListRow(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(
-            min = if (tileMode) 124.dp
+            min = if (tileMode) 108.dp
                 else qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
         ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
@@ -233,8 +233,8 @@ internal fun QrexSettingsListRow(
             // The user's dark Android reference has a genuine 2×3 tile grid.
             // Content grows for longer translations; FlowRow keeps rows distinct.
             Column(
-                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 plate()

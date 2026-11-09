@@ -1331,6 +1331,10 @@ private fun CreateScreen(
             val quickTypes = listOf(0, 1, 2, 6)
             val selectType: (Int) -> Unit = { index ->
                 kind = index
+                // A quick type restores the four-chip reference layout after
+                // leaving an advanced type. Advanced selections keep their
+                // own visible chip and remain editable.
+                showAdvancedTypes = index !in quickTypes
                 content = ""
                 password = ""
                 contactPhone = ""

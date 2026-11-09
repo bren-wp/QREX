@@ -1,3 +1,27 @@
+## Candidate: v1.0.43 · Android versionCode 143
+
+Continuation of the supplied six-screen QREX reference: native layered Splash gradient,
+CameraX Scanner overlaid instruction and torch icon, three-level History/Favorites
+cards with private-safe detail and reference category/time badges, and corrected
+Create quick-type visibility after editing an advanced QR format.
+Existing Result, More, Language, Export, About, Privacy and Terms remain
+functional and included in the genuine 12-screen Android capture suite.
+
+Distribution is strictly gated on four successful exact-commit Android workflows,
+actual emulator PNG images, release APK/AAB signature identity and SHA256 hashes.
+The public GitHub certificate differs from the approved Play upload key and
+**cannot update** an installation signed with another certificate.
+
+[QREX v1.0.43 release notes](docs/releases/v1.0.43.md).
+
+## Published: v1.0.42 · Android versionCode 142
+
+The v1.0.42 GitHub release includes verified APK, AAB, Play-UNSIGNED-QA AAB,
+12 authentic Android screenshots and SHA256SUMS. The standalone Result screen,
+AndroidX dependency refresh and source-security gates are retained in 1.0.43.
+
+[QREX v1.0.42 release](https://github.com/bren-wp/QREX/releases/tag/v1.0.42).
+
 ## Candidate: v1.0.42 · Android versionCode 142
 
 Result reference alignment and regression repairs from merged PR #100:
