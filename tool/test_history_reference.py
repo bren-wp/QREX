@@ -52,7 +52,11 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn('"qrex-history-subtitle"', history)
         self.assertIn('val savedStateDescription =', history)
         self.assertIn('stateDescription = savedStateDescription', history)
-        self.assertIn('val rowTitle = if (detail == tr("text")) detail', history)
+        self.assertIn('val rowTitle = when {', history)
+        self.assertIn('val safePreview = QRHistory.preview(item.raw)', history)
+        self.assertIn('testTag("qrex-history-preview")', history)
+        self.assertIn('color = tint.copy(alpha = .15f)', history)
+        self.assertIn('if (favoritesPage) {\n                        IconButton(', history)
         self.assertIn("Text(\n                                rowTitle,", history)
         for tag in ("qrex-history-menu-delete", "qrex-history-delete-dialog",
                     "qrex-history-delete-confirm", "qrex-history-delete-cancel"):
