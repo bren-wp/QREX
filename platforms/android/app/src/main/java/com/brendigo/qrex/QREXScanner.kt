@@ -451,8 +451,12 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                 )
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(if (torchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                        contentDescription = null, tint = QrexDesign.accentBright,
+                    // The reference retains an unstruck lightning glyph in
+                    // both states. Color + the existing CameraX confirmation
+                    // indicate activation without falsely implying failure.
+                    Icon(Icons.Default.FlashOn,
+                        contentDescription = null,
+                        tint = if (torchOn) QrexDesign.cyan else Color.White.copy(alpha = .86f),
                         modifier = Modifier.size(22.dp))
                     Spacer(Modifier.height(4.dp))
                     Text(tr("flashlight"), maxLines = if (fontScale >= 1.5f) 3 else 2,
