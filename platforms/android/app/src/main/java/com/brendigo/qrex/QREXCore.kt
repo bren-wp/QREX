@@ -43,11 +43,31 @@ object QRHistory {
      * URLs expose scheme/hostname, not credentials, paths or query tokens.
      * Wi-Fi exposes SSID only; saved passwords are never previewed.
      */
+    /**
+     * java.net.URI works in both JVM unit tests and Android. Reject URL
+     * credentials, unsupported schemes and noncanonical whitespace/control
+     * characters before returning only the scheme and host. This never
+     * exposes paths, queries, fragments or authentication tokens.
+     */
+    private fun safeWebOrigin(raw: String): String? {
+        if (raw != raw.trim() || raw.length > 10000 ||
+            raw.any { it.isWhitespace() || it.isISOControl() || it == '\\' }) return null
+        return runCatching {
+            val uri = java.net.URI(raw)
+            val scheme = uri.scheme?.lowercase(Locale.ROOT)
+            val host = uri.host
+            if (scheme !in setOf("http", "https") || host.isNullOrBlank() ||
+                uri.rawUserInfo != null || uri.rawAuthority?.contains('@') == true) {
+                null
+            } else {
+                "$scheme://$host"
+            }
+        }.getOrNull()
+    }
+
     fun preview(raw: String): String? = when {
         QRContent.isWifi(raw) -> QRContent.wifiField(raw, "S")?.take(72)
-        QRContent.safeUrl(raw) != null -> QRContent.safeUrl(raw)?.let {
-            "${it.scheme?.lowercase()}://${it.host}"
-        }
+        safeWebOrigin(raw) != null -> safeWebOrigin(raw)
         qrexExternalKind(raw) == QrexExternalKind.EMAIL ->
             raw.substring(7).substringBefore('?').take(72)
         qrexExternalKind(raw) == QrexExternalKind.PHONE -> raw.substring(4).take(48)
