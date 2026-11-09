@@ -26,26 +26,26 @@ Explore all **12 genuine screenshots from the running Android app**, captured an
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-splash.png" width="210" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-create.png" width="210" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-scan.png" width="210" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-result.png" width="210" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-history.png" width="210" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-saved.png" width="210" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-more.png" width="210" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-wifi.png" width="210" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-language.png" width="210" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-export.png" width="210" alt="Actual QREX PDF export page"><br><b>PDF export</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-about.png" width="210" alt="Actual QREX About dialog"><br><b>About</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.41/android-privacy.png" width="210" alt="Actual QREX Privacy dialog"><br><b>Privacy</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-language.png" width="210" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-export.png" width="210" alt="Actual QREX PDF export page"><br><b>PDF export</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-about.png" width="210" alt="Actual QREX About dialog"><br><b>About</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.42/android-privacy.png" width="210" alt="Actual QREX Privacy dialog"><br><b>Privacy</b></td>
 </tr>
 </table>
 
-[**View genuine v1.0.41 screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.41)
+[**View genuine v1.0.42 screenshots →**](https://github.com/bren-wp/QREX/releases/tag/v1.0.42)
 
 </div>
 
@@ -76,16 +76,16 @@ QREX asks before sharing or exporting Wi-Fi credentials. Saved Wi-Fi QR contents
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Install QREX from Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-**QREX v1.0.41:** restored the reference 2×3 More/Settings tile grid with a separate destructive History action, an accessible single-column fallback on small and large-font screens, responsive native Result screen and verified genuine Android UI screenshots. AndroidX Fragment 1.9.1, Android Gradle Plugin 9.5.0 and optimized R8 shrinking remain in use. Local CameraX/ZXing scanning, 23 offline languages and protected Wi-Fi data are unchanged. GitHub binaries are **not** signed with the Google Play upload certificate.
+**QREX v1.0.42 predecessor:** restored the reference 2×3 More/Settings tile grid with a separate destructive History action, an accessible single-column fallback on small and large-font screens, responsive native Result screen and verified genuine Android UI screenshots. AndroidX Fragment 1.9.1, Android Gradle Plugin 9.5.0 and optimized R8 shrinking remain in use. Local CameraX/ZXing scanning, 23 offline languages and protected Wi-Fi data are unchanged. GitHub binaries are **not** signed with the Google Play upload certificate.
 
 
-**QREX v1.0.42 candidate:** standalone QR Result with safe URL origin, fixed navigation tests, upgraded stable CameraX 1.6.2, Lifecycle 2.11.0, Activity Compose 1.13.0, ZXing 3.5.4, Android Gradle Plugin 9.5.0, Kotlin Compose 2.4.21 and Gradle 9.9.0. Source-level security/dead-code audit and CI signing gates are included; **this candidate is not a published release until exact-commit CI is green**. See [full security and dead-code report](docs/audits/2026-11-08-qrex-v142-full-security-deadcode-dependencies.md).
+**QREX v1.0.43 release candidate:** continued screen-by-screen reference alignment across History, Favorites, Splash, Scanner and Create, with secure QR action handling for e-mail, phone, maps and contacts. Create now returns to the compact four-type reference layout after an advanced QR selection. Source, privacy and localization regression gates remain mandatory. **The candidate is not a published binary until all exact-commit CI checks pass and the GitHub publisher completes successfully.** [Version 1.0.43 release notes](docs/releases/v1.0.43.md).
 
 [**Download the latest GitHub release →**](https://github.com/bren-wp/QREX/releases/latest)
 
-[**All QREX releases (v1.0.0–v1.0.41) →**](docs/releases/INDEX.md)
+[**All QREX releases (v1.0.0–v1.0.42) →**](docs/releases/INDEX.md)
 
-Latest published release: **[v1.0.41](https://github.com/bren-wp/QREX/releases/tag/v1.0.41)** (`com.brendigo.qrex`, versionCode 141). Includes AGP 9.0.1, Fragment 1.9.1, optimized R8 shrinking, the dark Q/QR identity, CameraX QR scanning, 8 QR types, local History/Saved search, 23 offline languages, About/Language/Export improvements, verified APK/AAB checksums, and 12 genuine v1.0.41 Android screenshots. QREX is built with native Android controls and designed for clear, responsive everyday use.
+Latest published release: **[v1.0.42](https://github.com/bren-wp/QREX/releases/tag/v1.0.42)** (`com.brendigo.qrex`, versionCode 142). Includes standalone Result screen, a secure URL-origin preview, CameraX/ZXing QR scanning, eight QR types, 23 offline languages, security/dead-code checks, APK/AAB checksums and 12 genuine Android emulator screenshots. QREX is built with native Android controls and responsive phone layouts.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
@@ -107,4 +107,4 @@ Created by [Brendigo](https://brendigo.com) · [Open-source license](LICENSE)
 </div>
 
 
-**Last complete screenshot release: v1.0.41.** All 12 authentic screenshots and the separate Play-UNSIGNED-QA AAB were verified in the public v1.0.41 release; the 1.0.31 release remains archived with its limited asset list.
+**Last complete screenshot release: v1.0.42.** All 12 authentic screenshots and the separate Play-UNSIGNED-QA AAB were verified in the public v1.0.42 release; the 1.0.31 release remains archived with its limited asset list.
