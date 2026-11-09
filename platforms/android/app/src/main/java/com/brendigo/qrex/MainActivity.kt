@@ -520,6 +520,7 @@ private fun ResultScreen(
     val compactResult = windowWidthDp < 360 || config.screenHeightDp < 650 ||
         LocalDensity.current.fontScale >= 1.35f
     val url = QRContent.safeUrl(raw)
+    val externalKind = remember(raw) { qrexExternalKind(raw) }
     // Use only the public scheme and hostname for the visual subtitle:
     // never duplicate query parameters, embedded credentials or access tokens.
     val publicUrlOrigin = url?.let { link ->
@@ -783,6 +784,22 @@ private fun ResultScreen(
         } else if (QRContent.isEvent(raw)) {
             PrimaryAction(tr("add_to_calendar")) {
                 if (!openCalendarEvent(context, raw)) {
+                    Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
+                }
+            }
+            Spacer(Modifier.height(6.dp))
+        } else if (externalKind != null) {
+            // This opens only an external compose/dialer/maps/contact editor.
+            // Nothing is sent or written silently; the user must finish there.
+            PrimaryAction(
+                when (externalKind) {
+                    QrexExternalKind.EMAIL -> tr("email")
+                    QrexExternalKind.PHONE -> tr("phone")
+                    QrexExternalKind.LOCATION -> tr("location")
+                    QrexExternalKind.CONTACT -> tr("contact")
+                }, modifier = Modifier.testTag("qrex-result-external-action")
+            ) {
+                if (!openQrExternalAction(context, raw)) {
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -1061,7 +1078,7 @@ private fun CreateScreen(
             QRContent.isEvent(raw) -> 7 to (QRContent.eventField(raw, "SUMMARY") ?: "")
             raw.startsWith("mailto:", ignoreCase = true) -> 3 to raw.substringAfter(':')
             raw.startsWith("tel:", ignoreCase = true) -> 4 to raw.substringAfter(':')
-            raw.startsWith("geo:", ignoreCase = true) -> 5 to raw.substringAfter(':')
+            raw.startsWith("geo:", ignoreCase = true) -> 5 to QRContent.locationInput(raw)
             raw.startsWith("BEGIN:VCARD", ignoreCase = true) ->
                 6 to (QRContent.contactField(raw, "FN") ?: "")
             QRContent.safeUrl(raw) != null -> 0 to raw
@@ -1120,7 +1137,7 @@ private fun CreateScreen(
         2 -> if (input.isBlank()) "" else QRContent.wifi(input, password)
         3 -> if (input.contains("@") && !input.contains("\n")) "mailto:$input" else ""
         4 -> if (input.isBlank()) "" else "tel:$input"
-        5 -> if (input.isBlank()) "" else "geo:$input"
+        5 -> QRContent.location(input).orEmpty()
         6 -> QRContent.contact(input, contactPhone, contactEmail).orEmpty()
         else -> QRContent.event(input, eventStart, eventEnd, eventLocation, eventDescription).orEmpty()
     }
