@@ -59,6 +59,14 @@ class QREXHistoryPrivacyTest {
             assertTrue("Category icon must remain legible", glyph.right - glyph.left >= 38.dp)
             rule.onAllNodesWithText(secretMarker, substring = true, useUnmergedTree = true)
                 .assertCountEquals(0)
+            // The supplied reference has one History overflow, not a second
+            // favorite heart. Favorite controls remain inside that menu.
+            rule.onAllNodesWithTag("qrex-history-favorite", useUnmergedTree = true)
+                .assertCountEquals(0)
+            rule.onNodeWithTag("qrex-history-preview", useUnmergedTree = true)
+                .assertIsDisplayed()
+            rule.onNodeWithTag("qrex-history-subtitle", useUnmergedTree = true)
+                .assertIsDisplayed()
 
             // A non-saved QR must disappear under Saved and return under All.
             rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
