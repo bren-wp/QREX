@@ -20,7 +20,7 @@ class TestInstrumentedFailureSummary(unittest.TestCase):
                 ' name="passingTest"/>'
                 '</testsuite>', encoding="utf-8"
             )
-            summary = summarize(root, "35")
+            summary = summarize(root, "35", {"com.brendigo.qrex.QREXMoreVerticalStackTest.darkAndLightMoreKeepReferenceTilesAndWorkingPrivacyTermsActions"})
             self.assertIn("QREXMoreVerticalStackTest.darkAndLightMore", summary)
             self.assertIn("Failed test IDs: 1", summary)
             for secret in ("super-secret", "WIFI:", "private.example", "AssertionError"):
@@ -41,11 +41,11 @@ class TestInstrumentedFailureSummary(unittest.TestCase):
                 ' name="test/https://private.example/abc">'
                 '<failure>secret-value</failure></testcase>'
                 '</testsuite>', encoding="utf-8")
-            summary = summarize(root, "31")
+            summary = summarize(root, "31", set())
             self.assertNotIn("password123", summary)
             self.assertNotIn("private.example", summary)
             self.assertNotIn("secret-value", summary)
-            self.assertIn("Unreported/invalid entries: 2", summary)
+            self.assertIn("Unreported/invalid entries: 3", summary)
 
     def test_handles_broken_reports_without_failure_or_leaks(self):
         with tempfile.TemporaryDirectory() as tmp:
