@@ -65,7 +65,9 @@ class MoreReferenceTests(unittest.TestCase):
 
     def test_raised_3d_icon_plate_is_decorative_not_an_extra_button(self):
         self.assertIn('testTag("qrex-more-icon-plate")', self.cards)
-        self.assertIn("Modifier.size(40.dp).background(Brush.verticalGradient(", self.cards)
+        self.assertIn("Modifier.size(if (tileMode || destructive) 48.dp else 40.dp)", self.cards)
+        self.assertIn("shape = if (tileMode || destructive) CircleShape", self.cards)
+        self.assertIn(".background(Brush.verticalGradient(", self.cards)
         self.assertIn("listOf(Color.White.copy(alpha = .10f), Color.Transparent)", self.cards)
         self.assertIn("shadowElevation = 4.dp", self.cards)
         self.assertIn("border = BorderStroke(1.dp, accent.copy(alpha = .39f))", self.cards)
