@@ -43,7 +43,9 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "result": ("rezultat", "https://brendigo.com", "natrag"),
         "history": ("povijest", "brendigo.com", "pretraži povijest..."),
         "saved": ("favoriti", "brendigo.com", "spremljeno"),
-        "more": ("postavke", "pdf", "jezik"),
+        # Export is now captioned "QR kodovi i povijest", not "PDF". Check
+        # localized visible controls instead of an obsolete implementation label.
+        "more": ("postavke", "izvoz arhive", "jezik"),
         "about": ("o aplikaciji", "qrex", "razvio brendigo", "zatvori"),
         "privacy": ("politika privatnosti", "qr kodovi obrađuju se", "zatvori"),
         "language": ("jezik", "hrvatski", "english"),
