@@ -432,7 +432,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     }
                     Spacer(Modifier.height(4.dp))
                     Text(tr("from_gallery"), maxLines = if (fontScale >= 1.5f) 3 else 2,
-                        fontSize = if (compactScan) 13.sp else 16.sp,
+                        fontSize = if (compactScan) 12.sp else 14.sp,
                         lineHeight = if (compactScan) 16.sp else 18.sp,
                         textAlign = TextAlign.Center)
                 }
@@ -689,7 +689,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                                 )
                             ),
                             textAlign = TextAlign.Center,
-                            fontSize = if (compactScan) 12.sp else 14.sp,
+                            fontSize = if (compactScan) 13.sp else 16.sp,
                             maxLines = if (fontScale >= 1.5f) 3 else 2
                         )
                     }
