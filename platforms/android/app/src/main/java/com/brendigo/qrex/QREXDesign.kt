@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.MoreVert
@@ -184,7 +185,7 @@ internal fun QrexSettingsListRow(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(
-            min = if (tileMode) 108.dp
+            min = if (tileMode) 116.dp
                 else qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
         ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
@@ -200,19 +201,25 @@ internal fun QrexSettingsListRow(
         val plate: @Composable () -> Unit = {
             Surface(
                 modifier = Modifier.testTag("qrex-more-icon-plate"),
-                shape = RoundedCornerShape(12.dp),
-                color = accent.copy(alpha = .13f),
-                border = BorderStroke(1.dp, accent.copy(alpha = .39f)),
+                shape = if (tileMode || destructive) CircleShape else RoundedCornerShape(12.dp),
+                color = when {
+                    destructive -> MaterialTheme.colorScheme.error.copy(alpha = .18f)
+                    tileMode -> Color(0xFF083D83)
+                    else -> accent.copy(alpha = .13f)
+                },
+                border = BorderStroke(1.dp, if (tileMode) accent.copy(alpha = .12f)
+                    else accent.copy(alpha = .39f)),
                 shadowElevation = 4.dp
             ) {
                 Box(
-                    Modifier.size(40.dp).background(Brush.verticalGradient(
+                    Modifier.size(if (tileMode || destructive) 48.dp else 40.dp)
+                        .background(Brush.verticalGradient(
                         listOf(Color.White.copy(alpha = .10f), Color.Transparent)
                     )),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(icon, contentDescription = null, tint = accent,
-                        modifier = Modifier.size(22.dp))
+                        modifier = Modifier.size(if (tileMode || destructive) 26.dp else 22.dp))
                 }
             }
         }
