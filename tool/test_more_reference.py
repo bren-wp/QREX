@@ -53,7 +53,7 @@ class MoreReferenceTests(unittest.TestCase):
         self.assertIn("tileMode = moreTiles", self.more)
         self.assertEqual(self.more.count("tileMode = moreTiles"), 6)
         self.assertEqual(self.more.count("Modifier.weight(1f).testTag"), 6)
-        self.assertIn("if (tileMode) 108.dp", self.cards)
+        self.assertIn("if (tileMode) 112.dp", self.cards)
         self.assertIn("verticalArrangement = Arrangement.spacedBy(6.dp)", self.cards)
         self.assertIn("widthDp < 360 || heightDp < 500 || fontScale >= 1.30f", self.cards)
         self.assertIn("if (fontScale >= 1.35f) 88 else 72", self.design)
