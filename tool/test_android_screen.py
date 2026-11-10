@@ -62,6 +62,24 @@ class ForegroundTests(unittest.TestCase):
             '<node package="com.brendigo.qrex" content-desc="Natrag" />'
         ), "result")
 
+    def test_more_root_uses_real_localized_export_tile_not_legacy_pdf(self):
+        # Export PDF is a detail/action, not the caption on the More root.
+        more = screen(
+            '<node package="com.brendigo.qrex" text="Postavke, pravne informacije i više." />'
+            '<node package="com.brendigo.qrex" text="Izvoz arhive" />'
+            '<node package="com.brendigo.qrex" text="QR kodovi i povijest" />'
+            '<node package="com.brendigo.qrex" text="Jezik" />'
+        )
+        validate(more, "more")
+        validate(more, "responsive-more")
+        # A wrongly navigated export detail page must not pass as More root.
+        with self.assertRaisesRegex(ValueError, "postavke"):
+            validate(screen(
+                '<node package="com.brendigo.qrex" text="Izvoz arhive" />'
+                '<node package="com.brendigo.qrex" text="PDF" />'
+                '<node package="com.brendigo.qrex" text="Jezik" />'
+            ), "more")
+
     def test_genuine_history_screen_is_accepted(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Favoriti" />'
