@@ -126,9 +126,9 @@ internal fun QrexBrandHeader(
             Row(Modifier.semantics(mergeDescendants = true) {
                 contentDescription = "QREX"
             }, verticalAlignment = Alignment.CenterVertically) {
-                Text("QRE", fontWeight = FontWeight.Black, fontSize = 25.sp,
+                Text("QRE", fontWeight = FontWeight.Black, fontSize = 29.sp,
                     color = MaterialTheme.colorScheme.onBackground)
-                Text("X", fontWeight = FontWeight.Black, fontSize = 25.sp,
+                Text("X", fontWeight = FontWeight.Black, fontSize = 29.sp,
                     color = QrexDesign.accentBright)
             }
             Spacer(Modifier.weight(1f))
@@ -140,7 +140,7 @@ internal fun QrexBrandHeader(
             }
         }
         Text(tr("scanner_local_message"), color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+            fontSize = 14.sp, maxLines = 3, overflow = TextOverflow.Ellipsis,
             modifier = Modifier.testTag("qrex-scanner-local-message"))
     }
 }
