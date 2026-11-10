@@ -244,7 +244,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('qrex-history-favorite', self.main)
         self.assertIn('if (favoritesPage) {', self.main)
         self.assertIn('.testTag("qrex-favorites-remove")', self.main)
-        self.assertIn("heightIn(min = 60.dp)", self.main)
+        self.assertIn("heightIn(min = 52.dp)", self.main)
         self.assertIn("heightIn(min = 64.dp)", details)
         self.assertIn("Text(types[index], maxLines = 2", self.main)
 
