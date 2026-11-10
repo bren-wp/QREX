@@ -66,7 +66,8 @@ class ResultNavigationReferenceTest(unittest.TestCase):
         self.assertIn("HorizontalDivider(color = if (darkUi)", self.main)
         self.assertIn("NavigationBarItem(", self.main)
         self.assertIn("if (selected)", self.design)
-        self.assertIn(".width(19.dp).height(2.dp)", self.design)
+        self.assertIn("if (icon == Icons.Default.QrCodeScanner)", self.design)
+        self.assertIn("drawLine(tint, start, end, strokeWidth = stroke", self.design)
         self.assertIn("contentDescription = null", self.design)
 
     def test_wifi_secrets_and_privacy_confirmations_unchanged(self):
