@@ -56,7 +56,7 @@ class ResultNavigationReferenceTest(unittest.TestCase):
 
     def test_every_main_screen_uses_one_real_five_tab_navigation(self):
         self.assertEqual(1, self.main.count("NavigationBar("))
-        self.assertIn("if (currentCode == null) {", self.main)
+        self.assertNotIn("if (currentCode == null) {", self.main)
         self.assertIn("BackHandler(enabled = currentCode != null)", self.main)
         self.assertIn('testTag("qrex-bottom-navigation")', self.main)
         self.assertIn('testTag("qrex-nav-glyph-$index")', self.main)
