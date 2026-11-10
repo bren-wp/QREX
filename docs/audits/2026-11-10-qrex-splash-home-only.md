@@ -20,11 +20,13 @@ Both uploaded images show an illustrated phone, its bezel, Android status bar an
 ## Source implementation
 
 - In-app Splash displays for **3500 ms** from the first Compose frame, using a monotonic remembered timestamp so rotation does not restart the delay. The OS-managed Android 12+ system splash runs separately and cannot be specified to an exact wall-clock duration by this Compose code.
-- Standard phone 393×852dp layout: vector logo width 214dp; proportional brand offset (about -50dp at 393×852dp and -35dp at 411×731dp); restored native upper and lower wave positions; footer track follows 56% of the available footer area and retains width/height bounds. Narrow, short, wide, tablet and 1.4×+ font windows retain accessible fallback layout.
+- Standard phone 393×852dp layout: vector logo width 220dp; proportional brand offset (about -50dp at 393×852dp and -35dp at 411×731dp); restored native upper and lower wave positions; footer track follows 57.5% of the available footer area and retains width/height bounds. Narrow, short, wide, tablet and 1.4×+ font windows retain accessible fallback layout.
 - Home live viewfinder: scanner corners target **63%** of available width and are vertically centered at **42%** of the preview height, clamped above the hint/buttons. CameraX, hardware torch acknowledgement, scoped gallery picker, camera permissions and the five bottom tabs remain fully functional.
 - Text/header and scan hint sizes are increased only on Home/Splash; touch targets remain at least 48dp.
 
 ## Quantified source geometry deviations
+
+On the 393dp reference-width profile the new source configuration differs from the estimated landmark ratios by about **0.16 percentage points** (Splash logo width), **0.14 pp** (progress width), **0.008 pp** (Home bracket width), and **0.92 pp** (Home bracket vertical center). These are *analytical geometry gaps*, not rendered-pixel mismatch rates.
 
 Run:
 ```bash
