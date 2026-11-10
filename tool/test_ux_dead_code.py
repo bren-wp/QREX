@@ -327,7 +327,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("maxSidePx = 440.dp.toPx()", self.scanner)
         self.assertIn("scannerFrameSidePx(", self.scanner)
         self.assertIn("size.width, usableHeight, maxSidePx", self.scanner)
-        self.assertIn("widthPx * .73f", self.scanner)
+        self.assertIn("widthPx * .63f", self.scanner)
         self.assertIn("usableHeightPx * .83f", self.scanner)
         self.assertIn('testTag("qrex-scan-brackets")', self.scanner)
         self.assertIn("size.height * 0.45f", self.scanner)
