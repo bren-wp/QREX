@@ -45,9 +45,9 @@ def geometry_report() -> dict:
         "home_bracket_width_fraction": float(side_fraction.group(1)),
         "home_bracket_center_in_camera_fraction": float(center_fraction.group(1)),
     }
-    # The standard 393dp width path is capped by a 214dp native logo.
+    # The reference phone uses an uncapped 393dp logo (244dp upper bound).
     standard_width = 393
-    logo = min(int(standard_width * float(logo_multiplier.group(1))), 214)
+    logo = min(int(standard_width * float(logo_multiplier.group(1))), 244)
     # Noncompact UI's footer horizontal padding is 30dp on each edge.
     available_footer = standard_width - 60
     progress = min(max(int(available_footer * float(progress_multiplier.group(1))), 80), 220)
