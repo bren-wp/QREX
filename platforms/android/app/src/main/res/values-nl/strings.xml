@@ -93,4 +93,10 @@
     <string name="theme_dark">Donker</string>
     <string name="theme_light">Licht</string>
     <string name="theme_system">Systeem</string>
+    <string name="more_privacy_label">Privacy</string>
+    <string name="more_export_hint">QR-codes en geschiedenis</string>
+    <string name="more_privacy_hint">Hoe we gegevens verwerken</string>
+    <string name="more_terms_hint">Regels en richtlijnen</string>
+    <string name="more_clear_hint">Alle QR-codes definitief verwijderen</string>
+    <string name="copy_link">Link kopiëren</string>
 </resources>

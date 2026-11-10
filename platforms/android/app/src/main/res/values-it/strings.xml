@@ -93,4 +93,10 @@
     <string name="theme_dark">Scuro</string>
     <string name="theme_light">Chiaro</string>
     <string name="theme_system">Sistema</string>
+    <string name="more_privacy_label">Privacy</string>
+    <string name="more_export_hint">Codici QR e cronologia</string>
+    <string name="more_privacy_hint">Come trattiamo i dati</string>
+    <string name="more_terms_hint">Regole e linee guida</string>
+    <string name="more_clear_hint">Elimina definitivamente tutti i codici QR</string>
+    <string name="copy_link">Copia link</string>
 </resources>

@@ -93,4 +93,10 @@
     <string name="theme_dark">Σκούρο</string>
     <string name="theme_light">Φωτεινό</string>
     <string name="theme_system">Σύστημα</string>
+    <string name="more_privacy_label">Απόρρητο</string>
+    <string name="more_export_hint">Κωδικοί QR και ιστορικό</string>
+    <string name="more_privacy_hint">Πώς επεξεργαζόμαστε δεδομένα</string>
+    <string name="more_terms_hint">Κανόνες και οδηγίες</string>
+    <string name="more_clear_hint">Οριστική διαγραφή όλων των κωδικών QR</string>
+    <string name="copy_link">Αντιγραφή συνδέσμου</string>
 </resources>

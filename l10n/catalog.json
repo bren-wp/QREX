@@ -96,7 +96,13 @@
         "theme": "Theme",
         "theme_dark": "Dark",
         "theme_light": "Light",
-        "theme_system": "System"
+        "theme_system": "System",
+        "more_privacy_label": "Privacy",
+        "more_export_hint": "QR codes and history",
+        "more_privacy_hint": "How we process data",
+        "more_terms_hint": "Rules and guidelines",
+        "more_clear_hint": "Permanently delete all QR codes",
+        "copy_link": "Copy link"
       }
     },
     "hr": {
@@ -122,7 +128,7 @@
         "hide": "Sakrij",
         "show": "Prikaži",
         "check_url": "Provjeri adresu prije otvaranja.",
-        "open_link": "Otvori poveznicu",
+        "open_link": "Otvori link",
         "copy": "Kopiraj",
         "share": "Podijeli",
         "saved": "Spremljeno",
@@ -136,7 +142,7 @@
         "link_failed": "Poveznicu nije moguće otvoriti.",
         "create_qr": "Stvori QR kod",
         "enter_details": "Vaši QR kodovi ostaju na vašem uređaju.",
-        "url": "Poveznica",
+        "url": "Link",
         "text": "Tekst",
         "wifi": "Wi-Fi",
         "email": "E-pošta",
@@ -181,7 +187,7 @@
         "save_to_device": "Spremi na uređaj",
         "add_to_calendar": "Dodaj u kalendar",
         "edit": "Uredi",
-        "add_favorite": "Dodaj u favorite",
+        "add_favorite": "Spremi u favorite",
         "remove_favorite": "Ukloni iz favorita",
         "clear_history": "Obriši povijest",
         "confirm_clear_history": "Obrisati povijest?",
@@ -194,7 +200,13 @@
         "theme": "Tema",
         "theme_dark": "Tamna",
         "theme_light": "Svijetla",
-        "theme_system": "Sustav"
+        "theme_system": "Sustav",
+        "more_privacy_label": "Privatnost",
+        "more_export_hint": "QR kodovi i povijest",
+        "more_privacy_hint": "Kako obrađujemo podatke",
+        "more_terms_hint": "Pravila i smjernice",
+        "more_clear_hint": "Trajno ukloni sve QR kodove",
+        "copy_link": "Kopiraj link"
       }
     },
     "de": {
@@ -292,7 +304,13 @@
         "theme": "Design",
         "theme_dark": "Dunkel",
         "theme_light": "Hell",
-        "theme_system": "System"
+        "theme_system": "System",
+        "more_privacy_label": "Datenschutz",
+        "more_export_hint": "QR-Codes und Verlauf",
+        "more_privacy_hint": "Wie wir Daten verarbeiten",
+        "more_terms_hint": "Regeln und Richtlinien",
+        "more_clear_hint": "Alle QR-Codes dauerhaft löschen",
+        "copy_link": "Link kopieren"
       }
     },
     "fr": {
@@ -390,7 +408,13 @@
         "theme": "Thème",
         "theme_dark": "Sombre",
         "theme_light": "Clair",
-        "theme_system": "Système"
+        "theme_system": "Système",
+        "more_privacy_label": "Confidentialité",
+        "more_export_hint": "Codes QR et historique",
+        "more_privacy_hint": "Comment nous traitons les données",
+        "more_terms_hint": "Règles et directives",
+        "more_clear_hint": "Supprimer définitivement tous les codes QR",
+        "copy_link": "Copier le lien"
       }
     },
     "es": {
@@ -488,7 +512,13 @@
         "theme": "Tema",
         "theme_dark": "Oscuro",
         "theme_light": "Claro",
-        "theme_system": "Sistema"
+        "theme_system": "Sistema",
+        "more_privacy_label": "Privacidad",
+        "more_export_hint": "Códigos QR e historial",
+        "more_privacy_hint": "Cómo tratamos los datos",
+        "more_terms_hint": "Reglas y directrices",
+        "more_clear_hint": "Eliminar permanentemente todos los códigos QR",
+        "copy_link": "Copiar enlace"
       }
     },
     "it": {
@@ -586,7 +616,13 @@
         "theme": "Tema",
         "theme_dark": "Scuro",
         "theme_light": "Chiaro",
-        "theme_system": "Sistema"
+        "theme_system": "Sistema",
+        "more_privacy_label": "Privacy",
+        "more_export_hint": "Codici QR e cronologia",
+        "more_privacy_hint": "Come trattiamo i dati",
+        "more_terms_hint": "Regole e linee guida",
+        "more_clear_hint": "Elimina definitivamente tutti i codici QR",
+        "copy_link": "Copia link"
       }
     },
     "pt": {
@@ -684,7 +720,13 @@
         "theme": "Tema",
         "theme_dark": "Escuro",
         "theme_light": "Claro",
-        "theme_system": "Sistema"
+        "theme_system": "Sistema",
+        "more_privacy_label": "Privacidade",
+        "more_export_hint": "Códigos QR e histórico",
+        "more_privacy_hint": "Como tratamos os dados",
+        "more_terms_hint": "Regras e orientações",
+        "more_clear_hint": "Eliminar permanentemente todos os códigos QR",
+        "copy_link": "Copiar ligação"
       }
     },
     "nl": {
@@ -782,7 +824,13 @@
         "theme": "Thema",
         "theme_dark": "Donker",
         "theme_light": "Licht",
-        "theme_system": "Systeem"
+        "theme_system": "Systeem",
+        "more_privacy_label": "Privacy",
+        "more_export_hint": "QR-codes en geschiedenis",
+        "more_privacy_hint": "Hoe we gegevens verwerken",
+        "more_terms_hint": "Regels en richtlijnen",
+        "more_clear_hint": "Alle QR-codes definitief verwijderen",
+        "copy_link": "Link kopiëren"
       }
     },
     "pl": {
@@ -880,7 +928,13 @@
         "theme": "Motyw",
         "theme_dark": "Ciemny",
         "theme_light": "Jasny",
-        "theme_system": "System"
+        "theme_system": "System",
+        "more_privacy_label": "Prywatność",
+        "more_export_hint": "Kody QR i historia",
+        "more_privacy_hint": "Jak przetwarzamy dane",
+        "more_terms_hint": "Zasady i wytyczne",
+        "more_clear_hint": "Trwale usuń wszystkie kody QR",
+        "copy_link": "Kopiuj link"
       }
     },
     "cs": {
@@ -978,7 +1032,13 @@
         "theme": "Motiv",
         "theme_dark": "Tmavý",
         "theme_light": "Světlý",
-        "theme_system": "Systém"
+        "theme_system": "Systém",
+        "more_privacy_label": "Soukromí",
+        "more_export_hint": "QR kódy a historie",
+        "more_privacy_hint": "Jak zpracováváme údaje",
+        "more_terms_hint": "Pravidla a pokyny",
+        "more_clear_hint": "Trvale smazat všechny QR kódy",
+        "copy_link": "Kopírovat odkaz"
       }
     },
     "sk": {
@@ -1076,7 +1136,13 @@
         "theme": "Motív",
         "theme_dark": "Tmavý",
         "theme_light": "Svetlý",
-        "theme_system": "Systém"
+        "theme_system": "Systém",
+        "more_privacy_label": "Súkromie",
+        "more_export_hint": "QR kódy a história",
+        "more_privacy_hint": "Ako spracúvame údaje",
+        "more_terms_hint": "Pravidlá a pokyny",
+        "more_clear_hint": "Natrvalo vymazať všetky QR kódy",
+        "copy_link": "Kopírovať odkaz"
       }
     },
     "sl": {
@@ -1174,7 +1240,13 @@
         "theme": "Tema",
         "theme_dark": "Temna",
         "theme_light": "Svetla",
-        "theme_system": "Sistem"
+        "theme_system": "Sistem",
+        "more_privacy_label": "Zasebnost",
+        "more_export_hint": "Kode QR in zgodovina",
+        "more_privacy_hint": "Kako obdelujemo podatke",
+        "more_terms_hint": "Pravila in smernice",
+        "more_clear_hint": "Trajno izbriši vse kode QR",
+        "copy_link": "Kopiraj povezavo"
       }
     },
     "hu": {
@@ -1272,7 +1344,13 @@
         "theme": "Téma",
         "theme_dark": "Sötét",
         "theme_light": "Világos",
-        "theme_system": "Rendszer"
+        "theme_system": "Rendszer",
+        "more_privacy_label": "Adatvédelem",
+        "more_export_hint": "QR-kódok és előzmények",
+        "more_privacy_hint": "Hogyan kezeljük az adatokat",
+        "more_terms_hint": "Szabályok és irányelvek",
+        "more_clear_hint": "Összes QR-kód végleges törlése",
+        "copy_link": "Hivatkozás másolása"
       }
     },
     "ro": {
@@ -1370,7 +1448,13 @@
         "theme": "Temă",
         "theme_dark": "Întunecată",
         "theme_light": "Luminoasă",
-        "theme_system": "Sistem"
+        "theme_system": "Sistem",
+        "more_privacy_label": "Confidențialitate",
+        "more_export_hint": "Coduri QR și istoric",
+        "more_privacy_hint": "Cum prelucrăm datele",
+        "more_terms_hint": "Reguli și orientări",
+        "more_clear_hint": "Șterge definitiv toate codurile QR",
+        "copy_link": "Copiază linkul"
       }
     },
     "bg": {
@@ -1468,7 +1552,13 @@
         "theme": "Тема",
         "theme_dark": "Тъмна",
         "theme_light": "Светла",
-        "theme_system": "Система"
+        "theme_system": "Система",
+        "more_privacy_label": "Поверителност",
+        "more_export_hint": "QR кодове и история",
+        "more_privacy_hint": "Как обработваме данните",
+        "more_terms_hint": "Правила и насоки",
+        "more_clear_hint": "Изтрий завинаги всички QR кодове",
+        "copy_link": "Копирай връзката"
       }
     },
     "el": {
@@ -1566,7 +1656,13 @@
         "theme": "Θέμα",
         "theme_dark": "Σκούρο",
         "theme_light": "Φωτεινό",
-        "theme_system": "Σύστημα"
+        "theme_system": "Σύστημα",
+        "more_privacy_label": "Απόρρητο",
+        "more_export_hint": "Κωδικοί QR και ιστορικό",
+        "more_privacy_hint": "Πώς επεξεργαζόμαστε δεδομένα",
+        "more_terms_hint": "Κανόνες και οδηγίες",
+        "more_clear_hint": "Οριστική διαγραφή όλων των κωδικών QR",
+        "copy_link": "Αντιγραφή συνδέσμου"
       }
     },
     "tr": {
@@ -1664,7 +1760,13 @@
         "theme": "Tema",
         "theme_dark": "Koyu",
         "theme_light": "Açık",
-        "theme_system": "Sistem"
+        "theme_system": "Sistem",
+        "more_privacy_label": "Gizlilik",
+        "more_export_hint": "QR kodları ve geçmiş",
+        "more_privacy_hint": "Verileri nasıl işliyoruz",
+        "more_terms_hint": "Kurallar ve yönergeler",
+        "more_clear_hint": "Tüm QR kodlarını kalıcı olarak sil",
+        "copy_link": "Bağlantıyı kopyala"
       }
     },
     "uk": {
@@ -1762,7 +1864,13 @@
         "theme": "Тема",
         "theme_dark": "Темна",
         "theme_light": "Світла",
-        "theme_system": "Система"
+        "theme_system": "Система",
+        "more_privacy_label": "Конфіденційність",
+        "more_export_hint": "QR-коди та історія",
+        "more_privacy_hint": "Як ми обробляємо дані",
+        "more_terms_hint": "Правила та рекомендації",
+        "more_clear_hint": "Назавжди видалити всі QR-коди",
+        "copy_link": "Копіювати посилання"
       }
     },
     "ru": {
@@ -1860,7 +1968,13 @@
         "theme": "Тема",
         "theme_dark": "Тёмная",
         "theme_light": "Светлая",
-        "theme_system": "Система"
+        "theme_system": "Система",
+        "more_privacy_label": "Конфиденциальность",
+        "more_export_hint": "QR-коды и история",
+        "more_privacy_hint": "Как мы обрабатываем данные",
+        "more_terms_hint": "Правила и рекомендации",
+        "more_clear_hint": "Навсегда удалить все QR-коды",
+        "copy_link": "Копировать ссылку"
       }
     },
     "sv": {
@@ -1958,7 +2072,13 @@
         "theme": "Tema",
         "theme_dark": "Mörkt",
         "theme_light": "Ljust",
-        "theme_system": "System"
+        "theme_system": "System",
+        "more_privacy_label": "Integritet",
+        "more_export_hint": "QR-koder och historik",
+        "more_privacy_hint": "Hur vi behandlar data",
+        "more_terms_hint": "Regler och riktlinjer",
+        "more_clear_hint": "Radera alla QR-koder permanent",
+        "copy_link": "Kopiera länk"
       }
     },
     "da": {
@@ -2056,7 +2176,13 @@
         "theme": "Tema",
         "theme_dark": "Mørkt",
         "theme_light": "Lyst",
-        "theme_system": "System"
+        "theme_system": "System",
+        "more_privacy_label": "Privatliv",
+        "more_export_hint": "QR-koder og historik",
+        "more_privacy_hint": "Sådan behandler vi data",
+        "more_terms_hint": "Regler og retningslinjer",
+        "more_clear_hint": "Slet alle QR-koder permanent",
+        "copy_link": "Kopiér link"
       }
     },
     "fi": {
@@ -2154,7 +2280,13 @@
         "theme": "Teema",
         "theme_dark": "Tumma",
         "theme_light": "Vaalea",
-        "theme_system": "Järjestelmä"
+        "theme_system": "Järjestelmä",
+        "more_privacy_label": "Tietosuoja",
+        "more_export_hint": "QR-koodit ja historia",
+        "more_privacy_hint": "Miten käsittelemme tietoja",
+        "more_terms_hint": "Säännöt ja ohjeet",
+        "more_clear_hint": "Poista kaikki QR-koodit pysyvästi",
+        "copy_link": "Kopioi linkki"
       }
     },
     "nb": {
@@ -2252,7 +2384,13 @@
         "theme": "Tema",
         "theme_dark": "Mørkt",
         "theme_light": "Lyst",
-        "theme_system": "System"
+        "theme_system": "System",
+        "more_privacy_label": "Personvern",
+        "more_export_hint": "QR-koder og historikk",
+        "more_privacy_hint": "Hvordan vi behandler data",
+        "more_terms_hint": "Regler og retningslinjer",
+        "more_clear_hint": "Slett alle QR-koder permanent",
+        "copy_link": "Kopier lenke"
       }
     }
   }

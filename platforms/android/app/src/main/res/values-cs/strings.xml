@@ -93,4 +93,10 @@
     <string name="theme_dark">Tmavý</string>
     <string name="theme_light">Světlý</string>
     <string name="theme_system">Systém</string>
+    <string name="more_privacy_label">Soukromí</string>
+    <string name="more_export_hint">QR kódy a historie</string>
+    <string name="more_privacy_hint">Jak zpracováváme údaje</string>
+    <string name="more_terms_hint">Pravidla a pokyny</string>
+    <string name="more_clear_hint">Trvale smazat všechny QR kódy</string>
+    <string name="copy_link">Kopírovat odkaz</string>
 </resources>

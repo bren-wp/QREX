@@ -102,6 +102,12 @@ object QREXStrings {
         "theme_dark" -> R.string.theme_dark
         "theme_light" -> R.string.theme_light
         "theme_system" -> R.string.theme_system
+        "more_privacy_label" -> R.string.more_privacy_label
+        "more_export_hint" -> R.string.more_export_hint
+        "more_privacy_hint" -> R.string.more_privacy_hint
+        "more_terms_hint" -> R.string.more_terms_hint
+        "more_clear_hint" -> R.string.more_clear_hint
+        "copy_link" -> R.string.copy_link
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]
