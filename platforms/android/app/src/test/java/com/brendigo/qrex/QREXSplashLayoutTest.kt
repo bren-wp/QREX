@@ -14,7 +14,19 @@ class QREXSplashLayoutTest {
         assertEquals(214, metrics.logoDp)
         assertEquals(60, metrics.titleSp)
         assertEquals(40, metrics.bottomPaddingDp)
+        assertEquals(-60, metrics.centerOffsetDp)
         assertFalse(qrexSplashUsesScrollLayout(852, 1f))
+    }
+
+    @Test
+    fun splashStays3500msAndRotationDoesNotRestartElapsedDuration() {
+        assertEquals(3500L, QREX_SPLASH_DURATION_MS)
+        assertEquals(3500L, qrexSplashRemainingMs(1000, 1000))
+        assertEquals(2000L, qrexSplashRemainingMs(1000, 2500))
+        assertEquals(250L, qrexSplashRemainingMs(1000, 4250))
+        assertEquals(0L, qrexSplashRemainingMs(1000, 4500))
+        assertEquals(0L, qrexSplashRemainingMs(1000, 9999))
+        assertEquals(0L, qrexSplashRemainingMs(1000, 999))
     }
 
     @Test
@@ -41,9 +53,9 @@ class QREXSplashLayoutTest {
     @Test
     fun progressTrackFollowsReferenceRatioWithoutOverflow() {
         // Footer content width = display width minus horizontal spacing.
-        assertEquals(166, qrexSplashProgressWidthDp(333))
-        assertEquals(140, qrexSplashProgressWidthDp(280))
-        assertEquals(184, qrexSplashProgressWidthDp(800))
+        assertEquals(186, qrexSplashProgressWidthDp(333))
+        assertEquals(156, qrexSplashProgressWidthDp(280))
+        assertEquals(220, qrexSplashProgressWidthDp(800))
         assertEquals(70, qrexSplashProgressWidthDp(70))
         assertEquals(0, qrexSplashProgressWidthDp(0))
     }
