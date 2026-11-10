@@ -144,6 +144,17 @@ jobs:
           name: qrex-splash-home-measurements
           path: docs/screenshots/splash-home-measurements.json
           if-no-files-found: error
+      - name: Audit six real Android screens with verifiable reference limits
+        run: |
+          python3 tool/measure_six_screen_reference.py \
+            --actual-dir docs/screenshots \
+            --output docs/screenshots/six-screen-measurements.json
+          test -s docs/screenshots/six-screen-measurements.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qrex-six-screen-measurements
+          path: docs/screenshots/six-screen-measurements.json
+          if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
           name: qrex-responsive-android
