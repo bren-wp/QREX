@@ -74,10 +74,10 @@ internal fun qrexSplashMetrics(
     return QrexSplashMetrics(
         // Retain the approved 393×852 phone geometry. On large tablets
         // scale the same vector instead of presenting a tiny phone-sized badge.
-        logoDp = minOf((widthDp * 0.55f).toInt(), when {
+        logoDp = minOf((widthDp * 0.56f).toInt(), when {
             heightDp < 620 -> 156
             largeScreen -> 256
-            else -> 214
+            else -> 244
         }).coerceAtLeast(96),
         titleSp = when {
             fontScale >= 1.6f -> 38
@@ -137,7 +137,7 @@ internal fun qrexSplashFooterLines(message: String, compactWidth: Boolean): Stri
 
 internal fun qrexSplashProgressWidthDp(availableWidthDp: Int): Int {
     if (availableWidthDp <= 0) return 0
-    return (availableWidthDp * .56f).toInt()
+    return (availableWidthDp * .575f).toInt()
         .coerceIn(80, 220).coerceAtMost(availableWidthDp)
 }
 
