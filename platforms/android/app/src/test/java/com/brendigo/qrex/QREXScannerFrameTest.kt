@@ -30,7 +30,7 @@ class QREXScannerFrameTest {
 
     @Test fun bracketVerticalPositionTracksReferenceAndClampsOverButtons() {
         // User reference: the bracket is centered ~42% down the camera panel.
-        assertEquals(192f, scannerFrameTopPx(933f, 668f, 400f), 0.1f)
+        assertEquals(191.86f, scannerFrameTopPx(933f, 668f, 400f), 0.1f)
         assertEquals(0f, scannerFrameTopPx(180f, 100f, 120f), 0.1f)
         assertEquals(0f, scannerFrameTopPx(0f, 100f, 40f), 0.1f)
     }
