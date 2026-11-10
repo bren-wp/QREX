@@ -364,23 +364,25 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun standaloneResultHidesTabsUntilBackThenRestoresAllFiveMainDestinations() {
+    fun resultKeepsTabsVisibleUntilBackAndRestoresAllFiveMainDestinations() {
         rule.onNodeWithTag("qrex-tab-1").performClick()
         requireScreenTag("qrex-create-screen", 0, "open Create for Result navigation")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://brendigo.com")
-        awaitCreateAction(0, "standalone Result transition")
+        awaitCreateAction(0, "Result transition with persistent tabs")
         rule.onNodeWithTag("qrex-create-show").assertIsEnabled()
             .performSemanticsAction(SemanticsActions.OnClick)
-        requireScreenTag("qrex-result-screen", 0, "open standalone Result")
-        // In the new supplied reference the five-tab bar is intentionally
-        // absent on Result. Test that it cannot cover or intercept QR actions.
-        rule.onAllNodesWithTag("qrex-bottom-navigation", useUnmergedTree = true)
-            .assertCountEquals(0)
+        requireScreenTag("qrex-result-screen", 0, "open Result with bottom tabs")
+        // The latest user reference shows the same five-tab navigation on
+        // Result. Verify its real semantics and selected originating tab;
+        // never hide the bar merely to make this instrumentation pass.
+        rule.onNodeWithTag("qrex-bottom-navigation", useUnmergedTree = true)
+            .assertIsDisplayed()
         for (index in 0..4) {
-            rule.onAllNodesWithTag("qrex-tab-$index", useUnmergedTree = true)
-                .assertCountEquals(0)
+            rule.onNodeWithTag("qrex-tab-$index", useUnmergedTree = true)
+                .assertIsDisplayed()
         }
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
         val viewport = rule.onNodeWithTag(
             "qrex-result-screen", useUnmergedTree = true
         ).getUnclippedBoundsInRoot()
