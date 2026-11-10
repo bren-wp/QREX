@@ -133,6 +133,17 @@ jobs:
             test -s "docs/screenshots/responsive/xlfont-${screen}.png"
           done
           python3 tool/verify_screenshots.py --responsive docs/screenshots/responsive/*.png
+      - name: Measure Splash/Home reference geometry on actual emulator captures
+        run: |
+          python3 tool/measure_splash_home_geometry.py \
+            --actual-dir docs/screenshots \
+            --output docs/screenshots/splash-home-measurements.json
+          test -s docs/screenshots/splash-home-measurements.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qrex-splash-home-measurements
+          path: docs/screenshots/splash-home-measurements.json
+          if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
           name: qrex-responsive-android

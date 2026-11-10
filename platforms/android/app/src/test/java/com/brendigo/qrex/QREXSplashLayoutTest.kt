@@ -11,10 +11,23 @@ class QREXSplashLayoutTest {
     @Test
     fun referenceSizedDeviceRetainsCenteredSplashGeometry() {
         val metrics = qrexSplashMetrics(393, 852, 1f)
-        assertEquals(214, metrics.logoDp)
+        assertEquals(220, metrics.logoDp)
         assertEquals(60, metrics.titleSp)
         assertEquals(40, metrics.bottomPaddingDp)
+        assertEquals(-50, metrics.centerOffsetDp)
+        assertEquals(-35, qrexSplashMetrics(411, 731, 1f).centerOffsetDp)
         assertFalse(qrexSplashUsesScrollLayout(852, 1f))
+    }
+
+    @Test
+    fun splashStays3500msAndRotationDoesNotRestartElapsedDuration() {
+        assertEquals(3500L, QREX_SPLASH_DURATION_MS)
+        assertEquals(3500L, qrexSplashRemainingMs(1000, 1000))
+        assertEquals(2000L, qrexSplashRemainingMs(1000, 2500))
+        assertEquals(250L, qrexSplashRemainingMs(1000, 4250))
+        assertEquals(0L, qrexSplashRemainingMs(1000, 4500))
+        assertEquals(0L, qrexSplashRemainingMs(1000, 9999))
+        assertEquals(0L, qrexSplashRemainingMs(1000, 999))
     }
 
     @Test
@@ -33,7 +46,7 @@ class QREXSplashLayoutTest {
         assertEquals(20, tablet.taglineSp)
         assertFalse(qrexSplashUsesScrollLayout(1280, 1f))
         val compactFold = qrexSplashMetrics(320, 700, 1f)
-        assertEquals(176, compactFold.logoDp)
+        assertEquals(179, compactFold.logoDp)
         assertEquals(50, compactFold.titleSp)
         assertFalse(qrexSplashUsesScrollLayout(700, 1f))
     }
@@ -41,9 +54,9 @@ class QREXSplashLayoutTest {
     @Test
     fun progressTrackFollowsReferenceRatioWithoutOverflow() {
         // Footer content width = display width minus horizontal spacing.
-        assertEquals(166, qrexSplashProgressWidthDp(333))
-        assertEquals(140, qrexSplashProgressWidthDp(280))
-        assertEquals(184, qrexSplashProgressWidthDp(800))
+        assertEquals(191, qrexSplashProgressWidthDp(333))
+        assertEquals(161, qrexSplashProgressWidthDp(280))
+        assertEquals(220, qrexSplashProgressWidthDp(800))
         assertEquals(70, qrexSplashProgressWidthDp(70))
         assertEquals(0, qrexSplashProgressWidthDp(0))
     }

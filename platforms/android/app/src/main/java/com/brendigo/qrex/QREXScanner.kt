@@ -66,8 +66,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 /**
- * Reference scan bracket geometry, in physical Canvas pixels. A 73% viewport
- * target matches the reference's approximately three-quarter-width scan box.
+ * Reference scan bracket geometry in physical Canvas pixels. The attached
+ * reference's four corners span approximately 400/635 = 63% of the camera width.
  * A separate 83% usable-height bound keeps the guide ABOVE bottom controls,
  * including on 320dp / large-font devices. Pure math for JVM regression tests.
  */
@@ -79,7 +79,21 @@ internal fun scannerFrameSidePx(
         maxSidePx.isNaN() || maxSidePx <= 0f ||
         widthPx <= 0f || usableHeightPx <= 0f) return 0f
     // The tablet viewfinder should not become a giant unscannable rectangle.
-    return minOf(widthPx * .73f, usableHeightPx * .83f, maxSidePx)
+    return minOf(widthPx * .63f, usableHeightPx * .83f, maxSidePx)
+}
+
+/** Place the bracket at the reference's ~42%-preview-height center while
+ * clamping its bottom above the reserved hint and camera-action region.
+ */
+internal fun scannerFrameTopPx(
+    previewHeightPx: Float, usableHeightPx: Float, sidePx: Float
+): Float {
+    if (!previewHeightPx.isFinite() || !usableHeightPx.isFinite() ||
+        !sidePx.isFinite() || previewHeightPx <= 0f || usableHeightPx <= 0f ||
+        sidePx <= 0f) return 0f
+    val availableTop = (usableHeightPx - sidePx).coerceAtLeast(0f)
+    return (previewHeightPx * .42f - sidePx * .5f)
+        .coerceIn(0f, availableTop)
 }
 
 /** Landscape/short and accessibility-sized Home screens scroll rather than
@@ -121,7 +135,7 @@ private fun ScannerCornerOverlay(
             size.width, usableHeight, maxSidePx = 440.dp.toPx()
         )
         val left = (size.width - side) / 2f
-        val top = (usableHeight - side) / 2f
+        val top = scannerFrameTopPx(size.height, usableHeight, side)
         val right = left + side
         val bottom = top + side
         val segment = side * 0.23f
@@ -657,7 +671,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     // camera scenes without intercepting QR preview touches.
                     Box(
                         modifier = Modifier.testTag("qrex-scan-hint-card")
-                            .background(Color.Black.copy(alpha = .22f),
+                            .background(Color.Black.copy(alpha = .08f),
                                 RoundedCornerShape(9.dp)),
                         contentAlignment = Alignment.Center
                     ) {
@@ -675,7 +689,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                                 )
                             ),
                             textAlign = TextAlign.Center,
-                            fontSize = if (compactScan) 12.sp else 14.sp,
+                            fontSize = if (compactScan) 13.sp else 16.sp,
                             maxLines = if (fontScale >= 1.5f) 3 else 2
                         )
                     }

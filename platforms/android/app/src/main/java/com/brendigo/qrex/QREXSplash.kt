@@ -48,6 +48,14 @@ import androidx.compose.ui.platform.testTag
  * Production splash geometry corresponding to the supplied dark Q/QR references.
  * Values are density independent; avoid clipped text on 320dp / tall-font phones.
  */
+/** A true 3.5-second in-app launch screen; rotation never restarts the clock. */
+internal const val QREX_SPLASH_DURATION_MS = 3_500L
+
+internal fun qrexSplashRemainingMs(startedAtMs: Long, nowMs: Long): Long =
+    if (startedAtMs < 0L || nowMs < startedAtMs) 0L
+    else (QREX_SPLASH_DURATION_MS - (nowMs - startedAtMs))
+        .coerceIn(0L, QREX_SPLASH_DURATION_MS)
+
 internal data class QrexSplashMetrics(
     val logoDp: Int,
     val titleSp: Int,
@@ -66,10 +74,10 @@ internal fun qrexSplashMetrics(
     return QrexSplashMetrics(
         // Retain the approved 393×852 phone geometry. On large tablets
         // scale the same vector instead of presenting a tiny phone-sized badge.
-        logoDp = minOf((widthDp * 0.55f).toInt(), when {
+        logoDp = minOf((widthDp * 0.56f).toInt(), when {
             heightDp < 620 -> 156
             largeScreen -> 256
-            else -> 214
+            else -> 244
         }).coerceAtLeast(96),
         titleSp = when {
             fontScale >= 1.6f -> 38
@@ -81,10 +89,14 @@ internal fun qrexSplashMetrics(
         taglineSp = when {
             compact || fontScale >= 1.3f -> 14
             largeScreen -> 20
-            else -> 17
+            else -> 19
         },
         bottomPaddingDp = if (heightDp < 620) 20 else 40,
-        centerOffsetDp = if (heightDp < 620) -12 else -30
+        centerOffsetDp = when {
+            heightDp < 620 -> -12
+            largeScreen -> -30
+            else -> (60 - heightDp * .13f).toInt().coerceIn(-65, -20) // ~37% phone icon center
+        }
     )
 }
 
@@ -125,8 +137,8 @@ internal fun qrexSplashFooterLines(message: String, compactWidth: Boolean): Stri
 
 internal fun qrexSplashProgressWidthDp(availableWidthDp: Int): Int {
     if (availableWidthDp <= 0) return 0
-    return (availableWidthDp * .5f).toInt()
-        .coerceIn(80, 184).coerceAtMost(availableWidthDp)
+    return (availableWidthDp * .575f).toInt()
+        .coerceIn(80, 220).coerceAtMost(availableWidthDp)
 }
 
 /**
@@ -161,7 +173,7 @@ internal fun QrexSplashScreen(
             // Broad satin-blue ribbons in the reference. Unlike concentric
             // circles, these bezier bands sweep diagonally across the display.
             val upperRibbon = Path().apply {
-                moveTo(0f, h * .04f)
+                moveTo(0f, h * .095f)
                 cubicTo(w * .28f, h * .09f, w * .47f, h * .04f, w * .78f, h * .17f)
                 cubicTo(w * 1.07f, h * .30f, w * .72f, h * .41f, w * .37f, h * .38f)
                 cubicTo(w * .19f, h * .36f, w * .07f, h * .33f, 0f, h * .37f)
@@ -171,13 +183,13 @@ internal fun QrexSplashScreen(
                 upperRibbon,
                 brush = Brush.linearGradient(
                     listOf(Color(0xFF085EF0), Color(0xFF0745BC), Color(0xFF021538)),
-                    start = Offset(w * .04f, h * .04f),
+                    start = Offset(w * .04f, h * .095f),
                     end = Offset(w * .95f, h * .44f)
                 ),
                 alpha = .85f
             )
             val upperEdge = Path().apply {
-                moveTo(0f, h * .04f)
+                moveTo(0f, h * .095f)
                 cubicTo(w * .28f, h * .09f, w * .47f, h * .04f, w * .78f, h * .17f)
             }
             drawPath(
@@ -208,8 +220,8 @@ internal fun QrexSplashScreen(
             val lowerRibbon = Path().apply {
                 // Keep the luminous ribbon BELOW the wordmark/tagline, as in
                 // the supplied screenshot; the old .54 crest crossed QREX.
-                moveTo(0f, h * .76f)
-                cubicTo(w * .34f, h * .70f, w * .57f, h * .74f, w, h * .82f)
+                moveTo(0f, h * .72f)
+                cubicTo(w * .34f, h * .66f, w * .57f, h * .73f, w, h * .82f)
                 lineTo(w, h)
                 lineTo(0f, h)
                 close()
@@ -224,8 +236,8 @@ internal fun QrexSplashScreen(
                 alpha = .87f
             )
             val lowerEdge = Path().apply {
-                moveTo(0f, h * .76f)
-                cubicTo(w * .34f, h * .70f, w * .57f, h * .74f, w, h * .82f)
+                moveTo(0f, h * .72f)
+                cubicTo(w * .34f, h * .66f, w * .57f, h * .73f, w, h * .82f)
             }
             drawPath(
                 lowerEdge, color = Color(0xFF16B6FE).copy(alpha = .7f),
@@ -383,7 +395,7 @@ private fun QrexSplashBrand(
                 )
             )
         }
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.height(5.dp))
         Text(
             buildAnnotatedString {
                 append(subtitle)
@@ -415,8 +427,8 @@ private fun QrexSplashFooter(
         Text(
             qrexSplashFooterLines(tr("splash_message"), compactWidth),
             color = Color(0xFFB9CFF4),
-            fontSize = if (compactWidth) 12.sp else 13.sp,
-            lineHeight = 19.sp,
+            fontSize = if (compactWidth) 13.sp else 17.sp,
+            lineHeight = if (compactWidth) 19.sp else 23.sp,
             textAlign = TextAlign.Center,
             maxLines = if (allowFullText) Int.MAX_VALUE else 3
         )
@@ -424,13 +436,13 @@ private fun QrexSplashFooter(
         BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             val widthDp = qrexSplashProgressWidthDp(maxWidth.value.toInt())
             Box(
-                Modifier.width(widthDp.dp).height(4.dp)
+                Modifier.width(widthDp.dp).height(7.dp)
                     .background(Color(0xFF435778), RoundedCornerShape(8.dp))
                     .testTag("qrex-splash-progress"),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Box(
-                    Modifier.fillMaxWidth(.51f).height(4.dp)
+                    Modifier.fillMaxWidth(.56f).height(7.dp)
                         .background(QrexDesign.cyan, RoundedCornerShape(8.dp))
                 )
             }

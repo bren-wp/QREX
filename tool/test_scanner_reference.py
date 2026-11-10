@@ -19,11 +19,12 @@ class ScannerReferenceTests(unittest.TestCase):
     def test_neon_corner_geometry_matches_reference_without_clipping_actions(self):
         s = self.scanner
         self.assertIn("internal fun scannerFrameSidePx(", s)
-        self.assertIn("widthPx * .73f", s)
+        self.assertIn("widthPx * .63f", s)
         self.assertIn("usableHeightPx * .83f", s)
         self.assertIn("maxSidePx = 440.dp.toPx()", s)
-        self.assertIn("widthPx * .73f, usableHeightPx * .83f, maxSidePx", s)
+        self.assertIn("widthPx * .63f, usableHeightPx * .83f, maxSidePx", s)
         self.assertIn("reservedBottomDp.dp.toPx()", s)
+        self.assertIn("scannerFrameTopPx(size.height, usableHeight, side)", s)
         self.assertIn("size.height * 0.45f", s)
         self.assertIn("Color(0xFFD9FAFF)", s)
         self.assertIn("QrexDesign.actionBlue.copy(alpha = .26f)", s)

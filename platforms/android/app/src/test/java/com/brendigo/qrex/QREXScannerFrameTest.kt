@@ -6,10 +6,10 @@ import org.junit.Test
 
 /** Physical Canvas geometry — production CameraX preview remains untouched. */
 class QREXScannerFrameTest {
-    @Test fun referenceBracketOccupiesNearlyThreeQuartersOfNormalPreview() {
+    @Test fun referenceBracketOccupiesSixtyThreePercentOfNormalPreview() {
         val side = scannerFrameSidePx(340f, 365f)
-        assertEquals(248.2f, side, 0.1f)
-        assertEquals(.73f, side / 340f, .001f)
+        assertEquals(214.2f, side, 0.1f)
+        assertEquals(.63f, side / 340f, .001f)
     }
 
     @Test fun shortOrNarrowViewportReservesSpaceForWorkingCameraActions() {
@@ -23,9 +23,16 @@ class QREXScannerFrameTest {
 
     @Test fun tabletViewfinderCapsAt440DpAndKeepsCanonicalPhoneRatio() {
         assertEquals(440f, scannerFrameSidePx(900f, 700f, 440f), 0.1f)
-        assertEquals(248.2f, scannerFrameSidePx(340f, 400f, 440f), 0.1f)
+        assertEquals(214.2f, scannerFrameSidePx(340f, 400f, 440f), 0.1f)
         assertEquals(0f, scannerFrameSidePx(900f, 700f, Float.NaN), 0f)
         assertEquals(0f, scannerFrameSidePx(900f, 700f, -1f), 0f)
+    }
+
+    @Test fun bracketVerticalPositionTracksReferenceAndClampsOverButtons() {
+        // User reference: the bracket is centered ~42% down the camera panel.
+        assertEquals(191.86f, scannerFrameTopPx(933f, 668f, 400f), 0.1f)
+        assertEquals(0f, scannerFrameTopPx(180f, 100f, 120f), 0.1f)
+        assertEquals(0f, scannerFrameTopPx(0f, 100f, 40f), 0.1f)
     }
 
     @Test fun shortLandscapeAndLargeFontUseScrollInsteadOfSqueezedCameraPanel() {
