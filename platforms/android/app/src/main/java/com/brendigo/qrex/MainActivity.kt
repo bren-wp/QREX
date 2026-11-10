@@ -229,17 +229,21 @@ private fun QREXApp(
     }
     var resultShowsQr by remember(screenshotMode) { mutableStateOf(false) }
     var editPayload by remember(screenshotMode) { mutableStateOf<String?>(null) }
-    // True cold-start splash, drawn with the real Compose logo and brand
-    // graphics. It is skipped for deterministic CI screenshots and not
-    // replayed after Activity recreation.
+    // Keep the real native Splash visible for 3.5 seconds from the first
+    // Compose frame, not for 950 ms. Preserve the monotonic start timestamp on
+    // rotation so configuration changes never start another splash cycle.
+    // Debug screenshot mode is intentionally pinned for real emulator capture.
     var showSplash by rememberSaveable(screenshotMode) {
         mutableStateOf(screenshotMode == null || screenshotMode == "splash")
     }
-    LaunchedEffect(showSplash, screenshotMode) {
-        // In debug-only screenshot mode, keep the *real* splash visible long
-        // enough for a verified emulator screenshot; production dismisses it.
+    val splashStartedAtMs = rememberSaveable(screenshotMode) {
+        android.os.SystemClock.elapsedRealtime()
+    }
+    LaunchedEffect(showSplash, screenshotMode, splashStartedAtMs) {
         if (showSplash && screenshotMode != "splash") {
-            delay(950)
+            delay(qrexSplashRemainingMs(
+                splashStartedAtMs, android.os.SystemClock.elapsedRealtime()
+            ))
             showSplash = false
         }
     }
