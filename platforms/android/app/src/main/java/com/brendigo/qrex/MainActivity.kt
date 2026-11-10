@@ -305,8 +305,8 @@ private fun QREXApp(
         if (showSplash) {
             QrexSplashScreen(subtitle = tr("tagline"))
         } else {
-        // Result is a standalone destination in the supplied Android reference.
-        // The real Back button and system Back return to the previous tab.
+        // Result retains the shared bottom tabs in the supplied November
+        // reference. Back still returns to the originating destination.
         BackHandler(enabled = currentCode != null) {
             focusManager.clearFocus(force = true)
             currentCode = null
@@ -607,8 +607,8 @@ private fun ResultScreen(
     }
     // Android 16 may keep the IME visible briefly after leaving Create.
     // Keep the header pinned above the independently scrollable Result body.
-    // Without the five-tab bar, short-screen and high-font Result actions
-    // remain reachable above system navigation and the IME.
+    // Shared bottom navigation reduces visible height; the independent body
+    // remains scrollable above the system bars and keyboard on small devices.
     Column(Modifier.fillMaxSize().imePadding().padding(bottom = 8.dp)
         .testTag("qrex-result-screen"),
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -809,7 +809,8 @@ private fun ResultScreen(
             Spacer(Modifier.height(6.dp))
         }
         QrexResultAction(
-            tr("copy"), Icons.Default.ContentCopy,
+            if (url != null) tr("copy_link") else tr("copy"),
+            Icons.Default.ContentCopy,
             modifier = Modifier.testTag("qrex-result-copy")
         ) {
             if (wifi) confirmWifiCopy = true else {
