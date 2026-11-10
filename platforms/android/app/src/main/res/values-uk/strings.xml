@@ -93,4 +93,10 @@
     <string name="theme_dark">Темна</string>
     <string name="theme_light">Світла</string>
     <string name="theme_system">Система</string>
+    <string name="more_privacy_label">Конфіденційність</string>
+    <string name="more_export_hint">QR-коди та історія</string>
+    <string name="more_privacy_hint">Як ми обробляємо дані</string>
+    <string name="more_terms_hint">Правила та рекомендації</string>
+    <string name="more_clear_hint">Назавжди видалити всі QR-коди</string>
+    <string name="copy_link">Копіювати посилання</string>
 </resources>

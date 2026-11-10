@@ -20,7 +20,7 @@
     <string name="hide">Sakrij</string>
     <string name="show">Prikaži</string>
     <string name="check_url">Provjeri adresu prije otvaranja.</string>
-    <string name="open_link">Otvori poveznicu</string>
+    <string name="open_link">Otvori link</string>
     <string name="copy">Kopiraj</string>
     <string name="share">Podijeli</string>
     <string name="saved">Spremljeno</string>
@@ -34,7 +34,7 @@
     <string name="link_failed">Poveznicu nije moguće otvoriti.</string>
     <string name="create_qr">Stvori QR kod</string>
     <string name="enter_details">Vaši QR kodovi ostaju na vašem uređaju.</string>
-    <string name="url">Poveznica</string>
+    <string name="url">Link</string>
     <string name="text">Tekst</string>
     <string name="wifi">Wi-Fi</string>
     <string name="email">E-pošta</string>
@@ -79,7 +79,7 @@
     <string name="save_to_device">Spremi na uređaj</string>
     <string name="add_to_calendar">Dodaj u kalendar</string>
     <string name="edit">Uredi</string>
-    <string name="add_favorite">Dodaj u favorite</string>
+    <string name="add_favorite">Spremi u favorite</string>
     <string name="remove_favorite">Ukloni iz favorita</string>
     <string name="clear_history">Obriši povijest</string>
     <string name="confirm_clear_history">Obrisati povijest?</string>
@@ -93,4 +93,10 @@
     <string name="theme_dark">Tamna</string>
     <string name="theme_light">Svijetla</string>
     <string name="theme_system">Sustav</string>
+    <string name="more_privacy_label">Privatnost</string>
+    <string name="more_export_hint">QR kodovi i povijest</string>
+    <string name="more_privacy_hint">Kako obrađujemo podatke</string>
+    <string name="more_terms_hint">Pravila i smjernice</string>
+    <string name="more_clear_hint">Trajno ukloni sve QR kodove</string>
+    <string name="copy_link">Kopiraj link</string>
 </resources>

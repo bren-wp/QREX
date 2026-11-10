@@ -93,4 +93,10 @@
     <string name="theme_dark">Temna</string>
     <string name="theme_light">Svetla</string>
     <string name="theme_system">Sistem</string>
+    <string name="more_privacy_label">Zasebnost</string>
+    <string name="more_export_hint">Kode QR in zgodovina</string>
+    <string name="more_privacy_hint">Kako obdelujemo podatke</string>
+    <string name="more_terms_hint">Pravila in smernice</string>
+    <string name="more_clear_hint">Trajno izbriši vse kode QR</string>
+    <string name="copy_link">Kopiraj povezavo</string>
 </resources>

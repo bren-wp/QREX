@@ -19,7 +19,7 @@ import org.junit.Test
 class QREXResultLayoutTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
-    @Test fun standaloneResultKeepsAllReferenceActionsAndRestoresTabs() {
+    @Test fun resultRetainsReferenceNavigationAndAllFunctionalActions() {
         rule.waitUntil(timeoutMillis = 20_000L) {
             rule.onAllNodesWithTag("qrex-tab-1", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
@@ -39,14 +39,15 @@ class QREXResultLayoutTest {
                 .fetchSemanticsNodes().isNotEmpty()
         }
 
-        // Unlike Scan/Create/History/More, the supplied standalone
-        // Result reference has no bottom five-tab bar.
+        // The latest supplied Result reference has the same five bottom tabs.
+        // Their selected page tracks the actual source of the QR result.
         rule.onNodeWithTag("qrex-bottom-navigation", useUnmergedTree = true)
-            .assertDoesNotExist()
+            .assertIsDisplayed()
         for (index in 0..4) {
             rule.onNodeWithTag("qrex-tab-$index", useUnmergedTree = true)
-                .assertDoesNotExist()
+                .assertIsDisplayed()
         }
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
 
         val card = rule.onNodeWithTag(
             "qrex-result-summary", useUnmergedTree = true
@@ -80,9 +81,8 @@ class QREXResultLayoutTest {
         rule.onNodeWithTag("qrex-result-url-origin", useUnmergedTree = true)
             .assertIsDisplayed()
 
-        // With the standalone reference there is no bottom navigation
-        // intercepting the Favorite/Delete actions. A short viewport can
-        // still scroll when the IME or increased font makes content taller.
+        // Bottom navigation must never hide Favorite/Delete. The Result
+        // scroll viewport remains independent when IME/font sizes increase.
         val favorite = rule.onNodeWithTag(
             "qrex-result-save-favorite", useUnmergedTree = true
         ).performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()

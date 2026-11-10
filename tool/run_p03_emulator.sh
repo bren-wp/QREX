@@ -29,6 +29,12 @@ timeout -k 15s 1200s gradle -p platforms/android --no-daemon --stacktrace \
   :app:connectedDebugAndroidTest \
   || test_status=$?
 
+# Give contributors actionable test IDs without exposing raw QR values, failure
+# messages, stacks, test arguments or ADB logs in public CI.
+if (( test_status != 0 )); then
+  python3 tool/report_failed_instrumentation_tests.py || true
+fi
+
 timeout -k 3s 20s adb logcat -b crash -d -v threadtime > "$crash_raw" || {
   echo "P03 crash buffer unavailable" >&2
   exit 1

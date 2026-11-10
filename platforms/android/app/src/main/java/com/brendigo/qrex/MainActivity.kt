@@ -217,7 +217,8 @@ private fun QREXApp(
     // Do not persist currentCode: it can include private Wi-Fi credentials.
     var selected by rememberSaveable(screenshotMode) {
         mutableIntStateOf(when (screenshotMode) {
-            "create", "wifi", "result" -> 1
+            "create", "wifi" -> 1
+            "result" -> 2 // reference result opens from History
             "history" -> 2
             "saved" -> 3
             "more", "language", "export", "about", "privacy", "terms" -> 4
@@ -304,17 +305,16 @@ private fun QREXApp(
         if (showSplash) {
             QrexSplashScreen(subtitle = tr("tagline"))
         } else {
-        // Result is a standalone destination in the supplied Android reference.
-        // The real Back button and system Back return to the previous tab.
+        // Result retains the shared bottom tabs in the supplied November
+        // reference. Back still returns to the originating destination.
         BackHandler(enabled = currentCode != null) {
             focusManager.clearFocus(force = true)
             currentCode = null
             resultShowsQr = false
         }
         Scaffold(containerColor = colors.background, bottomBar = {
-            // Main destinations retain five native tabs; Result has only its
-            // pinned Back / overflow header, so every action remains reachable.
-            if (currentCode == null) {
+            // All six supplied reference screens, including Result, retain
+            // the same five native destinations. Never overlay the Result body.
             Column(Modifier.fillMaxWidth()) {
                 HorizontalDivider(color = if (darkUi) QrexDesign.stroke else colors.outlineVariant,
                     thickness = 1.dp)
@@ -326,10 +326,7 @@ private fun QREXApp(
                 pages.forEachIndexed { index, label ->
                     val target = navTargets[index]
                     val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue
-                        else listOf(
-                            QrexDesign.purple, QrexDesign.accentBright,
-                            Color(0xFF2298FF), QrexDesign.purple, QrexDesign.accentBright
-                        )[index]
+                        else QrexDesign.cyan
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == target,
                         onClick = {
@@ -366,8 +363,7 @@ private fun QREXApp(
                             indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer))
                 }
                 }
-            } // Divider and five-tab navigation on main destinations
-            }
+            } // Divider and five-tab navigation on main and Result destinations
         }) { padding ->
             Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
                 androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
@@ -611,8 +607,8 @@ private fun ResultScreen(
     }
     // Android 16 may keep the IME visible briefly after leaving Create.
     // Keep the header pinned above the independently scrollable Result body.
-    // Without the five-tab bar, short-screen and high-font Result actions
-    // remain reachable above system navigation and the IME.
+    // Shared bottom navigation reduces visible height; the independent body
+    // remains scrollable above the system bars and keyboard on small devices.
     Column(Modifier.fillMaxSize().imePadding().padding(bottom = 8.dp)
         .testTag("qrex-result-screen"),
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -813,7 +809,8 @@ private fun ResultScreen(
             Spacer(Modifier.height(6.dp))
         }
         QrexResultAction(
-            tr("copy"), Icons.Default.ContentCopy,
+            if (url != null) tr("copy_link") else tr("copy"),
+            Icons.Default.ContentCopy,
             modifier = Modifier.testTag("qrex-result-copy")
         ) {
             if (wifi) confirmWifiCopy = true else {
@@ -1372,7 +1369,7 @@ private fun CreateScreen(
                     quickTypes.forEach { index ->
                         Surface(
                             onClick = { selectType(index) },
-                            modifier = Modifier.weight(1f).heightIn(min = 60.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 52.dp)
                                 .semantics { this.selected = kind == index }
                                 .testTag("qrex-create-type-$index"),
                             shape = RoundedCornerShape(11.dp),
@@ -1387,7 +1384,7 @@ private fun CreateScreen(
                                     .then(if (kind == index)
                                         Modifier.background(QrexDesign.referenceButtonBrush)
                                         else Modifier)
-                                    .heightIn(min = 60.dp)
+                                    .heightIn(min = 52.dp)
                                     .padding(horizontal = 6.dp, vertical = 7.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
@@ -1819,7 +1816,7 @@ private fun HistoryScreen(
         }
         LazyColumn(
             modifier = Modifier.weight(1f).fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(bottom = 8.dp)
         ) {
             itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) }) { _, item ->
@@ -1902,8 +1899,8 @@ private fun HistoryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 100.dp else 78.dp)
-                            .padding(start = 9.dp, end = 4.dp, top = 5.dp, bottom = 5.dp),
+                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 100.dp else 64.dp)
+                            .padding(start = 9.dp, end = 4.dp, top = 3.dp, bottom = 3.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         QrexHistoryGlyph(icon, tint, background = glyphBackground)
@@ -2200,7 +2197,7 @@ private fun MoreScreen(
                 modifier = Modifier.fillMaxWidth().testTag("qrex-more-reference-grid"),
                 maxItemsInEachRow = moreColumns,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
                     subtitle = themeTitle, onClick = { showTheme = true },
@@ -2213,14 +2210,16 @@ private fun MoreScreen(
                     modifier = Modifier.weight(1f).testTag("qrex-more-language"),
                     tileMode = moreTiles)
                 QrexSettingsListRow(tr("export_archive"), Icons.Default.Download,
-                    subtitle = "PDF", onClick = { detailPage = "export" },
+                    subtitle = tr("more_export_hint"), onClick = { detailPage = "export" },
                     modifier = Modifier.weight(1f).testTag("qrex-more-export"),
                     tileMode = moreTiles)
-                QrexSettingsListRow(tr("privacy_policy"), Icons.Default.Lock,
+                QrexSettingsListRow(tr("more_privacy_label"), Icons.Default.Lock,
+                    subtitle = tr("more_privacy_hint"),
                     onClick = { showPrivacy = true },
                     modifier = Modifier.weight(1f).testTag("qrex-more-privacy"),
                     tileMode = moreTiles)
                 QrexSettingsListRow(tr("terms_of_use"), Icons.Default.Description,
+                    subtitle = tr("more_terms_hint"),
                     onClick = { showTerms = true },
                     modifier = Modifier.weight(1f).testTag("qrex-more-terms"),
                     tileMode = moreTiles,
@@ -2232,8 +2231,9 @@ private fun MoreScreen(
                     tileMode = moreTiles)
             }
             // Never place destructive Clear History inside the six-tile grid.
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(4.dp))
             QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
+                subtitle = tr("more_clear_hint"),
                 destructive = true, showChevron = false,
                 onClick = { showDelete = true },
                 modifier = Modifier.testTag("qrex-more-delete"))

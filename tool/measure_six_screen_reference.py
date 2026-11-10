@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Six-screen, fail-closed QREX screenshot audit.
+
+The November 2026 user references are framed 941x1672 illustrations,
+not flat 1080x1920 Android screenshots. Never equate these illustrations
+with actual emulator pixels. A true mismatch score is only calculated
+for the same viewport, locale, mode, density and exact pixel dimensions.
+No images are produced, resized, or uploaded by this script.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+from compare_ui_pixels import read_png, compare
+
+SCREENS = ("splash", "scan", "result", "create", "history", "more")
+REFERENCE_NOTE = (
+    "Illustrated smartphone with exterior wallpaper and bezel; "
+    "no matching unframed reference screenshot was supplied"
+)
+
+
+def audit(actual_dir: Path, reference_dir: Path | None = None) -> dict:
+    rows: dict[str, dict] = {}
+    for screen in SCREENS:
+        name = f"android-{screen}.png"
+        path = actual_dir / name
+        actual = read_png(path)
+        record = {
+            "screen": screen,
+            "android_capture": name,
+            "viewport_px": [actual.width, actual.height],
+            "actual_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "exact_mismatched_pixels": None,
+            "exact_mismatch_percent": None,
+            "max_channel_delta": None,
+            "status": "illustrated_reference_not_pixel_comparable",
+            "reference_limitation": REFERENCE_NOTE,
+        }
+        if reference_dir is not None:
+            reference = read_png(reference_dir / name)
+            # Refuse dimensional mismatch rather than scaling or cropping
+            # away the phone bezel and falsely claiming 0% deviation.
+            diff = compare(reference, actual, tolerance=0)
+            record.update(
+                exact_mismatched_pixels=diff.mismatched,
+                exact_mismatch_percent=round(diff.percent, 6),
+                max_channel_delta=diff.max_channel_delta,
+                changed_bounds=diff.bounds,
+                status="verified_exact_pixel_comparison",
+                reference_limitation=None,
+            )
+        rows[screen] = record
+    return {
+        "source": "actual Android emulator screenshots for six QREX screens",
+        "reference_type": ("flat_equal_size_png" if reference_dir
+                           else "framed_phone_reference_artwork"),
+        "all_exact_1_to_1": (
+            all(rows[s]["exact_mismatched_pixels"] == 0 for s in SCREENS)
+            if reference_dir is not None else None
+        ),
+        "screens": rows,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--actual-dir", type=Path, required=True)
+    parser.add_argument("--flat-reference-dir", type=Path)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    report = audit(args.actual_dir, args.flat_reference_dir)
+    content = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
+    print(content)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(content, encoding="utf-8")
+    return 0 if report["all_exact_1_to_1"] is not False else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -93,4 +93,10 @@
     <string name="theme_dark">Mørkt</string>
     <string name="theme_light">Lyst</string>
     <string name="theme_system">System</string>
+    <string name="more_privacy_label">Privatliv</string>
+    <string name="more_export_hint">QR-koder og historik</string>
+    <string name="more_privacy_hint">Sådan behandler vi data</string>
+    <string name="more_terms_hint">Regler og retningslinjer</string>
+    <string name="more_clear_hint">Slet alle QR-koder permanent</string>
+    <string name="copy_link">Kopiér link</string>
 </resources>

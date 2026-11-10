@@ -93,4 +93,10 @@
     <string name="theme_dark">Tumma</string>
     <string name="theme_light">Vaalea</string>
     <string name="theme_system">Järjestelmä</string>
+    <string name="more_privacy_label">Tietosuoja</string>
+    <string name="more_export_hint">QR-koodit ja historia</string>
+    <string name="more_privacy_hint">Miten käsittelemme tietoja</string>
+    <string name="more_terms_hint">Säännöt ja ohjeet</string>
+    <string name="more_clear_hint">Poista kaikki QR-koodit pysyvästi</string>
+    <string name="copy_link">Kopioi linkki</string>
 </resources>

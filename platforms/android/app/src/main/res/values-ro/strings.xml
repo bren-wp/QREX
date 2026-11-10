@@ -93,4 +93,10 @@
     <string name="theme_dark">Întunecată</string>
     <string name="theme_light">Luminoasă</string>
     <string name="theme_system">Sistem</string>
+    <string name="more_privacy_label">Confidențialitate</string>
+    <string name="more_export_hint">Coduri QR și istoric</string>
+    <string name="more_privacy_hint">Cum prelucrăm datele</string>
+    <string name="more_terms_hint">Reguli și orientări</string>
+    <string name="more_clear_hint">Șterge definitiv toate codurile QR</string>
+    <string name="copy_link">Copiază linkul</string>
 </resources>
