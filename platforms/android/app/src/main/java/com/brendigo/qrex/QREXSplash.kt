@@ -95,7 +95,7 @@ internal fun qrexSplashMetrics(
         centerOffsetDp = when {
             heightDp < 620 -> -12
             largeScreen -> -30
-            else -> -60 // phone logo center matches the supplied ~37%-height reference
+            else -> (60 - heightDp * .13f).toInt().coerceIn(-65, -20) // ~37% phone icon center
         }
     )
 }
