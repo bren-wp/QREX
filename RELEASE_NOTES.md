@@ -1,3 +1,17 @@
+## Published: v1.0.43 · Android versionCode 143
+
+Published on 2026-11-09 UTC from main commit
+`3db98ebe60f2b3ef7c7178df40cf1994393bf908`. Verified public release
+assets: native Android APK and AAB (disposable GitHub CI certificate),
+unsigned Play QA AAB, twelve genuine 1080×1920 emulator screenshots and
+`SHA256SUMS.txt`. Four mandatory CI workflows succeeded on that exact
+main commit, including Kotlin/JVM, Lint/R8, localization and API 26/31/34/35/36
+emulator checks. The six-phone promotional composition is not proof of
+pixel-identical UI. Google Play upload-key compatibility and physical-device
+acceptance remain separate checks.
+
+[Download QREX v1.0.43](https://github.com/bren-wp/QREX/releases/tag/v1.0.43)
+
 ## Candidate: v1.0.43 · Android versionCode 143
 
 Continuation of the supplied six-screen QREX reference: native layered Splash gradient,
