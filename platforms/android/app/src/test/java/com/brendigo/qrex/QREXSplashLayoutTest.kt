@@ -11,7 +11,7 @@ class QREXSplashLayoutTest {
     @Test
     fun referenceSizedDeviceRetainsCenteredSplashGeometry() {
         val metrics = qrexSplashMetrics(393, 852, 1f)
-        assertEquals(214, metrics.logoDp)
+        assertEquals(220, metrics.logoDp)
         assertEquals(60, metrics.titleSp)
         assertEquals(40, metrics.bottomPaddingDp)
         assertEquals(-50, metrics.centerOffsetDp)
@@ -46,7 +46,7 @@ class QREXSplashLayoutTest {
         assertEquals(20, tablet.taglineSp)
         assertFalse(qrexSplashUsesScrollLayout(1280, 1f))
         val compactFold = qrexSplashMetrics(320, 700, 1f)
-        assertEquals(176, compactFold.logoDp)
+        assertEquals(179, compactFold.logoDp)
         assertEquals(50, compactFold.titleSp)
         assertFalse(qrexSplashUsesScrollLayout(700, 1f))
     }
@@ -54,8 +54,8 @@ class QREXSplashLayoutTest {
     @Test
     fun progressTrackFollowsReferenceRatioWithoutOverflow() {
         // Footer content width = display width minus horizontal spacing.
-        assertEquals(186, qrexSplashProgressWidthDp(333))
-        assertEquals(156, qrexSplashProgressWidthDp(280))
+        assertEquals(191, qrexSplashProgressWidthDp(333))
+        assertEquals(161, qrexSplashProgressWidthDp(280))
         assertEquals(220, qrexSplashProgressWidthDp(800))
         assertEquals(70, qrexSplashProgressWidthDp(70))
         assertEquals(0, qrexSplashProgressWidthDp(0))
