@@ -1,6 +1,7 @@
 package com.brendigo.qrex
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.ui.platform.testTag
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -185,7 +189,7 @@ internal fun QrexSettingsListRow(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(
-            min = if (tileMode) 116.dp
+            min = if (tileMode) 112.dp
                 else qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
         ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
@@ -325,11 +329,33 @@ internal fun QrexNavigationGlyph(
     modifier: Modifier = Modifier
 ) {
     Box(modifier.size(30.dp), contentAlignment = Alignment.Center) {
-        Icon(icon, contentDescription = null, tint = tint,
-            modifier = Modifier.size(22.dp))
-        if (selected) {
-            Box(Modifier.align(Alignment.BottomCenter).width(19.dp).height(2.dp)
-                .background(tint, RoundedCornerShape(2.dp)))
+        if (icon == Icons.Default.QrCodeScanner) {
+            // Four luminous corner brackets from the user reference rather
+            // than the stock microscopic QR matrix symbol.
+            Canvas(Modifier.size(24.dp)) {
+                val a = size.width * .10f
+                val b = size.width * .34f
+                val z = size.width - a
+                val stroke = 2.4.dp.toPx()
+                listOf(
+                    Offset(a, a + b) to Offset(a, a),
+                    Offset(a, a) to Offset(a + b, a),
+                    Offset(z - b, a) to Offset(z, a),
+                    Offset(z, a) to Offset(z, a + b),
+                    Offset(a, z - b) to Offset(a, z),
+                    Offset(a, z) to Offset(a + b, z),
+                    Offset(z - b, z) to Offset(z, z),
+                    Offset(z, z - b) to Offset(z, z)
+                ).forEach { (start, end) ->
+                    drawLine(tint, start, end, strokeWidth = stroke,
+                        cap = StrokeCap.Round)
+                }
+                drawCircle(tint.copy(alpha = if (selected) 1f else .8f),
+                    radius = 1.6.dp.toPx(), center = center)
+            }
+        } else {
+            Icon(icon, contentDescription = null, tint = tint,
+                modifier = Modifier.size(23.dp))
         }
     }
 }
