@@ -268,7 +268,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         result = self.main.split("private fun ResultScreen(", 1)[1].split(
             "fun openLink(", 1
         )[0]
-        self.assertIn('tr("copy"), Icons.Default.ContentCopy,', result)
+        self.assertIn('if (url != null) tr("copy_link") else tr("copy")', result)
         self.assertIn('testTag("qrex-result-copy")', result)
         self.assertIn('testTag("qrex-result-menu-copy")', result)
         self.assertEqual(result.count("if (wifi) confirmWifiCopy = true else {"), 2)
