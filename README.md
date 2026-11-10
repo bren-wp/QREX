@@ -82,6 +82,8 @@ QREX asks before sharing or exporting Wi-Fi credentials. Saved Wi-Fi QR contents
 
 **App identity:** `com.brendigo.qrex` · `versionName 1.0.43` · `versionCode 143` · Android 8.0+ (API 26). Release assets include `QREX-Android-1.0.43.apk`, `QREX-Android-1.0.43.aab`, `QREX-Android-1.0.43-Play-UNSIGNED-QA.aab`, `SHA256SUMS.txt` and 12 authentic captures.
 
+Latest published release: **[v1.0.43](https://github.com/bren-wp/QREX/releases/tag/v1.0.43)** (`com.brendigo.qrex`, versionCode 143). All 12 current captures belong to that verified GitHub release.
+
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
 **Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
@@ -102,4 +104,4 @@ Created by [Brendigo](https://brendigo.com) · [Open-source license](LICENSE)
 </div>
 
 
-**Verified screenshot release: v1.0.43.** The public GitHub release contains twelve authentic Android screenshots. The promotional six-phone visual is a design reference, not a substitute for native UI captures.
+**Last complete screenshot release: v1.0.43.** The public GitHub release contains twelve authentic Android screenshots. The promotional six-phone visual is a design reference, not a substitute for native UI captures.
