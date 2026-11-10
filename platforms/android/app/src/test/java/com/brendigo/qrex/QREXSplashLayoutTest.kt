@@ -14,7 +14,8 @@ class QREXSplashLayoutTest {
         assertEquals(214, metrics.logoDp)
         assertEquals(60, metrics.titleSp)
         assertEquals(40, metrics.bottomPaddingDp)
-        assertEquals(-60, metrics.centerOffsetDp)
+        assertEquals(-50, metrics.centerOffsetDp)
+        assertEquals(-35, qrexSplashMetrics(411, 731, 1f).centerOffsetDp)
         assertFalse(qrexSplashUsesScrollLayout(852, 1f))
     }
 
