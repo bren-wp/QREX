@@ -1690,6 +1690,9 @@ private fun HistoryScreen(
     }
     val operationFailed = tr("operation_failed")
     val largeHistoryText = LocalDensity.current.fontScale >= 1.35f
+    val historyRowMinDp = qrexHistoryRowHeightDp(
+        LocalConfiguration.current.screenHeightDp, LocalDensity.current.fontScale
+    )
     var search by remember { mutableStateOf("") }
     var savedOnly by remember(initiallySavedOnly) { mutableStateOf(initiallySavedOnly) }
     var historyFilterExpanded by remember { mutableStateOf(false) }
@@ -1894,7 +1897,7 @@ private fun HistoryScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 100.dp else 64.dp)
+                        Modifier.fillMaxWidth().heightIn(min = historyRowMinDp.dp)
                             .padding(start = 9.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
