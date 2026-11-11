@@ -24,6 +24,13 @@ class QREXVisualLayoutTest {
         assertTrue(qrexSettingsCardHeightDp(1.45f) >= qrexSettingsCardHeightDp(1.0f))
     }
 
+    @Test fun historyRowsExpandOnlyWhenThePhoneHasEnoughVerticalSpace() {
+        assertEquals(64, qrexHistoryRowHeightDp(690, 1.0f))
+        assertEquals(64, qrexHistoryRowHeightDp(789, 1.0f))
+        assertEquals(88, qrexHistoryRowHeightDp(850, 1.0f))
+        assertEquals(100, qrexHistoryRowHeightDp(690, 1.5f))
+    }
+
     @Test fun createChoicesRemainAccessibleAtLargeFontAndCompactWidth() {
         assertFalse(qrexLayoutProfile(430, 850, 1.0f).stackTypeChoices)
         assertFalse(qrexLayoutProfile(393, 850, 1.0f).stackTypeChoices)
@@ -31,5 +38,8 @@ class QREXVisualLayoutTest {
         assertTrue(qrexLayoutProfile(320, 850, 1.0f).stackTypeChoices)
         assertTrue(qrexLayoutProfile(430, 850, 1.30f).stackTypeChoices)
         assertEquals(104, qrexLayoutProfile(320, 600, 1.6f).darkQrSizeDp)
+        // Normal-width compact phones must keep a legible generated QR preview.
+        assertEquals(132, qrexLayoutProfile(393, 600, 1.0f).darkQrSizeDp)
+        assertEquals(156, qrexLayoutProfile(393, 780, 1.0f).darkQrSizeDp)
     }
 }

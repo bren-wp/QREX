@@ -220,8 +220,8 @@ internal fun QrexSplashScreen(
             val lowerRibbon = Path().apply {
                 // Keep the luminous ribbon BELOW the wordmark/tagline, as in
                 // the supplied screenshot; the old .54 crest crossed QREX.
-                moveTo(0f, h * .72f)
-                cubicTo(w * .34f, h * .66f, w * .57f, h * .73f, w, h * .82f)
+                moveTo(0f, h * .77f)
+                cubicTo(w * .34f, h * .73f, w * .57f, h * .78f, w, h * .85f)
                 lineTo(w, h)
                 lineTo(0f, h)
                 close()
@@ -230,14 +230,14 @@ internal fun QrexSplashScreen(
                 lowerRibbon,
                 brush = Brush.linearGradient(
                     listOf(Color(0xFF0D67EB), Color(0xFF062CB2), Color(0xFF020B38)),
-                    start = Offset(0f, h * .72f),
+                    start = Offset(0f, h * .77f),
                     end = Offset(w, h)
                 ),
                 alpha = .87f
             )
             val lowerEdge = Path().apply {
-                moveTo(0f, h * .72f)
-                cubicTo(w * .34f, h * .66f, w * .57f, h * .73f, w, h * .82f)
+                moveTo(0f, h * .77f)
+                cubicTo(w * .34f, h * .73f, w * .57f, h * .78f, w, h * .85f)
             }
             drawPath(
                 lowerEdge, color = Color(0xFF16B6FE).copy(alpha = .7f),
@@ -426,7 +426,7 @@ private fun QrexSplashFooter(
     ) {
         Text(
             qrexSplashFooterLines(tr("splash_message"), compactWidth),
-            color = Color(0xFFB9CFF4),
+            color = Color.White,
             fontSize = if (compactWidth) 13.sp else 17.sp,
             lineHeight = if (compactWidth) 19.sp else 23.sp,
             textAlign = TextAlign.Center,

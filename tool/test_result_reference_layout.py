@@ -23,7 +23,7 @@ class ResultNavigationReferenceTest(unittest.TestCase):
     def test_result_has_compact_panel_and_working_actions(self):
         s = self.result
         self.assertIn('testTag("qrex-result-summary")', s)
-        self.assertIn("min = if (compactResult) 154.dp else if (wideResult) 192.dp else 164.dp", s)
+        self.assertIn("min = if (compactResult) 148.dp else if (wideResult) 192.dp else 156.dp", s)
         self.assertIn("Modifier.size(if (wideResult) 62.dp else 54.dp).background(resultGlyphBrush)", s)
         self.assertIn("modifier = Modifier.size(if (wideResult) 32.dp else 28.dp)", s)
         self.assertIn("padding(horizontal = 12.dp, vertical = 12.dp)", s)
@@ -48,7 +48,7 @@ class ResultNavigationReferenceTest(unittest.TestCase):
     def test_result_rows_keep_native_accessibility_and_compact_spacing(self):
         s = self.design
         self.assertIn("internal fun qrexResultActionHeightDp(", s)
-        self.assertIn("if (fontScale >= 1.35f) 60 else 52", s)
+        self.assertIn("if (fontScale >= 1.35f) 60 else 48", s)
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", s)
         self.assertIn("shadowElevation = 2.dp", s)
         self.assertIn("onClick = onClick", s)

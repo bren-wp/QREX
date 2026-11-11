@@ -57,7 +57,7 @@ class QREXMoreVerticalStackTest {
         )
         // Match the tested production tile minimum after v1.0.43's
         // reference layout reduction; keep the 48dp touch target checks.
-        val minHeight = if (columns == 2) 108.dp else 72.dp
+        val minHeight = if (columns == 2) 104.dp else 72.dp
         val minPx = with(rule.density) { minHeight.roundToPx() }
 
         tags.forEach { tag ->
@@ -99,6 +99,23 @@ class QREXMoreVerticalStackTest {
             .getUnclippedBoundsInRoot()
         assertTrue("delete must stay below the six settings cards",
             delete.top >= about.bottom)
+    }
+
+    @Test
+    fun clearHistoryIsFullyAboveBottomNavigationWithoutScrollingOnStandardPhone() {
+        openMore()
+        val config = rule.activity.resources.configuration
+        if (config.screenWidthDp < 360 || config.screenHeightDp < 650 ||
+            config.fontScale > 1.15f ||
+            qrexMoreTileColumns(config.screenWidthDp, config.screenHeightDp, config.fontScale) != 2) {
+            return // The accessible single-column layout is intentionally scrollable.
+        }
+        val delete = rule.onNodeWithTag("qrex-more-delete", useUnmergedTree = true)
+            .assertIsDisplayed().getUnclippedBoundsInRoot()
+        val nav = rule.onNodeWithTag("qrex-bottom-navigation", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertTrue("Clear history must be fully visible above navigation on reference phones",
+            delete.bottom <= nav.top)
     }
 
     @Test
