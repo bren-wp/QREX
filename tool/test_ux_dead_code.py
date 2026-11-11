@@ -285,7 +285,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('modifier = Modifier.size(52.dp).testTag("qrex-result-menu")', self.main)
         self.assertIn('testTag("qrex-result-primary")', self.main)
         self.assertIn('testTag("qrex-result-delete")', self.main)
-        self.assertIn("min = if (compactResult) 154.dp else if (wideResult) 192.dp else 180.dp", self.main)
+        self.assertIn("min = if (compactResult) 154.dp else if (wideResult) 192.dp else 164.dp", self.main)
         self.assertNotIn("heightIn(min = 178.dp)", self.main)
         result = self.main.split("private fun ResultScreen(", 1)[1].split(
             "fun openLink(", 1
