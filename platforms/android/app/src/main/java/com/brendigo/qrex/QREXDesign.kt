@@ -190,7 +190,7 @@ internal fun QrexSettingsListRow(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().heightIn(
-            min = if (tileMode) 112.dp
+            min = if (tileMode) 104.dp
                 else qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp
         ),
         shape = RoundedCornerShape(QrexDesign.cardRadius),
@@ -245,8 +245,8 @@ internal fun QrexSettingsListRow(
             // The user's dark Android reference has a genuine 2×3 tile grid.
             // Content grows for longer translations; FlowRow keeps rows distinct.
             Column(
-                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 plate()
@@ -303,7 +303,11 @@ internal fun qrexLayoutProfile(
     return QrexLayoutProfile(
         stackTypeChoices = stackChoices,
         showQrPreview = heightDp >= 420 && fontScale < 1.70f,
-        darkQrSizeDp = if (narrow || short) 104 else 156,
+        darkQrSizeDp = when {
+            narrow -> 112
+            short -> 144
+            else -> 156
+        },
         horizontalPaddingDp = if (widthDp < 350) 12 else 16
     )
 }
@@ -315,9 +319,12 @@ internal fun qrexLayoutProfile(
 internal fun qrexResultContentFraction(viewportWidthDp: Int): Float =
     (520f / viewportWidthDp.coerceAtLeast(1)).coerceAtMost(1f)
 
-/** Text size never reduces result actions below an accessible 52dp target. */
+/** Keep the full Result action stack visible on ordinary phones without
+ * reducing touch targets below Android's 48dp accessibility minimum.
+ * Large accessibility fonts receive 60dp, with scrolling preserved.
+ */
 internal fun qrexResultActionHeightDp(fontScale: Float): Int =
-    if (fontScale >= 1.35f) 60 else 52
+    if (fontScale >= 1.35f) 60 else 48
 
 /** Real brand-blue navigation icon and thin selected underline. No duplicate
  * content description: the native NavigationBarItem label owns accessibility.
@@ -362,7 +369,7 @@ internal fun QrexNavigationGlyph(
 }
 
 /** Reference-style result action: real full-width button with a touch target
- * >= 52dp, clear icon, legible label and chevron. Never an inert decorative card.
+ * >= 48dp, clear icon, legible label and chevron. Never an inert decorative card.
  */
 @Composable
 internal fun QrexResultAction(
@@ -376,7 +383,7 @@ internal fun QrexResultAction(
 ) {
     // Screenshot references show flat, soft-cornered rows, with destructive
     // actions in a subtly tinted red row rather than a pill-shaped outline.
-    // All rows remain genuine Compose click targets (>= 56dp).
+    // All rows remain genuine Compose click targets (>= 48dp).
     val foreground = if (destructive) MaterialTheme.colorScheme.error
         else MaterialTheme.colorScheme.onSurface
     Surface(
