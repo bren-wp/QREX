@@ -45,7 +45,9 @@ jobs:
     needs: preflight
     if: ${{ needs.preflight.outputs.release_needed == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 110
+    # Five P03 emulator variants run at max-parallel 2 (up to three 50-minute waves).
+    # The publisher must outlive the exact-commit matrix without bypassing it.
+    timeout-minutes: 240
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
@@ -70,7 +72,9 @@ jobs:
         run: |
           set -euo pipefail
           required=(native-platforms.yml capture-screenshots.yml generate-localizations.yml p03-stability.yml)
-          for attempt in $(seq 1 135); do
+          # 180-minute bounded wait allows the full five-API P03 matrix to
+          # finish under runner contention; real test failures still fail closed.
+          for attempt in $(seq 1 540); do
             all_passed=true
             for workflow in "${required[@]}"; do
               result="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow/runs?branch=main&head_sha=$RELEASE_SHA&per_page=30" |
@@ -87,7 +91,7 @@ jobs:
             done
             if [ "$all_passed" = true ]; then exit 0; fi
             test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
-            echo "Waiting for all required tests (attempt $attempt/135)"
+            echo "Waiting for all required tests (attempt $attempt/540)"
             sleep 20
           done
           echo "Timed out waiting for successful exact-commit checks." >&2
