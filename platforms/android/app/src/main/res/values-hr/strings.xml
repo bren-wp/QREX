@@ -8,8 +8,8 @@
     <string name="point_camera">Usmjeri kameru prema QR kodu</string>
     <string name="allow_camera">Dopusti pristup kameri za skeniranje QR kodova.</string>
     <string name="enable_camera">Omogući kameru</string>
-    <string name="from_gallery">Iz galerije</string>
-    <string name="flashlight">Svjetiljka</string>
+    <string name="from_gallery">Odaberi iz galerije</string>
+    <string name="flashlight">Bljeskalica</string>
     <string name="qr_not_found">Na slici nije pronađen QR kod.</string>
     <string name="image_failed">Sliku nije moguće pročitati.</string>
     <string name="camera_failed">Kamera nije dostupna.</string>
