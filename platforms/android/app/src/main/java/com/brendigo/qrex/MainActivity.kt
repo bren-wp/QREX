@@ -702,7 +702,7 @@ private fun ResultScreen(
         QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
             Column(
                 Modifier.fillMaxWidth().heightIn(
-                    min = if (compactResult) 154.dp else if (wideResult) 192.dp else 164.dp
+                    min = if (compactResult) 148.dp else if (wideResult) 192.dp else 156.dp
                 ).padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -776,14 +776,14 @@ private fun ResultScreen(
             PrimaryAction(
                 tr("open_link"), modifier = Modifier.testTag("qrex-result-primary")
             ) { openLink(context, url) }
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(3.dp))
         } else if (QRContent.isEvent(raw)) {
             PrimaryAction(tr("add_to_calendar")) {
                 if (!openCalendarEvent(context, raw)) {
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(3.dp))
         } else if (externalKind != null) {
             // This opens only an external compose/dialer/maps/contact editor.
             // Nothing is sent or written silently; the user must finish there.
@@ -799,7 +799,7 @@ private fun ResultScreen(
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(3.dp))
         }
         QrexResultAction(
             if (url != null) tr("copy_link") else tr("copy"),
@@ -811,18 +811,18 @@ private fun ResultScreen(
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(3.dp))
         QrexResultAction(tr("share"), Icons.Default.Share) {
             if (wifi) confirmWifiShare = true
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(3.dp))
         QrexResultAction(if (showQrPreview) tr("hide") else tr("show_qr"), Icons.Default.QrCode,
             modifier = Modifier.testTag("qrex-result-toggle-qr"),
             showChevron = false) {
             showQrPreview = !showQrPreview
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(3.dp))
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
             if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -2171,7 +2171,7 @@ private fun MoreScreen(
         onPdf = { confirmPdfExport = true }
     )
     else -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(horizontal = 14.dp, vertical = 12.dp)
+        .padding(horizontal = 14.dp, vertical = 8.dp)
         .testTag("qrex-more-screen")) {
         AppHeader(tr("more"), tr("settings"))
         // Reference 2×3 native tiles on standard phones, preserving a fully
@@ -2192,7 +2192,7 @@ private fun MoreScreen(
                 modifier = Modifier.fillMaxWidth().testTag("qrex-more-reference-grid"),
                 maxItemsInEachRow = moreColumns,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
                     subtitle = themeTitle, onClick = { showTheme = true },
@@ -2226,14 +2226,14 @@ private fun MoreScreen(
                     tileMode = moreTiles)
             }
             // Never place destructive Clear History inside the six-tile grid.
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(0.dp))
             QrexSettingsListRow(tr("clear_history"), Icons.Default.DeleteForever,
                 subtitle = tr("more_clear_hint"),
                 destructive = true, showChevron = false,
                 onClick = { showDelete = true },
                 modifier = Modifier.testTag("qrex-more-delete"))
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(4.dp))
     }
     }
     if (showTheme) {
