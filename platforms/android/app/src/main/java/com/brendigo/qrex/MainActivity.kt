@@ -1422,13 +1422,13 @@ private fun CreateScreen(
                 Modifier.fillMaxWidth().testTag("qrex-create-unified-card")
             ) {
                 Column(
-                    Modifier.fillMaxWidth().padding(12.dp)
+                    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp)
                         .testTag("qrex-create-unified-content")
                 ) {
             if (kind == 0) {
                 Text(
                     "${tr("url")} (URL)",
-                    modifier = Modifier.padding(start = 7.dp, bottom = 6.dp)
+                    modifier = Modifier.padding(start = 7.dp, bottom = 4.dp)
                         .testTag("qrex-create-url-caption"),
                     color = QrexDesign.accentBright,
                     fontSize = 12.sp,
@@ -1571,7 +1571,7 @@ private fun CreateScreen(
             // needed by Generate on 320dp phones and during IME transitions.
             // Render a card only after there is a real generated QR bitmap.
             if (previewVisible && qr != null) {
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(6.dp))
                 // Centered thumbnail card matches the Create reference; never
                 // repeat an arbitrary QR payload (possibly containing a private
                 // URL token) as decorative preview text beneath the image.
@@ -1581,9 +1581,9 @@ private fun CreateScreen(
                         .testTag("qrex-create-preview-card")
                 ) {
                     Column(
-                        Modifier.fillMaxWidth().padding(11.dp),
+                        Modifier.fillMaxWidth().padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Image(
                             qr.asImageBitmap(),
@@ -1597,7 +1597,7 @@ private fun CreateScreen(
                         ) {
                             Text(
                                 tr("qr_preview"),
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Medium, fontSize = 11.sp
                             )
