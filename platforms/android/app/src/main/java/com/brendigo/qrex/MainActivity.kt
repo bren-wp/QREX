@@ -1810,7 +1810,9 @@ private fun HistoryScreen(
         }
         LazyColumn(
             modifier = Modifier.weight(1f).fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            // Compress gaps only for History/Favorites: the fifth reference
+            // item must fit above the shared bottom bar at normal font scale.
+            verticalArrangement = Arrangement.spacedBy(3.dp),
             contentPadding = PaddingValues(bottom = 8.dp)
         ) {
             itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) }) { _, item ->
@@ -1894,12 +1896,12 @@ private fun HistoryScreen(
                 ) {
                     Row(
                         Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 100.dp else 64.dp)
-                            .padding(start = 9.dp, end = 4.dp, top = 3.dp, bottom = 3.dp),
+                            .padding(start = 9.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         QrexHistoryGlyph(icon, tint, background = glyphBackground)
                         Spacer(Modifier.width(9.dp))
-                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
                             // Three native information levels match the reference:
                             // concise title, safe typed preview, category/time chip.
                             // Never print an entire raw URL, QR note or Wi-Fi secret.
