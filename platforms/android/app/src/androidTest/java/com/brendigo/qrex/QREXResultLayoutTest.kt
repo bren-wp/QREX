@@ -91,6 +91,18 @@ class QREXResultLayoutTest {
         ).getUnclippedBoundsInRoot()
         assertTrue("Favorite must stay inside Result viewport",
             favorite.bottom <= activeViewport.bottom)
+        val config = rule.activity.resources.configuration
+        if (config.screenWidthDp >= 360 && config.screenHeightDp >= 650 &&
+            config.fontScale <= 1.15f) {
+            val deleteAtRest = rule.onNodeWithTag(
+                "qrex-result-delete", useUnmergedTree = true
+            ).getUnclippedBoundsInRoot()
+            val bottomNav = rule.onNodeWithTag(
+                "qrex-bottom-navigation", useUnmergedTree = true
+            ).getUnclippedBoundsInRoot()
+            assertTrue("Delete must fit above the bottom navigation without scrolling",
+                deleteAtRest.bottom <= bottomNav.top)
+        }
         rule.onNodeWithTag("qrex-result-delete", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("qrex-result-menu", useUnmergedTree = true)
