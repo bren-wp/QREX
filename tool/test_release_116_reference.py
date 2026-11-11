@@ -11,13 +11,22 @@ ANDROID = ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex"
 
 
 class Production116ReferenceTests(unittest.TestCase):
+    def current_patch(self):
+        gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
+        match = re.search(r"(?m)^\s*versionCode\s*=\s*(\d+)\s*$", gradle)
+        self.assertIsNotNone(match)
+        patch = int(match.group(1)) - 100
+        self.assertGreaterEqual(patch, 44)
+        self.assertIn(f'versionName = "1.0.{patch}"', gradle)
+        return patch
     def test_published_versions_are_archived_outside_active_workflows(self):
+        patch = self.current_patch()
         archived = ROOT / "docs/releases/workflows"
         self.assertEqual(
-            ["github-release-1.0.43.yml"], sorted(p.name for p in WORKFLOWS.glob("github-release-1.0.*.yml")),
+            [f"github-release-1.0.{patch}.yml"], sorted(p.name for p in WORKFLOWS.glob("github-release-1.0.*.yml")),
             "No already-published version must trigger on future main pushes"
         )
-        for minor in range(1, 43):
+        for minor in range(1, patch):
             src = (archived / f"github-release-1.0.{minor}.yml").read_text("utf-8")
             with self.subTest(version=minor):
                 self.assertIn(f"gh release create v1.0.{minor}", src)
@@ -36,8 +45,7 @@ class Production116ReferenceTests(unittest.TestCase):
 
     def test_version_and_native_navigation(self):
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
-        self.assertIn("versionCode = 143", gradle)
-        self.assertIn('versionName = "1.0.43"', gradle)
+        self.current_patch()
         details = (ANDROID / "QREXMoreDetails.kt").read_text("utf-8")
         self.assertIn('Modifier.size(52.dp).testTag("qrex-detail-back")', details)
         self.assertIn('contentDescription = tr("back")', details)
