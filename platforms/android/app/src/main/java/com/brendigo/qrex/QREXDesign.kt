@@ -304,7 +304,7 @@ internal fun qrexLayoutProfile(
         stackTypeChoices = stackChoices,
         showQrPreview = heightDp >= 420 && fontScale < 1.70f,
         darkQrSizeDp = when {
-            narrow -> 112
+            narrow -> 104
             short -> 144
             else -> 156
         },
