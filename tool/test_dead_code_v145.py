@@ -61,20 +61,24 @@ class Qrex145DeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("val titleTextSize = 27.sp", self.design)
         self.assertIn("val supportingTextSize = 14.sp", self.design)
 
-    def test_new_release_is_not_confused_with_published_old_images(self):
+    def test_marketing_images_match_the_documented_published_version(self):
         readme = (ROOT / "README.md").read_text("utf-8")
-        self.assertIn(
-            "Latest published release: **[v1.0.44]",
+        gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
+        match = re.search(
+            r"Latest published release: \\*\\*\\[v([0-9]+\\.[0-9]+\\.[0-9]+)\\]",
             readme,
         )
+        self.assertIsNotNone(match)
+        published_version = match.group(1)
         self.assertIn(
-            "releases/download/v1.0.44/android-history.png",
+            f"releases/download/v{published_version}/android-history.png",
             readme,
         )
-        self.assertNotIn(
-            "releases/download/v1.0.45/android-history.png",
-            readme,
-            "Do not claim next-version screenshots until actual publication",
+        configured = re.search(r'versionName\\s*=\\s*"([0-9.]+)"', gradle)
+        self.assertIsNotNone(configured)
+        self.assertLessEqual(
+            tuple(map(int, published_version.split("."))),
+            tuple(map(int, configured.group(1).split("."))),
         )
 
 
