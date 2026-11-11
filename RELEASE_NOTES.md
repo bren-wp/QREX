@@ -1,3 +1,17 @@
+## Published: v1.0.44 · Android versionCode 144
+
+Published on 2026-11-11 UTC from tested main commit
+`ec966544967208a825137fbd20e8a4162e11ae73`. The published GitHub release
+contains the native Android APK and AAB signed with a **disposable GitHub
+certificate**, a Play-UNSIGNED-QA candidate, `SHA256SUMS.txt` and twelve genuine
+1080×1920 Android emulator screenshots. The exact-source Kotlin, Lint/R8,
+localization, API 26/31/34/35/36 and capture workflows all succeeded before
+the release publisher completed. The framed promotional references are not
+unframed Android screenshots and exact 0% pixel deviation is not established.
+
+[Download QREX v1.0.44](https://github.com/bren-wp/QREX/releases/tag/v1.0.44) ·
+[Release details](docs/releases/v1.0.44.md).
+
 ## Published: v1.0.43 · Android versionCode 143
 
 Published on 2026-11-09 UTC from main commit
