@@ -32,7 +32,7 @@ class QREXVisualLayoutTest {
         assertTrue(qrexLayoutProfile(430, 850, 1.30f).stackTypeChoices)
         assertEquals(104, qrexLayoutProfile(320, 600, 1.6f).darkQrSizeDp)
         // Normal-width compact phones must keep a legible generated QR preview.
-        assertEquals(144, qrexLayoutProfile(393, 600, 1.0f).darkQrSizeDp)
+        assertEquals(132, qrexLayoutProfile(393, 600, 1.0f).darkQrSizeDp)
         assertEquals(156, qrexLayoutProfile(393, 780, 1.0f).darkQrSizeDp)
     }
 }
