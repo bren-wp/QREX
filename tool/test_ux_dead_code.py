@@ -238,7 +238,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("val stackChoices = widthDp < 340", design)
         self.assertIn("qrexSettingsCardHeightDp(LocalDensity.current.fontScale).dp", design)
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
-        self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
+        self.assertIn("if (fontScale >= 1.35f) 60 else 48", design)
         self.assertIn('testTag("qrex-history-menu").size(48.dp)', self.main)
         self.assertIn('.testTag("qrex-favorites-remove")', self.main)
         self.assertNotIn('qrex-history-favorite', self.main)
@@ -285,7 +285,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('modifier = Modifier.size(52.dp).testTag("qrex-result-menu")', self.main)
         self.assertIn('testTag("qrex-result-primary")', self.main)
         self.assertIn('testTag("qrex-result-delete")', self.main)
-        self.assertIn("min = if (compactResult) 154.dp else if (wideResult) 192.dp else 164.dp", self.main)
+        self.assertIn("min = if (compactResult) 148.dp else if (wideResult) 192.dp else 156.dp", self.main)
         self.assertNotIn("heightIn(min = 178.dp)", self.main)
         result = self.main.split("private fun ResultScreen(", 1)[1].split(
             "fun openLink(", 1
@@ -303,7 +303,7 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("val foreground = if (destructive) MaterialTheme.colorScheme.error", design)
         self.assertIn("if (showChevron && !destructive)", design)
         self.assertIn("qrexResultActionHeightDp(LocalDensity.current.fontScale).dp", design)
-        self.assertIn("if (fontScale >= 1.35f) 60 else 52", design)
+        self.assertIn("if (fontScale >= 1.35f) 60 else 48", design)
         self.assertIn('if (wifi) confirmWifiShare = true', self.main)
         self.assertIn('if (wifi && !alreadySaved) confirmWifiSave = true', self.main)
         self.assertIn('if (confirmResultDelete)', self.main)
