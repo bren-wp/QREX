@@ -703,7 +703,7 @@ private fun ResultScreen(
         QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
             Column(
                 Modifier.fillMaxWidth().heightIn(
-                    min = if (compactResult) 154.dp else if (wideResult) 192.dp else 180.dp
+                    min = if (compactResult) 154.dp else if (wideResult) 192.dp else 164.dp
                 ).padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -777,14 +777,14 @@ private fun ResultScreen(
             PrimaryAction(
                 tr("open_link"), modifier = Modifier.testTag("qrex-result-primary")
             ) { openLink(context, url) }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
         } else if (QRContent.isEvent(raw)) {
             PrimaryAction(tr("add_to_calendar")) {
                 if (!openCalendarEvent(context, raw)) {
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
         } else if (externalKind != null) {
             // This opens only an external compose/dialer/maps/contact editor.
             // Nothing is sent or written silently; the user must finish there.
@@ -800,7 +800,7 @@ private fun ResultScreen(
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
         }
         QrexResultAction(
             if (url != null) tr("copy_link") else tr("copy"),
@@ -812,18 +812,18 @@ private fun ResultScreen(
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(4.dp))
         QrexResultAction(tr("share"), Icons.Default.Share) {
             if (wifi) confirmWifiShare = true
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(4.dp))
         QrexResultAction(if (showQrPreview) tr("hide") else tr("show_qr"), Icons.Default.QrCode,
             modifier = Modifier.testTag("qrex-result-toggle-qr"),
             showChevron = false) {
             showQrPreview = !showQrPreview
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(4.dp))
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
             if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
