@@ -1,3 +1,18 @@
+## Published: v1.0.45 · Android versionCode 145
+
+Published on 2026-11-11 UTC from main merge commit
+`eb85e43816152005a688e2cb760757c72b9d8d9b`.
+GitHub release v1.0.45 contains the real Android APK, AAB, unsigned
+Play QA AAB, SHA256SUMS and twelve genuine Android emulator screenshot assets.
+Its exact-commit native CI, localization, emulator screenshot and P03
+API 26/31/34/35/36 matrix all passed prior to release. The GitHub CI
+signing certificate is disposable and **cannot update a Play installation**.
+The supplied six marketing phone illustrations are not pixel-equivalent
+reference screenshots; 0% image mismatch has not been measured.
+
+[Download QREX v1.0.45](https://github.com/bren-wp/QREX/releases/tag/v1.0.45) ·
+[Release notes](docs/releases/v1.0.45.md).
+
 ## Published: v1.0.44 · Android versionCode 144
 
 Published on 2026-11-11 UTC from tested main commit
