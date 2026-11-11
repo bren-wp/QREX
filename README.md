@@ -49,6 +49,13 @@ Explore all **12 genuine screenshots from the running Android app**, captured an
 
 </div>
 
+
+### November 2026 screen alignment update — v1.0.44
+
+The six attached design references (Splash, Scan, Result, Create, History and More) have been reviewed against the native Jetpack Compose implementation. The current main branch includes reference-alignment changes from merged PR #114: persistent five-tab navigation on Result, compact History records, the six More tiles, smaller Create category controls and native scanner brackets. **The illustrated phone-frame reference is not an unmodified device screenshot, so a verified 0% pixel mismatch cannot be claimed.** Live camera scenery also cannot be reproduced pixel-for-pixel on arbitrary devices.
+
+**v1.0.44 is released only if its exact-source Android CI, API 26/31/34/35/36 instrumentation, screenshot capture, signature, SHA-256 and APK/AAB metadata checks pass.** The twelve images already visible above are genuine QREX v1.0.43 emulator screenshots, not generated renders; updated v1.0.44 captures are attached to the [new release](https://github.com/bren-wp/QREX/releases/tag/v1.0.44) when publication completes. The GitHub release signing key is disposable and is not suitable for Play Store updates.
+
 ## Everything you need
 
 | | Feature |
