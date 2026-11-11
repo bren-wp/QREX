@@ -305,7 +305,7 @@ internal fun qrexLayoutProfile(
         showQrPreview = heightDp >= 420 && fontScale < 1.70f,
         darkQrSizeDp = when {
             narrow -> 104
-            short -> 144
+            short -> 132
             else -> 156
         },
         horizontalPaddingDp = if (widthDp < 350) 12 else 16
