@@ -83,7 +83,7 @@ QREX asks before sharing or exporting Wi-Fi credentials. Saved Wi-Fi QR contents
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Install QREX from Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-**Latest published release: [v1.0.44](https://github.com/bren-wp/QREX/releases/tag/v1.0.44)** (`com.brendigo.qrex`, versionCode 144).
+Latest published release: **[v1.0.44](https://github.com/bren-wp/QREX/releases/tag/v1.0.44)** (`com.brendigo.qrex`, versionCode 144).
 
 **Latest published version: QREX v1.0.44 (Android build 144).** This release includes the six-screen alignment for Splash, Scanner, Result, Create, History and More, plus genuine emulator captures from the same published release. The 12 PNG files above are actual emulator screenshots, not promotional renders; pixel-perfect equality with framed mockups remains unverified. [Release notes](docs/releases/v1.0.44.md).
 
