@@ -24,6 +24,13 @@ class QREXVisualLayoutTest {
         assertTrue(qrexSettingsCardHeightDp(1.45f) >= qrexSettingsCardHeightDp(1.0f))
     }
 
+    @Test fun historyRowsExpandOnlyWhenThePhoneHasEnoughVerticalSpace() {
+        assertEquals(64, qrexHistoryRowHeightDp(690, 1.0f))
+        assertEquals(64, qrexHistoryRowHeightDp(789, 1.0f))
+        assertEquals(88, qrexHistoryRowHeightDp(850, 1.0f))
+        assertEquals(100, qrexHistoryRowHeightDp(690, 1.5f))
+    }
+
     @Test fun createChoicesRemainAccessibleAtLargeFontAndCompactWidth() {
         assertFalse(qrexLayoutProfile(430, 850, 1.0f).stackTypeChoices)
         assertFalse(qrexLayoutProfile(393, 850, 1.0f).stackTypeChoices)
