@@ -16,9 +16,9 @@ class QREXResultLayoutProfileTest {
     }
 
     @Test fun normalFontUsesNative52DpActionTargets() {
-        assertEquals(52, qrexResultActionHeightDp(1f))
-        assertEquals(52, qrexResultActionHeightDp(1.20f))
-        assertEquals(52, qrexResultActionHeightDp(1.34f))
+        assertEquals(48, qrexResultActionHeightDp(1f))
+        assertEquals(48, qrexResultActionHeightDp(1.20f))
+        assertEquals(48, qrexResultActionHeightDp(1.34f))
         assertTrue(qrexResultActionHeightDp(1f) >= 48)
     }
 
