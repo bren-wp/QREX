@@ -28,7 +28,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -49,17 +48,13 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
@@ -267,9 +262,8 @@ private fun QREXApp(
             )
         } else null
     }
-    // Android 16 predictive/back gesture returns from a QR result to its
-    // originating screen instead of abruptly exiting the entire app.
-    BackHandler(enabled = currentCode != null) { currentCode = null }
+    // Result back navigation is handled once inside the visible Scaffold.
+    // A second handler here would shadow its focus and QR-preview cleanup.
     val darkUi = when (screenshotTheme ?: store.themeMode) {
         "light" -> false
         "system" -> isSystemInDarkTheme()
