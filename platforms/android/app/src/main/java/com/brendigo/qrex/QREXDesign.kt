@@ -277,6 +277,16 @@ internal fun QrexSettingsListRow(
 internal fun qrexMoreTileColumns(widthDp: Int, heightDp: Int, fontScale: Float): Int =
     if (widthDp < 360 || heightDp < 500 || fontScale >= 1.30f) 1 else 2
 
+/** Taller portrait reference phones have room for three fully readable
+ * History lines without truncating the five rows. Short devices keep compact
+ * rows, so the last record remains visible above bottom navigation.
+ */
+internal fun qrexHistoryRowHeightDp(heightDp: Int, fontScale: Float): Int = when {
+    fontScale >= 1.35f -> 100
+    heightDp >= 790 -> 88
+    else -> 64
+}
+
 /** Accessible card height for Settings, independent of display width or theme. */
 internal fun qrexSettingsCardHeightDp(fontScale: Float): Int =
     if (fontScale >= 1.35f) 88 else 72
