@@ -2,25 +2,28 @@
 
 <img src="assets/brand/qrex-logo.svg" alt="QREX — Scan. Create. Share." width="380">
 
-### Scan. Create. Share.
+# Scan. Create. Share.
 
-**Your QR codes. Your device. Your choice.**
+**One privacy-first place for every QR code.**
 
-Scan, create and organize QR codes with an Android app built for simplicity and privacy.
+Scan a code in seconds, create your own, and keep the ones that matter — all on your Android device.
+
+**📷 Instant scanning &nbsp;·&nbsp; ✨ QR creation &nbsp;·&nbsp; 🔐 Local-first privacy**
 
 **Free · Offline · No ads · No account**
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Get QREX on Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play — QREX for Android" height="64"></a>
 
-[See the app](#see-qrex-in-action) · [Features](#everything-you-need) · [Privacy](#privacy-comes-first) · [Get QREX](#get-qrex)
+[See the real app](#see-qrex-in-action) · [Features](#everything-you-need) · [Privacy](#privacy-comes-first) · [Download](#get-qrex)
 
 </div>
 
 ---
 
+
 ## See QREX in action
 
-Explore all **12 genuine screenshots from the running Android app**, captured and verified on a real Android emulator with demonstration QR codes. Every screen below is taken directly from QREX — not a promotional mockup. Full-size captures are included in the GitHub release.
+**These are real QREX screens, not AI illustrations or phone mockups.** The complete gallery below contains twelve authentic captures from the published **v1.0.45** Android emulator run, including the scanner, QR generator, history, settings, and privacy dialogs. All full-resolution PNG files are available with the [verified release](https://github.com/bren-wp/QREX/releases/tag/v1.0.45).
 
 <div align="center">
 
@@ -50,15 +53,15 @@ Explore all **12 genuine screenshots from the running Android app**, captured an
 </div>
 
 
-### November 2026 screen alignment update — v1.0.45
+### What you see is what ships
 
-**v1.0.46 is a release candidate, not yet a published release.** PR #116 merged the latest six-screen layout refinements; GitHub CI must still successfully compile, exercise the five-API emulator matrix, and capture twelve genuine screenshots on the exact release commit. The release publisher now waits for the complete matrix rather than timing out after 45 minutes. Follow [the verified release blocker and progress](https://github.com/bren-wp/QREX/issues/117). Until the checks pass and the GitHub release is published, every screenshot and download linked below remains explicitly from the verified **v1.0.45** release.
+The native screens are built with Jetpack Compose; the scanner uses a live CameraX preview rather than a static sample image. The published v1.0.45 capture set is the source of the gallery above. The six illustrated phone-frame design references are **visual targets**, not pixel-aligned device captures; exact 0% pixel mismatch has **not** been independently verified.
 
-The six attached design references (Splash, Scan, Result, Create, History and More) have been reviewed against the native Jetpack Compose implementation. The current main branch includes reference-alignment changes from merged PR #114: persistent five-tab navigation on Result, compact History records, the six More tiles, smaller Create category controls and native scanner brackets. **The illustrated phone-frame reference is not an unmodified device screenshot, so a verified 0% pixel mismatch cannot be claimed.** Live camera scenery also cannot be reproduced pixel-for-pixel on arbitrary devices.
-
-**v1.0.45 was published after the exact-commit Android CI, API 26/31/34/35/36 instrumentation, screenshot capture, signature, SHA-256 and APK/AAB metadata gates passed.** The twelve images above are genuine QREX v1.0.45 emulator screenshots, not generated renders; all captures are already attached to the [published release](https://github.com/bren-wp/QREX/releases/tag/v1.0.45). The GitHub release signing key is disposable and is not suitable for Play Store updates.
+**Next release: v1.0.46 (candidate, not published).** It includes further refinements to Splash, Scanner, Result, Create, History and More. The screenshot gallery stays on the authentic v1.0.45 release until all current-commit Android, security, localization, emulator and release-integrity checks pass. [Track release verification](https://github.com/bren-wp/QREX/issues/117).
 
 ## Everything you need
+
+No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating together in a compact interface designed for everyday use.
 
 | | Feature |
 |:--|:--|
@@ -71,6 +74,12 @@ The six attached design references (Splash, Scan, Result, Create, History and Mo
 | 🌍 **23 languages** | Including English and Croatian, all without an online translation service. |
 | 🌗 **Make it yours** | A consistent midnight-blue appearance, accessible controls and responsive layouts. |
 
+### A simpler QR workflow
+
+| 01 · **Scan** | 02 · **Review** | 03 · **Keep or share** |
+|:--|:--|:--|
+| Point the camera at a code or choose a picture from your gallery. | Check the content before opening a link or using QR data. | Copy, share, save a favorite or create your own QR code. |
+
 ## Privacy comes first
 
 QREX scans and generates QR codes **on your phone**, without a developer cloud account, advertising, analytics or a required Internet connection. Camera access is requested only for camera scanning; you can choose a gallery image without granting camera permission.
@@ -82,6 +91,10 @@ QREX asks before sharing or exporting Wi-Fi credentials. Saved Wi-Fi QR contents
 [Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
 
 ## Get QREX
+
+**Android 8.0+ (API 26)** · Package `com.brendigo.qrex` · Created by **Brendigo**
+
+Install from Google Play, or inspect the published GitHub assets and SHA-256 checksums. GitHub CI builds are independently signed for distribution and **not** suitable for updating a Google Play installation.
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Install QREX from Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
@@ -96,6 +109,10 @@ Latest published release: **[v1.0.45](https://github.com/bren-wp/QREX/releases/t
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
 **Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
+
+### Explore more
+
+[Release history](docs/releases/INDEX.md) · [What's new](RELEASE_NOTES.md) · [Screenshots & release packages](https://github.com/bren-wp/QREX/releases) · [Support](https://brendigo.com)
 
 Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3), [v1.0.4](https://github.com/bren-wp/QREX/releases/tag/v1.0.4) and [v1.0.5](https://github.com/bren-wp/QREX/releases/tag/v1.0.5) remain archived and downloadable.
 
@@ -113,4 +130,4 @@ Created by [Brendigo](https://brendigo.com) · [Open-source license](LICENSE)
 </div>
 
 
-**Last complete screenshot release: v1.0.45.** The public GitHub release contains twelve authentic Android screenshots. The promotional six-phone visual is a design reference, not a substitute for native UI captures.
+**Last complete screenshot release: v1.0.45.** All twelve screenshots above come from that published Android emulator release. No generated images are presented as real app screens.

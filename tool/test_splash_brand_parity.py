@@ -67,8 +67,8 @@ class SplashBrandParityTest(unittest.TestCase):
 
     def test_splash_reference_layers_keep_wordmark_clear_of_lower_ribbon(self):
         splash = (KOTLIN / "QREXSplash.kt").read_text("utf-8")
-        self.assertIn("moveTo(0f, h * .72f)", splash)
-        self.assertIn("w * .34f, h * .66f", splash)
+        self.assertIn("moveTo(0f, h * .77f)", splash)
+        self.assertIn("w * .34f, h * .73f", splash)
         self.assertNotIn("w * .34f, h * .54f", splash)
         self.assertIn("moveTo(0f, h * .86f)", splash)
         self.assertIn("style = Stroke(width = 10.dp.toPx())", splash)

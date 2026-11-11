@@ -70,7 +70,12 @@ class CreateReferenceRegressionTests(unittest.TestCase):
         self.assertLess(preview, generate)
         self.assertIn('testTag("qrex-create-unified-content")', create)
         self.assertIn("QrexPanel(", create)
-        self.assertIn("Modifier.fillMaxWidth().padding(12.dp)", create)
+        # Assert the real compact card padding, not the superseded 12dp
+        # uniform inset. The asymmetric inset preserves preview height.
+        self.assertIn(
+            "Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp)",
+            create,
+        )
         self.assertIn('testTag("qrex-create-preview-ready")', create)
         self.assertIn("onClick = ::requestImageExport", create)
         self.assertIn("containerColor = MaterialTheme.colorScheme.surfaceVariant", create)
