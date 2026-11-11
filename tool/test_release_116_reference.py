@@ -19,6 +19,8 @@ class Production116ReferenceTests(unittest.TestCase):
         self.assertGreaterEqual(patch, 44)
         self.assertIn(f'versionName = "1.0.{patch}"', gradle)
         return patch
+
+
     def test_published_versions_are_archived_outside_active_workflows(self):
         patch = self.current_patch()
         archived = ROOT / "docs/releases/workflows"
