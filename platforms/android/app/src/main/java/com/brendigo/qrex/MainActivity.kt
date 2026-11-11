@@ -28,7 +28,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -49,17 +48,12 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.ContentCopy
@@ -267,9 +261,8 @@ private fun QREXApp(
             )
         } else null
     }
-    // Android 16 predictive/back gesture returns from a QR result to its
-    // originating screen instead of abruptly exiting the entire app.
-    BackHandler(enabled = currentCode != null) { currentCode = null }
+    // Result back navigation is handled once inside the visible Scaffold.
+    // A second handler here would shadow its focus and QR-preview cleanup.
     val darkUi = when (screenshotTheme ?: store.themeMode) {
         "light" -> false
         "system" -> isSystemInDarkTheme()
@@ -709,7 +702,7 @@ private fun ResultScreen(
         QrexPanel(modifier = Modifier.fillMaxWidth().testTag("qrex-result-summary")) {
             Column(
                 Modifier.fillMaxWidth().heightIn(
-                    min = if (compactResult) 154.dp else if (wideResult) 192.dp else 180.dp
+                    min = if (compactResult) 154.dp else if (wideResult) 192.dp else 164.dp
                 ).padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -783,14 +776,14 @@ private fun ResultScreen(
             PrimaryAction(
                 tr("open_link"), modifier = Modifier.testTag("qrex-result-primary")
             ) { openLink(context, url) }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
         } else if (QRContent.isEvent(raw)) {
             PrimaryAction(tr("add_to_calendar")) {
                 if (!openCalendarEvent(context, raw)) {
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
         } else if (externalKind != null) {
             // This opens only an external compose/dialer/maps/contact editor.
             // Nothing is sent or written silently; the user must finish there.
@@ -806,7 +799,7 @@ private fun ResultScreen(
                     Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
                 }
             }
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
         }
         QrexResultAction(
             if (url != null) tr("copy_link") else tr("copy"),
@@ -818,18 +811,18 @@ private fun ResultScreen(
                 Toast.makeText(context, copied, Toast.LENGTH_SHORT).show()
             }
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(4.dp))
         QrexResultAction(tr("share"), Icons.Default.Share) {
             if (wifi) confirmWifiShare = true
             else shareQrText(context, raw, shareTitle, sharingFailed)
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(4.dp))
         QrexResultAction(if (showQrPreview) tr("hide") else tr("show_qr"), Icons.Default.QrCode,
             modifier = Modifier.testTag("qrex-result-toggle-qr"),
             showChevron = false) {
             showQrPreview = !showQrPreview
         }
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(4.dp))
         QrexResultAction(
             if (alreadySaved) tr("remove_favorite") else tr("add_favorite"),
             if (alreadySaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -1816,7 +1809,9 @@ private fun HistoryScreen(
         }
         LazyColumn(
             modifier = Modifier.weight(1f).fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            // Compress gaps only for History/Favorites: the fifth reference
+            // item must fit above the shared bottom bar at normal font scale.
+            verticalArrangement = Arrangement.spacedBy(3.dp),
             contentPadding = PaddingValues(bottom = 8.dp)
         ) {
             itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) }) { _, item ->
@@ -1900,12 +1895,12 @@ private fun HistoryScreen(
                 ) {
                     Row(
                         Modifier.fillMaxWidth().heightIn(min = if (largeHistoryText) 100.dp else 64.dp)
-                            .padding(start = 9.dp, end = 4.dp, top = 3.dp, bottom = 3.dp),
+                            .padding(start = 9.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         QrexHistoryGlyph(icon, tint, background = glyphBackground)
                         Spacer(Modifier.width(9.dp))
-                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(0.dp)) {
                             // Three native information levels match the reference:
                             // concise title, safe typed preview, category/time chip.
                             // Never print an entire raw URL, QR note or Wi-Fi secret.

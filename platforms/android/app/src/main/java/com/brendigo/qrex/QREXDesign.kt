@@ -73,12 +73,13 @@ internal object QrexDesign {
     val phoneTint = Color(0xFFFF7488)
     // Phone and contact types are informational, not destructive actions.
     val success = Color(0xFF19CFAB)
-    val titleTextSize = 21.sp
-    val supportingTextSize = 11.sp
+    // Larger native header to match the visual hierarchy of the supplied History/More references.
+    val titleTextSize = 27.sp
+    val supportingTextSize = 14.sp
     val tileSupportingTextSize = 12.sp
     val sectionSpacing = 12.dp
     val cardRadius = 15.dp
-    val actionTextSize = 14.sp
+    val actionTextSize = 16.sp
     val heroBrush = Brush.verticalGradient(
         listOf(Color(0xFF09172D), background, backgroundDeep)
     )
@@ -230,7 +231,7 @@ internal fun QrexSettingsListRow(
         val labels: @Composable () -> Unit = {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(label, fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
+                    fontSize = if (tileMode) 16.sp else 15.sp,
                     color = if (destructive) accent else MaterialTheme.colorScheme.onSurface,
                     maxLines = 3, overflow = TextOverflow.Ellipsis)
                 if (subtitle != null) {
