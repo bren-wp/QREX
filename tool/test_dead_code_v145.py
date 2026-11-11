@@ -65,7 +65,7 @@ class Qrex145DeadCodeRegressionTests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text("utf-8")
         gradle = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         match = re.search(
-            r"Latest published release: \\*\\*\\[v([0-9]+\\.[0-9]+\\.[0-9]+)\\]",
+            r"Latest published release: \*\*\[v([0-9]+\.[0-9]+\.[0-9]+)\]",
             readme,
         )
         self.assertIsNotNone(match)
@@ -74,7 +74,7 @@ class Qrex145DeadCodeRegressionTests(unittest.TestCase):
             f"releases/download/v{published_version}/android-history.png",
             readme,
         )
-        configured = re.search(r'versionName\\s*=\\s*"([0-9.]+)"', gradle)
+        configured = re.search(r'versionName\s*=\s*"([0-9.]+)"', gradle)
         self.assertIsNotNone(configured)
         self.assertLessEqual(
             tuple(map(int, published_version.split("."))),
