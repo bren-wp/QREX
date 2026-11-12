@@ -28,12 +28,8 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn("isShrinkResources = true", self.android)
         self.assertNotIn("android.r8.optimizedResourceShrinking=false", properties)
 
-    def test_release_workflow_uses_registered_agp9_unit_test_task(self):
-        # A missing Gradle task previously blocked a fully green CI build
-        # from publishing the signed GitHub-only APK/AAB.
-        release = (ROOT / ".github/workflows/github-release-1.0.46.yml").read_text(
-            "utf-8"
-        )
+    def test_generic_github_publisher_uses_registered_agp9_tasks(self):
+        release = (ROOT / ".github/workflows/github-release.yml").read_text("utf-8")
         ci = (ROOT / ".github/workflows/native-platforms.yml").read_text("utf-8")
         self.assertIn(":app:testDebugUnitTest", ci)
         self.assertIn(":app:testDebugUnitTest :app:lintRelease", release)
@@ -41,32 +37,17 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertIn(":app:assembleRelease :app:bundleRelease", release)
         self.assertIn("Require all 4 green exact-commit Android checks", release)
         self.assertIn("p03-stability.yml", release)
+        self.assertIn("needs.preflight.outputs.version", release)
         p03 = (ROOT / ".github/workflows/p03-stability.yml").read_text("utf-8")
         self.assertIn("  push:\n    branches: [main]", p03)
-        self.assertIn("QREX-Android-1.0.46-Play-UNSIGNED-QA.aab", release)
-        # Publisher must inspect the ACTUAL new Android versionCode, not the
-        # previous release's code. The v1.0.23 publisher once built correct
-        # packages and then failed only at this stale aapt badging assertion.
-        self.assertIn('= "com.brendigo.qrex 146 1.0.46"', release)
-        self.assertNotIn('= "com.brendigo.qrex 125 1.0.46"', release)
+        self.assertIn("QREX-Android-$RELEASE_VERSION-Play-UNSIGNED-QA.aab", release)
 
-    def test_github_publisher_requires_exact_android_identity(self):
-        # The 1.0.23 publisher once compiled and signed both packages but
-        # refused to publish because this check still demanded build 122.
-        # Resolve metadata from the real Android Gradle configuration so
-        # the publisher can never silently drift from the package under test.
-        import re
-        code = re.search(r"(?m)^\s*versionCode\s*=\s*(\d+)", self.android)
-        version = re.search(r'(?m)^\s*versionName\s*=\s*"([^"]+)"', self.android)
-        self.assertIsNotNone(code)
-        self.assertIsNotNone(version)
-        workflow = (
-            ROOT / ".github/workflows/github-release-1.0.46.yml"
-        ).read_text("utf-8")
-        self.assertIn(
-            f'com.brendigo.qrex {code.group(1)} {version.group(1)}', workflow
-        )
-        self.assertNotIn('com.brendigo.qrex 124 1.0.46', workflow)
+    def test_generic_publisher_validates_dynamic_android_identity(self):
+        release = (ROOT / ".github/workflows/github-release.yml").read_text("utf-8")
+        self.assertIn("com.brendigo.qrex $RELEASE_CODE $RELEASE_VERSION", release)
+        self.assertNotIn('com.brendigo.qrex 146 1.0.46', release)
+        self.assertIn("versionCode =", release)
+        self.assertIn("versionName =", release)
 
     def test_valid_repo_config(self):
         self.assertEqual(self.check(), [])
@@ -76,12 +57,12 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
     def test_published_version_code_is_rejected(self):
-        issues = self.check(android=self.android.replace("versionCode = 146", "versionCode = 145"))
-        self.assertTrue(any("published QREX build 145" in issue for issue in issues), issues)
+        issues = self.check(android=self.android.replace("versionCode = 147", "versionCode = 146"))
+        self.assertTrue(any("published QREX build 146" in issue for issue in issues), issues)
 
     def test_prerelease_version_metadata_is_rejected(self):
         issues = self.check(
-            android=self.android.replace('versionName = "1.0.46"', 'versionName = "0.2.4"')
+            android=self.android.replace('versionName = "1.0.47"', 'versionName = "0.2.4"')
         )
         self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
 

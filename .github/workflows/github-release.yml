@@ -237,6 +237,8 @@ jobs:
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
           ! gh release view v$RELEASE_VERSION --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
           ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v$RELEASE_VERSION" >/dev/null 2>&1
+          sed 's/^\\*\\*Status:\\*\\* GitHub publication must pass all checks before this version is marked released\\./**Status:** Published after passing exact-SHA CI and package verification gates./' \
+            "docs/releases/v$RELEASE_VERSION.md" > "$RUNNER_TEMP/qrex-published-release-notes.md"
           gh release create v$RELEASE_VERSION \
             production/QREX-Android-$RELEASE_VERSION.apk \
             production/QREX-Android-$RELEASE_VERSION.aab \
@@ -245,7 +247,7 @@ jobs:
             production/android-*.png \
             --repo "$GITHUB_REPOSITORY" --target "$RELEASE_SHA" \
             --title "QREX $RELEASE_VERSION — Android GitHub release" \
-            --notes-file docs/releases/v$RELEASE_VERSION.md --latest
+            --notes-file "$RUNNER_TEMP/qrex-published-release-notes.md" --latest
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$RELEASE_VERSION" |
             jq -e --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" '
               .tag_name == ("v" + $version) and .target_commitish == $sha
@@ -260,3 +262,41 @@ jobs:
                   "android-about.png", "android-privacy.png"] | sort)
               and all(.assets[]; .size > 0)
             ' >/dev/null
+
+  docs_after_publication:
+    name: Synchronize actual published release documents on main
+    needs: [preflight, release]
+    if: ${{ needs.release.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      RELEASE_VERSION: ${{ needs.preflight.outputs.version }}
+      RELEASE_CODE: ${{ needs.preflight.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: true
+      - name: Advance README and release index after live GitHub asset verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$RELEASE_VERSION" |
+            jq -e --arg sha "$RELEASE_SHA" '.target_commitish == $sha and .draft == false and .prerelease == false and (.assets | length) == 16' >/dev/null
+          previous="$(sed -n 's/.*Latest published release: \\*\\*\\[v\\([0-9.]*\\)\\].*/\\1/p' README.md | head -1)"
+          [[ "$previous" =~ ^1\\.0\\.[0-9]+$ ]]
+          python3 tool/sync_published_release.py "$previous" "$RELEASE_VERSION" "$RELEASE_CODE" "$RELEASE_SHA"
+          python3 -m unittest discover -s tool -p 'test_*.py'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md RELEASE_NOTES.md docs/releases/INDEX.md "docs/releases/v$RELEASE_VERSION.md"
+          git diff --cached --quiet || {
+            git commit -m "docs(QREX): verify v$RELEASE_VERSION published assets and screenshots"
+            test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
+            git push origin HEAD:main
+          }

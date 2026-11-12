@@ -14,9 +14,12 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 TOOLS_NS = "http://schemas.android.com/tools"
 APP_ID = "com.brendigo.qrex"
-LAST_PUBLISHED_NATIVE_BUILD_CODE = 145
-PRODUCTION_VERSION = "1.0.46"
-PRODUCTION_BUILD_CODE = 146
+def latest_published_version() -> str | None:
+    # The README names only an actually released GitHub version. Candidates
+    # can advance versionCode without misrepresenting unpublished binaries.
+    text = (ROOT / "README.md").read_text("utf-8")
+    match = re.search(r"Latest published release: \\*\\*\\[v(1\\.0\\.\\d+)\\]", text)
+    return match.group(1) if match else None
 
 
 def field(source: str, name: str) -> str | None:
@@ -34,12 +37,19 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
         issues.append("Android application ID unexpectedly changed")
     code = field(android_gradle, "versionCode")
     version = field(android_gradle, "versionName")
-    if not code or not code.isdecimal() or int(code) <= LAST_PUBLISHED_NATIVE_BUILD_CODE:
-        issues.append(
-            f"Android versionCode must advance beyond published QREX build "
-            f"{LAST_PUBLISHED_NATIVE_BUILD_CODE}")
-    if version != PRODUCTION_VERSION or code != str(PRODUCTION_BUILD_CODE):
-        issues.append("Production candidate must be QREX 1.0.46 / build 146")
+    published = latest_published_version()
+    if published is None:
+        issues.append("Missing published QREX version baseline in README")
+    elif not code or not code.isdecimal():
+        issues.append("Android versionCode must be numeric")
+    else:
+        published_code = 100 + int(published.split(".")[-1])
+        # A published source revision remains valid for documentation-only CI.
+        # A new candidate must advance the code and the matching version name.
+        if int(code) < published_code or (int(code) == published_code and version != published):
+            issues.append(f"Android versionCode must advance beyond published QREX build {published_code}")
+    if not code or not code.isdecimal() or int(code) < 100 or version != f"1.0.{int(code) - 100}":
+        issues.append("Production candidate versionName must match its Android versionCode")
     try:
         root = ET.fromstring(android_manifest)
         app = root.find("application")

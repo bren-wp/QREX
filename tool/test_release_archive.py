@@ -17,8 +17,8 @@ class ArchivedPublisherTests(unittest.TestCase):
         patch = int(version.group(1)) - 100
         self.assertGreaterEqual(patch, 44)
         self.assertIn(f'versionName = "1.0.{patch}"', gradle)
-        self.assertEqual([f"github-release-1.0.{patch}.yml"],
-                         sorted(p.name for p in ACTIVE.glob("github-release-1.0.*.yml")))
+        self.assertEqual([], sorted(p.name for p in ACTIVE.glob("github-release-1.0.*.yml")))
+        self.assertTrue((ACTIVE / "github-release.yml").is_file())
         expected = {f"github-release-1.0.{n}.yml" for n in range(1, patch)}
         self.assertEqual(expected, {p.name for p in ARCHIVE.glob("github-release-1.0.*.yml")})
         for name in sorted(expected):
