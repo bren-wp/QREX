@@ -43,8 +43,14 @@ class QREXCreateReferenceTest {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
         await("qrex-create-content")
-        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
-            .performTextReplacement("https://brendigo.com")
+        val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+        input.performTextReplacement("https://brendigo.com")
+        // Measure the *intrinsic* 48dp tap target with the IME dismissed.
+        // The input method can temporarily resize and cover the scroll
+        // viewport on API 35+, which is not a measurement of the icon itself.
+        // A separate test still presses the real icon and asserts clearing.
+        input.performImeAction()
+        rule.waitForIdle()
         await("qrex-create-clear-url")
         val clear = rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
             .assertIsDisplayed()
