@@ -61,7 +61,7 @@ class QREXCoreTest {
             "javascript:alert(1)",
             "https://example.org/\nX-Evil: injected"
         )) {
-            assertNull("Unexpected web URL: " + raw, QRContent.safeUrl(raw))
+            assertFalse("Unexpected web URL: " + raw, QRContent.safeWebUrlSyntax(raw))
         }
     }
 
@@ -74,7 +74,7 @@ class QREXCoreTest {
             "http://127.0.0.1:8080/",
             "https://[2001:db8::1]:443/"
         )) {
-            assertNotNull("Valid web URL rejected: " + raw, QRContent.safeUrl(raw))
+            assertTrue("Valid web URL rejected: " + raw, QRContent.safeWebUrlSyntax(raw))
         }
     }
 

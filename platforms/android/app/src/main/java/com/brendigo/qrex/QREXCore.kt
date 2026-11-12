@@ -299,51 +299,57 @@ object QRContent {
     }
 
     /**
-     * Parse web QR destinations as untrusted input. Android Uri is convenient
-     * for dispatch, but accepts malformed port strings on some platform
-     * versions. java.net.URI rejects malformed syntax before the Intent is
-     * constructed. Unicode IDN hosts remain supported via IDN validation.
+     * Strict, platform-independent URL syntax gate for untrusted QR content.
+     * Keep this separate from Android Uri so malformed input is covered by
+     * ordinary JVM tests as well as connected Android instrumented tests.
+     * Unicode IDN domains are validated without silently rewriting the URL.
      */
-    fun safeUrl(raw: String): Uri? {
+    internal fun safeWebUrlSyntax(raw: String): Boolean {
         if (raw.length !in 1..10000 || raw != raw.trim() ||
-            raw.any { it.isWhitespace() || it.isISOControl() || it.code == 92 }) return null
+            raw.any { it.isWhitespace() || it.isISOControl() || it.code == 92 }) return false
         return runCatching {
             val strict = java.net.URI(raw)
-            val uri = Uri.parse(raw)
-            val authority = strict.rawAuthority ?: return@runCatching null
-            val host = uri.host ?: return@runCatching null
-            if (uri.scheme?.lowercase() !in setOf("http", "https") ||
-                strict.scheme?.lowercase(Locale.ROOT) != uri.scheme?.lowercase(Locale.ROOT) ||
-                uri.host.isNullOrBlank() || uri.isOpaque ||
-                strict.rawUserInfo != null || authority.contains('@') ||
-                authority.contains('%') || (uri.encodedAuthority?.contains("@") == true)) {
-                return@runCatching null
-            }
-            // Reject strings such as :http, :0, :65536, :443:444 and empty
-            // ports. For IPv6 the separator may only follow the closing ].
-            val portSeparator = if (authority.startsWith("[")) {
+            if (strict.scheme?.lowercase(Locale.ROOT) !in setOf("http", "https") ||
+                strict.isOpaque || strict.rawUserInfo != null) return@runCatching false
+            val authority = strict.rawAuthority ?: return@runCatching false
+            if ('@' in authority || '%' in authority) return@runCatching false
+            // Avoid Android Uri interpreting nonnumeric or out-of-range ports
+            // as a host with an unrecognized/default port.
+            val host: String
+            val portText: String?
+            if (authority.startsWith("[")) {
                 val bracketEnd = authority.indexOf(']')
-                if (bracketEnd < 0 || strict.host == null) return@runCatching null
-                if (bracketEnd == authority.lastIndex) -1
-                else if (authority.getOrNull(bracketEnd + 1) == ':') bracketEnd + 1
-                else return@runCatching null
-            } else authority.indexOf(':')
-            if (portSeparator >= 0) {
-                val portText = authority.substring(portSeparator + 1)
-                val port = portText.toIntOrNull()
-                if (portText.isEmpty() || portText.any { !it.isDigit() } ||
-                    port == null || port !in 1..65535 || uri.port != port) {
-                    return@runCatching null
+                if (bracketEnd < 0 || strict.host == null) return@runCatching false
+                host = authority.substring(0, bracketEnd + 1)
+                portText = when {
+                    bracketEnd == authority.lastIndex -> null
+                    authority.getOrNull(bracketEnd + 1) == ':' ->
+                        authority.substring(bracketEnd + 2)
+                    else -> return@runCatching false
                 }
+            } else {
+                val colon = authority.lastIndexOf(':')
+                host = if (colon >= 0) authority.substring(0, colon) else authority
+                portText = if (colon >= 0) authority.substring(colon + 1) else null
+                if (':' in host) return@runCatching false
             }
-            if (!authority.startsWith("[")) {
-                val asciiHost = java.net.IDN.toASCII(host, java.net.IDN.USE_STD3_ASCII_RULES)
-                if (asciiHost.length !in 1..253 ||
-                    asciiHost.split('.').any { it.length !in 1..63 }) {
-                    return@runCatching null
-                }
+            if (portText != null && (portText.isEmpty() ||
+                portText.any { !it.isDigit() } || portText.toIntOrNull() !in 1..65535)) {
+                return@runCatching false
             }
-            uri
+            if (authority.startsWith("[")) return@runCatching strict.host != null
+            val asciiHost = java.net.IDN.toASCII(host, java.net.IDN.USE_STD3_ASCII_RULES)
+            asciiHost.length in 1..253 && asciiHost.split('.').all { it.length in 1..63 }
+        }.getOrDefault(false)
+    }
+
+    /** Dispatch validation is independent from the initial scanner result UI. */
+    fun safeUrl(raw: String): Uri? {
+        if (!safeWebUrlSyntax(raw)) return null
+        return runCatching {
+            val uri = Uri.parse(raw)
+            if (uri.scheme?.lowercase() !in setOf("http", "https") ||
+                uri.host.isNullOrBlank() || (uri.encodedAuthority?.contains("@") == true)) null else uri
         }.getOrNull()
     }
 
