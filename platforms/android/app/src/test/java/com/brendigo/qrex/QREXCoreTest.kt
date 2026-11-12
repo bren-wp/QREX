@@ -45,6 +45,39 @@ class QREXCoreTest {
         assertNull(QRHistory.preview("Arbitrary private note"))
     }
 
+    @Test fun untrustedWebQrRejectsInvalidPortsAndHiddenAuthorityCharacters() {
+        for (raw in listOf(
+            "https://example.org:bad/path",
+            "https://example.org:/path",
+            "https://example.org:0/path",
+            "https://example.org:65536/path",
+            "https://example.org:443:444/path",
+            "https://%65xample.org/path",
+            "https://user:password@example.org/",
+            "https://example.org@other.example/",
+            "https://bad..example.org/path",
+            "https://example.org\\\\evil.example/path",
+            "file:///private/data",
+            "javascript:alert(1)",
+            "https://example.org/\nX-Evil: injected"
+        )) {
+            assertNull("Unexpected web URL: " + raw, QRContent.safeUrl(raw))
+        }
+    }
+
+    @Test fun untrustedWebQrKeepsValidLinksAndInternationalizedDomains() {
+        for (raw in listOf(
+            "https://brendigo.com",
+            "HTTPS://example.org:443/path?key=value#fragment",
+            "https://xn--bcher-kva.example/path",
+            "https://bücher.example/path",
+            "http://127.0.0.1:8080/",
+            "https://[2001:db8::1]:443/"
+        )) {
+            assertNotNull("Valid web URL rejected: " + raw, QRContent.safeUrl(raw))
+        }
+    }
+
     @Test fun languageChoicesContainEnglishAndCroatian() {
         assertEquals(23, QREXStrings.languages.size)
         assertEquals("en", QREXStrings.languages.first())
