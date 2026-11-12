@@ -47,7 +47,7 @@ class ReleaseIntegrityTests(unittest.TestCase):
         self.assertIn("commits/main", gate)
         self.assertIn("completed:success", gate)
         self.assertIn("needs: verify", play)
-        self.assertIn("QREX-Android-${{ inputs.version }}.aab", play)
+        self.assertIn("QREX-Android-${{ needs.verify.outputs.version }}.aab", play)
         self.assertIn("QREX_UPLOAD_KEYSTORE_BASE64", signer)
         self.assertIn("QREX_UPLOAD_CERT_SHA256", signer)
         self.assertIn("keytool -printcert -jarfile", signer)

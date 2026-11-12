@@ -62,7 +62,7 @@ class AndroidCodeAuditTests(unittest.TestCase):
         public = (ROOT / "docs/releases/workflows/github-release-1.0.1.yml").read_text("utf-8")
         for required in ("QREX_UPLOAD_CERT_SHA256", "QREX_UPLOAD_KEYSTORE_BASE64",
                          "environment: production", "RELEASE_VERSION",
-                         "production/QREX-Android-${{ inputs.version }}.aab"):
+                         "production/QREX-Android-${{ needs.verify.outputs.version }}.aab"):
             self.assertIn(required, play)
         self.assertNotIn("keytool -genkeypair", play)
         self.assertIn("keytool -genkeypair", public)
