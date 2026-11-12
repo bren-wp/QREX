@@ -8,9 +8,12 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -36,8 +39,16 @@ class QREXResultLayoutTest {
                     .fetchSemanticsNodes().isNotEmpty()
             }
             rule.onNodeWithTag("qrex-tab-1").performClick()
-            rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
-                .performTextReplacement(raw)
+            val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            input.performTextReplacement(raw)
+            // The Result has no editor; complete the actual IME transaction
+            // before measuring visible bounds. API 26's keyboard animation
+            // may outlive the Compose recomposition that reveals Result.
+            input.performImeAction()
+            rule.waitUntil(timeoutMillis = 10_000L) {
+                ViewCompat.getRootWindowInsets(rule.activity.window.decorView)
+                    ?.isVisible(WindowInsetsCompat.Type.ime()) != true
+            }
             rule.waitUntil(timeoutMillis = 20_000L) {
                 runCatching {
                     rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
@@ -101,40 +112,68 @@ class QREXResultLayoutTest {
             .assertIsDisplayed()
     }
 
-    @Test fun resultPrimaryFavoriteAndDeleteRemainReachable() = withPersistedResult {
+    @Test fun resultPrimaryActionFitsVisibleViewport() = withPersistedResult {
         val viewport = rule.onNodeWithTag(
             "qrex-result-screen", useUnmergedTree = true
         ).getUnclippedBoundsInRoot()
-        val open = rule.onNodeWithTag(
+        val primary = rule.onNodeWithTag(
             "qrex-result-primary", useUnmergedTree = true
         ).assertIsDisplayed().getUnclippedBoundsInRoot()
         assertTrue("Primary action must fit inside Result viewport",
-            open.bottom <= viewport.bottom)
+            primary.bottom <= viewport.bottom)
+    }
 
-        // Check 'without scrolling' before any performScrollTo moves the
-        // content. The previous combined test measured after scrolling.
-        val config = rule.activity.resources.configuration
-        if (config.screenWidthDp >= 360 && config.screenHeightDp >= 650 &&
-            config.fontScale <= 1.15f) {
-            val deleteAtRest = rule.onNodeWithTag(
-                "qrex-result-delete", useUnmergedTree = true
-            ).getUnclippedBoundsInRoot()
-            val bottomNav = rule.onNodeWithTag(
-                "qrex-bottom-navigation", useUnmergedTree = true
-            ).getUnclippedBoundsInRoot()
-            assertTrue("Delete must fit above the bottom navigation without scrolling",
-                deleteAtRest.bottom <= bottomNav.top)
-        }
+    @Test fun resultFavoriteRemainsReachableAboveBottomNavigation() = withPersistedResult {
         val favorite = rule.onNodeWithTag(
             "qrex-result-save-favorite", useUnmergedTree = true
         ).performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-        val activeViewport = rule.onNodeWithTag(
+        val viewport = rule.onNodeWithTag(
             "qrex-result-screen", useUnmergedTree = true
         ).getUnclippedBoundsInRoot()
+        val nav = rule.onNodeWithTag(
+            "qrex-bottom-navigation", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
         assertTrue("Favorite must stay inside Result viewport",
-            favorite.bottom <= activeViewport.bottom)
-        rule.onNodeWithTag("qrex-result-delete", useUnmergedTree = true)
-            .performScrollTo().assertIsDisplayed()
+            favorite.bottom <= viewport.bottom)
+        assertTrue("Favorite must not be covered by the bottom navigation",
+            favorite.bottom <= nav.top)
+    }
+
+    @Test fun resultDeleteIsReachableAndFitsAtRestOnTallViewports() = withPersistedResult {
+        val viewport = rule.onNodeWithTag(
+            "qrex-result-screen", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        val nav = rule.onNodeWithTag(
+            "qrex-bottom-navigation", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        val config = rule.activity.resources.configuration
+
+        // ScreenHeightDp includes areas consumed by platform/system bars
+        // and can differ from the actual Compose viewport on API 26.
+        // Require the at-rest match where the real viewport has enough
+        // room for the 156dp card, 54dp primary, five >=48dp action rows,
+        // spacing and the fixed 56dp Result header.
+        if (config.screenWidthDp >= 360 && config.fontScale <= 1.15f &&
+            viewport.bottom - viewport.top >= 550.dp) {
+            val atRest = rule.onNodeWithTag(
+                "qrex-result-delete", useUnmergedTree = true
+            ).getUnclippedBoundsInRoot()
+            assertTrue("Delete must fit above navigation without scrolling on tall screens",
+                atRest.bottom <= nav.top)
+        }
+
+        // On compact devices, the content is intentionally scrollable;
+        // never allow the bottom bar to hide or intercept Delete.
+        val delete = rule.onNodeWithTag(
+            "qrex-result-delete", useUnmergedTree = true
+        ).performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
+        val visibleViewport = rule.onNodeWithTag(
+            "qrex-result-screen", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        assertTrue("Delete must stay within the Result viewport",
+            delete.bottom <= visibleViewport.bottom)
+        assertTrue("Delete must not be covered by the bottom navigation",
+            delete.bottom <= nav.top)
     }
 
     @Test fun resultOverflowEditReturnsToTheWorkingCreateField() = withPersistedResult {
