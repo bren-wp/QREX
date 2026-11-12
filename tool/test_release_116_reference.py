@@ -25,9 +25,10 @@ class Production116ReferenceTests(unittest.TestCase):
         patch = self.current_patch()
         archived = ROOT / "docs/releases/workflows"
         self.assertEqual(
-            [f"github-release-1.0.{patch}.yml"], sorted(p.name for p in WORKFLOWS.glob("github-release-1.0.*.yml")),
-            "No already-published version must trigger on future main pushes"
+            [], sorted(p.name for p in WORKFLOWS.glob("github-release-1.0.*.yml")),
+            "All published version-specific workflows must be archived"
         )
+        self.assertTrue((WORKFLOWS / "github-release.yml").is_file())
         for minor in range(1, patch):
             src = (archived / f"github-release-1.0.{minor}.yml").read_text("utf-8")
             with self.subTest(version=minor):
