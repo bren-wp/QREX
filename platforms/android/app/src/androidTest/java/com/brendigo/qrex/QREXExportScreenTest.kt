@@ -68,12 +68,14 @@ class QREXExportScreenTest {
         rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
     }
 
+
     @Test
-    fun savedPdfRequiresExplicitConsentAndCancelRetainsAllHistory() {
+    fun creatingQrAndSavingFavoriteMakesPdfAvailable() {
+        // Keep the real Create → Result → Save flow independently tested.
+        // PDF consent must not silently pass because Create navigation worked.
         val context = rule.activity.applicationContext
-        val host = "qrex-export-${System.nanoTime().toString().removePrefix("-")}.example.org"
+        val host = "qrex-create-favorite-${System.nanoTime().toString().removePrefix("-")}.example.org"
         val raw = "https://$host/test"
-        val before = QREXStore(context).items.map { it.raw }
         try {
             awaitTag("qrex-tab-1")
             rule.onNodeWithTag("qrex-tab-1").performClick()
@@ -91,14 +93,54 @@ class QREXExportScreenTest {
             awaitTag("qrex-result-save-favorite")
             rule.onNodeWithTag("qrex-result-save-favorite", useUnmergedTree = true)
                 .performScrollTo().performClick()
-            // The standalone Result reference deliberately hides bottom tabs.
-            // Return via its real Back action before opening More → Export.
+
+            // A real saved favorite must be durably committed before navigating.
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                QREXStore(context).items.any { it.raw == raw && it.saved }
+            }
             rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
                 .assertIsDisplayed().performClick()
             awaitTag("qrex-tab-4")
             openExport()
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                runCatching {
+                    rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
+                        .assertIsEnabled()
+                }.isSuccess
+            }
             rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
-                .assertIsEnabled().performClick()
+                .assertIsDisplayed().assertIsEnabled()
+        } finally {
+            val store = QREXStore(context)
+            store.items.firstOrNull { it.raw == raw }?.let { record ->
+                assertTrue("remove only synthetic Create favorite", store.remove(record))
+            }
+        }
+    }
+
+    @Test
+    fun savedPdfRequiresExplicitConsentAndCancelRetainsAllHistory() {
+        // Seed the actual production store, not a fake PDF or screenshot.
+        // Recreate the Activity so its observable store sees the saved entry.
+        // This isolates PDF consent/cancel from unrelated Create/IME navigation.
+        val context = rule.activity.applicationContext
+        val host = "qrex-export-${System.nanoTime().toString().removePrefix("-")}.example.org"
+        val raw = "https://$host/test"
+        val before = QREXStore(context).items.map { it.raw }
+        try {
+            assertTrue("synthetic favorite must persist", QREXStore(context).save(raw))
+            rule.activityRule.scenario.recreate()
+            awaitTag("qrex-tab-4")
+            openExport()
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                runCatching {
+                    rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
+                        .assertIsEnabled()
+                }.isSuccess
+            }
+            rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
+                .assertIsDisplayed().assertIsEnabled().performClick()
+            awaitTag("qrex-export-consent")
             rule.onNodeWithTag("qrex-export-consent", useUnmergedTree = true)
                 .assertIsDisplayed()
             for (tag in listOf("qrex-export-consent-confirm",
@@ -110,6 +152,10 @@ class QREXExportScreenTest {
             }
             rule.onNodeWithTag("qrex-export-consent-cancel", useUnmergedTree = true)
                 .assertIsDisplayed().performClick()
+            rule.waitUntil(timeoutMillis = 10_000L) {
+                rule.onAllNodesWithTag("qrex-export-consent", useUnmergedTree = true)
+                    .fetchSemanticsNodes().isEmpty()
+            }
             rule.onAllNodesWithTag("qrex-export-consent", useUnmergedTree = true)
                 .assertCountEquals(0)
             rule.onNodeWithTag("qrex-export-screen").assertIsDisplayed()
@@ -118,12 +164,13 @@ class QREXExportScreenTest {
                 after.containsAll(before))
             assertEquals("only synthetic record should have been added",
                 before.size + 1, after.size)
+            assertTrue("cancel must not delete saved favorite", after.contains(raw))
         } finally {
             val store = QREXStore(context)
-            val testRecord = store.items.firstOrNull { it.raw == raw }
-            if (testRecord != null) {
-                assertTrue("remove only test record", store.remove(testRecord))
+            store.items.firstOrNull { it.raw == raw }?.let { record ->
+                assertTrue("remove only synthetic PDF favorite", store.remove(record))
             }
         }
     }
+
 }
