@@ -18,7 +18,7 @@ def latest_published_version() -> str | None:
     # The README names only an actually released GitHub version. Candidates
     # can advance versionCode without misrepresenting unpublished binaries.
     text = (ROOT / "README.md").read_text("utf-8")
-    match = re.search(r"Latest published release: \\*\\*\\[v(1\\.0\\.\\d+)\\]", text)
+    match = re.search(r"Latest published release: .+?v(1[.]0[.][0-9]+)", text)
     return match.group(1) if match else None
 
 

@@ -237,7 +237,7 @@ jobs:
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
           ! gh release view v$RELEASE_VERSION --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1
           ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v$RELEASE_VERSION" >/dev/null 2>&1
-          sed 's/^\\*\\*Status:\\*\\* GitHub publication must pass all checks before this version is marked released\\./**Status:** Published after passing exact-SHA CI and package verification gates./' \
+          sed 's/GitHub publication must pass all checks before this version is marked released./Published after passing exact-SHA CI and package verification gates./' \
             "docs/releases/v$RELEASE_VERSION.md" > "$RUNNER_TEMP/qrex-published-release-notes.md"
           gh release create v$RELEASE_VERSION \
             production/QREX-Android-$RELEASE_VERSION.apk \
@@ -288,8 +288,8 @@ jobs:
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$RELEASE_VERSION" |
             jq -e --arg sha "$RELEASE_SHA" '.target_commitish == $sha and .draft == false and .prerelease == false and (.assets | length) == 16' >/dev/null
-          previous="$(sed -n 's/.*Latest published release: \\*\\*\\[v\\([0-9.]*\\)\\].*/\\1/p' README.md | head -1)"
-          [[ "$previous" =~ ^1\\.0\\.[0-9]+$ ]]
+          previous="$(grep -m1 'Latest published release:' README.md | grep -oE 'v1[.]0[.][0-9]+' | head -1 | cut -c2-)"
+          [[ "$previous" =~ ^1[.]0[.][0-9]+$ ]]
           python3 tool/sync_published_release.py "$previous" "$RELEASE_VERSION" "$RELEASE_CODE" "$RELEASE_SHA"
           python3 -m unittest discover -s tool -p 'test_*.py'
           git config user.name "github-actions[bot]"
