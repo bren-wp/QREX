@@ -35,6 +35,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -100,6 +101,7 @@ import java.time.format.DateTimeFormatter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -1455,7 +1457,14 @@ private fun CreateScreen(
                 trailingIcon = {
                     if (content.isNotEmpty() && kind == 0) {
                         IconButton(
-                            onClick = { content = "" },
+                            onClick = {
+                                // End the current IME edit session before clearing.
+                                // Android 15/16 can deliver a pending edit event
+                                // after a trailing-icon tap otherwise.
+                                keyboardController?.hide()
+                                focusManager.clearFocus(force = true)
+                                content = ""
+                            },
                             modifier = Modifier.size(48.dp)
                                 .testTag("qrex-create-clear-url")
                         ) {
@@ -1465,11 +1474,18 @@ private fun CreateScreen(
                         }
                     }
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = when (kind) {
-                    0 -> KeyboardType.Uri
-                    3 -> KeyboardType.Email
-                    4 -> KeyboardType.Phone
-                    else -> KeyboardType.Text
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = when (kind) {
+                        0 -> KeyboardType.Uri
+                        3 -> KeyboardType.Email
+                        4 -> KeyboardType.Phone
+                        else -> KeyboardType.Text
+                    },
+                    imeAction = if (kind == 0) ImeAction.Done else ImeAction.Default
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus(force = true)
                 })
             )
             if (kind == 2) {

@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
@@ -26,32 +27,49 @@ class QREXCreateReferenceTest {
         }
     }
 
-    @Test fun urlClearGlyphRemovesActualDraftWithoutNavigation() {
+    // Keeping these checks separate makes API-specific failures actionable
+    // without exposing typed QR values or JUnit exception messages in CI.
+    @Test fun urlFieldHasLocalizedAccessibleName() {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
         await("qrex-create-content")
-
         val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
         val label = input.fetchSemanticsNode().config[SemanticsProperties.ContentDescription]
         assertTrue("URL field requires a localized accessible name",
             label.isNotEmpty() && label.first().isNotBlank())
-        // Android 15/16 can defer composing IME events past the next tap.
-        // Replace the editable text through Compose semantics, as the other
-        // functional Create tests do, then exercise the *real* clear button.
-        input.performTextReplacement("https://brendigo.com")
-        rule.waitUntil(timeoutMillis = 10_000L) {
-            rule.onAllNodesWithTag("qrex-create-clear-url", useUnmergedTree = true)
-                .fetchSemanticsNodes().isNotEmpty()
-        }
-        input.assertTextEquals("https://brendigo.com")
+    }
+
+    @Test fun urlClearGlyphHasAccessible48DpTouchTarget() {
+        await("qrex-tab-1")
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        await("qrex-create-content")
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://brendigo.com")
+        await("qrex-create-clear-url")
         val clear = rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
             .assertIsDisplayed()
         val hit = clear.getUnclippedBoundsInRoot()
         assertTrue("Clear URL icon has inadequate width", hit.right - hit.left >= 48.dp)
         assertTrue("Clear URL icon has inadequate height", hit.bottom - hit.top >= 48.dp)
+    }
 
-        clear.performClick()
-        // Verify state actually changed, not just that the icon received a tap.
+    @Test fun urlClearGlyphRemovesActualDraftWithoutNavigation() {
+        await("qrex-tab-1")
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        await("qrex-create-content")
+        val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+
+        // Exercise the real text editor and its Done IME action before the
+        // physical clear tap; do not synthesize a state mutation in the test.
+        input.performTextReplacement("https://brendigo.com")
+        await("qrex-create-clear-url")
+        input.performImeAction()
+        rule.waitForIdle()
+        rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
+            .assertIsDisplayed().performClick()
+
+        // This only passes when the actual URL field becomes empty and
+        // the generate action stops accepting a now-empty payload.
         rule.waitUntil(timeoutMillis = 10_000L) {
             rule.onAllNodesWithTag("qrex-create-clear-url", useUnmergedTree = true)
                 .fetchSemanticsNodes().isEmpty()
