@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextReplacement
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertTrue
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -39,24 +41,49 @@ class QREXCreateReferenceTest {
             label.isNotEmpty() && label.first().isNotBlank())
     }
 
-    @Test fun urlClearGlyphHasAccessible48DpTouchTarget() {
+    /**
+     * The Android 15 emulator uses a different IME inset lifecycle from the
+     * older matrix entries. Finish the actual edit and wait for the keyboard
+     * to stop occluding the TextField before evaluating the clear icon.
+     * Dedicated test names keep the public P03 report privacy-safe but precise.
+     */
+    private fun prepareClearUrlTouchTarget() {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
         await("qrex-create-content")
         val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
         input.performTextReplacement("https://brendigo.com")
-        // Measure the *intrinsic* 48dp tap target with the IME dismissed.
-        // The input method can temporarily resize and cover the scroll
-        // viewport on API 35+, which is not a measurement of the icon itself.
-        // A separate test still presses the real icon and asserts clearing.
         input.performImeAction()
+        rule.waitUntil(timeoutMillis = 15_000L) {
+            ViewCompat.getRootWindowInsets(rule.activity.window.decorView)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) != true
+        }
         rule.waitForIdle()
         await("qrex-create-clear-url")
-        val clear = rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
+    }
+
+    @Test fun urlClearGlyphRemainsVisibleAfterImeDone() {
+        prepareClearUrlTouchTarget()
+        rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
             .assertIsDisplayed()
-        val hit = clear.getUnclippedBoundsInRoot()
-        assertTrue("Clear URL icon has inadequate width", hit.right - hit.left >= 48.dp)
-        assertTrue("Clear URL icon has inadequate height", hit.bottom - hit.top >= 48.dp)
+    }
+
+    @Test fun urlClearGlyphHasAtLeast48DpWidth() {
+        prepareClearUrlTouchTarget()
+        val hit = rule.onNodeWithTag(
+            "qrex-create-clear-url", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        assertTrue("Clear URL touch target must be >=48dp wide",
+            hit.right - hit.left >= 48.dp)
+    }
+
+    @Test fun urlClearGlyphHasAtLeast48DpHeight() {
+        prepareClearUrlTouchTarget()
+        val hit = rule.onNodeWithTag(
+            "qrex-create-clear-url", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        assertTrue("Clear URL touch target must be >=48dp tall",
+            hit.bottom - hit.top >= 48.dp)
     }
 
     @Test fun urlClearGlyphRemovesActualDraftWithoutNavigation() {

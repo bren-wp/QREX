@@ -1465,7 +1465,10 @@ private fun CreateScreen(
                                 focusManager.clearFocus(force = true)
                                 content = ""
                             },
-                            modifier = Modifier.size(48.dp)
+                            // Keep the 24dp glyph unchanged but provide a
+                            // reliable 52dp Compose hit region at all
+                            // Android densities (minimum 48dp accessible).
+                            modifier = Modifier.size(52.dp)
                                 .testTag("qrex-create-clear-url")
                         ) {
                             Icon(Icons.Default.Cancel,
