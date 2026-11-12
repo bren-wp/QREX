@@ -19,28 +19,51 @@ import org.junit.Test
 class QREXResultLayoutTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
-    @Test fun resultRetainsReferenceNavigationAndAllFunctionalActions() {
-        rule.waitUntil(timeoutMillis = 20_000L) {
-            rule.onAllNodesWithTag("qrex-tab-1", useUnmergedTree = true)
-                .fetchSemanticsNodes().isNotEmpty()
+    /**
+     * Every UI check starts with a real persisted favorite. Result Delete is
+     * intentionally hidden for QR codes that are not in History; relying on
+     * history recording being enabled makes tests order-dependent.
+     */
+    private fun withPersistedResult(assertions: () -> Unit) {
+        val context = rule.activity.applicationContext
+        val raw = "https://qrex-result-${System.nanoTime().toString().removePrefix("-")}.example.org/test"
+        assertTrue("Test QR must be saved", QREXStore(context).save(raw))
+        try {
+            // The Activity's store is lazy and must reload the persisted seed.
+            rule.activityRule.scenario.recreate()
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                rule.onAllNodesWithTag("qrex-tab-1", useUnmergedTree = true)
+                    .fetchSemanticsNodes().isNotEmpty()
+            }
+            rule.onNodeWithTag("qrex-tab-1").performClick()
+            rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+                .performTextReplacement(raw)
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                runCatching {
+                    rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
+                        .assertIsEnabled()
+                }.isSuccess
+            }
+            rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
+                .performClick()
+            rule.waitUntil(timeoutMillis = 20_000L) {
+                rule.onAllNodesWithTag("qrex-result-summary", useUnmergedTree = true)
+                    .fetchSemanticsNodes().isNotEmpty()
+            }
+            assertions()
+        } finally {
+            // Do not clear real History, and never leak the synthetic favorite.
+            val store = QREXStore(context)
+            store.items.firstOrNull { it.raw == raw }?.let { record ->
+                assertTrue("Only synthetic Result record may be removed",
+                    store.remove(record))
+            }
         }
-        rule.onNodeWithTag("qrex-tab-1").performClick()
-        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
-            .performTextReplacement("https://example.org/qrex/layout-test")
-        rule.waitUntil(timeoutMillis = 20_000L) {
-            runCatching {
-                rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
-                    .assertIsEnabled()
-            }.isSuccess
-        }
-        rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true).performClick()
-        rule.waitUntil(timeoutMillis = 20_000L) {
-            rule.onAllNodesWithTag("qrex-result-summary", useUnmergedTree = true)
-                .fetchSemanticsNodes().isNotEmpty()
-        }
+    }
 
-        // The latest supplied Result reference has the same five bottom tabs.
-        // Their selected page tracks the actual source of the QR result.
+    @Test fun resultNavigationHasFiveFunctionalVisibleTabs() = withPersistedResult {
+        // The Result screen has the same five live bottom tabs, and the
+        // selected state still tracks its originating Create destination.
         rule.onNodeWithTag("qrex-bottom-navigation", useUnmergedTree = true)
             .assertIsDisplayed()
         for (index in 0..4) {
@@ -48,7 +71,9 @@ class QREXResultLayoutTest {
                 .assertIsDisplayed()
         }
         rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
+    }
 
+    @Test fun resultSummaryGlyphAndOriginFitReferenceViewport() = withPersistedResult {
         val card = rule.onNodeWithTag(
             "qrex-result-summary", useUnmergedTree = true
         ).assertIsDisplayed().getUnclippedBoundsInRoot()
@@ -59,8 +84,6 @@ class QREXResultLayoutTest {
             glyph.top >= card.top && glyph.bottom <= card.bottom)
         assertTrue("Summary must fit the reference-style compact layout",
             card.bottom - card.top <= 260.dp)
-        // On wide Android windows the Result remains a centered, phone-like
-        // readable panel; on small phones it still fills the available width.
         val viewport = rule.onNodeWithTag(
             "qrex-result-screen", useUnmergedTree = true
         ).getUnclippedBoundsInRoot()
@@ -71,26 +94,25 @@ class QREXResultLayoutTest {
                 (card.left.value + card.right.value) -
                     (viewport.left.value + viewport.right.value)
             )
-            assertTrue("Tablet result panel must be horizontally centered", centerDelta < 4f)
+            assertTrue("Tablet result panel must be horizontally centered",
+                centerDelta < 4f)
         }
+        rule.onNodeWithTag("qrex-result-url-origin", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test fun resultPrimaryFavoriteAndDeleteRemainReachable() = withPersistedResult {
+        val viewport = rule.onNodeWithTag(
+            "qrex-result-screen", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
         val open = rule.onNodeWithTag(
             "qrex-result-primary", useUnmergedTree = true
         ).assertIsDisplayed().getUnclippedBoundsInRoot()
         assertTrue("Primary action must fit inside Result viewport",
             open.bottom <= viewport.bottom)
-        rule.onNodeWithTag("qrex-result-url-origin", useUnmergedTree = true)
-            .assertIsDisplayed()
 
-        // Bottom navigation must never hide Favorite/Delete. The Result
-        // scroll viewport remains independent when IME/font sizes increase.
-        val favorite = rule.onNodeWithTag(
-            "qrex-result-save-favorite", useUnmergedTree = true
-        ).performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
-        val activeViewport = rule.onNodeWithTag(
-            "qrex-result-screen", useUnmergedTree = true
-        ).getUnclippedBoundsInRoot()
-        assertTrue("Favorite must stay inside Result viewport",
-            favorite.bottom <= activeViewport.bottom)
+        // Check 'without scrolling' before any performScrollTo moves the
+        // content. The previous combined test measured after scrolling.
         val config = rule.activity.resources.configuration
         if (config.screenWidthDp >= 360 && config.screenHeightDp >= 650 &&
             config.fontScale <= 1.15f) {
@@ -103,13 +125,27 @@ class QREXResultLayoutTest {
             assertTrue("Delete must fit above the bottom navigation without scrolling",
                 deleteAtRest.bottom <= bottomNav.top)
         }
+        val favorite = rule.onNodeWithTag(
+            "qrex-result-save-favorite", useUnmergedTree = true
+        ).performScrollTo().assertIsDisplayed().getUnclippedBoundsInRoot()
+        val activeViewport = rule.onNodeWithTag(
+            "qrex-result-screen", useUnmergedTree = true
+        ).getUnclippedBoundsInRoot()
+        assertTrue("Favorite must stay inside Result viewport",
+            favorite.bottom <= activeViewport.bottom)
         rule.onNodeWithTag("qrex-result-delete", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun resultOverflowEditReturnsToTheWorkingCreateField() = withPersistedResult {
         rule.onNodeWithTag("qrex-result-menu", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
         rule.onNodeWithTag("qrex-result-menu-edit", useUnmergedTree = true)
             .assertIsDisplayed().performClick()
-        // Edit is not removed; it returns to Create and its real tabs.
+        rule.waitUntil(timeoutMillis = 20_000L) {
+            rule.onAllNodesWithTag("qrex-result-screen", useUnmergedTree = true)
+                .fetchSemanticsNodes().isEmpty()
+        }
         rule.onNodeWithTag("qrex-result-screen", useUnmergedTree = true)
             .assertDoesNotExist()
         rule.onNodeWithTag("qrex-bottom-navigation", useUnmergedTree = true)
