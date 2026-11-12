@@ -5,11 +5,6 @@ name: QREX authorized Google Play upload
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'VersionName already set in Android Gradle metadata'
-        required: true
-        type: string
-        default: '1.0.44'
       confirmation:
         description: 'Type PLAY_UPLOAD_<version> after reviewing the exact main commit'
         required: true
@@ -37,19 +32,32 @@ jobs:
     name: Require exact main commit, policy and approved QA
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      version: ${{ steps.metadata.outputs.version }}
     permissions:
       actions: read
       contents: read
     env:
       GH_TOKEN: ${{ github.token }}
       PRODUCTION_APPROVED: ${{ inputs.confirmation }}
-      RELEASE_VERSION: ${{ inputs.version }}
       DEVICE_QA_CONFIRMED: ${{ inputs.device_qa_confirmed }}
       STORE_REVIEW_CONFIRMED: ${{ inputs.store_review_confirmed }}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Resolve actual Android version
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_file=platforms/android/app/build.gradle.kts
+          version="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' "$source_file" | head -1)"
+          code="$(sed -n 's/^[[:space:]]*versionCode = \([0-9]*\).*/\1/p' "$source_file" | head -1)"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$code" =~ ^[0-9]+$ ]]
+          echo "RELEASE_VERSION=$version" >> "$GITHUB_ENV"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Check version metadata and exact-commit Android quality gates
         run: |
           set -euo pipefail
@@ -66,7 +74,7 @@ jobs:
     permissions:
       contents: read
     env:
-      RELEASE_VERSION: ${{ inputs.version }}
+      RELEASE_VERSION: ${{ needs.verify.outputs.version }}
       QREX_UPLOAD_KEYSTORE_BASE64: ${{ secrets.QREX_UPLOAD_KEYSTORE_BASE64 }}
       QREX_UPLOAD_STORE_PASSWORD: ${{ secrets.QREX_UPLOAD_STORE_PASSWORD }}
       QREX_UPLOAD_KEY_ALIAS: ${{ secrets.QREX_UPLOAD_KEY_ALIAS }}
@@ -82,12 +90,11 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: '9.1.0'
-      - name: Provision Android API 36 tools
+          gradle-version: '9.9.0'
+      - name: Provision Android compile SDK 37
         run: |
           set -euo pipefail
-          test -d "$ANDROID_HOME/platforms/android-36" ||
-            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36"
+          bash tool/install_android_compile_sdk.sh
           test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner" ||
             "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;36.0.0"
       - name: Build and verify with the approved existing Play upload certificate
@@ -97,9 +104,9 @@ jobs:
       - name: Upload authenticated bundle for manual Play Console submission
         uses: actions/upload-artifact@v7
         with:
-          name: QREX-${{ inputs.version }}-Google-Play-Upload-Signed-AAB
+          name: QREX-${{ needs.verify.outputs.version }}-Google-Play-Upload-Signed-AAB
           path: |
-            production/QREX-Android-${{ inputs.version }}.aab
+            production/QREX-Android-${{ needs.verify.outputs.version }}.aab
             production/SHA256SUMS-PLAY.txt
           if-no-files-found: error
           retention-days: 30

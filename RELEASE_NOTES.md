@@ -1,3 +1,18 @@
+## Published: v1.0.46 · Android versionCode 146
+
+Published on 2026-11-12 UTC from main commit
+`be87b4010bc545fae2907afa0781cec896d5dc45`.
+The GitHub release includes an Android APK, AAB, unsigned Play QA AAB,
+`SHA256SUMS.txt` and twelve actual Android emulator screenshots.
+Native CI, localization, screen capture and P03 API 26/31/34/35/36
+workflows passed on the release commit. GitHub signing certificates are
+disposable; the public bundles are not compatible with authorized Play
+uploads or guaranteed in-place updates. No exact 0% pixel-parity result
+has been established for the supplied marketing references.
+
+[Download v1.0.46](https://github.com/bren-wp/QREX/releases/tag/v1.0.46) ·
+[Release details](docs/releases/v1.0.46.md).
+
 ## Published: v1.0.45 · Android versionCode 145
 
 Published on 2026-11-11 UTC from main merge commit

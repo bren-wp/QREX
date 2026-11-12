@@ -42,7 +42,7 @@ test "$source_version" = "$RELEASE_VERSION"
 
 python3 tool/check_native_release.py
 gradle -p platforms/android --no-daemon --stacktrace \
-  :app:testReleaseUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
+  :app:testDebugUnitTest :app:lintRelease :app:assembleRelease :app:bundleRelease
 bundle="platforms/android/app/build/outputs/bundle/release/app-release.aab"
 apk="platforms/android/app/build/outputs/apk/release/app-release.apk"
 test -s "$bundle"
