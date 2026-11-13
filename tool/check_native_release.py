@@ -27,7 +27,7 @@ def field(source: str, name: str) -> str | None:
     return match.group(1) if match else None
 
 
-def check_configuration(android_gradle: str, android_manifest: str) -> list[str]:
+def check_configuration(android_gradle: str, android_manifest: str, *, published_version: str | None = None) -> list[str]:
     issues: list[str] = []
     for key in ("compileSdk", "targetSdk"):
         actual = field(android_gradle, key)
@@ -37,7 +37,9 @@ def check_configuration(android_gradle: str, android_manifest: str) -> list[str]
         issues.append("Android application ID unexpectedly changed")
     code = field(android_gradle, "versionCode")
     version = field(android_gradle, "versionName")
-    published = latest_published_version()
+    # Unit tests use an explicit immutable publication baseline; the production
+    # CLI continues to read the current committed README by default.
+    published = latest_published_version() if published_version is None else published_version
     if published is None:
         issues.append("Missing published QREX version baseline in README")
     elif not code or not code.isdecimal():

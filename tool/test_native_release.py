@@ -2,7 +2,7 @@
 """Android-only production metadata and minimal-permissions regression tests."""
 from pathlib import Path
 import unittest
-from check_native_release import ROOT, check_configuration
+from check_native_release import ROOT, check_configuration, field
 
 
 class NativeReleaseGateTests(unittest.TestCase):
@@ -11,10 +11,11 @@ class NativeReleaseGateTests(unittest.TestCase):
         cls.android = (ROOT / "platforms/android/app/build.gradle.kts").read_text("utf-8")
         cls.manifest = (ROOT / "platforms/android/app/src/main/AndroidManifest.xml").read_text("utf-8")
 
-    def check(self, android=None, manifest=None):
+    def check(self, android=None, manifest=None, published_version=None):
         return check_configuration(
             self.android if android is None else android,
             self.manifest if manifest is None else manifest,
+            published_version=published_version,
         )
 
     def test_androidx_fragment_updated_and_r8_optimized_with_agp9(self):
@@ -57,12 +58,34 @@ class NativeReleaseGateTests(unittest.TestCase):
         self.assertTrue(any("targetSdk" in issue for issue in issues), issues)
 
     def test_published_version_code_is_rejected(self):
-        issues = self.check(android=self.android.replace("versionCode = 147", "versionCode = 146"))
-        self.assertTrue(any("published QREX build 146" in issue for issue in issues), issues)
+        # Assert from fixed test inputs, not the README modified after release.
+        published_code = int(field(self.android, "versionCode"))
+        published_version = f"1.0.{published_code - 100}"
+        old_source = self.android.replace(
+            f"versionCode = {published_code}", f"versionCode = {published_code - 1}"
+        )
+        issues = self.check(android=old_source, published_version=published_version)
+        self.assertTrue(
+            any(f"published QREX build {published_code}" in issue for issue in issues),
+            issues,
+        )
+
+    def test_published_and_candidate_sources_are_separately_checked(self):
+        code = int(field(self.android, "versionCode"))
+        self.assertEqual([], self.check(published_version=f"1.0.{code - 101}"))
+        self.assertEqual([], self.check(published_version=f"1.0.{code - 100}"))
+        issues = self.check(published_version=f"1.0.{code - 99}")
+        self.assertTrue(
+            any(f"published QREX build {code + 1}" in issue for issue in issues),
+            issues,
+        )
 
     def test_prerelease_version_metadata_is_rejected(self):
+        code = int(field(self.android, "versionCode"))
         issues = self.check(
-            android=self.android.replace('versionName = "1.0.47"', 'versionName = "0.2.4"')
+            android=self.android.replace(
+                f'versionName = "1.0.{code - 100}"', 'versionName = "0.2.4"'
+            )
         )
         self.assertTrue(any("Production candidate" in issue for issue in issues), issues)
 
