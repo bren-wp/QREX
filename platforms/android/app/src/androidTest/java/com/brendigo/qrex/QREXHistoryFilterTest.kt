@@ -6,6 +6,8 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -18,6 +20,36 @@ import org.junit.Test
 /** Real Compose checks for the reference History All/Saved selector. */
 class QREXHistoryFilterTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
+
+    @Test
+    fun searchClearRestoresHistoryWithoutChangingTheSelectedTabOrFilter() {
+        rule.waitUntil(timeoutMillis = 15_000L) {
+            rule.onAllNodesWithTag("qrex-tab-2", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("qrex-tab-2").performClick()
+        val field = rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
+        field.assertIsDisplayed().performTextReplacement("example")
+        rule.waitUntil(timeoutMillis = 10_000L) {
+            rule.onAllNodesWithTag("qrex-history-search-clear", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        val clear = rule.onNodeWithTag(
+            "qrex-history-search-clear", useUnmergedTree = true
+        ).assertIsDisplayed()
+        val bounds = clear.getUnclippedBoundsInRoot()
+        assertTrue("Clear History search must be >=48dp wide",
+            bounds.right - bounds.left >= 48.dp)
+        assertTrue("Clear History search must be >=48dp tall",
+            bounds.bottom - bounds.top >= 48.dp)
+        clear.performClick()
+        field.assertTextEquals("")
+        rule.onNodeWithTag("qrex-history-search-clear", useUnmergedTree = true)
+            .assertDoesNotExist()
+        rule.onNodeWithTag("qrex-history-screen").assertIsDisplayed()
+        rule.onNodeWithTag("qrex-history-filter-toggle", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
 
     @Test
     fun historyAllSavedAndSearchHaveAccessibleMeasuredTargets() {

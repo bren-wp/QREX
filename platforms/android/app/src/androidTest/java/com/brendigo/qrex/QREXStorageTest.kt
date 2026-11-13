@@ -420,9 +420,8 @@ class QREXStorageTest {
         assertTrue(first.startsWith("qrex-gcm:v1:"))
         store.save("https://example.com/new")
         val secondHistory = org.json.JSONArray(preferences.getString("history", "[]"))
-        val second = (0 until secondHistory.length()).map {
-            secondHistory.getJSONObject(it).getString("raw")
-        }.single { it.startsWith("qrex-gcm:v1:") }
+        // Both the new URL and the old Wi-Fi entry are encrypted now.
+        val second = secondHistory.getJSONObject(1).getString("raw")
         assertEquals(first, second)
         assertFalse(preferences.getString("history", "").orEmpty().contains("keep-encrypted"))
         val restored = QREXStore(context)
@@ -460,12 +459,15 @@ class QREXStorageTest {
         assertTrue(prefs.edit().putString("history", initial.toString()).commit())
         val store = QREXStore(context)
         assertEquals(250, store.items.size)
+        val migratedSnapshot = prefs.getString("history", null)
+        assertNotNull(migratedSnapshot)
+        assertFalse(migratedSnapshot!!.contains("https://example.com/favorite/"))
         assertFalse(store.save("https://example.org/251"))
         store.record("https://example.org/auto-scan")
         assertEquals(250, store.items.size)
         assertTrue(store.items.all { it.saved })
         assertTrue(store.items.any { it.raw == "https://example.com/favorite/249" })
-        assertEquals(initial.toString(), prefs.getString("history", null))
+        assertEquals(migratedSnapshot, prefs.getString("history", null))
         assertTrue(store.clearAll())
     }
 
@@ -549,8 +551,9 @@ class QREXStorageTest {
         val prefs = context.getSharedPreferences("qrex.user", 0)
         val saved = org.json.JSONArray(prefs.getString("history", "[]"))
             .getJSONObject(0)
-        assertFalse(saved.getBoolean("protected"))
-        assertEquals(literal, saved.getString("raw"))
+        assertTrue(saved.getBoolean("protected"))
+        assertTrue(saved.getString("raw").startsWith("qrex-gcm:v1:"))
+        assertNotEquals(literal, saved.getString("raw"))
         val reopened = QREXStore(context)
         assertTrue(reopened.items.any { it.raw == literal && it.saved })
         assertTrue(reopened.save("https://example.org/after-restart"))
@@ -704,6 +707,120 @@ class QREXStorageTest {
         assertFalse(native.getBoolean("flutterMigrationV1", false))
         assertEquals("corrupt", legacy.getString("flutter.qrex_record_v1", null))
         assertTrue(store.clearAll())
+    }
+
+
+    @Test
+    fun allNewQrHistoryTypesAreEncryptedWithoutLosingContent() {
+        val store = QREXStore(context)
+        assertTrue(store.clearAll())
+        val records = listOf(
+            "https://example.org/private?access_token=nonwifi-secret-123",
+            "Sensitive notes: nonwifi-secret-456",
+            "BEGIN:VCARD\nVERSION:3.0\nFN:Private Person\nEND:VCARD",
+            "geo:45.3271,14.4422?q=Rijeka",
+            QRContent.wifi("Secure network", "nonwifi-secret-789")
+        )
+        for (raw in records) assertTrue(store.save(raw))
+        val preferences = context.getSharedPreferences("qrex.user", 0)
+        val serialized = preferences.getString("history", null)
+        assertNotNull(serialized)
+        assertFalse(serialized!!.contains("nonwifi-secret"))
+        assertFalse(serialized.contains("Private Person"))
+        val rows = org.json.JSONArray(serialized)
+        assertEquals(records.size, rows.length())
+        for (index in 0 until rows.length()) {
+            val record = rows.getJSONObject(index)
+            assertTrue(record.getBoolean("protected"))
+            assertTrue(record.getString("raw").startsWith("qrex-gcm:v1:"))
+        }
+        val reopened = QREXStore(context)
+        assertEquals(records.toSet(), reopened.items.map { it.raw }.toSet())
+        assertEquals(serialized, preferences.getString("history", null))
+        assertTrue(reopened.clearAll())
+    }
+
+    @Test
+    fun mixedLegacyPlaintextQrRecordsMigrateAtomicallyAndPreserveFlags() {
+        val seed = QREXStore(context)
+        assertTrue(seed.clearAll())
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val url = "https://example.org/private?token=old-plaintext-url"
+        val note = "Old plaintext note: Šibenik"
+        val prefixLiteral = "qrex-gcm:v1:ordinary-qr-text:not-an-envelope"
+        val legacy = org.json.JSONArray()
+            .put(org.json.JSONObject().put("raw", url).put("timestamp", 12L)
+                .put("saved", false).put("protected", false))
+            .put(org.json.JSONObject().put("raw", note).put("timestamp", 34L)
+                .put("saved", true))
+            .put(org.json.JSONObject().put("raw", prefixLiteral).put("timestamp", 56L)
+                .put("saved", true).put("protected", false))
+        assertTrue(prefs.edit().putString("history", legacy.toString()).commit())
+
+        val migrated = QREXStore(context)
+        assertEquals(3, migrated.items.size)
+        assertEquals(listOf(url, note, prefixLiteral), migrated.items.map { it.raw })
+        assertEquals(listOf(12L, 34L, 56L), migrated.items.map { it.timestamp })
+        assertEquals(listOf(false, true, true), migrated.items.map { it.saved })
+        val ciphertext = prefs.getString("history", null)
+        assertNotNull(ciphertext)
+        assertFalse(ciphertext!!.contains("old-plaintext-url"))
+        assertFalse(ciphertext.contains("Old plaintext note"))
+        val protected = org.json.JSONArray(ciphertext)
+        assertEquals(3, protected.length())
+        for (i in 0 until protected.length()) {
+            assertTrue(protected.getJSONObject(i).getBoolean("protected"))
+            assertTrue(protected.getJSONObject(i).getString("raw").startsWith("qrex-gcm:v1:"))
+        }
+        assertEquals(listOf(url, note, prefixLiteral), QREXStore(context).items.map { it.raw })
+        // Repeated startup must not rotate IVs or rewrite authenticated data.
+        assertEquals(ciphertext, prefs.getString("history", null))
+        assertTrue(migrated.clearAll())
+    }
+
+    @Test
+    fun undecryptableNonWifiHistoryCannotBeReplacedByEmptyOrNewHistory() {
+        val seed = QREXStore(context)
+        assertTrue(seed.clearAll())
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val broken = org.json.JSONArray()
+            .put(org.json.JSONObject().put("raw", "qrex-gcm:v1:bad-iv:bad-ciphertext")
+                .put("protected", true).put("timestamp", 42L).put("saved", true))
+            .put(org.json.JSONObject().put("raw", "sensitive-old-plaintext-note")
+                .put("protected", false).put("timestamp", 43L).put("saved", false))
+            .toString()
+        assertTrue(prefs.edit().putString("history", broken).commit())
+        val unreadable = QREXStore(context)
+        assertTrue(unreadable.items.isEmpty())
+        assertFalse(unreadable.save("https://example.org/new"))
+        unreadable.record("new scan must not overwrite")
+        assertEquals(broken, prefs.getString("history", null))
+        // Only an explicit user-requested clear may discard undecryptable data.
+        assertTrue(unreadable.clearAll())
+    }
+
+    @Test
+    fun legacyFlutterNonWifiEntriesAreNotLeftInPlaintextNativeHistory() {
+        val seed = QREXStore(context)
+        assertTrue(seed.clearAll())
+        val flutter = context.getSharedPreferences("FlutterSharedPreferences", 0)
+        val prefs = context.getSharedPreferences("qrex.user", 0)
+        val privateQr = "https://example.com/?token=flutter-nonwifi-secret"
+        val imported = org.json.JSONArray()
+            .put(org.json.JSONObject().put("raw", privateQr)
+                .put("date", "2026-10-09T10:12:13.123Z").put("saved", true))
+        assertTrue(flutter.edit().putString("flutter.qrex_history_v1", imported.toString()).commit())
+        val migrated = QREXStore(context)
+        assertEquals(privateQr, migrated.items.single().raw)
+        assertTrue(migrated.items.single().saved)
+        val stored = prefs.getString("history", null)
+        assertNotNull(stored)
+        assertFalse(stored!!.contains("flutter-nonwifi-secret"))
+        val row = org.json.JSONArray(stored).getJSONObject(0)
+        assertTrue(row.getBoolean("protected"))
+        assertTrue(row.getString("raw").startsWith("qrex-gcm:v1:"))
+        assertFalse(flutter.contains("flutter.qrex_history_v1"))
+        assertTrue(migrated.clearAll())
     }
 
 

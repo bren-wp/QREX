@@ -322,6 +322,13 @@ internal fun qrexLayoutProfile(
     )
 }
 
+/** Calendar buttons are side by side on the reference 393dp phone. Compact
+ * devices and accessibility font scales need a full-width one-column stack
+ * to display both localized dates without ellipsizing the value.
+ */
+internal fun qrexEventDateInputsStack(widthDp: Int, fontScale: Float): Boolean =
+    widthDp < 390 || fontScale >= 1.30f
+
 /** Keep Result cards at phone width on compact devices and cap the
  * readable content column to 520dp on tablets and large foldable windows.
  * Unlike a fixed 520dp width, this never overflows a 320dp viewport.

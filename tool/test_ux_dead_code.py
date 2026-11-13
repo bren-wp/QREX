@@ -363,13 +363,16 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("Modifier.size(metrics.logoDp.dp)", splash)
         self.assertIn("qrexSplashMetrics(", splash)
 
-    def test_irreplaceable_history_migration_and_wifi_encryption_are_retained(self):
+    def test_irreplaceable_history_migration_and_all_qr_encryption_are_retained(self):
         self.assertIn('getSharedPreferences("FlutterSharedPreferences"', self.core)
         self.assertIn("migrateFlutterV1()", self.core)
         self.assertIn("QREXSecretCipher.encrypt(item.raw)", self.core)
+        self.assertIn("QREXSecretCipher.encrypt(record.raw)", self.core)
         self.assertIn("QREXSecretCipher.decrypt(value)", self.core)
         self.assertIn("if (!historyReadable) return false", self.core)
-        self.assertIn("protectedWifi", self.core)
+        self.assertIn("protectedEntries", self.core)
+        self.assertIn('.put("protected", true)', self.core)
+        self.assertIn("if (!persist()) historyReadable = false", self.core)
 
 
 if __name__ == "__main__":
