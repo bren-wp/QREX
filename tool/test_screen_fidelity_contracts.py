@@ -58,6 +58,15 @@ class ScreenFidelityContracts(unittest.TestCase):
         self.assertIn("widthDp < 390 || fontScale >= 1.30f",
                       self.files["QREXDesign.kt"])
 
+    def test_zoom_chips_wait_for_camera_acknowledgement(self):
+        scanner = self.files["QREXScanner.kt"]
+        self.assertIn("var zoomBusy by remember", scanner)
+        self.assertIn("enabled = !zoomBusy", scanner)
+        self.assertIn("runCatching { request.get() }.isSuccess", scanner)
+        self.assertIn("selectedZoom = ratio", scanner)
+        self.assertIn("zoomBusy = false", scanner)
+        self.assertIn("message = cameraFailed", scanner)
+
     def test_all_ten_screen_routes_keep_real_controls(self):
         for tag in ("qrex-result-screen", "qrex-create-screen",
                     "qrex-history-screen", "qrex-favorites-screen", "qrex-more-screen"):

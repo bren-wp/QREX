@@ -291,6 +291,9 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
     var torchOn by remember { mutableStateOf(false) }
     var torchBusy by remember { mutableStateOf(false) }
     var selectedZoom by remember { mutableFloatStateOf(1f) }
+    // CameraX zoom requests are asynchronous. Reject rapid overlapping taps
+    // and update the selected chip only after hardware reports success.
+    var zoomBusy by remember { mutableStateOf(false) }
     val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri == null) {
             // Cancellation, including Back, resumes normal camera scanning.
@@ -559,6 +562,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                     torchOn = false
                     torchBusy = false
                     selectedZoom = 1f
+                    zoomBusy = false
                     analyzer?.clearAnalyzer()
                     if (cameraFuture.isDone) runCatching { cameraFuture.get().unbindAll() }
                     analysisExecutor.shutdown()
@@ -635,19 +639,31 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
                                 FilterChip(
                                     selected = selectedZoom == ratio,
                                     onClick = {
-                                        val active = camera
-                                        if (active != null) {
-                                            val request = runCatching {
-                                                active.cameraControl.setZoomRatio(ratio)
-                                            }.getOrNull()
-                                            request?.addListener({
-                                                if (camera === active &&
-                                                    runCatching { request.get() }.isSuccess) {
-                                                    selectedZoom = ratio
-                                                }
-                                            }, ContextCompat.getMainExecutor(context))
+                                        if (!zoomBusy) {
+                                            val active = camera
+                                            val request = active?.let {
+                                                runCatching {
+                                                    it.cameraControl.setZoomRatio(ratio)
+                                                }.getOrNull()
+                                            }
+                                            if (request == null || active == null) {
+                                                message = cameraFailed
+                                            } else {
+                                                zoomBusy = true
+                                                request.addListener({
+                                                    if (camera === active) {
+                                                        if (runCatching { request.get() }.isSuccess) {
+                                                            selectedZoom = ratio
+                                                        } else {
+                                                            message = cameraFailed
+                                                        }
+                                                        zoomBusy = false
+                                                    }
+                                                }, ContextCompat.getMainExecutor(context))
+                                            }
                                         }
                                     },
+                                    enabled = !zoomBusy,
                                     label = { Text("${ratio}×") },
                                     modifier = Modifier.heightIn(min = 48.dp)
                                         .testTag("qrex-zoom-${ratio}"),
