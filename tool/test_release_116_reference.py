@@ -29,7 +29,8 @@ class Production116ReferenceTests(unittest.TestCase):
             "All published version-specific workflows must be archived"
         )
         self.assertTrue((WORKFLOWS / "github-release.yml").is_file())
-        for minor in range(1, patch):
+        # v1.0.47 and later are published by the single source-driven workflow.
+        for minor in range(1, min(patch, 47)):
             src = (archived / f"github-release-1.0.{minor}.yml").read_text("utf-8")
             with self.subTest(version=minor):
                 self.assertIn(f"gh release create v1.0.{minor}", src)

@@ -19,13 +19,28 @@ class ArchivedPublisherTests(unittest.TestCase):
         self.assertIn(f'versionName = "1.0.{patch}"', gradle)
         self.assertEqual([], sorted(p.name for p in ACTIVE.glob("github-release-1.0.*.yml")))
         self.assertTrue((ACTIVE / "github-release.yml").is_file())
-        expected = {f"github-release-1.0.{n}.yml" for n in range(1, patch)}
+        # Per-version publishers were retired with the generic publisher at v1.0.47.
+        # Requiring an archived v1.0.47 recipe when preparing v1.0.48 is wrong.
+        expected = {f"github-release-1.0.{n}.yml" for n in range(1, min(patch, 47))}
         self.assertEqual(expected, {p.name for p in ARCHIVE.glob("github-release-1.0.*.yml")})
         for name in sorted(expected):
             with self.subTest(name=name):
                 recipe = (ARCHIVE / name).read_text("utf-8")
                 self.assertIn("gh release create v1.0.", recipe)
                 self.assertNotIn("secrets.QREX_UPLOAD_KEYSTORE_BASE64", recipe)
+
+    def test_generic_publisher_has_no_per_version_archive_after_46(self):
+        """Future candidates must not require a removed v1.0.47 YAML recipe."""
+        archive = sorted(p.name for p in ARCHIVE.glob("github-release-1.0.*.yml"))
+        expected = sorted(f"github-release-1.0.{n}.yml" for n in range(1, 47))
+        self.assertEqual(expected, archive)
+        self.assertTrue((ACTIVE / "github-release.yml").is_file())
+        for patch in (47, 48, 49, 100):
+            with self.subTest(candidate=patch):
+                self.assertEqual(expected, sorted(
+                    f"github-release-1.0.{n}.yml"
+                    for n in range(1, min(patch, 47))
+                ))
 
     def test_current_published_release_metadata_is_not_a_candidate(self):
         # Read the current published version from the README; it changes
