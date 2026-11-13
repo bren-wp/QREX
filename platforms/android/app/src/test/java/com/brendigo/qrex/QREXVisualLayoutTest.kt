@@ -31,6 +31,17 @@ class QREXVisualLayoutTest {
         assertEquals(100, qrexHistoryRowHeightDp(690, 1.5f))
     }
 
+    @Test fun eventDateButtonsRespectReferencePhoneAndAccessibleWindowClasses() {
+        assertTrue(qrexEventDateInputsStack(320, 1.0f))
+        assertTrue(qrexEventDateInputsStack(360, 1.0f))
+        assertTrue(qrexEventDateInputsStack(389, 1.0f))
+        assertFalse(qrexEventDateInputsStack(390, 1.0f))
+        assertFalse(qrexEventDateInputsStack(393, 1.0f))
+        assertFalse(qrexEventDateInputsStack(800, 1.0f))
+        assertTrue(qrexEventDateInputsStack(393, 1.30f))
+        assertTrue(qrexEventDateInputsStack(800, 2.0f))
+    }
+
     @Test fun createChoicesRemainAccessibleAtLargeFontAndCompactWidth() {
         assertFalse(qrexLayoutProfile(430, 850, 1.0f).stackTypeChoices)
         assertFalse(qrexLayoutProfile(393, 850, 1.0f).stackTypeChoices)

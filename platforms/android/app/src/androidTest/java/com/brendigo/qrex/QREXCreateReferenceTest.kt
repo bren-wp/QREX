@@ -153,6 +153,37 @@ class QREXCreateReferenceTest {
             .assertIsDisplayed()
     }
 
+    @Test fun eventDateInputsWrapOnCompactPhonesButRetainReferencePair() {
+        await("qrex-tab-1")
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        await("qrex-create-overflow")
+        rule.onNodeWithTag("qrex-create-overflow", useUnmergedTree = true)
+            .performClick()
+        await("qrex-create-overflow-type-7")
+        rule.onNodeWithTag("qrex-create-overflow-type-7", useUnmergedTree = true)
+            .performClick()
+        await("qrex-event-date-choices")
+        val start = rule.onNodeWithTag("qrex-event-start", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        val end = rule.onNodeWithTag("qrex-event-end", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertTrue(start.bottom - start.top >= 48.dp)
+        assertTrue(end.bottom - end.top >= 48.dp)
+        val configuration = rule.activity.resources.configuration
+        if (qrexEventDateInputsStack(
+                configuration.screenWidthDp, configuration.fontScale
+            )) {
+            assertTrue("Compact calendar fields must stack",
+                end.top >= start.bottom - 2.dp)
+            assertTrue("Stacked actions must have the same column width",
+                kotlin.math.abs((end.left - start.left).value) < 2f)
+        } else {
+            assertTrue("Reference calendar dates must share one row",
+                kotlin.math.abs((end.top - start.top).value) < 2f)
+            assertTrue("Start and end cannot overlap", start.right <= end.left)
+        }
+    }
+
     @Test fun quickTypeTabsFitSingleRowOnReferenceWidth() {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()

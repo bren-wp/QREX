@@ -48,6 +48,16 @@ class ScreenFidelityContracts(unittest.TestCase):
         self.assertEqual(scanner.count("onClick = toggleTorch"), 2)
         self.assertIn("elevation = ButtonDefaults.buttonElevation(", scanner)
 
+    def test_history_search_and_calendar_date_actions_are_operable(self):
+        self.assertIn('testTag("qrex-history-search-clear")', self.main)
+        self.assertIn('onClick = { search = "" }', self.main)
+        self.assertIn('testTag("qrex-event-date-choices")', self.main)
+        self.assertIn('testTag("qrex-event-start")', self.main)
+        self.assertIn('testTag("qrex-event-end")', self.main)
+        self.assertIn("qrexEventDateInputsStack(", self.main)
+        self.assertIn("widthDp < 390 || fontScale >= 1.30f",
+                      self.files["QREXDesign.kt"])
+
     def test_all_ten_screen_routes_keep_real_controls(self):
         for tag in ("qrex-result-screen", "qrex-create-screen",
                     "qrex-history-screen", "qrex-favorites-screen", "qrex-more-screen"):

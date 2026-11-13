@@ -1542,7 +1542,19 @@ private fun CreateScreen(
             }
             if (kind == 7) {
                 Spacer(Modifier.height(7.dp))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Keep the two reference date actions on standard phones.
+                // On 320-389dp windows and enlarged fonts they need the full
+                // width: otherwise localized dates become unreadable.
+                val stackedEventDates = qrexEventDateInputsStack(
+                    window.screenWidthDp, LocalDensity.current.fontScale
+                )
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth()
+                        .testTag("qrex-event-date-choices"),
+                    maxItemsInEachRow = if (stackedEventDates) 1 else 2,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     OutlinedButton(
                         onClick = {
                             pickEventDateTime(eventStart) {
@@ -1550,7 +1562,8 @@ private fun CreateScreen(
                                 if (eventEnd <= it) eventEnd = it.plusHours(1)
                             }
                         },
-                        modifier = Modifier.weight(1f).heightIn(min = 54.dp),
+                        modifier = Modifier.weight(1f).heightIn(min = 54.dp)
+                            .testTag("qrex-event-start"),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
@@ -1560,7 +1573,8 @@ private fun CreateScreen(
                     }
                     OutlinedButton(
                         onClick = { pickEventDateTime(eventEnd) { eventEnd = it } },
-                        modifier = Modifier.weight(1f).heightIn(min = 54.dp),
+                        modifier = Modifier.weight(1f).heightIn(min = 54.dp)
+                            .testTag("qrex-event-end"),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.Start) {
@@ -1568,6 +1582,14 @@ private fun CreateScreen(
                             Text(eventEnd.format(dateTimeFormat), fontSize = 12.sp, maxLines = 2)
                         }
                     }
+                }
+                if (eventEnd <= eventStart) {
+                    Text(
+                        "${tr("event_end")}: ${tr("invalid_content")}",
+                        modifier = Modifier.testTag("qrex-event-dates-error"),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
                 OutlinedTextField(
                     value = eventLocation,
@@ -1743,6 +1765,24 @@ private fun HistoryScreen(
                 onValueChange = { search = it.take(120) },
                 label = { Text(tr("search_qr")) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                // Search text remains in memory only. A true 48dp clear target
+                // lets users restore the full History list without leaving
+                // this screen, including with TalkBack or large fonts.
+                trailingIcon = {
+                    if (search.isNotEmpty()) {
+                        IconButton(
+                            onClick = { search = "" },
+                            modifier = Modifier.size(48.dp)
+                                .testTag("qrex-history-search-clear")
+                        ) {
+                            Icon(
+                                Icons.Default.Cancel,
+                                contentDescription = "${tr("close")} · ${tr("search_qr")}",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(13.dp),
                 modifier = Modifier.weight(1f).heightIn(min = 52.dp)
