@@ -28,6 +28,15 @@ class GenericReleaseWorkflowTest(unittest.TestCase):
         self.assertIn('gh release view "v$version"', self.body)
         self.assertNotIn("gradle-version: '9.1.0'", self.body)
 
+    def test_docs_sync_and_its_tests_run_before_publication(self):
+        self.assertIn("Prove post-publication documentation checks before publishing", self.body)
+        self.assertLess(
+            self.body.index("Prove post-publication documentation checks before publishing"),
+            self.body.index("Publish stable GitHub version v$RELEASE_VERSION"),
+        )
+        self.assertIn("python3 tool/sync_published_release.py", self.body)
+        self.assertIn("python3 -m unittest discover -s tool -p 'test_*.py'", self.body)
+
     def test_hard_release_gates_and_disposable_signing(self):
         for value in ("native-platforms.yml", "capture-screenshots.yml",
                       "generate-localizations.yml", "p03-stability.yml",

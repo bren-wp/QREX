@@ -230,6 +230,20 @@ jobs:
           (cd production && sha256sum QREX-Android-$RELEASE_VERSION*.apk QREX-Android-$RELEASE_VERSION*.aab android-*.png > SHA256SUMS.txt)
           (cd production && sha256sum --check SHA256SUMS.txt)
 
+      - name: Prove post-publication documentation checks before publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          previous="$(grep -m1 'Latest published release:' README.md | grep -oE 'v1[.]0[.][0-9]+' | head -1 | cut -c2-)"
+          [[ "$previous" =~ ^1[.]0[.][0-9]+$ ]]
+          tmp="$(mktemp -d)"
+          trap 'git worktree remove --force "$tmp" >/dev/null 2>&1 || rm -rf "$tmp"' EXIT
+          git worktree add --detach "$tmp" "$RELEASE_SHA"
+          (
+            cd "$tmp"
+            python3 tool/sync_published_release.py "$previous" "$RELEASE_VERSION" "$RELEASE_CODE" "$RELEASE_SHA"
+            python3 -m unittest discover -s tool -p 'test_*.py'
+          )
       - name: Publish stable GitHub version v$RELEASE_VERSION
         shell: bash
         run: |
