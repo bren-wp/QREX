@@ -1,0 +1,77 @@
+name: Recover QREX published documentation without rebuilding
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Existing published version, for example 1.0.47'
+        required: true
+        type: string
+      release_sha:
+        description: 'Exact source commit SHA of the existing GitHub release'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: qrex-published-docs-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Validate the published release and synchronize docs only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.release_version }}
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "bren-wp/QREX"
+          [[ "$RELEASE_VERSION" =~ ^1[.]0[.][0-9]+$ ]]
+          [[ "$RELEASE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          HEAD_SHA="$(git rev-parse HEAD)"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$HEAD_SHA"
+          git merge-base --is-ancestor "$RELEASE_SHA" HEAD
+          code="$(sed -n 's/^[[:space:]]*versionCode = \([0-9]*\).*/\1/p' platforms/android/app/build.gradle.kts | head -1)"
+          version="$(sed -n 's/^[[:space:]]*versionName = "\([^"]*\)".*/\1/p' platforms/android/app/build.gradle.kts | head -1)"
+          test "$version" = "$RELEASE_VERSION"
+          patch="$(printf '%s' "$RELEASE_VERSION" | cut -d. -f3)"
+          test "$code" -eq "$((100 + patch))"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v$RELEASE_VERSION" --jq '.object.sha')" = "$RELEASE_SHA"
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$RELEASE_VERSION" |
+            jq -e --arg version "$RELEASE_VERSION" --arg sha "$RELEASE_SHA" '
+              .tag_name == ("v" + $version) and .target_commitish == $sha
+              and .draft == false and .prerelease == false
+              and ([.assets[].name] | sort) ==
+                (["QREX-Android-\($version).apk", "QREX-Android-\($version).aab",
+                  "QREX-Android-\($version)-Play-UNSIGNED-QA.aab", "SHA256SUMS.txt",
+                  "android-splash.png", "android-create.png", "android-scan.png",
+                  "android-wifi.png", "android-result.png", "android-history.png",
+                  "android-saved.png", "android-more.png", "android-language.png",
+                  "android-export.png", "android-about.png", "android-privacy.png"] | sort)
+              and all(.assets[]; .size > 0)' > /dev/null
+          previous="$(grep -m1 'Latest published release:' README.md | grep -oE 'v1[.]0[.][0-9]+' | head -1 | cut -c2-)"
+          [[ "$previous" =~ ^1[.]0[.][0-9]+$ ]]
+          python3 tool/sync_published_release.py "$previous" "$RELEASE_VERSION" "$code" "$RELEASE_SHA"
+          python3 -m unittest discover -s tool -p 'test_*.py'
+          git add README.md RELEASE_NOTES.md docs/releases/INDEX.md "docs/releases/v$RELEASE_VERSION.md"
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(QREX): recover v$RELEASE_VERSION without republishing"
+            test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$HEAD_SHA"
+            git push origin HEAD:main
+          else
+            echo "Documentation already matches the published version; nothing to change."
+          fi
