@@ -17,6 +17,9 @@ from pathlib import Path
 from compare_ui_pixels import read_png, compare, SCREENS as ALL_SCREENS
 
 SCREENS = ("splash", "scan", "result", "create", "history", "more")
+# Terms is an actual dialog capture in the reference responsive profile, not
+# a regular 1080x1920 Play Store image. Count it as its own screen in QA.
+ALL_VIEW_STATES = ALL_SCREENS + ("terms",)
 REFERENCE_NOTE = (
     "Illustrated smartphone with exterior wallpaper and bezel; "
     "no matching unframed reference screenshot was supplied"
@@ -27,21 +30,30 @@ def audit(
     actual_dir: Path,
     reference_dir: Path | None = None,
     screens: tuple[str, ...] = SCREENS,
+    responsive_dir: Path | None = None,
 ) -> dict:
     # The legacy six-screen contract remains the default. The CI workflow
     # additionally audits the entire twelve-screen genuine screenshot set.
     if not screens or len(set(screens)) != len(screens) or any(
-        screen not in ALL_SCREENS for screen in screens
+        screen not in ALL_VIEW_STATES for screen in screens
     ):
         raise ValueError("Only unique known QREX screens may be measured")
+    if "terms" in screens and responsive_dir is None:
+        raise ValueError("Terms requires a genuine responsive screenshot directory")
     rows: dict[str, dict] = {}
     for screen in screens:
         name = f"android-{screen}.png"
-        path = actual_dir / name
+        # All twelve Play Store captures use the native screenshot directory.
+        # Terms is obtained from the already-captured real reference profile.
+        path = (responsive_dir / "reference-terms.png"
+                if screen == "terms" else actual_dir / name)
+        recorded_name = (
+            "responsive/reference-terms.png" if screen == "terms" else name
+        )
         actual = read_png(path)
         record = {
             "screen": screen,
-            "android_capture": name,
+            "android_capture": recorded_name,
             "viewport_px": [actual.width, actual.height],
             "actual_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
             "exact_mismatched_pixels": None,
@@ -81,11 +93,18 @@ def main() -> int:
     parser.add_argument("--actual-dir", type=Path, required=True)
     parser.add_argument("--flat-reference-dir", type=Path)
     parser.add_argument("--all-screens", action="store_true",
-                        help="Audit every one of the twelve genuine QREX captures")
+                        help="Audit the twelve genuine standard QREX captures")
+    parser.add_argument("--include-terms", action="store_true",
+                        help="Also audit the real Terms modal captured in the responsive profile")
+    parser.add_argument("--responsive-dir", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    if args.include_terms and (not args.all_screens or args.responsive_dir is None):
+        parser.error("--include-terms requires --all-screens and --responsive-dir")
+    selected = (ALL_VIEW_STATES if args.include_terms
+                else ALL_SCREENS if args.all_screens else SCREENS)
     report = audit(args.actual_dir, args.flat_reference_dir,
-                   screens=ALL_SCREENS if args.all_screens else SCREENS)
+                   screens=selected, responsive_dir=args.responsive_dir)
     content = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     print(content)
     if args.output:

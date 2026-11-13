@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 from types import SimpleNamespace
 
-from measure_six_screen_reference import SCREENS, ALL_SCREENS, audit
+from measure_six_screen_reference import SCREENS, ALL_SCREENS, ALL_VIEW_STATES, audit
 
 
 class SixScreenReferenceTests(unittest.TestCase):
@@ -72,6 +72,32 @@ class SixScreenReferenceTests(unittest.TestCase):
                              ["exact_mismatched_pixels"])
             self.assertEqual(0, report["screens"][ALL_SCREENS[0]]
                              ["exact_mismatched_pixels"])
+
+    def test_terms_is_measured_from_real_responsive_capture_as_thirteenth_view(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            for name in ALL_SCREENS:
+                (folder / f"android-{name}.png").write_bytes(b"real phone fixture")
+            responsive = folder / "responsive"
+            responsive.mkdir()
+            (responsive / "reference-terms.png").write_bytes(b"real Terms fixture")
+            with patch("measure_six_screen_reference.read_png",
+                       return_value=SimpleNamespace(width=1080, height=2340)):
+                report = audit(folder, screens=ALL_VIEW_STATES,
+                               responsive_dir=responsive)
+            self.assertEqual(13, len(report["screens"]))
+            self.assertIsNone(report["all_exact_1_to_1"])
+            self.assertEqual("responsive/reference-terms.png",
+                             report["screens"]["terms"]["android_capture"])
+            self.assertEqual([1080, 2340],
+                             report["screens"]["terms"]["viewport_px"])
+            self.assertEqual(64, len(report["screens"]["terms"]["actual_sha256"]))
+
+    def test_terms_requires_original_actual_responsive_capture(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            with self.assertRaises(ValueError):
+                audit(folder, screens=ALL_VIEW_STATES)
 
     def test_unknown_or_duplicate_screen_names_are_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
