@@ -155,6 +155,17 @@ jobs:
           name: qrex-six-screen-measurements
           path: docs/screenshots/six-screen-measurements.json
           if-no-files-found: error
+      - name: Audit every captured QREX screen with documented reference limits
+        run: |
+          python3 tool/measure_six_screen_reference.py \
+            --actual-dir docs/screenshots --all-screens \
+            --output docs/screenshots/twelve-screen-measurements.json
+          test -s docs/screenshots/twelve-screen-measurements.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qrex-twelve-screen-measurements
+          path: docs/screenshots/twelve-screen-measurements.json
+          if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
           name: qrex-responsive-android

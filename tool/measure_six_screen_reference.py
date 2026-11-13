@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Six-screen, fail-closed QREX screenshot audit.
+"""Fail-closed QREX screenshot audit for six or all twelve native screens.
 
 The November 2026 user references are framed 941x1672 illustrations,
 not flat 1080x1920 Android screenshots. Never equate these illustrations
@@ -14,7 +14,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from compare_ui_pixels import read_png, compare
+from compare_ui_pixels import read_png, compare, SCREENS as ALL_SCREENS
 
 SCREENS = ("splash", "scan", "result", "create", "history", "more")
 REFERENCE_NOTE = (
@@ -23,9 +23,19 @@ REFERENCE_NOTE = (
 )
 
 
-def audit(actual_dir: Path, reference_dir: Path | None = None) -> dict:
+def audit(
+    actual_dir: Path,
+    reference_dir: Path | None = None,
+    screens: tuple[str, ...] = SCREENS,
+) -> dict:
+    # The legacy six-screen contract remains the default. The CI workflow
+    # additionally audits the entire twelve-screen genuine screenshot set.
+    if not screens or len(set(screens)) != len(screens) or any(
+        screen not in ALL_SCREENS for screen in screens
+    ):
+        raise ValueError("Only unique known QREX screens may be measured")
     rows: dict[str, dict] = {}
-    for screen in SCREENS:
+    for screen in screens:
         name = f"android-{screen}.png"
         path = actual_dir / name
         actual = read_png(path)
@@ -55,11 +65,11 @@ def audit(actual_dir: Path, reference_dir: Path | None = None) -> dict:
             )
         rows[screen] = record
     return {
-        "source": "actual Android emulator screenshots for six QREX screens",
+        "source": f"actual Android emulator screenshots for {len(screens)} QREX screens",
         "reference_type": ("flat_equal_size_png" if reference_dir
                            else "framed_phone_reference_artwork"),
         "all_exact_1_to_1": (
-            all(rows[s]["exact_mismatched_pixels"] == 0 for s in SCREENS)
+            all(rows[s]["exact_mismatched_pixels"] == 0 for s in screens)
             if reference_dir is not None else None
         ),
         "screens": rows,
@@ -70,9 +80,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--actual-dir", type=Path, required=True)
     parser.add_argument("--flat-reference-dir", type=Path)
+    parser.add_argument("--all-screens", action="store_true",
+                        help="Audit every one of the twelve genuine QREX captures")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    report = audit(args.actual_dir, args.flat_reference_dir)
+    report = audit(args.actual_dir, args.flat_reference_dir,
+                   screens=ALL_SCREENS if args.all_screens else SCREENS)
     content = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     print(content)
     if args.output:

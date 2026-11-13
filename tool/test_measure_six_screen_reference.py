@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 from types import SimpleNamespace
 
-from measure_six_screen_reference import SCREENS, audit
+from measure_six_screen_reference import SCREENS, ALL_SCREENS, audit
 
 
 class SixScreenReferenceTests(unittest.TestCase):
@@ -28,6 +28,60 @@ class SixScreenReferenceTests(unittest.TestCase):
                 self.assertIsNone(row["exact_mismatch_percent"])
                 self.assertEqual([1080, 1920], row["viewport_px"])
                 self.assertEqual(64, len(row["actual_sha256"]))
+
+    def test_all_twelve_real_screen_captures_have_individual_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            for name in ALL_SCREENS:
+                (folder / f"android-{name}.png").write_bytes(
+                    f"actual-{name}".encode("utf-8")
+                )
+            with patch("measure_six_screen_reference.read_png",
+                       return_value=SimpleNamespace(width=1080, height=1920)):
+                report = audit(folder, screens=ALL_SCREENS)
+            self.assertEqual(12, len(report["screens"]))
+            self.assertEqual(set(ALL_SCREENS), set(report["screens"]))
+            self.assertIsNone(report["all_exact_1_to_1"])
+            for name in ALL_SCREENS:
+                row = report["screens"][name]
+                self.assertEqual(f"android-{name}.png", row["android_capture"])
+                self.assertEqual([1080, 1920], row["viewport_px"])
+                self.assertEqual(64, len(row["actual_sha256"]))
+                self.assertIsNone(row["exact_mismatch_percent"])
+
+    def test_all_twelve_fail_if_any_flat_reference_differs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            for name in ALL_SCREENS:
+                (folder / f"android-{name}.png").write_bytes(b"mock screenshot")
+            with patch("measure_six_screen_reference.read_png",
+                       return_value=SimpleNamespace(width=1080, height=1920)):
+                with patch("measure_six_screen_reference.compare",
+                           side_effect=[
+                               SimpleNamespace(
+                                   mismatched=1 if i == 11 else 0,
+                                   percent=0.000048225 if i == 11 else 0.0,
+                                   max_channel_delta=1 if i == 11 else 0,
+                                   bounds=(0, 0, 0, 0) if i == 11 else None
+                               )
+                               for i in range(len(ALL_SCREENS))
+                           ]):
+                    report = audit(folder, folder, screens=ALL_SCREENS)
+            self.assertFalse(report["all_exact_1_to_1"])
+            self.assertEqual(1, report["screens"][ALL_SCREENS[-1]]
+                             ["exact_mismatched_pixels"])
+            self.assertEqual(0, report["screens"][ALL_SCREENS[0]]
+                             ["exact_mismatched_pixels"])
+
+    def test_unknown_or_duplicate_screen_names_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            with self.assertRaises(ValueError):
+                audit(folder, screens=("splash", "splash"))
+            with self.assertRaises(ValueError):
+                audit(folder, screens=("unknown",))
+            with self.assertRaises(ValueError):
+                audit(folder, screens=())
 
     def test_real_flat_reference_reports_actual_zero_or_nonzero_mismatch(self):
         with tempfile.TemporaryDirectory() as tmp:
