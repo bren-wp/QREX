@@ -9,31 +9,37 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-/** Encrypts manually saved Wi-Fi QR credentials with a non-exportable Android Keystore key. */
+/** Encrypts all local QR history with the original non-exportable Keystore key. */
 internal object QREXSecretCipher {
+    // Historical Wi-Fi alias MUST stay unchanged to decrypt existing installs.
     private const val ALIAS = "com.brendigo.qrex.history.wifi.v1"
     private const val PREFIX = "qrex-gcm:v1:"
     private const val ALGORITHM = "AES/GCM/NoPadding"
-    // A corrupt local preference must not allocate an unbounded Base64
-    // ciphertext or overwhelm Android Keystore. Legitimate saved QR payloads
-    // are bounded to 10,000 UTF-16 chars in QREXStore.
+    // Bound attacker-controlled pref values and Keystore allocations. Every
+    // QR payload is limited to 10,000 UTF-16 chars by QREXStore.
     private const val MAX_PLAINTEXT_BYTES = 48_000
     private const val MAX_ENCODED_CHARS = 65_536
 
     fun isEncrypted(raw: String): Boolean = raw.startsWith(PREFIX)
 
-    private fun key(): SecretKey {
+    // Read the Keystore handle once per process. This prevents hundreds of
+    // repeated KeyStore.load/getKey calls during one-time 250-record migration.
+    // Failed key acquisition is retried by Kotlin lazy on a subsequent call.
+    private val cachedKey: SecretKey by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
         val existing = ks.getKey(ALIAS, null) as? SecretKey
-        if (existing != null) return existing
-        val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
-        generator.init(KeyGenParameterSpec.Builder(
-            ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-        ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256).build())
-        return generator.generateKey()
+        if (existing != null) existing else {
+            val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+            generator.init(KeyGenParameterSpec.Builder(
+                ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256).build())
+            generator.generateKey()
+        }
     }
+
+    private fun key(): SecretKey = cachedKey
 
     fun available(): Boolean = runCatching { key(); true }.getOrDefault(false)
 
