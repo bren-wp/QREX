@@ -1739,11 +1739,18 @@ private fun HistoryScreen(
     var historyFilterExpanded by remember { mutableStateOf(false) }
     val historyFilterState = if (savedOnly) tr("saved") else tr("all")
     var pendingDelete by remember { mutableStateOf<QRRecord?>(null) }
-    val found = (screenshotItems ?: store.items).filter {
+    val historyCandidates = screenshotItems ?: store.items
+    val savedFilterActive = favoritesPage || savedOnly
+    val hasEligibleHistory = historyCandidates.any { !savedFilterActive || it.saved }
+    val found = historyCandidates.filter {
         // Favorites is a dedicated destination: its filter cannot be reset
         // by a transient History tab state after Activity recreation.
-        QRHistory.matches(it, search, favoritesPage || savedOnly)
+        QRHistory.matches(it, search, savedFilterActive)
     }
+    // A query without matches is not the same as an empty history or an
+    // empty Favorites collection. Keep all three states accessible and
+    // never print raw query contents in the empty-state card.
+    val searchHasNoMatches = search.isNotBlank() && hasEligibleHistory && found.isEmpty()
     Column(
         Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)
             .testTag(if (favoritesPage) "qrex-favorites-screen" else "qrex-history-screen")
@@ -1860,12 +1867,27 @@ private fun HistoryScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Icon(if (favoritesPage) Icons.Default.FavoriteBorder else Icons.Default.History,
+                    Icon(
+                        if (searchHasNoMatches) Icons.Default.Search
+                        else if (favoritesPage) Icons.Default.FavoriteBorder
+                        else Icons.Default.History,
                         contentDescription = null,
-                        tint = if (favoritesPage) QrexDesign.purple else MaterialTheme.colorScheme.primary)
-                    Text(if (savedOnly) tr("no_saved") else tr("no_history"),
+                        tint = if (favoritesPage) QrexDesign.purple
+                            else MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        when {
+                            searchHasNoMatches -> tr("no_matches")
+                            favoritesPage || savedOnly -> tr("no_saved")
+                            else -> tr("no_history")
+                        },
+                        modifier = Modifier.testTag(
+                            if (searchHasNoMatches) "qrex-history-no-matches"
+                            else "qrex-history-no-records"
+                        ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium)
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }

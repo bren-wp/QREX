@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Règles et directives</string>
     <string name="more_clear_hint">Supprimer définitivement tous les codes QR</string>
     <string name="copy_link">Copier le lien</string>
+    <string name="no_matches">Aucun code QR correspondant</string>
 </resources>

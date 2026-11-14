@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Säännöt ja ohjeet</string>
     <string name="more_clear_hint">Poista kaikki QR-koodit pysyvästi</string>
     <string name="copy_link">Kopioi linkki</string>
+    <string name="no_matches">Ei vastaavia QR-koodeja</string>
 </resources>

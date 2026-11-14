@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Reguli și orientări</string>
     <string name="more_clear_hint">Șterge definitiv toate codurile QR</string>
     <string name="copy_link">Copiază linkul</string>
+    <string name="no_matches">Nu există coduri QR corespunzătoare</string>
 </resources>

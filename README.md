@@ -76,8 +76,8 @@ No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating t
 | 📷 **Scan from camera or photos** | Point your camera at a QR code or select an image from Android's system photo picker. |
 | ✨ **Create QR codes** | Make QR codes for links, text, Wi-Fi, contact details, email, phone numbers, places and calendar events. |
 | 🔎 **Review before opening** | Choose whether to open a scanned website. No automatic URL opening. |
-| 🔖 **History & saved codes** | Browse, search, save and remove locally stored QR codes. |
-| 🔐 **Protect Wi-Fi details** | Wi-Fi codes are never recorded automatically; manually saved Wi-Fi details use Android Keystore encryption. |
+| 🔖 **History & saved codes** | Browse, search, save and remove locally stored QR codes; get a clear, localized empty state when your search finds no matching entries. |
+| 🔐 **Private QR history** | All local QR history entries, including URLs, notes, contacts and manually saved Wi-Fi codes, are encrypted with Android Keystore-backed AES-GCM. Wi-Fi credentials are not recorded automatically. |
 | 📄 **Save and export** | Export individual PNG images or your manually saved QR collection as an unencrypted PDF. |
 | 🌍 **23 languages** | Including English and Croatian, all without an online translation service. |
 | 🌗 **Make it yours** | A consistent midnight-blue appearance, accessible controls and responsive layouts. |
@@ -94,7 +94,7 @@ Whether it is a website, Wi-Fi network, event or contact, each QR code follows t
 
 QREX scans and generates QR codes **on your phone**, without a developer cloud account, advertising, analytics or a required Internet connection. Camera access is requested only for camera scanning; you can choose a gallery image without granting camera permission.
 
-QREX asks before sharing or exporting Wi-Fi credentials. Saved Wi-Fi QR contents use AES-GCM backed by Android Keystore. Android clipboard previews are suppressed for sensitive QR content.
+QREX asks before sharing or exporting Wi-Fi credentials. All locally persisted QR history payloads use AES-GCM encryption backed by Android Keystore, including older plaintext entries migrated on-device. Android clipboard previews are suppressed for QR content. The QR details you explicitly open, copy, share or export remain readable to you and to the application you choose.
 
 **Exported PDF documents are not encrypted.** Protect those files when they include private information.
 
@@ -119,6 +119,16 @@ Latest published release: **[v1.0.48](https://github.com/bren-wp/QREX/releases/t
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
 **Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
+
+### Screen-by-screen quality evidence
+
+The native design is verified using actual Android screenshots: twelve
+standard screenshots and a thirteenth Terms dialog capture, plus responsive
+phone, large-font, landscape and tablet profiles. CI publishes SHA-256 and
+viewport measurements for each screen state. The supplied original phone
+mockups are perspective/framed artwork, **not** identical-resolution flat
+baselines, so zero-pixel (1:1) equivalence remains unverified. We do not
+generate or substitute images for real UI captures.
 
 ### Explore more
 

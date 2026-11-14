@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Szabályok és irányelvek</string>
     <string name="more_clear_hint">Összes QR-kód végleges törlése</string>
     <string name="copy_link">Hivatkozás másolása</string>
+    <string name="no_matches">Nincs egyező QR-kód</string>
 </resources>

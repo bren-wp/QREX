@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Правила и насоки</string>
     <string name="more_clear_hint">Изтрий завинаги всички QR кодове</string>
     <string name="copy_link">Копирай връзката</string>
+    <string name="no_matches">Няма съвпадащи QR кодове</string>
 </resources>

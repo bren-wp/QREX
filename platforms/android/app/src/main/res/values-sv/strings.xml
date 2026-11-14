@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Regler och riktlinjer</string>
     <string name="more_clear_hint">Radera alla QR-koder permanent</string>
     <string name="copy_link">Kopiera länk</string>
+    <string name="no_matches">Inga matchande QR-koder</string>
 </resources>

@@ -52,6 +52,37 @@ class QREXHistoryFilterTest {
     }
 
     @Test
+    fun populatedHistoryShowsTranslatedNoMatchesInsteadOfClaimingHistoryIsEmpty() {
+        rule.waitUntil(timeoutMillis = 20_000L) {
+            rule.onAllNodesWithTag("qrex-tab-1", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("qrex-tab-1").performClick()
+        rule.waitUntil(timeoutMillis = 10_000L) {
+            rule.onAllNodesWithTag("qrex-create-content", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performTextReplacement("https://example.org/qrex-search-regression")
+        rule.onNodeWithTag("qrex-create-show", useUnmergedTree = true)
+            .performClick()
+        rule.onNodeWithTag("qrex-tab-2").performClick()
+        val searchInput = rule.onNodeWithTag("qrex-history-search", useUnmergedTree = true)
+        searchInput.performTextReplacement("unique-no-match-query-149")
+        rule.waitUntil(timeoutMillis = 10_000L) {
+            rule.onAllNodesWithTag("qrex-history-no-matches", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("qrex-history-no-matches", useUnmergedTree = true)
+            .assertIsDisplayed()
+        rule.onNodeWithTag("qrex-history-search-clear", useUnmergedTree = true)
+            .performClick()
+        rule.onNodeWithTag("qrex-history-no-matches", useUnmergedTree = true)
+            .assertDoesNotExist()
+        rule.onNodeWithTag("qrex-history-screen").assertIsDisplayed()
+    }
+
+    @Test
     fun historyAllSavedAndSearchHaveAccessibleMeasuredTargets() {
         rule.waitUntil(timeoutMillis = 15_000L) {
             rule.onAllNodesWithTag("qrex-tab-2", useUnmergedTree = true)

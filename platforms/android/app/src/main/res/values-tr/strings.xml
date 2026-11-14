@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Kurallar ve yönergeler</string>
     <string name="more_clear_hint">Tüm QR kodlarını kalıcı olarak sil</string>
     <string name="copy_link">Bağlantıyı kopyala</string>
+    <string name="no_matches">Eşleşen QR kodu yok</string>
 </resources>
