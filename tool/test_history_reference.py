@@ -22,7 +22,7 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         for locale, info in langs.items():
             strings = info["strings"]
             self.assertEqual(en_keys, tuple(strings), locale)
-            for key in ("all", "saved", "no_history", "no_saved"):
+            for key in ("all", "saved", "no_history", "no_saved", "no_matches"):
                 with self.subTest(locale=locale, key=key):
                     self.assertTrue(strings[key].strip())
 
@@ -31,8 +31,11 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn('text = { Text(tr("saved")) }', self.source)
         self.assertIn('testTag("qrex-history-filter-toggle")', self.source)
         self.assertIn('testTag("qrex-history-search-row")', self.source)
-        self.assertIn('if (savedOnly) tr("no_saved") else tr("no_history")',
-                      self.source)
+        self.assertIn('searchHasNoMatches -> tr("no_matches")', self.source)
+        self.assertIn('favoritesPage || savedOnly -> tr("no_saved")', self.source)
+        self.assertIn('else -> tr("no_history")', self.source)
+        self.assertIn('"qrex-history-no-matches"', self.source)
+        self.assertIn('val hasEligibleHistory =', self.source)
         for tag in ("qrex-history-all", "qrex-history-saved",
                     "qrex-history-search"):
             self.assertIn(f'testTag("{tag}")', self.source)
@@ -89,7 +92,9 @@ class HistoryReferenceRegressionTests(unittest.TestCase):
         self.assertIn(".semantics { selected = !savedOnly }", self.source)
         self.assertIn(".semantics { selected = savedOnly }", self.source)
         self.assertGreaterEqual(self.source.count(".heightIn(min = 52.dp)"), 3)
-        self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.source)
+        self.assertIn("val savedFilterActive = favoritesPage || savedOnly", self.source)
+        self.assertIn("QRHistory.matches(it, search, savedFilterActive)", self.source)
+        self.assertIn('search.isNotBlank() && hasEligibleHistory && found.isEmpty()', self.source)
         self.assertIn("itemsIndexed(found, key = { index, item -> QRHistory.uiRowKey(item, index) })", self.source)
         self.assertNotIn("items(found, key = { it.raw })", self.source)
         # History and Favorites have separate semantic empty-state tags.
