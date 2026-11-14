@@ -102,7 +102,8 @@
         "more_privacy_hint": "How we process data",
         "more_terms_hint": "Rules and guidelines",
         "more_clear_hint": "Permanently delete all QR codes",
-        "copy_link": "Copy link"
+        "copy_link": "Copy link",
+        "no_matches": "No matching QR codes"
       }
     },
     "hr": {
@@ -206,7 +207,8 @@
         "more_privacy_hint": "Kako obrađujemo podatke",
         "more_terms_hint": "Pravila i smjernice",
         "more_clear_hint": "Trajno ukloni sve QR kodove",
-        "copy_link": "Kopiraj link"
+        "copy_link": "Kopiraj link",
+        "no_matches": "Nema odgovarajućih QR kodova"
       }
     },
     "de": {
@@ -310,7 +312,8 @@
         "more_privacy_hint": "Wie wir Daten verarbeiten",
         "more_terms_hint": "Regeln und Richtlinien",
         "more_clear_hint": "Alle QR-Codes dauerhaft löschen",
-        "copy_link": "Link kopieren"
+        "copy_link": "Link kopieren",
+        "no_matches": "Keine passenden QR-Codes"
       }
     },
     "fr": {
@@ -414,7 +417,8 @@
         "more_privacy_hint": "Comment nous traitons les données",
         "more_terms_hint": "Règles et directives",
         "more_clear_hint": "Supprimer définitivement tous les codes QR",
-        "copy_link": "Copier le lien"
+        "copy_link": "Copier le lien",
+        "no_matches": "Aucun code QR correspondant"
       }
     },
     "es": {
@@ -518,7 +522,8 @@
         "more_privacy_hint": "Cómo tratamos los datos",
         "more_terms_hint": "Reglas y directrices",
         "more_clear_hint": "Eliminar permanentemente todos los códigos QR",
-        "copy_link": "Copiar enlace"
+        "copy_link": "Copiar enlace",
+        "no_matches": "No hay códigos QR coincidentes"
       }
     },
     "it": {
@@ -622,7 +627,8 @@
         "more_privacy_hint": "Come trattiamo i dati",
         "more_terms_hint": "Regole e linee guida",
         "more_clear_hint": "Elimina definitivamente tutti i codici QR",
-        "copy_link": "Copia link"
+        "copy_link": "Copia link",
+        "no_matches": "Nessun codice QR corrispondente"
       }
     },
     "pt": {
@@ -726,7 +732,8 @@
         "more_privacy_hint": "Como tratamos os dados",
         "more_terms_hint": "Regras e orientações",
         "more_clear_hint": "Eliminar permanentemente todos os códigos QR",
-        "copy_link": "Copiar ligação"
+        "copy_link": "Copiar ligação",
+        "no_matches": "Nenhum código QR correspondente"
       }
     },
     "nl": {
@@ -830,7 +837,8 @@
         "more_privacy_hint": "Hoe we gegevens verwerken",
         "more_terms_hint": "Regels en richtlijnen",
         "more_clear_hint": "Alle QR-codes definitief verwijderen",
-        "copy_link": "Link kopiëren"
+        "copy_link": "Link kopiëren",
+        "no_matches": "Geen overeenkomende QR-codes"
       }
     },
     "pl": {
@@ -934,7 +942,8 @@
         "more_privacy_hint": "Jak przetwarzamy dane",
         "more_terms_hint": "Zasady i wytyczne",
         "more_clear_hint": "Trwale usuń wszystkie kody QR",
-        "copy_link": "Kopiuj link"
+        "copy_link": "Kopiuj link",
+        "no_matches": "Brak pasujących kodów QR"
       }
     },
     "cs": {
@@ -1038,7 +1047,8 @@
         "more_privacy_hint": "Jak zpracováváme údaje",
         "more_terms_hint": "Pravidla a pokyny",
         "more_clear_hint": "Trvale smazat všechny QR kódy",
-        "copy_link": "Kopírovat odkaz"
+        "copy_link": "Kopírovat odkaz",
+        "no_matches": "Žádné odpovídající QR kódy"
       }
     },
     "sk": {
@@ -1142,7 +1152,8 @@
         "more_privacy_hint": "Ako spracúvame údaje",
         "more_terms_hint": "Pravidlá a pokyny",
         "more_clear_hint": "Natrvalo vymazať všetky QR kódy",
-        "copy_link": "Kopírovať odkaz"
+        "copy_link": "Kopírovať odkaz",
+        "no_matches": "Žiadne zodpovedajúce QR kódy"
       }
     },
     "sl": {
@@ -1246,7 +1257,8 @@
         "more_privacy_hint": "Kako obdelujemo podatke",
         "more_terms_hint": "Pravila in smernice",
         "more_clear_hint": "Trajno izbriši vse kode QR",
-        "copy_link": "Kopiraj povezavo"
+        "copy_link": "Kopiraj povezavo",
+        "no_matches": "Ni ujemajočih se kod QR"
       }
     },
     "hu": {
@@ -1350,7 +1362,8 @@
         "more_privacy_hint": "Hogyan kezeljük az adatokat",
         "more_terms_hint": "Szabályok és irányelvek",
         "more_clear_hint": "Összes QR-kód végleges törlése",
-        "copy_link": "Hivatkozás másolása"
+        "copy_link": "Hivatkozás másolása",
+        "no_matches": "Nincs egyező QR-kód"
       }
     },
     "ro": {
@@ -1454,7 +1467,8 @@
         "more_privacy_hint": "Cum prelucrăm datele",
         "more_terms_hint": "Reguli și orientări",
         "more_clear_hint": "Șterge definitiv toate codurile QR",
-        "copy_link": "Copiază linkul"
+        "copy_link": "Copiază linkul",
+        "no_matches": "Nu există coduri QR corespunzătoare"
       }
     },
     "bg": {
@@ -1558,7 +1572,8 @@
         "more_privacy_hint": "Как обработваме данните",
         "more_terms_hint": "Правила и насоки",
         "more_clear_hint": "Изтрий завинаги всички QR кодове",
-        "copy_link": "Копирай връзката"
+        "copy_link": "Копирай връзката",
+        "no_matches": "Няма съвпадащи QR кодове"
       }
     },
     "el": {
@@ -1662,7 +1677,8 @@
         "more_privacy_hint": "Πώς επεξεργαζόμαστε δεδομένα",
         "more_terms_hint": "Κανόνες και οδηγίες",
         "more_clear_hint": "Οριστική διαγραφή όλων των κωδικών QR",
-        "copy_link": "Αντιγραφή συνδέσμου"
+        "copy_link": "Αντιγραφή συνδέσμου",
+        "no_matches": "Δεν βρέθηκαν QR κωδικοί που να ταιριάζουν"
       }
     },
     "tr": {
@@ -1766,7 +1782,8 @@
         "more_privacy_hint": "Verileri nasıl işliyoruz",
         "more_terms_hint": "Kurallar ve yönergeler",
         "more_clear_hint": "Tüm QR kodlarını kalıcı olarak sil",
-        "copy_link": "Bağlantıyı kopyala"
+        "copy_link": "Bağlantıyı kopyala",
+        "no_matches": "Eşleşen QR kodu yok"
       }
     },
     "uk": {
@@ -1870,7 +1887,8 @@
         "more_privacy_hint": "Як ми обробляємо дані",
         "more_terms_hint": "Правила та рекомендації",
         "more_clear_hint": "Назавжди видалити всі QR-коди",
-        "copy_link": "Копіювати посилання"
+        "copy_link": "Копіювати посилання",
+        "no_matches": "Відповідних QR-кодів не знайдено"
       }
     },
     "ru": {
@@ -1974,7 +1992,8 @@
         "more_privacy_hint": "Как мы обрабатываем данные",
         "more_terms_hint": "Правила и рекомендации",
         "more_clear_hint": "Навсегда удалить все QR-коды",
-        "copy_link": "Копировать ссылку"
+        "copy_link": "Копировать ссылку",
+        "no_matches": "Совпадающие QR-коды не найдены"
       }
     },
     "sv": {
@@ -2078,7 +2097,8 @@
         "more_privacy_hint": "Hur vi behandlar data",
         "more_terms_hint": "Regler och riktlinjer",
         "more_clear_hint": "Radera alla QR-koder permanent",
-        "copy_link": "Kopiera länk"
+        "copy_link": "Kopiera länk",
+        "no_matches": "Inga matchande QR-koder"
       }
     },
     "da": {
@@ -2182,7 +2202,8 @@
         "more_privacy_hint": "Sådan behandler vi data",
         "more_terms_hint": "Regler og retningslinjer",
         "more_clear_hint": "Slet alle QR-koder permanent",
-        "copy_link": "Kopiér link"
+        "copy_link": "Kopiér link",
+        "no_matches": "Ingen matchende QR-koder"
       }
     },
     "fi": {
@@ -2286,7 +2307,8 @@
         "more_privacy_hint": "Miten käsittelemme tietoja",
         "more_terms_hint": "Säännöt ja ohjeet",
         "more_clear_hint": "Poista kaikki QR-koodit pysyvästi",
-        "copy_link": "Kopioi linkki"
+        "copy_link": "Kopioi linkki",
+        "no_matches": "Ei vastaavia QR-koodeja"
       }
     },
     "nb": {
@@ -2390,7 +2412,8 @@
         "more_privacy_hint": "Hvordan vi behandler data",
         "more_terms_hint": "Regler og retningslinjer",
         "more_clear_hint": "Slett alle QR-koder permanent",
-        "copy_link": "Kopier lenke"
+        "copy_link": "Kopier lenke",
+        "no_matches": "Ingen samsvarende QR-koder"
       }
     }
   }

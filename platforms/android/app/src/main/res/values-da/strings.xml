@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Regler og retningslinjer</string>
     <string name="more_clear_hint">Slet alle QR-koder permanent</string>
     <string name="copy_link">Kopiér link</string>
+    <string name="no_matches">Ingen matchende QR-koder</string>
 </resources>

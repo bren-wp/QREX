@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Rules and guidelines</string>
     <string name="more_clear_hint">Permanently delete all QR codes</string>
     <string name="copy_link">Copy link</string>
+    <string name="no_matches">No matching QR codes</string>
 </resources>

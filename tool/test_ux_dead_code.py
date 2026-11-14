@@ -153,7 +153,9 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn('"qrex-favorites-screen" else "qrex-history-screen"', self.main)
         self.assertIn('testTag("qrex-history-filter-toggle")', self.main)
         self.assertIn('testTag("qrex-history-saved")', self.main)
-        self.assertIn("QRHistory.matches(it, search, favoritesPage || savedOnly)", self.main)
+        self.assertIn("val savedFilterActive = favoritesPage || savedOnly", self.main)
+        self.assertIn("QRHistory.matches(it, search, savedFilterActive)", self.main)
+        self.assertIn('"qrex-history-no-matches"', self.main)
         self.assertIn("private fun AppHeader(", self.main)
         self.assertIn("hasSaved = store.items.any { it.saved }", self.main)
 

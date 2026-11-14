@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Pravidlá a pokyny</string>
     <string name="more_clear_hint">Natrvalo vymazať všetky QR kódy</string>
     <string name="copy_link">Kopírovať odkaz</string>
+    <string name="no_matches">Žiadne zodpovedajúce QR kódy</string>
 </resources>

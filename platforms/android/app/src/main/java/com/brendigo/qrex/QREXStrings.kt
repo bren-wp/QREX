@@ -108,6 +108,7 @@ object QREXStrings {
         "more_terms_hint" -> R.string.more_terms_hint
         "more_clear_hint" -> R.string.more_clear_hint
         "copy_link" -> R.string.copy_link
+        "no_matches" -> R.string.no_matches
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

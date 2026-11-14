@@ -67,6 +67,15 @@ class ScreenFidelityContracts(unittest.TestCase):
         self.assertIn("zoomBusy = false", scanner)
         self.assertIn("message = cameraFailed", scanner)
 
+    def test_history_no_matches_does_not_false_label_saved_or_empty_history(self):
+        self.assertIn("val searchHasNoMatches =", self.main)
+        self.assertIn('searchHasNoMatches -> tr("no_matches")', self.main)
+        self.assertIn('testTag(', self.main)
+        self.assertIn('"qrex-history-no-matches"', self.main)
+        self.assertIn('favoritesPage || savedOnly -> tr("no_saved")', self.main)
+        strings = (ROOT / "platforms/android/app/src/main/java/com/brendigo/qrex/QREXStrings.kt").read_text("utf-8")
+        self.assertIn('"no_matches" -> R.string.no_matches', strings)
+
     def test_all_ten_screen_routes_keep_real_controls(self):
         for tag in ("qrex-result-screen", "qrex-create-screen",
                     "qrex-history-screen", "qrex-favorites-screen", "qrex-more-screen"):

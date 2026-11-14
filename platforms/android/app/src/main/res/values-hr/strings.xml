@@ -99,4 +99,5 @@
     <string name="more_terms_hint">Pravila i smjernice</string>
     <string name="more_clear_hint">Trajno ukloni sve QR kodove</string>
     <string name="copy_link">Kopiraj link</string>
+    <string name="no_matches">Nema odgovarajućih QR kodova</string>
 </resources>
