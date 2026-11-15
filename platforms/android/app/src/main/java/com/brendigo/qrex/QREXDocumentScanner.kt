@@ -77,7 +77,7 @@ internal class QREXDocumentSession : ViewModel() {
     val pages = mutableStateListOf<Bitmap>()
     var pending by mutableStateOf<Bitmap?>(null)
         private set
-    fun setPending(bitmap: Bitmap?) { pending = bitmap }
+    fun updatePending(bitmap: Bitmap?) { pending = bitmap }
     fun accept(): Boolean {
         val bitmap = pending ?: return false
         if (pages.size >= QREX_DOCUMENT_MAX_PAGES) return false
@@ -275,7 +275,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                             QREXDocumentProcessing.readFromPicker(context, uri)
                         }
                     }.onSuccess {
-                        session.setPending(it)
+                        session.updatePending(it)
                         editingIndex = -1
                         screen = "review"
                     }.onFailure { message = errorText }
@@ -366,7 +366,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                     if (rotated !== fitted) rotated.recycle()
                                     if (original !== fitted && original !== rotated) original.recycle()
                                     scope.launch {
-                                        session.setPending(fitted)
+                                        session.updatePending(fitted)
                                         editingIndex = -1
                                         cropCorners = defaultCorners
                                         screen = "review"
@@ -433,7 +433,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                             QREXDocumentProcessing.cropPerspective(bitmap, cropCorners)
                                         }
                                     }.onSuccess {
-                                        session.setPending(it)
+                                        session.updatePending(it)
                                         screen = "review"
                                     }.onFailure { message = errorText }
                                     busy = false
@@ -457,7 +457,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                         withContext(Dispatchers.Default) {
                                             QREXDocumentProcessing.rotate(bitmap, 90)
                                         }
-                                    }.onSuccess { session.setPending(it) }
+                                    }.onSuccess { session.updatePending(it) }
                                         .onFailure { message = errorText }
                                     busy = false
                                 }
@@ -466,7 +466,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                         Button(onClick = {
                             if (editingIndex in session.pages.indices) {
                                 session.replace(editingIndex, bitmap)
-                                session.setPending(null)
+                                session.updatePending(null)
                                 editingIndex = -1
                                 screen = "pages"
                             } else if (session.accept()) {
@@ -477,7 +477,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                         }
                     }
                     OutlinedButton(onClick = {
-                        session.setPending(null)
+                        session.updatePending(null)
                         editingIndex = -1
                         screen = "camera"
                     }, enabled = !busy, modifier = Modifier.fillMaxWidth()) {
@@ -505,7 +505,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                 TextButton(onClick = { session.move(index, 1) },
                                     enabled = index < session.pages.lastIndex) { Text("↓") }
                                 TextButton(onClick = {
-                                    session.setPending(bitmap)
+                                    session.updatePending(bitmap)
                                     editingIndex = index
                                     cropCorners = defaultCorners
                                     screen = "review"
