@@ -268,7 +268,7 @@ internal fun decodeGalleryQr(context: Context, uri: Uri): Result<String?> = runC
 }
 
 @Composable
-fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
+fun ScanScreen(onMore: () -> Unit = {}, onDocumentScan: () -> Unit = {}, onRead: (String) -> Unit) {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
@@ -495,6 +495,11 @@ fun ScanScreen(onMore: () -> Unit = {}, onRead: (String) -> Unit) {
         val cameraPanel = if (scrollHome) previewModifier
             else previewModifier.weight(1f)
         QrexBrandHeader(onMore = onMore)
+        OutlinedButton(
+            onClick = onDocumentScan,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .testTag("qrex-document-entry")
+        ) { Text(tr("document_scan")) }
         Spacer(Modifier.height(if (compactScan) 4.dp else 8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }
