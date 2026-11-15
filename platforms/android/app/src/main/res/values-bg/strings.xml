@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Изтрий завинаги всички QR кодове</string>
     <string name="copy_link">Копирай връзката</string>
     <string name="no_matches">Няма съвпадащи QR кодове</string>
+    <string name="document_scan">Сканиране на документ</string>
+    <string name="document_camera_hint">Снимайте страница или импортирайте снимка.</string>
+    <string name="document_capture">Снимай страница</string>
+    <string name="document_permission">Разрешете достъп до камерата или импортирайте снимка.</string>
+    <string name="document_working">Обработка на документа…</string>
+    <string name="document_error">Неуспешна обработка. Опитайте отново.</string>
+    <string name="document_limit">Максимум 8 страници на документ.</string>
+    <string name="document_pages">Страници</string>
+    <string name="document_add_page">Добави страница</string>
+    <string name="document_crop">Изрязване на ъгли</string>
+    <string name="document_crop_hint">Плъзнете всеки ъгъл до ръба на документа.</string>
+    <string name="document_corners_invalid">Ъглите трябва да образуват валидна форма.</string>
+    <string name="document_apply_crop">Приложи изрязването</string>
+    <string name="document_rotate">Завърти</string>
+    <string name="document_accept">Добави към документа</string>
+    <string name="document_retake">Снимай отново или избери друга снимка</string>
+    <string name="document_session_note">Страниците остават в паметта до експорта; при излизане се изтриват.</string>
+    <string name="document_export">Експорт в PDF</string>
+    <string name="document_name">Име на PDF файл</string>
+    <string name="document_saved_warning">Експортираните PDF файлове са достъпни за приложения с достъп до файла и не са криптирани от QREX.</string>
+    <string name="document_success">PDF е запазен.</string>
+    <string name="document_discard">Отхвърляне на документа?</string>
+    <string name="document_exit_warning">Незапазените страници ще се загубят. Да излезете ли?</string>
 </resources>

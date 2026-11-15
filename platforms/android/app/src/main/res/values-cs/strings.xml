@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Trvale smazat všechny QR kódy</string>
     <string name="copy_link">Kopírovat odkaz</string>
     <string name="no_matches">Žádné odpovídající QR kódy</string>
+    <string name="document_scan">Skenovat dokument</string>
+    <string name="document_camera_hint">Vyfoťte stránku nebo importujte fotografii.</string>
+    <string name="document_capture">Vyfotit stránku</string>
+    <string name="document_permission">Povolte přístup k fotoaparátu nebo importujte fotografii.</string>
+    <string name="document_working">Zpracování dokumentu…</string>
+    <string name="document_error">Zpracování se nezdařilo. Zkuste to znovu.</string>
+    <string name="document_limit">Nejvýše 8 stránek na dokument.</string>
+    <string name="document_pages">Stránky</string>
+    <string name="document_add_page">Přidat stránku</string>
+    <string name="document_crop">Oříznout rohy</string>
+    <string name="document_crop_hint">Přetáhněte rohy k okrajům dokumentu.</string>
+    <string name="document_corners_invalid">Rohy musí tvořit platný tvar.</string>
+    <string name="document_apply_crop">Použít oříznutí</string>
+    <string name="document_rotate">Otočit</string>
+    <string name="document_accept">Přidat do dokumentu</string>
+    <string name="document_retake">Vyfotit znovu nebo vybrat jinou fotku</string>
+    <string name="document_session_note">Stránky zůstávají v paměti do exportu; při opuštění se zahodí.</string>
+    <string name="document_export">Exportovat PDF</string>
+    <string name="document_name">Název souboru PDF</string>
+    <string name="document_saved_warning">Exportovaná PDF mohou číst aplikace s přístupem k souboru a QREX je nešifruje.</string>
+    <string name="document_success">PDF úspěšně uloženo.</string>
+    <string name="document_discard">Zahodit dokument?</string>
+    <string name="document_exit_warning">Neuložené stránky budou ztraceny. Chcete odejít?</string>
 </resources>

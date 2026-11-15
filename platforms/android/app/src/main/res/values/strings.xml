@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Permanently delete all QR codes</string>
     <string name="copy_link">Copy link</string>
     <string name="no_matches">No matching QR codes</string>
+    <string name="document_scan">Scan document</string>
+    <string name="document_camera_hint">Capture a paper page or import a photo.</string>
+    <string name="document_capture">Capture page</string>
+    <string name="document_permission">Allow camera access to scan documents, or import a photo.</string>
+    <string name="document_working">Processing document…</string>
+    <string name="document_error">Document processing failed. Try again.</string>
+    <string name="document_limit">Maximum of 8 pages per document.</string>
+    <string name="document_pages">Pages</string>
+    <string name="document_add_page">Add page</string>
+    <string name="document_crop">Crop corners</string>
+    <string name="document_crop_hint">Drag each corner to the document edge.</string>
+    <string name="document_corners_invalid">Corners must form a valid document shape.</string>
+    <string name="document_apply_crop">Apply crop</string>
+    <string name="document_rotate">Rotate</string>
+    <string name="document_accept">Add to document</string>
+    <string name="document_retake">Retake or choose another photo</string>
+    <string name="document_session_note">Pages stay in memory until export; leaving discards them.</string>
+    <string name="document_export">Export PDF</string>
+    <string name="document_name">PDF filename</string>
+    <string name="document_saved_warning">Exported PDFs are readable by apps with file access and are not encrypted by QREX.</string>
+    <string name="document_success">PDF saved successfully.</string>
+    <string name="document_discard">Discard document?</string>
+    <string name="document_exit_warning">Unsaved pages will be lost. Do you want to exit?</string>
 </resources>

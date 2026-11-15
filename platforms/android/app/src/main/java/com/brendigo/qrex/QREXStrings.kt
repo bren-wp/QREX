@@ -109,6 +109,29 @@ object QREXStrings {
         "more_clear_hint" -> R.string.more_clear_hint
         "copy_link" -> R.string.copy_link
         "no_matches" -> R.string.no_matches
+        "document_scan" -> R.string.document_scan
+        "document_camera_hint" -> R.string.document_camera_hint
+        "document_capture" -> R.string.document_capture
+        "document_permission" -> R.string.document_permission
+        "document_working" -> R.string.document_working
+        "document_error" -> R.string.document_error
+        "document_limit" -> R.string.document_limit
+        "document_pages" -> R.string.document_pages
+        "document_add_page" -> R.string.document_add_page
+        "document_crop" -> R.string.document_crop
+        "document_crop_hint" -> R.string.document_crop_hint
+        "document_corners_invalid" -> R.string.document_corners_invalid
+        "document_apply_crop" -> R.string.document_apply_crop
+        "document_rotate" -> R.string.document_rotate
+        "document_accept" -> R.string.document_accept
+        "document_retake" -> R.string.document_retake
+        "document_session_note" -> R.string.document_session_note
+        "document_export" -> R.string.document_export
+        "document_name" -> R.string.document_name
+        "document_saved_warning" -> R.string.document_saved_warning
+        "document_success" -> R.string.document_success
+        "document_discard" -> R.string.document_discard
+        "document_exit_warning" -> R.string.document_exit_warning
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

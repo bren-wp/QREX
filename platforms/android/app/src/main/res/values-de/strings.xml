@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Alle QR-Codes dauerhaft löschen</string>
     <string name="copy_link">Link kopieren</string>
     <string name="no_matches">Keine passenden QR-Codes</string>
+    <string name="document_scan">Dokument scannen</string>
+    <string name="document_camera_hint">Fotografieren Sie eine Seite oder importieren Sie ein Foto.</string>
+    <string name="document_capture">Seite aufnehmen</string>
+    <string name="document_permission">Erlauben Sie den Kamerazugriff oder importieren Sie ein Foto.</string>
+    <string name="document_working">Dokument wird verarbeitet…</string>
+    <string name="document_error">Verarbeitung fehlgeschlagen. Erneut versuchen.</string>
+    <string name="document_limit">Maximal 8 Seiten pro Dokument.</string>
+    <string name="document_pages">Seiten</string>
+    <string name="document_add_page">Seite hinzufügen</string>
+    <string name="document_crop">Ecken zuschneiden</string>
+    <string name="document_crop_hint">Ziehen Sie jede Ecke an den Dokumentrand.</string>
+    <string name="document_corners_invalid">Die Ecken müssen eine gültige Dokumentform bilden.</string>
+    <string name="document_apply_crop">Zuschnitt anwenden</string>
+    <string name="document_rotate">Drehen</string>
+    <string name="document_accept">Zum Dokument hinzufügen</string>
+    <string name="document_retake">Erneut aufnehmen oder anderes Foto wählen</string>
+    <string name="document_session_note">Seiten bleiben bis zum Export im Speicher; beim Verlassen werden sie verworfen.</string>
+    <string name="document_export">PDF exportieren</string>
+    <string name="document_name">PDF-Dateiname</string>
+    <string name="document_saved_warning">Exportierte PDFs sind für Apps mit Dateizugriff lesbar und werden nicht von QREX verschlüsselt.</string>
+    <string name="document_success">PDF erfolgreich gespeichert.</string>
+    <string name="document_discard">Dokument verwerfen?</string>
+    <string name="document_exit_warning">Nicht gespeicherte Seiten gehen verloren. Möchten Sie beenden?</string>
 </resources>

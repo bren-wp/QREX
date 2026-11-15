@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Poista kaikki QR-koodit pysyvästi</string>
     <string name="copy_link">Kopioi linkki</string>
     <string name="no_matches">Ei vastaavia QR-koodeja</string>
+    <string name="document_scan">Skannaa asiakirja</string>
+    <string name="document_camera_hint">Kuvaa sivu tai tuo valokuva.</string>
+    <string name="document_capture">Kuvaa sivu</string>
+    <string name="document_permission">Salli kameran käyttö tai tuo valokuva.</string>
+    <string name="document_working">Asiakirjaa käsitellään…</string>
+    <string name="document_error">Käsittely epäonnistui. Yritä uudelleen.</string>
+    <string name="document_limit">Enintään 8 sivua asiakirjaa kohden.</string>
+    <string name="document_pages">Sivut</string>
+    <string name="document_add_page">Lisää sivu</string>
+    <string name="document_crop">Rajaa kulmat</string>
+    <string name="document_crop_hint">Vedä kulmat asiakirjan reunoille.</string>
+    <string name="document_corners_invalid">Kulmien tulee muodostaa kelvollinen muoto.</string>
+    <string name="document_apply_crop">Käytä rajausta</string>
+    <string name="document_rotate">Kierrä</string>
+    <string name="document_accept">Lisää asiakirjaan</string>
+    <string name="document_retake">Ota uusi kuva tai valitse toinen</string>
+    <string name="document_session_note">Sivut ovat muistissa vientiin asti; poistuttaessa ne häviävät.</string>
+    <string name="document_export">Vie PDF</string>
+    <string name="document_name">PDF-tiedoston nimi</string>
+    <string name="document_saved_warning">Vietyjä PDF-tiedostoja voivat lukea sovellukset, joilla on tiedoston käyttöoikeus. QREX ei salaa niitä.</string>
+    <string name="document_success">PDF tallennettu.</string>
+    <string name="document_discard">Hylätäänkö asiakirja?</string>
+    <string name="document_exit_warning">Tallentamattomat sivut häviävät. Poistutaanko?</string>
 </resources>

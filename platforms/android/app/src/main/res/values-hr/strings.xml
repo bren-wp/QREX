@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Trajno ukloni sve QR kodove</string>
     <string name="copy_link">Kopiraj link</string>
     <string name="no_matches">Nema odgovarajućih QR kodova</string>
+    <string name="document_scan">Skeniraj dokument</string>
+    <string name="document_camera_hint">Fotografirajte papirnatu stranicu ili uvezite fotografiju.</string>
+    <string name="document_capture">Fotografiraj stranicu</string>
+    <string name="document_permission">Dopustite pristup kameri ili uvezite fotografiju.</string>
+    <string name="document_working">Obrada dokumenta…</string>
+    <string name="document_error">Obrada dokumenta nije uspjela. Pokušajte ponovno.</string>
+    <string name="document_limit">Najviše 8 stranica po dokumentu.</string>
+    <string name="document_pages">Stranice</string>
+    <string name="document_add_page">Dodaj stranicu</string>
+    <string name="document_crop">Obreži kutove</string>
+    <string name="document_crop_hint">Povucite svaki kut do ruba dokumenta.</string>
+    <string name="document_corners_invalid">Kutovi moraju činiti ispravan oblik dokumenta.</string>
+    <string name="document_apply_crop">Primijeni obrezivanje</string>
+    <string name="document_rotate">Rotiraj</string>
+    <string name="document_accept">Dodaj u dokument</string>
+    <string name="document_retake">Ponovno snimi ili odaberi drugu fotografiju</string>
+    <string name="document_session_note">Stranice se čuvaju u memoriji do izvoza; izlaskom se odbacuju.</string>
+    <string name="document_export">Izvezi PDF</string>
+    <string name="document_name">Naziv PDF datoteke</string>
+    <string name="document_saved_warning">Izvezeni PDF-ovi čitljivi su aplikacijama s pristupom datoteci i QREX ih ne šifrira.</string>
+    <string name="document_success">PDF je uspješno spremljen.</string>
+    <string name="document_discard">Odbaciti dokument?</string>
+    <string name="document_exit_warning">Nespremljene stranice bit će izgubljene. Želite li izaći?</string>
 </resources>

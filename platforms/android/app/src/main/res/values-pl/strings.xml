@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Trwale usuń wszystkie kody QR</string>
     <string name="copy_link">Kopiuj link</string>
     <string name="no_matches">Brak pasujących kodów QR</string>
+    <string name="document_scan">Skanuj dokument</string>
+    <string name="document_camera_hint">Zrób zdjęcie strony lub zaimportuj fotografię.</string>
+    <string name="document_capture">Zrób zdjęcie strony</string>
+    <string name="document_permission">Zezwól na dostęp do aparatu albo zaimportuj zdjęcie.</string>
+    <string name="document_working">Przetwarzanie dokumentu…</string>
+    <string name="document_error">Nie udało się przetworzyć. Spróbuj ponownie.</string>
+    <string name="document_limit">Maksymalnie 8 stron w dokumencie.</string>
+    <string name="document_pages">Strony</string>
+    <string name="document_add_page">Dodaj stronę</string>
+    <string name="document_crop">Przytnij rogi</string>
+    <string name="document_crop_hint">Przeciągnij każdy róg do krawędzi dokumentu.</string>
+    <string name="document_corners_invalid">Rogi muszą tworzyć prawidłowy kształt.</string>
+    <string name="document_apply_crop">Zastosuj przycięcie</string>
+    <string name="document_rotate">Obróć</string>
+    <string name="document_accept">Dodaj do dokumentu</string>
+    <string name="document_retake">Zrób ponownie lub wybierz inne zdjęcie</string>
+    <string name="document_session_note">Strony pozostają w pamięci do eksportu; wyjście je usuwa.</string>
+    <string name="document_export">Eksportuj PDF</string>
+    <string name="document_name">Nazwa pliku PDF</string>
+    <string name="document_saved_warning">Pliki PDF mogą być odczytane przez aplikacje z dostępem do pliku i nie są szyfrowane przez QREX.</string>
+    <string name="document_success">PDF zapisano pomyślnie.</string>
+    <string name="document_discard">Odrzucić dokument?</string>
+    <string name="document_exit_warning">Niezapisane strony zostaną utracone. Czy wyjść?</string>
 </resources>

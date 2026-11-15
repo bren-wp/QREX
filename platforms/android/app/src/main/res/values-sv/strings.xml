@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Radera alla QR-koder permanent</string>
     <string name="copy_link">Kopiera länk</string>
     <string name="no_matches">Inga matchande QR-koder</string>
+    <string name="document_scan">Skanna dokument</string>
+    <string name="document_camera_hint">Fotografera en sida eller importera ett foto.</string>
+    <string name="document_capture">Fotografera sida</string>
+    <string name="document_permission">Tillåt kameraåtkomst eller importera ett foto.</string>
+    <string name="document_working">Bearbetar dokument…</string>
+    <string name="document_error">Det gick inte att bearbeta dokumentet. Försök igen.</string>
+    <string name="document_limit">Högst 8 sidor per dokument.</string>
+    <string name="document_pages">Sidor</string>
+    <string name="document_add_page">Lägg till sida</string>
+    <string name="document_crop">Beskär hörn</string>
+    <string name="document_crop_hint">Dra varje hörn till dokumentets kant.</string>
+    <string name="document_corners_invalid">Hörnen måste bilda en giltig form.</string>
+    <string name="document_apply_crop">Verkställ beskärning</string>
+    <string name="document_rotate">Rotera</string>
+    <string name="document_accept">Lägg till i dokument</string>
+    <string name="document_retake">Ta om eller välj annat foto</string>
+    <string name="document_session_note">Sidorna lagras i minnet till export; de försvinner när du lämnar.</string>
+    <string name="document_export">Exportera PDF</string>
+    <string name="document_name">PDF-filnamn</string>
+    <string name="document_saved_warning">Exporterade PDF-filer kan läsas av appar med filåtkomst och krypteras inte av QREX.</string>
+    <string name="document_success">PDF sparad.</string>
+    <string name="document_discard">Kasta dokumentet?</string>
+    <string name="document_exit_warning">Osparade sidor går förlorade. Vill du avsluta?</string>
 </resources>

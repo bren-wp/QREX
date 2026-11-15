@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Supprimer définitivement tous les codes QR</string>
     <string name="copy_link">Copier le lien</string>
     <string name="no_matches">Aucun code QR correspondant</string>
+    <string name="document_scan">Numériser un document</string>
+    <string name="document_camera_hint">Photographiez une page ou importez une photo.</string>
+    <string name="document_capture">Capturer la page</string>
+    <string name="document_permission">Autorisez l’appareil photo ou importez une photo.</string>
+    <string name="document_working">Traitement du document…</string>
+    <string name="document_error">Échec du traitement. Réessayez.</string>
+    <string name="document_limit">8 pages maximum par document.</string>
+    <string name="document_pages">Pages</string>
+    <string name="document_add_page">Ajouter une page</string>
+    <string name="document_crop">Recadrer les coins</string>
+    <string name="document_crop_hint">Faites glisser chaque coin vers le bord du document.</string>
+    <string name="document_corners_invalid">Les coins doivent former un document valide.</string>
+    <string name="document_apply_crop">Appliquer le recadrage</string>
+    <string name="document_rotate">Faire pivoter</string>
+    <string name="document_accept">Ajouter au document</string>
+    <string name="document_retake">Reprendre ou choisir une autre photo</string>
+    <string name="document_session_note">Les pages restent en mémoire jusqu’à l’exportation ; quitter les supprimera.</string>
+    <string name="document_export">Exporter en PDF</string>
+    <string name="document_name">Nom du fichier PDF</string>
+    <string name="document_saved_warning">Les PDF exportés sont lisibles par les applications autorisées et ne sont pas chiffrés par QREX.</string>
+    <string name="document_success">PDF enregistré.</string>
+    <string name="document_discard">Supprimer le document ?</string>
+    <string name="document_exit_warning">Les pages non enregistrées seront perdues. Quitter ?</string>
 </resources>

@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Alle QR-codes definitief verwijderen</string>
     <string name="copy_link">Link kopiëren</string>
     <string name="no_matches">Geen overeenkomende QR-codes</string>
+    <string name="document_scan">Document scannen</string>
+    <string name="document_camera_hint">Fotografeer een pagina of importeer een foto.</string>
+    <string name="document_capture">Pagina vastleggen</string>
+    <string name="document_permission">Geef cameratoegang of importeer een foto.</string>
+    <string name="document_working">Document verwerken…</string>
+    <string name="document_error">Documentverwerking mislukt. Probeer opnieuw.</string>
+    <string name="document_limit">Maximaal 8 pagina\'s per document.</string>
+    <string name="document_pages">Pagina\'s</string>
+    <string name="document_add_page">Pagina toevoegen</string>
+    <string name="document_crop">Hoeken bijsnijden</string>
+    <string name="document_crop_hint">Sleep elke hoek naar de rand van het document.</string>
+    <string name="document_corners_invalid">De hoeken moeten een geldige documentvorm vormen.</string>
+    <string name="document_apply_crop">Bijsnijden toepassen</string>
+    <string name="document_rotate">Draaien</string>
+    <string name="document_accept">Aan document toevoegen</string>
+    <string name="document_retake">Opnieuw fotograferen of andere foto kiezen</string>
+    <string name="document_session_note">Pagina\'s blijven tot export in het geheugen; bij verlaten worden ze gewist.</string>
+    <string name="document_export">PDF exporteren</string>
+    <string name="document_name">PDF-bestandsnaam</string>
+    <string name="document_saved_warning">Geëxporteerde PDF\'s zijn leesbaar voor apps met bestandstoegang en worden niet door QREX versleuteld.</string>
+    <string name="document_success">PDF opgeslagen.</string>
+    <string name="document_discard">Document verwijderen?</string>
+    <string name="document_exit_warning">Niet-opgeslagen pagina\'s gaan verloren. Wilt u afsluiten?</string>
 </resources>

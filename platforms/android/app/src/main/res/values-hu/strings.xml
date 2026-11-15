@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Összes QR-kód végleges törlése</string>
     <string name="copy_link">Hivatkozás másolása</string>
     <string name="no_matches">Nincs egyező QR-kód</string>
+    <string name="document_scan">Dokumentum beolvasása</string>
+    <string name="document_camera_hint">Fényképezzen le egy oldalt, vagy importáljon képet.</string>
+    <string name="document_capture">Oldal fényképezése</string>
+    <string name="document_permission">Engedélyezze a kamerát, vagy importáljon képet.</string>
+    <string name="document_working">Dokumentum feldolgozása…</string>
+    <string name="document_error">A feldolgozás sikertelen. Próbálja újra.</string>
+    <string name="document_limit">Legfeljebb 8 oldal dokumentumonként.</string>
+    <string name="document_pages">Oldalak</string>
+    <string name="document_add_page">Oldal hozzáadása</string>
+    <string name="document_crop">Sarkok levágása</string>
+    <string name="document_crop_hint">Húzza a sarkokat a dokumentum széleihez.</string>
+    <string name="document_corners_invalid">A sarkoknak érvényes alakzatot kell alkotniuk.</string>
+    <string name="document_apply_crop">Vágás alkalmazása</string>
+    <string name="document_rotate">Forgatás</string>
+    <string name="document_accept">Hozzáadás a dokumentumhoz</string>
+    <string name="document_retake">Új fénykép vagy másik kép választása</string>
+    <string name="document_session_note">Az oldalak exportálásig a memóriában maradnak; kilépéskor törlődnek.</string>
+    <string name="document_export">PDF exportálása</string>
+    <string name="document_name">PDF-fájlnév</string>
+    <string name="document_saved_warning">Az exportált PDF-eket a fájlhoz hozzáférő alkalmazások olvashatják; a QREX nem titkosítja őket.</string>
+    <string name="document_success">PDF sikeresen mentve.</string>
+    <string name="document_discard">Dokumentum elvetése?</string>
+    <string name="document_exit_warning">A nem mentett oldalak elvesznek. Kilép?</string>
 </resources>

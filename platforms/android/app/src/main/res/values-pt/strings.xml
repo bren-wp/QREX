@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Eliminar permanentemente todos os códigos QR</string>
     <string name="copy_link">Copiar ligação</string>
     <string name="no_matches">Nenhum código QR correspondente</string>
+    <string name="document_scan">Digitalizar documento</string>
+    <string name="document_camera_hint">Fotografe uma página ou importe uma fotografia.</string>
+    <string name="document_capture">Capturar página</string>
+    <string name="document_permission">Permita o acesso à câmara ou importe uma fotografia.</string>
+    <string name="document_working">A processar documento…</string>
+    <string name="document_error">Falha ao processar. Tente novamente.</string>
+    <string name="document_limit">Máximo de 8 páginas por documento.</string>
+    <string name="document_pages">Páginas</string>
+    <string name="document_add_page">Adicionar página</string>
+    <string name="document_crop">Recortar cantos</string>
+    <string name="document_crop_hint">Arraste cada canto até à margem do documento.</string>
+    <string name="document_corners_invalid">Os cantos devem formar um documento válido.</string>
+    <string name="document_apply_crop">Aplicar recorte</string>
+    <string name="document_rotate">Rodar</string>
+    <string name="document_accept">Adicionar ao documento</string>
+    <string name="document_retake">Fotografar novamente ou escolher outra foto</string>
+    <string name="document_session_note">As páginas ficam na memória até exportar; ao sair serão eliminadas.</string>
+    <string name="document_export">Exportar PDF</string>
+    <string name="document_name">Nome do ficheiro PDF</string>
+    <string name="document_saved_warning">Os PDF exportados podem ser lidos por apps com acesso ao ficheiro e não são encriptados pelo QREX.</string>
+    <string name="document_success">PDF guardado com sucesso.</string>
+    <string name="document_discard">Descartar documento?</string>
+    <string name="document_exit_warning">As páginas não guardadas serão perdidas. Quer sair?</string>
 </resources>
