@@ -98,8 +98,11 @@ internal object QREXDocumentProcessing {
     fun readFromPicker(context: Context, uri: Uri): Bitmap {
         val resolver = context.contentResolver
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+        val sourceStream = resolver.openInputStream(uri)
             ?: error("Document source unavailable")
+        // A bounds-only decode intentionally returns null. Check the metadata,
+        // not the (absent) Bitmap, before opening the stream a second time.
+        sourceStream.use { BitmapFactory.decodeStream(it, null, bounds) }
         require(bounds.outWidth in 1..30000 && bounds.outHeight in 1..30000)
         // Image decoders may round sampling down to a power of two. Choose
         // the next power explicitly so a huge provider image is never decoded
