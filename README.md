@@ -69,6 +69,13 @@ The native screens are built with Jetpack Compose; the scanner uses a live Camer
 
 ## Everything you need
 
+### Document Scanner — development preview (PR #120)
+
+The next QREX feature is being developed **inside the existing Scan tab**, without adding a sixth root tab. The current code introduces CameraX paper capture, Android Photo Picker import, four-corner perspective cropping, orientation correction, page rotation, page re-editing and ordering, and A4 portrait/landscape multi-page PDF export through Android's document picker. It is designed to remain offline and limit processing to eight memory-resident pages.
+
+**Status:** this is a **Draft pull request**, not a feature of the [published v1.0.49 release](https://github.com/bren-wp/QREX/releases/tag/v1.0.49). Actual camera, PDF, memory, accessibility and emulator verification is pending. Automatic border detection, advanced image filters, undo and recovery after process death are still planned. No screenshots from this development branch are presented as published release captures. [Follow PR #120](https://github.com/bren-wp/QREX/pull/120).
+
+
 No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating together in a compact interface designed for everyday use.
 
 | | Feature |

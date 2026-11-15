@@ -1,4 +1,6 @@
-# QREX 1.0.22 — Google Play submission guide
+# Historical QREX 1.0.22 — Google Play submission guide
+
+> **Archive only:** this guide describes an older proposed Play submission. The last verified public GitHub release is [v1.0.49](https://github.com/bren-wp/QREX/releases/tag/v1.0.49). The unreleased document scanner is under [draft PR #120](https://github.com/bren-wp/QREX/pull/120). Do not treat the 1.0.22 version/code or signing steps below as current upload instructions.
 
 **Platform:** Android · **package:** `com.brendigo.qrex` · **versionName:** `1.0.22` · **versionCode:** `122` · **target/compile SDK:** 36 · **min SDK:** 26.
 
