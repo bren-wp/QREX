@@ -22,6 +22,11 @@ class QREXScannerControlsTest {
         }
         rule.onNodeWithTag("qrex-scanner-local-message", useUnmergedTree = true)
             .assertIsDisplayed()
+        val documentAction = rule.onNodeWithTag("qrex-document-entry", useUnmergedTree = true)
+            .assertIsDisplayed()
+        val documentBounds = documentAction.getUnclippedBoundsInRoot()
+        assertTrue(documentBounds.right - documentBounds.left >= 48.dp)
+        assertTrue(documentBounds.bottom - documentBounds.top >= 48.dp)
         for (tag in listOf("qrex-scan-gallery", "qrex-scan-torch")) {
             val button = rule.onNodeWithTag(tag, useUnmergedTree = true)
                 .assertIsDisplayed()

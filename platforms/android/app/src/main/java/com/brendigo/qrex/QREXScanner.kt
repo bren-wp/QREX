@@ -494,12 +494,7 @@ fun ScanScreen(onMore: () -> Unit = {}, onDocumentScan: () -> Unit = {}, onRead:
     ) {
         val cameraPanel = if (scrollHome) previewModifier
             else previewModifier.weight(1f)
-        QrexBrandHeader(onMore = onMore)
-        OutlinedButton(
-            onClick = onDocumentScan,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                .testTag("qrex-document-entry")
-        ) { Text(tr("document_scan")) }
+        QrexBrandHeader(onMore = onMore, onDocumentScan = onDocumentScan)
         Spacer(Modifier.height(if (compactScan) 4.dp else 8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }
