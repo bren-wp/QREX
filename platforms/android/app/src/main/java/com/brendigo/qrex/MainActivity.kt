@@ -1472,10 +1472,12 @@ private fun CreateScreen(
                                 focusManager.clearFocus(force = true)
                                 content = ""
                             },
-                            // Keep the 24dp glyph unchanged but provide a
-                            // reliable 52dp Compose hit region at all
-                            // Android densities (minimum 48dp accessible).
-                            modifier = Modifier.size(52.dp)
+                            // Material3's TextField trailing slot can constrain
+                            // the measured IconButton below its requested size
+                            // on some Android API/density combinations.
+                            // requiredSize keeps the actual tappable node >=48dp
+                            // without changing the visible 24dp clear glyph.
+                            modifier = Modifier.requiredSize(56.dp)
                                 .testTag("qrex-create-clear-url")
                         ) {
                             Icon(Icons.Default.Cancel,
