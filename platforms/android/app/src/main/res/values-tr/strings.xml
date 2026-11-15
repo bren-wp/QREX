@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Tüm QR kodlarını kalıcı olarak sil</string>
     <string name="copy_link">Bağlantıyı kopyala</string>
     <string name="no_matches">Eşleşen QR kodu yok</string>
+    <string name="document_scan">Belge tara</string>
+    <string name="document_camera_hint">Bir sayfanın fotoğrafını çekin veya fotoğraf içe aktarın.</string>
+    <string name="document_capture">Sayfa çek</string>
+    <string name="document_permission">Kameraya izin verin veya fotoğraf içe aktarın.</string>
+    <string name="document_working">Belge işleniyor…</string>
+    <string name="document_error">Belge işlenemedi. Yeniden deneyin.</string>
+    <string name="document_limit">Belge başına en fazla 8 sayfa.</string>
+    <string name="document_pages">Sayfalar</string>
+    <string name="document_add_page">Sayfa ekle</string>
+    <string name="document_crop">Köşeleri kırp</string>
+    <string name="document_crop_hint">Her köşeyi belgenin kenarına sürükleyin.</string>
+    <string name="document_corners_invalid">Köşeler geçerli bir şekil oluşturmalı.</string>
+    <string name="document_apply_crop">Kırpmayı uygula</string>
+    <string name="document_rotate">Döndür</string>
+    <string name="document_accept">Belgeye ekle</string>
+    <string name="document_retake">Yeniden çek veya başka fotoğraf seç</string>
+    <string name="document_session_note">Sayfalar dışa aktarılana kadar bellekte tutulur; çıkışta silinir.</string>
+    <string name="document_export">PDF dışa aktar</string>
+    <string name="document_name">PDF dosya adı</string>
+    <string name="document_saved_warning">Dışa aktarılan PDF\'ler dosyaya erişimi olan uygulamalarca okunabilir; QREX tarafından şifrelenmez.</string>
+    <string name="document_success">PDF kaydedildi.</string>
+    <string name="document_discard">Belge silinsin mi?</string>
+    <string name="document_exit_warning">Kaydedilmemiş sayfalar kaybolacak. Çıkılsın mı?</string>
 </resources>

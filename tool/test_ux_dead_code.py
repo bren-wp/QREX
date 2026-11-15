@@ -55,7 +55,17 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('CreateDocument("application/zip")', self.main)
         self.assertIn("QrexDesign.backgroundDeep", self.main)
         self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
-        self.assertIn("QrexBrandHeader(onMore = onMore)", self.scanner)
+        self.assertIn("QrexBrandHeader(onMore = onMore, onDocumentScan = onDocumentScan)", self.scanner)
+
+    def test_document_scanner_header_entry_retains_preview_space(self):
+        # The document route must not add a full-height row above CameraX.
+        # Keep the QR camera controls in view on Android API 35/36 devices.
+        design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
+        self.assertIn("QrexBrandHeader(onMore = onMore, onDocumentScan = onDocumentScan)", self.scanner)
+        self.assertNotIn('OutlinedButton(\n            onClick = onDocumentScan', self.scanner)
+        self.assertIn("if (onDocumentScan != null)", design)
+        self.assertIn('Modifier.size(48.dp).testTag("qrex-document-entry")', design)
+        self.assertIn('contentDescription = tr("document_scan")', design)
 
     def test_reference_splash_tagline_and_android_26_window_theme(self):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")

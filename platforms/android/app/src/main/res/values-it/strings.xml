@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Elimina definitivamente tutti i codici QR</string>
     <string name="copy_link">Copia link</string>
     <string name="no_matches">Nessun codice QR corrispondente</string>
+    <string name="document_scan">Scansiona documento</string>
+    <string name="document_camera_hint">Fotografa una pagina o importa una foto.</string>
+    <string name="document_capture">Acquisisci pagina</string>
+    <string name="document_permission">Consenti l’accesso alla fotocamera o importa una foto.</string>
+    <string name="document_working">Elaborazione del documento…</string>
+    <string name="document_error">Elaborazione non riuscita. Riprova.</string>
+    <string name="document_limit">Massimo 8 pagine per documento.</string>
+    <string name="document_pages">Pagine</string>
+    <string name="document_add_page">Aggiungi pagina</string>
+    <string name="document_crop">Ritaglia gli angoli</string>
+    <string name="document_crop_hint">Trascina ogni angolo fino al bordo del documento.</string>
+    <string name="document_corners_invalid">Gli angoli devono formare un documento valido.</string>
+    <string name="document_apply_crop">Applica ritaglio</string>
+    <string name="document_rotate">Ruota</string>
+    <string name="document_accept">Aggiungi al documento</string>
+    <string name="document_retake">Riscatta o scegli un’altra foto</string>
+    <string name="document_session_note">Le pagine restano in memoria fino all’esportazione; uscendo vengono eliminate.</string>
+    <string name="document_export">Esporta PDF</string>
+    <string name="document_name">Nome del PDF</string>
+    <string name="document_saved_warning">I PDF esportati sono leggibili dalle app con accesso al file e non sono crittografati da QREX.</string>
+    <string name="document_success">PDF salvato correttamente.</string>
+    <string name="document_discard">Eliminare il documento?</string>
+    <string name="document_exit_warning">Le pagine non salvate andranno perse. Vuoi uscire?</string>
 </resources>

@@ -221,6 +221,8 @@ private fun QREXApp(
             else -> 0
         })
     }
+    // Document workflow stays inside Scan; retain its route on rotation.
+    var documentMode by rememberSaveable(screenshotMode) { mutableStateOf(false) }
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
     }
@@ -308,6 +310,7 @@ private fun QREXApp(
             resultShowsQr = false
         }
         Scaffold(containerColor = colors.background, bottomBar = {
+            if (!documentMode) {
             // All six supplied reference screens, including Result, retain
             // the same five native destinations. Never overlay the Result body.
             Column(Modifier.fillMaxWidth()) {
@@ -359,11 +362,14 @@ private fun QREXApp(
                 }
                 }
             } // Divider and five-tab navigation on main and Result destinations
+            }
         }) { padding ->
             Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
                 androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
                 .padding(padding)) {
-                if (currentCode != null) {
+                if (documentMode) {
+                    QREXDocumentScanScreen(onExit = { documentMode = false })
+                } else if (currentCode != null) {
                     ResultScreen(
                         raw = currentCode!!,
                         store = store,
@@ -379,7 +385,8 @@ private fun QREXApp(
                     )
                 } else {
                     when (selected) {
-                        0 -> ScanScreen(onMore = { selected = 4 }, onRead = { raw ->
+                        0 -> ScanScreen(onMore = { selected = 4 },
+                            onDocumentScan = { documentMode = true }, onRead = { raw ->
                             store.record(raw)
                             resultShowsQr = false
                             currentCode = raw
@@ -1465,10 +1472,12 @@ private fun CreateScreen(
                                 focusManager.clearFocus(force = true)
                                 content = ""
                             },
-                            // Keep the 24dp glyph unchanged but provide a
-                            // reliable 52dp Compose hit region at all
-                            // Android densities (minimum 48dp accessible).
-                            modifier = Modifier.size(52.dp)
+                            // Material3's TextField trailing slot can constrain
+                            // the measured IconButton below its requested size
+                            // on some Android API/density combinations.
+                            // requiredSize keeps the actual tappable node >=48dp
+                            // without changing the visible 24dp clear glyph.
+                            modifier = Modifier.requiredSize(56.dp)
                                 .testTag("qrex-create-clear-url")
                         ) {
                             Icon(Icons.Default.Cancel,

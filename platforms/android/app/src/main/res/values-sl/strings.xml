@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Trajno izbriši vse kode QR</string>
     <string name="copy_link">Kopiraj povezavo</string>
     <string name="no_matches">Ni ujemajočih se kod QR</string>
+    <string name="document_scan">Skeniraj dokument</string>
+    <string name="document_camera_hint">Fotografirajte stran ali uvozite fotografijo.</string>
+    <string name="document_capture">Fotografiraj stran</string>
+    <string name="document_permission">Dovolite dostop do kamere ali uvozite fotografijo.</string>
+    <string name="document_working">Obdelava dokumenta…</string>
+    <string name="document_error">Obdelava ni uspela. Poskusite znova.</string>
+    <string name="document_limit">Največ 8 strani na dokument.</string>
+    <string name="document_pages">Strani</string>
+    <string name="document_add_page">Dodaj stran</string>
+    <string name="document_crop">Obreži vogale</string>
+    <string name="document_crop_hint">Povlecite vsak vogal do roba dokumenta.</string>
+    <string name="document_corners_invalid">Vogali morajo tvoriti veljavno obliko.</string>
+    <string name="document_apply_crop">Uporabi obrezovanje</string>
+    <string name="document_rotate">Zavrti</string>
+    <string name="document_accept">Dodaj v dokument</string>
+    <string name="document_retake">Ponovno fotografiraj ali izberi drugo sliko</string>
+    <string name="document_session_note">Strani ostanejo v pomnilniku do izvoza; ob izhodu se zavržejo.</string>
+    <string name="document_export">Izvozi PDF</string>
+    <string name="document_name">Ime datoteke PDF</string>
+    <string name="document_saved_warning">Izvožene datoteke PDF lahko berejo aplikacije z dostopom do datoteke in jih QREX ne šifrira.</string>
+    <string name="document_success">PDF je shranjen.</string>
+    <string name="document_discard">Zavrzi dokument?</string>
+    <string name="document_exit_warning">Neshranjene strani bodo izgubljene. Želite izstopiti?</string>
 </resources>

@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Οριστική διαγραφή όλων των κωδικών QR</string>
     <string name="copy_link">Αντιγραφή συνδέσμου</string>
     <string name="no_matches">Δεν βρέθηκαν QR κωδικοί που να ταιριάζουν</string>
+    <string name="document_scan">Σάρωση εγγράφου</string>
+    <string name="document_camera_hint">Φωτογραφίστε μια σελίδα ή εισαγάγετε φωτογραφία.</string>
+    <string name="document_capture">Λήψη σελίδας</string>
+    <string name="document_permission">Επιτρέψτε την κάμερα ή εισαγάγετε φωτογραφία.</string>
+    <string name="document_working">Επεξεργασία εγγράφου…</string>
+    <string name="document_error">Η επεξεργασία απέτυχε. Δοκιμάστε ξανά.</string>
+    <string name="document_limit">Έως 8 σελίδες ανά έγγραφο.</string>
+    <string name="document_pages">Σελίδες</string>
+    <string name="document_add_page">Προσθήκη σελίδας</string>
+    <string name="document_crop">Περικοπή γωνιών</string>
+    <string name="document_crop_hint">Σύρετε κάθε γωνία στο άκρο του εγγράφου.</string>
+    <string name="document_corners_invalid">Οι γωνίες πρέπει να ορίζουν έγκυρο σχήμα.</string>
+    <string name="document_apply_crop">Εφαρμογή περικοπής</string>
+    <string name="document_rotate">Περιστροφή</string>
+    <string name="document_accept">Προσθήκη στο έγγραφο</string>
+    <string name="document_retake">Νέα λήψη ή επιλογή άλλης φωτογραφίας</string>
+    <string name="document_session_note">Οι σελίδες μένουν στη μνήμη μέχρι την εξαγωγή και χάνονται κατά την έξοδο.</string>
+    <string name="document_export">Εξαγωγή PDF</string>
+    <string name="document_name">Όνομα αρχείου PDF</string>
+    <string name="document_saved_warning">Τα εξαγόμενα PDF διαβάζονται από εφαρμογές με πρόσβαση στο αρχείο και δεν κρυπτογραφούνται από το QREX.</string>
+    <string name="document_success">Το PDF αποθηκεύτηκε.</string>
+    <string name="document_discard">Απόρριψη εγγράφου;</string>
+    <string name="document_exit_warning">Οι μη αποθηκευμένες σελίδες θα χαθούν. Έξοδος;</string>
 </resources>

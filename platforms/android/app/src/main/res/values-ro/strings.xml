@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Șterge definitiv toate codurile QR</string>
     <string name="copy_link">Copiază linkul</string>
     <string name="no_matches">Nu există coduri QR corespunzătoare</string>
+    <string name="document_scan">Scanează document</string>
+    <string name="document_camera_hint">Fotografiază o pagină sau importă o fotografie.</string>
+    <string name="document_capture">Fotografiază pagina</string>
+    <string name="document_permission">Permite accesul la cameră sau importă o fotografie.</string>
+    <string name="document_working">Se procesează documentul…</string>
+    <string name="document_error">Procesarea a eșuat. Încearcă din nou.</string>
+    <string name="document_limit">Maximum 8 pagini per document.</string>
+    <string name="document_pages">Pagini</string>
+    <string name="document_add_page">Adaugă pagină</string>
+    <string name="document_crop">Decupează colțurile</string>
+    <string name="document_crop_hint">Trage fiecare colț la marginea documentului.</string>
+    <string name="document_corners_invalid">Colțurile trebuie să formeze un document valid.</string>
+    <string name="document_apply_crop">Aplică decuparea</string>
+    <string name="document_rotate">Rotește</string>
+    <string name="document_accept">Adaugă la document</string>
+    <string name="document_retake">Refă fotografia sau alege alta</string>
+    <string name="document_session_note">Paginile rămân în memorie până la export; la ieșire sunt eliminate.</string>
+    <string name="document_export">Exportă PDF</string>
+    <string name="document_name">Numele fișierului PDF</string>
+    <string name="document_saved_warning">PDF-urile exportate pot fi citite de aplicațiile cu acces la fișier și nu sunt criptate de QREX.</string>
+    <string name="document_success">PDF salvat cu succes.</string>
+    <string name="document_discard">Renunți la document?</string>
+    <string name="document_exit_warning">Paginile nesalvate se vor pierde. Vrei să ieși?</string>
 </resources>

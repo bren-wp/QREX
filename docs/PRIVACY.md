@@ -23,6 +23,12 @@ When you tap **Share**, QREX sends the selected QR text to the app you choose; Q
 
 Calendar-event QR content is processed on device. If you tap **Add to calendar**, QREX passes the event title, start/end time and any location or details you entered to the calendar app selected on your device using Android's standard event-insert action. QREX does not request calendar read or write permission. The selected calendar app controls its own storage and privacy practices.
 
+## Document Scanner (development branch PR #120; not in v1.0.49)
+
+The proposed document-scanning workflow captures paper pages with CameraX or reads images selected through the Android Photo Picker. Images and edited page bitmaps remain in application memory for the document session, including ordinary Activity recreation. QREX does not upload these images and does not create intermediate plaintext photo files on disk. Up to eight pages are allowed, with each held image bounded in resolution. A full Android process termination may discard a session; unsaved scans are **not** a durable backup. Leaving the session requests confirmation before discarding pages.
+
+PDF creation starts only after you select an output destination with Android's Storage Access Framework. Exported PDFs are **not encrypted** with the app's protected QR history key. Files are readable by the destination provider and by apps you intentionally grant access to; cloud destinations may upload them independently of QREX. Review the destination before exporting or sharing documents that contain personal data. A partially written export may remain if the destination fails during writing.
+
 ## PDF and PNG exports
 
 Exports are created only after you choose to export. A PDF archive contains only your manually saved codes and **is not encrypted**. A saved PNG likewise contains readable QR data and **is not encrypted**. QREX warns before exporting a Wi-Fi QR image because it may encode a password. Cloud providers or recipients selected by you may store it separately. Deleting data in QREX does **not** erase already-exported copies.

@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Eliminar permanentemente todos los códigos QR</string>
     <string name="copy_link">Copiar enlace</string>
     <string name="no_matches">No hay códigos QR coincidentes</string>
+    <string name="document_scan">Escanear documento</string>
+    <string name="document_camera_hint">Fotografía una página o importa una foto.</string>
+    <string name="document_capture">Capturar página</string>
+    <string name="document_permission">Permite usar la cámara o importa una foto.</string>
+    <string name="document_working">Procesando documento…</string>
+    <string name="document_error">Error al procesar. Inténtalo de nuevo.</string>
+    <string name="document_limit">Máximo de 8 páginas por documento.</string>
+    <string name="document_pages">Páginas</string>
+    <string name="document_add_page">Añadir página</string>
+    <string name="document_crop">Recortar esquinas</string>
+    <string name="document_crop_hint">Arrastra cada esquina hasta el borde del documento.</string>
+    <string name="document_corners_invalid">Las esquinas deben formar una figura válida.</string>
+    <string name="document_apply_crop">Aplicar recorte</string>
+    <string name="document_rotate">Girar</string>
+    <string name="document_accept">Añadir al documento</string>
+    <string name="document_retake">Repetir foto o elegir otra</string>
+    <string name="document_session_note">Las páginas permanecen en memoria hasta exportar; al salir se descartan.</string>
+    <string name="document_export">Exportar PDF</string>
+    <string name="document_name">Nombre del PDF</string>
+    <string name="document_saved_warning">Las aplicaciones con acceso al archivo pueden leer los PDF exportados; QREX no los cifra.</string>
+    <string name="document_success">PDF guardado correctamente.</string>
+    <string name="document_discard">¿Descartar documento?</string>
+    <string name="document_exit_warning">Se perderán las páginas sin guardar. ¿Quieres salir?</string>
 </resources>

@@ -100,4 +100,27 @@
     <string name="more_clear_hint">Slett alle QR-koder permanent</string>
     <string name="copy_link">Kopier lenke</string>
     <string name="no_matches">Ingen samsvarende QR-koder</string>
+    <string name="document_scan">Skann dokument</string>
+    <string name="document_camera_hint">Fotografer en side eller importer et bilde.</string>
+    <string name="document_capture">Ta bilde av side</string>
+    <string name="document_permission">Tillat kameratilgang eller importer et bilde.</string>
+    <string name="document_working">Behandler dokument…</string>
+    <string name="document_error">Kunne ikke behandle dokumentet. Prøv igjen.</string>
+    <string name="document_limit">Maksimalt 8 sider per dokument.</string>
+    <string name="document_pages">Sider</string>
+    <string name="document_add_page">Legg til side</string>
+    <string name="document_crop">Beskjær hjørner</string>
+    <string name="document_crop_hint">Dra hvert hjørne til kanten av dokumentet.</string>
+    <string name="document_corners_invalid">Hjørnene må danne en gyldig form.</string>
+    <string name="document_apply_crop">Bruk beskjæring</string>
+    <string name="document_rotate">Roter</string>
+    <string name="document_accept">Legg til i dokument</string>
+    <string name="document_retake">Ta nytt bilde eller velg et annet</string>
+    <string name="document_session_note">Sidene holdes i minnet til eksport; de slettes når du går ut.</string>
+    <string name="document_export">Eksporter PDF</string>
+    <string name="document_name">PDF-filnavn</string>
+    <string name="document_saved_warning">Eksporterte PDF-er kan leses av apper med filtilgang og krypteres ikke av QREX.</string>
+    <string name="document_success">PDF lagret.</string>
+    <string name="document_discard">Forkaste dokumentet?</string>
+    <string name="document_exit_warning">Ulagrede sider går tapt. Vil du avslutte?</string>
 </resources>
