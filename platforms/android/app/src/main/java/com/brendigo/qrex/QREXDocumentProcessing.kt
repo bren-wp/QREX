@@ -101,9 +101,14 @@ internal object QREXDocumentProcessing {
         resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
             ?: error("Document source unavailable")
         require(bounds.outWidth in 1..30000 && bounds.outHeight in 1..30000)
-        val sample = kotlin.math.sqrt(
-            bounds.outWidth.toDouble() * bounds.outHeight / QREX_DOCUMENT_MAX_PIXELS
-        ).toInt().coerceAtLeast(1)
+        // Image decoders may round sampling down to a power of two. Choose
+        // the next power explicitly so a huge provider image is never decoded
+        // at a size above the in-memory page budget.
+        var sample = 1
+        while ((bounds.outWidth.toLong() / sample) *
+            (bounds.outHeight.toLong() / sample) > QREX_DOCUMENT_MAX_PIXELS) {
+            sample *= 2
+        }
         val options = BitmapFactory.Options().apply {
             inSampleSize = sample
             inPreferredConfig = Bitmap.Config.ARGB_8888
