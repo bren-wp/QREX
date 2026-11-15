@@ -260,6 +260,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     val defaultCorners = listOf(.05f, .05f, .95f, .05f, .95f, .95f, .05f, .95f)
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
+    val invalidCornersText = tr("document_corners_invalid")
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -423,7 +424,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                         QREXDocumentCorners(bitmap, cropCorners) { cropCorners = it }
                         Button(onClick = {
                             if (!qrexDocumentQuadValid(cropCorners)) {
-                                message = tr("document_corners_invalid")
+                                message = invalidCornersText
                             } else {
                                 busy = true
                                 scope.launch {
