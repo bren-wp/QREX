@@ -155,18 +155,20 @@ internal fun QREXDocumentCorners(
     onChange: (List<Float>) -> Unit
 ) {
     var activeCorner by remember(source) { mutableIntStateOf(-1) }
+    val currentCorners by rememberUpdatedState(corners)
+    val updateCorners by rememberUpdatedState(onChange)
     val viewportHeight = min(400, max(200, LocalConfiguration.current.screenHeightDp / 2))
     Canvas(Modifier.fillMaxWidth().height(viewportHeight.dp)
         .background(Color.Black, RoundedCornerShape(12.dp))
-        .pointerInput(source, corners) {
+        .pointerInput(source) {
             detectDragGestures(
                 onDragStart = { touch ->
                     val r = qrexDocumentPreviewRect(
                         size.width.toFloat(), size.height.toFloat(), source.width, source.height
                     )
                     activeCorner = (0..3).minByOrNull { i ->
-                        hypot(touch.x - (r.left + corners[i * 2] * r.width()),
-                            touch.y - (r.top + corners[i * 2 + 1] * r.height()))
+                        hypot(touch.x - (r.left + currentCorners[i * 2] * r.width()),
+                            touch.y - (r.top + currentCorners[i * 2 + 1] * r.height()))
                     } ?: -1
                 },
                 onDragEnd = { activeCorner = -1 },
@@ -176,12 +178,12 @@ internal fun QREXDocumentCorners(
                         size.width.toFloat(), size.height.toFloat(), source.width, source.height
                     )
                     if (activeCorner in 0..3 && r.width() > 0 && r.height() > 0) {
-                        val updated = corners.toMutableList()
+                        val updated = currentCorners.toMutableList()
                         updated[activeCorner * 2] =
                             ((change.position.x - r.left) / r.width()).coerceIn(0f, 1f)
                         updated[activeCorner * 2 + 1] =
                             ((change.position.y - r.top) / r.height()).coerceIn(0f, 1f)
-                        onChange(updated)
+                        updateCorners(updated)
                         change.consume()
                     }
                 }
