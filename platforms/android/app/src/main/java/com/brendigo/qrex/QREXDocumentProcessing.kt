@@ -43,7 +43,7 @@ internal fun qrexDocumentFit(
 
 internal fun qrexDocumentSafeName(name: String): String {
     val cleaned = name.trim().replace(Regex("[\\\\/:*?\"<>|\\p{Cntrl}]"), "_")
-        .trim('.').take(64).ifBlank { "QREX-document" }
+        .trim('.', '_').take(64).ifBlank { "QREX-document" }
     return if (cleaned.endsWith(".pdf", ignoreCase = true)) cleaned else "$cleaned.pdf"
 }
 
