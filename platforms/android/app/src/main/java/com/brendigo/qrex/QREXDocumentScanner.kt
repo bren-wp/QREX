@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
 import android.net.Uri
+import android.util.Size
+import android.content.ClipData
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -17,6 +19,8 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -127,6 +131,11 @@ internal fun QREXDocumentCamera(
                 }
                 capture = ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    .setResolutionSelector(ResolutionSelector.Builder()
+                        .setResolutionStrategy(ResolutionStrategy(
+                            Size(1600, 2400),
+                            ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER
+                        )).build())
                     .build()
                 // QR screen is disposed before this screen starts. Bind the
                 // document use cases alone, never analyze document pixels as QR.
@@ -244,6 +253,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     var busy by remember { mutableStateOf(false) }
     var documentName by rememberSaveable { mutableStateOf("QREX-document") }
     var exportedUri by remember { mutableStateOf<Uri?>(null) }
+    var editingIndex by rememberSaveable { mutableIntStateOf(-1) }
     var cropCorners by remember { mutableStateOf(
         listOf(.05f, .05f, .95f, .05f, .95f, .95f, .05f, .95f)
     ) }
@@ -265,6 +275,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                         }
                     }.onSuccess {
                         session.setPending(it)
+                        editingIndex = -1
                         screen = "review"
                     }.onFailure { message = errorText }
                     busy = false
@@ -355,6 +366,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                     if (original !== fitted && original !== rotated) original.recycle()
                                     scope.launch {
                                         session.setPending(fitted)
+                                        editingIndex = -1
                                         cropCorners = defaultCorners
                                         screen = "review"
                                         busy = false
@@ -451,13 +463,21 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                             }, modifier = Modifier.weight(1f)) { Text(tr("document_rotate")) }
                         }
                         Button(onClick = {
-                            if (session.accept()) screen = "pages" else message = maxText
+                            if (editingIndex in session.pages.indices) {
+                                session.replace(editingIndex, bitmap)
+                                session.setPending(null)
+                                editingIndex = -1
+                                screen = "pages"
+                            } else if (session.accept()) {
+                                screen = "pages"
+                            } else message = maxText
                         }, enabled = !busy, modifier = Modifier.fillMaxWidth()) {
                             Text(tr("document_accept"))
                         }
                     }
                     OutlinedButton(onClick = {
                         session.setPending(null)
+                        editingIndex = -1
                         screen = "camera"
                     }, enabled = !busy, modifier = Modifier.fillMaxWidth()) {
                         Text(tr("document_retake"))
@@ -483,6 +503,12 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                     enabled = index > 0) { Text("↑") }
                                 TextButton(onClick = { session.move(index, 1) },
                                     enabled = index < session.pages.lastIndex) { Text("↓") }
+                                TextButton(onClick = {
+                                    session.setPending(bitmap)
+                                    editingIndex = index
+                                    cropCorners = defaultCorners
+                                    screen = "review"
+                                }, enabled = !busy) { Text(tr("edit")) }
                                 TextButton(onClick = { session.pages.removeAt(index) },
                                     enabled = !busy) { Text(tr("delete")) }
                             }
@@ -518,6 +544,8 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                 Intent(Intent.ACTION_SEND).apply {
                                     type = "application/pdf"
                                     putExtra(Intent.EXTRA_STREAM, uri)
+                                    clipData = ClipData.newUri(context.contentResolver,
+                                        "QREX PDF", uri)
                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 }, null))
                         }.onFailure { message = errorText }
