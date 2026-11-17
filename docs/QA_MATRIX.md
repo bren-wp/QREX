@@ -30,7 +30,7 @@ This release checklist covers the **single Kotlin/Jetpack Compose Android applic
 - [ ] Verify single-page and multi-page A4 PDF content, orientations, page counts and compatibility with third-party readers.
 - [ ] Verify SAF cancellation, revoked write permission, out-of-space failure and exported PDF sharing grants.
 - [ ] Verify all 23 localizations, TalkBack labels, 200% font and dark/light/system appearance.
-- [ ] Capture real new-document screenshots and compare to approved flat image references. Do not infer 0% pixel variance from marketing mockups.
+- [ ] Capture four actual document editor screen states in dark/light via debug-only fictional page, validate foreground/UI controls, and compare to approved flat image references. Real UI capture does not itself establish 0% pixel variance.
 - [ ] Run static source/manifest audit, dependency license review, JVM tests, instrumentation, Android Lint and R8 before release.
 - [ ] Verify no unintended regressions to existing QR scan, QR creation, history, favorites or saved-QR PDF export.
 

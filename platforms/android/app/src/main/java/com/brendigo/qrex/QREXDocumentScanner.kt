@@ -276,8 +276,45 @@ internal fun QREXDocumentCorners(
     }
 }
 
+/**
+ * Neutral, generated-in-memory sample page for actual native UI screenshots.
+ * Only reachable through MainActivity's debuggable-only intent allowlist.
+ * It is not a camera capture or a user's document.
+ */
+private fun qrexDocumentDebugPage(): Bitmap {
+    val bitmap = Bitmap.createBitmap(720, 1020, Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bitmap)
+    canvas.drawColor(android.graphics.Color.WHITE)
+    val heading = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.rgb(8, 107, 216)
+        textSize = 48f
+        typeface = android.graphics.Typeface.DEFAULT_BOLD
+    }
+    canvas.drawText("QREX DEMO", 56f, 98f, heading)
+    val accent = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.rgb(24, 184, 220)
+    }
+    canvas.drawRoundRect(RectF(56f, 130f, 664f, 142f), 6f, 6f, accent)
+    val line = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.rgb(222, 228, 239)
+    }
+    for (index in 0..7) {
+        val top = 198f + index * 84f
+        canvas.drawRoundRect(
+            RectF(56f, top, if (index % 3 == 2) 490f else 664f, top + 23f),
+            8f, 8f, line
+        )
+        canvas.drawRoundRect(RectF(56f, top + 34f, 460f, top + 47f),
+            6f, 6f, line)
+    }
+    return bitmap
+}
+
 @Composable
-internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
+internal fun QREXDocumentScanScreen(
+    onExit: () -> Unit,
+    screenshotFixture: String? = null
+) {
     val context = LocalContext.current
     val activity = context as ComponentActivity
     val session = remember(activity) {
@@ -287,7 +324,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     val scope = rememberCoroutineScope()
     val executor = remember { Executors.newSingleThreadExecutor() }
     DisposableEffect(Unit) { onDispose { executor.shutdown() } }
-    var screen by rememberSaveable { mutableStateOf("camera") }
+    var screen by rememberSaveable(screenshotFixture) { mutableStateOf("camera") }
     var message by remember { mutableStateOf<String?>(null) }
     var showExitConfirmation by remember { mutableStateOf(false) }
     var cameraAllowed by remember {
@@ -318,6 +355,19 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
+    // Debug-only screenshot routing: the captured PNGs remain genuine app UI
+    // pixels while the fictional paper page contains no user information.
+    LaunchedEffect(screenshotFixture) {
+        if (screenshotFixture != null && session.pages.isEmpty() &&
+            session.pending == null) {
+            val demo = qrexDocumentDebugPage()
+            when (screenshotFixture) {
+                "document-review", "document-crop" -> session.updatePending(demo)
+                "document-pages", "document-export" -> session.pages.add(demo)
+            }
+            screen = screenshotFixture.removePrefix("document-")
+        }
+    }
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
