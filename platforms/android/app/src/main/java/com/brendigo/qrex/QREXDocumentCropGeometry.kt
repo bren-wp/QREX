@@ -1,6 +1,5 @@
 package com.brendigo.qrex
 
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -28,7 +27,7 @@ internal fun qrexDocumentBoundingRectangle(corners: List<Float>): List<Float> {
  */
 internal fun qrexDocumentMoveCorner(
     corners: List<Float>, selected: Int, x: Float, y: Float,
-    rectangle: Boolean, minimumSpan: Float = .06f
+    rectangle: Boolean, minimumSpan: Float = .02f
 ): List<Float> {
     if (selected !in 0..3 || !qrexDocumentQuadValid(corners) ||
         !x.isFinite() || !y.isFinite() ||
