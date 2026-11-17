@@ -81,7 +81,19 @@ jobs:
               exit 0
             fi
             cat "$RUNNER_TEMP/p03-build.log"
-            if [ "$attempt" -ge 3 ] || ! grep -Eq 'Received status code (403|429|5[0-9][0-9])|Read timed out|Connection reset' "$RUNNER_TEMP/p03-build.log"; then
+            # Plugin 2.4.21 is published, but Gradle's plugin portal can fail
+            # before HTTP diagnostics are printed. Retry this exact known
+            # dependency-resolution outage (bounded); never retry Kotlin
+            # compile errors or instrumentation failures.
+            if grep -Eq 'Received status code (403|429|5[0-9][0-9])|Read timed out|Connection reset' "$RUNNER_TEMP/p03-build.log"; then
+              retryable=true
+            elif grep -Fq "Plugin [id: 'org.jetbrains.kotlin.plugin.compose', version: '2.4.21'" "$RUNNER_TEMP/p03-build.log" &&
+                 grep -Fq "Plugin Repositories (could not resolve plugin artifact" "$RUNNER_TEMP/p03-build.log"; then
+              retryable=true
+            else
+              retryable=false
+            fi
+            if [ "$attempt" -ge 3 ] || [ "$retryable" != true ]; then
               rm -f "$RUNNER_TEMP/p03-build.log"
               exit 1
             fi

@@ -126,13 +126,19 @@ internal object QREXDocumentProcessing {
         val decoded = resolver.openInputStream(uri)?.use {
             BitmapFactory.decodeStream(it, null, options)
         } ?: error("Cannot decode document image")
+        // Full EXIF support matters for photographed paper documents: simple
+        // rotationDegrees silently drops horizontally mirrored phone images.
+        // Reuse the tested QR-gallery orientation helper (all eight variants).
         val orientation = resolver.openInputStream(uri)?.use {
-            runCatching { ExifInterface(it).rotationDegrees }.getOrDefault(0)
-        } ?: 0
-        val oriented = rotate(decoded, orientation)
+            runCatching {
+                ExifInterface(it).getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                )
+            }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
+        } ?: ExifInterface.ORIENTATION_NORMAL
+        val oriented = orientGalleryBitmap(decoded, orientation)
         val sized = downsize(oriented)
         if (oriented !== sized) oriented.recycle()
-        if (decoded !== oriented && decoded !== sized) decoded.recycle()
         return sized
     }
 

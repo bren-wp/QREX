@@ -48,4 +48,39 @@ class QREXDocumentCropInstrumentedTest {
             source.recycle()
         }
     }
+    @Test fun pickerImportHonorsMirroredExifOrientation() {
+        val context = androidx.test.platform.app.InstrumentationRegistry
+            .getInstrumentation().targetContext
+        val file = java.io.File(context.cacheDir, "qrex-exif-test.jpg")
+        val original = Bitmap.createBitmap(120, 70, Bitmap.Config.ARGB_8888)
+        Canvas(original).apply {
+            drawColor(Color.RED)
+            drawRect(60f, 0f, 120f, 70f, Paint().apply { color = Color.GREEN })
+        }
+        var decoded: Bitmap? = null
+        try {
+            file.outputStream().use {
+                assertTrue(original.compress(Bitmap.CompressFormat.JPEG, 98, it))
+            }
+            val exif = androidx.exifinterface.media.ExifInterface(file.absolutePath)
+            exif.setAttribute(
+                androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                androidx.exifinterface.media.ExifInterface.ORIENTATION_FLIP_HORIZONTAL.toString()
+            )
+            exif.saveAttributes()
+            decoded = QREXDocumentProcessing.readFromPicker(context,
+                android.net.Uri.fromFile(file))
+            // The green half is now on the LEFT. Use dominant channels
+            // rather than exact JPEG values to avoid encoder noise.
+            val left = decoded.getPixel(12, 35)
+            val right = decoded.getPixel(108, 35)
+            assertTrue(Color.green(left) > Color.red(left))
+            assertTrue(Color.red(right) > Color.green(right))
+        } finally {
+            decoded?.recycle()
+            original.recycle()
+            file.delete()
+        }
+    }
+
 }
