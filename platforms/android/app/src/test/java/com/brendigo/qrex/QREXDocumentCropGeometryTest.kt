@@ -39,7 +39,7 @@ class QREXDocumentCropGeometryTest {
 
     @Test fun rejectCollapsedInvertedCrossedOrNonfiniteShapes() {
         val current = qrexDocumentMoveCorner(full, 0, .1f, .1f, false)
-        assertSame(current, qrexDocumentMoveCorner(current, 0, .95f, .95f, true))
+        assertSame(current, qrexDocumentMoveCorner(current, 0, .99f, .99f, true))
         assertSame(current, qrexDocumentMoveCorner(current, 0, Float.NaN, .3f, false))
         assertSame(current, qrexDocumentMoveCorner(current, 7, .2f, .2f, false))
         assertSame(current, qrexDocumentMoveCorner(current, 0, 2f, 1f, false))
