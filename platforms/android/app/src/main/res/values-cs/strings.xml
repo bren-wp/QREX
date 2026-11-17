@@ -132,4 +132,6 @@
     <string name="document_bw">Černobíle</string>
     <string name="document_move_up">Posunout stránku nahoru</string>
     <string name="document_move_down">Posunout stránku dolů</string>
+    <string name="document_auto_edges">Navrhnout okraje</string>
+    <string name="document_auto_not_found">Nebyly nalezeny jasné okraje. Upravte rohy ručně.</string>
 </resources>

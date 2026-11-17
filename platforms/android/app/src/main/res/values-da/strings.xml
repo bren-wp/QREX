@@ -132,4 +132,6 @@
     <string name="document_bw">Sort-hvid</string>
     <string name="document_move_up">Flyt side op</string>
     <string name="document_move_down">Flyt side ned</string>
+    <string name="document_auto_edges">Foreslå kanter</string>
+    <string name="document_auto_not_found">Ingen tydelig sidekant fundet. Juster hjørnerne manuelt.</string>
 </resources>

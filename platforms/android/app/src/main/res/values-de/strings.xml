@@ -132,4 +132,6 @@
     <string name="document_bw">Schwarzweiß</string>
     <string name="document_move_up">Seite nach oben</string>
     <string name="document_move_down">Seite nach unten</string>
+    <string name="document_auto_edges">Ränder vorschlagen</string>
+    <string name="document_auto_not_found">Keine klaren Seitenränder erkannt. Ecken manuell anpassen.</string>
 </resources>

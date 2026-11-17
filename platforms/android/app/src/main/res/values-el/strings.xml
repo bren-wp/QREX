@@ -132,4 +132,6 @@
     <string name="document_bw">Ασπρόμαυρο</string>
     <string name="document_move_up">Μετακίνηση σελίδας πάνω</string>
     <string name="document_move_down">Μετακίνηση σελίδας κάτω</string>
+    <string name="document_auto_edges">Πρόταση ορίων</string>
+    <string name="document_auto_not_found">Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες.</string>
 </resources>

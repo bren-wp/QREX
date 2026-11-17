@@ -132,4 +132,6 @@
     <string name="document_bw">Mustavalkoinen</string>
     <string name="document_move_up">Siirrä sivua ylös</string>
     <string name="document_move_down">Siirrä sivua alas</string>
+    <string name="document_auto_edges">Ehdota reunoja</string>
+    <string name="document_auto_not_found">Selkeitä sivun reunoja ei löytynyt. Säädä kulmat käsin.</string>
 </resources>

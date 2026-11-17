@@ -132,4 +132,6 @@
     <string name="document_bw">Bianco e nero</string>
     <string name="document_move_up">Sposta pagina su</string>
     <string name="document_move_down">Sposta pagina giù</string>
+    <string name="document_auto_edges">Suggerisci bordi</string>
+    <string name="document_auto_not_found">Bordi non rilevati. Regola gli angoli manualmente.</string>
 </resources>

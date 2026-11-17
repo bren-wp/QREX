@@ -132,4 +132,6 @@
     <string name="document_bw">Svartvitt</string>
     <string name="document_move_up">Flytta sidan upp</string>
     <string name="document_move_down">Flytta sidan ned</string>
+    <string name="document_auto_edges">Föreslå kanter</string>
+    <string name="document_auto_not_found">Ingen tydlig sidkant hittades. Justera hörnen manuellt.</string>
 </resources>

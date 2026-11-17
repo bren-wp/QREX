@@ -132,4 +132,6 @@
     <string name="document_bw">Zwart-wit</string>
     <string name="document_move_up">Pagina omhoog</string>
     <string name="document_move_down">Pagina omlaag</string>
+    <string name="document_auto_edges">Randen voorstellen</string>
+    <string name="document_auto_not_found">Geen duidelijke paginarand gevonden. Pas hoeken handmatig aan.</string>
 </resources>

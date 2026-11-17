@@ -135,7 +135,9 @@
         "document_grayscale": "Grayscale",
         "document_bw": "Black & white",
         "document_move_up": "Move page up",
-        "document_move_down": "Move page down"
+        "document_move_down": "Move page down",
+        "document_auto_edges": "Suggest borders",
+        "document_auto_not_found": "No clear page boundary found. Adjust corners manually."
       }
     },
     "hr": {
@@ -272,7 +274,9 @@
         "document_grayscale": "Sivi tonovi",
         "document_bw": "Crno-bijelo",
         "document_move_up": "Pomakni stranicu gore",
-        "document_move_down": "Pomakni stranicu dolje"
+        "document_move_down": "Pomakni stranicu dolje",
+        "document_auto_edges": "Predloži rubove",
+        "document_auto_not_found": "Nisu pronađeni jasni rubovi. Ručno namjestite kutove."
       }
     },
     "de": {
@@ -409,7 +413,9 @@
         "document_grayscale": "Graustufen",
         "document_bw": "Schwarzweiß",
         "document_move_up": "Seite nach oben",
-        "document_move_down": "Seite nach unten"
+        "document_move_down": "Seite nach unten",
+        "document_auto_edges": "Ränder vorschlagen",
+        "document_auto_not_found": "Keine klaren Seitenränder erkannt. Ecken manuell anpassen."
       }
     },
     "fr": {
@@ -546,7 +552,9 @@
         "document_grayscale": "Niveaux de gris",
         "document_bw": "Noir et blanc",
         "document_move_up": "Monter la page",
-        "document_move_down": "Descendre la page"
+        "document_move_down": "Descendre la page",
+        "document_auto_edges": "Suggérer les bords",
+        "document_auto_not_found": "Aucun bord net détecté. Ajustez les coins manuellement."
       }
     },
     "es": {
@@ -683,7 +691,9 @@
         "document_grayscale": "Escala de grises",
         "document_bw": "Blanco y negro",
         "document_move_up": "Subir página",
-        "document_move_down": "Bajar página"
+        "document_move_down": "Bajar página",
+        "document_auto_edges": "Sugerir bordes",
+        "document_auto_not_found": "No se detectaron bordes claros. Ajusta las esquinas manualmente."
       }
     },
     "it": {
@@ -820,7 +830,9 @@
         "document_grayscale": "Scala di grigi",
         "document_bw": "Bianco e nero",
         "document_move_up": "Sposta pagina su",
-        "document_move_down": "Sposta pagina giù"
+        "document_move_down": "Sposta pagina giù",
+        "document_auto_edges": "Suggerisci bordi",
+        "document_auto_not_found": "Bordi non rilevati. Regola gli angoli manualmente."
       }
     },
     "pt": {
@@ -957,7 +969,9 @@
         "document_grayscale": "Tons de cinzento",
         "document_bw": "Preto e branco",
         "document_move_up": "Subir página",
-        "document_move_down": "Descer página"
+        "document_move_down": "Descer página",
+        "document_auto_edges": "Sugerir margens",
+        "document_auto_not_found": "Não foram detetados limites claros. Ajuste os cantos manualmente."
       }
     },
     "nl": {
@@ -1094,7 +1108,9 @@
         "document_grayscale": "Grijstinten",
         "document_bw": "Zwart-wit",
         "document_move_up": "Pagina omhoog",
-        "document_move_down": "Pagina omlaag"
+        "document_move_down": "Pagina omlaag",
+        "document_auto_edges": "Randen voorstellen",
+        "document_auto_not_found": "Geen duidelijke paginarand gevonden. Pas hoeken handmatig aan."
       }
     },
     "pl": {
@@ -1231,7 +1247,9 @@
         "document_grayscale": "Skala szarości",
         "document_bw": "Czarno-białe",
         "document_move_up": "Przesuń stronę w górę",
-        "document_move_down": "Przesuń stronę w dół"
+        "document_move_down": "Przesuń stronę w dół",
+        "document_auto_edges": "Zaproponuj krawędzie",
+        "document_auto_not_found": "Nie wykryto wyraźnych krawędzi. Dostosuj rogi ręcznie."
       }
     },
     "cs": {
@@ -1368,7 +1386,9 @@
         "document_grayscale": "Odstíny šedi",
         "document_bw": "Černobíle",
         "document_move_up": "Posunout stránku nahoru",
-        "document_move_down": "Posunout stránku dolů"
+        "document_move_down": "Posunout stránku dolů",
+        "document_auto_edges": "Navrhnout okraje",
+        "document_auto_not_found": "Nebyly nalezeny jasné okraje. Upravte rohy ručně."
       }
     },
     "sk": {
@@ -1505,7 +1525,9 @@
         "document_grayscale": "Odtiene sivej",
         "document_bw": "Čiernobielo",
         "document_move_up": "Posunúť stránku hore",
-        "document_move_down": "Posunúť stránku dole"
+        "document_move_down": "Posunúť stránku dole",
+        "document_auto_edges": "Navrhnúť okraje",
+        "document_auto_not_found": "Nenašli sa jasné okraje. Upravte rohy ručne."
       }
     },
     "sl": {
@@ -1642,7 +1664,9 @@
         "document_grayscale": "Sivine",
         "document_bw": "Črno-belo",
         "document_move_up": "Premakni stran navzgor",
-        "document_move_down": "Premakni stran navzdol"
+        "document_move_down": "Premakni stran navzdol",
+        "document_auto_edges": "Predlagaj robove",
+        "document_auto_not_found": "Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno."
       }
     },
     "hu": {
@@ -1779,7 +1803,9 @@
         "document_grayscale": "Szürkeárnyalatos",
         "document_bw": "Fekete-fehér",
         "document_move_up": "Oldal feljebb",
-        "document_move_down": "Oldal lejjebb"
+        "document_move_down": "Oldal lejjebb",
+        "document_auto_edges": "Szegélyek javaslata",
+        "document_auto_not_found": "Nem találhatók egyértelmű szélek. Állítsa be a sarkokat kézzel."
       }
     },
     "ro": {
@@ -1916,7 +1942,9 @@
         "document_grayscale": "Nuanțe de gri",
         "document_bw": "Alb-negru",
         "document_move_up": "Mută pagina în sus",
-        "document_move_down": "Mută pagina în jos"
+        "document_move_down": "Mută pagina în jos",
+        "document_auto_edges": "Sugerează marginile",
+        "document_auto_not_found": "Nu s-au găsit margini clare. Reglați colțurile manual."
       }
     },
     "bg": {
@@ -2053,7 +2081,9 @@
         "document_grayscale": "Нива на сивото",
         "document_bw": "Черно-бяло",
         "document_move_up": "Премести страницата нагоре",
-        "document_move_down": "Премести страницата надолу"
+        "document_move_down": "Премести страницата надолу",
+        "document_auto_edges": "Предложи краища",
+        "document_auto_not_found": "Не са открити ясни граници. Настройте ъглите ръчно."
       }
     },
     "el": {
@@ -2190,7 +2220,9 @@
         "document_grayscale": "Κλίμακα γκρι",
         "document_bw": "Ασπρόμαυρο",
         "document_move_up": "Μετακίνηση σελίδας πάνω",
-        "document_move_down": "Μετακίνηση σελίδας κάτω"
+        "document_move_down": "Μετακίνηση σελίδας κάτω",
+        "document_auto_edges": "Πρόταση ορίων",
+        "document_auto_not_found": "Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες."
       }
     },
     "tr": {
@@ -2327,7 +2359,9 @@
         "document_grayscale": "Gri tonlama",
         "document_bw": "Siyah beyaz",
         "document_move_up": "Sayfayı yukarı taşı",
-        "document_move_down": "Sayfayı aşağı taşı"
+        "document_move_down": "Sayfayı aşağı taşı",
+        "document_auto_edges": "Kenarları öner",
+        "document_auto_not_found": "Belirgin sayfa kenarı bulunamadı. Köşeleri elle ayarlayın."
       }
     },
     "uk": {
@@ -2464,7 +2498,9 @@
         "document_grayscale": "Відтінки сірого",
         "document_bw": "Чорно-біле",
         "document_move_up": "Перемістити сторінку вгору",
-        "document_move_down": "Перемістити сторінку вниз"
+        "document_move_down": "Перемістити сторінку вниз",
+        "document_auto_edges": "Запропонувати межі",
+        "document_auto_not_found": "Чітких меж не знайдено. Налаштуйте кути вручну."
       }
     },
     "ru": {
@@ -2601,7 +2637,9 @@
         "document_grayscale": "Оттенки серого",
         "document_bw": "Чёрно-белое",
         "document_move_up": "Переместить страницу вверх",
-        "document_move_down": "Переместить страницу вниз"
+        "document_move_down": "Переместить страницу вниз",
+        "document_auto_edges": "Предложить границы",
+        "document_auto_not_found": "Чёткие границы не найдены. Настройте углы вручную."
       }
     },
     "sv": {
@@ -2738,7 +2776,9 @@
         "document_grayscale": "Gråskala",
         "document_bw": "Svartvitt",
         "document_move_up": "Flytta sidan upp",
-        "document_move_down": "Flytta sidan ned"
+        "document_move_down": "Flytta sidan ned",
+        "document_auto_edges": "Föreslå kanter",
+        "document_auto_not_found": "Ingen tydlig sidkant hittades. Justera hörnen manuellt."
       }
     },
     "da": {
@@ -2875,7 +2915,9 @@
         "document_grayscale": "Gråtoner",
         "document_bw": "Sort-hvid",
         "document_move_up": "Flyt side op",
-        "document_move_down": "Flyt side ned"
+        "document_move_down": "Flyt side ned",
+        "document_auto_edges": "Foreslå kanter",
+        "document_auto_not_found": "Ingen tydelig sidekant fundet. Juster hjørnerne manuelt."
       }
     },
     "fi": {
@@ -3012,7 +3054,9 @@
         "document_grayscale": "Harmaasävy",
         "document_bw": "Mustavalkoinen",
         "document_move_up": "Siirrä sivua ylös",
-        "document_move_down": "Siirrä sivua alas"
+        "document_move_down": "Siirrä sivua alas",
+        "document_auto_edges": "Ehdota reunoja",
+        "document_auto_not_found": "Selkeitä sivun reunoja ei löytynyt. Säädä kulmat käsin."
       }
     },
     "nb": {
@@ -3149,7 +3193,9 @@
         "document_grayscale": "Gråtoner",
         "document_bw": "Svart-hvitt",
         "document_move_up": "Flytt side opp",
-        "document_move_down": "Flytt side ned"
+        "document_move_down": "Flytt side ned",
+        "document_auto_edges": "Foreslå kanter",
+        "document_auto_not_found": "Ingen tydelig sidekant funnet. Juster hjørnene manuelt."
       }
     }
   }

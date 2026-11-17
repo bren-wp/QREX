@@ -132,4 +132,6 @@
     <string name="document_bw">Siyah beyaz</string>
     <string name="document_move_up">Sayfayı yukarı taşı</string>
     <string name="document_move_down">Sayfayı aşağı taşı</string>
+    <string name="document_auto_edges">Kenarları öner</string>
+    <string name="document_auto_not_found">Belirgin sayfa kenarı bulunamadı. Köşeleri elle ayarlayın.</string>
 </resources>

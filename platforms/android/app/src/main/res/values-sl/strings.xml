@@ -132,4 +132,6 @@
     <string name="document_bw">Črno-belo</string>
     <string name="document_move_up">Premakni stran navzgor</string>
     <string name="document_move_down">Premakni stran navzdol</string>
+    <string name="document_auto_edges">Predlagaj robove</string>
+    <string name="document_auto_not_found">Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno.</string>
 </resources>

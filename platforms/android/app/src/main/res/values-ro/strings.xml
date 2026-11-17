@@ -132,4 +132,6 @@
     <string name="document_bw">Alb-negru</string>
     <string name="document_move_up">Mută pagina în sus</string>
     <string name="document_move_down">Mută pagina în jos</string>
+    <string name="document_auto_edges">Sugerează marginile</string>
+    <string name="document_auto_not_found">Nu s-au găsit margini clare. Reglați colțurile manual.</string>
 </resources>

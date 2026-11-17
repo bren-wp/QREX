@@ -359,6 +359,7 @@ internal fun QREXDocumentScanScreen(
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
+    val noEdgesText = tr("document_auto_not_found")
     // Debug-only screenshot routing: the captured PNGs remain genuine app UI
     // pixels while the fictional paper page contains no user information.
     LaunchedEffect(screenshotFixture) {
@@ -568,12 +569,40 @@ internal fun QREXDocumentScanScreen(
                         QREXDocumentCorners(bitmap, cropCorners, rectangleCrop) {
                             cropCorners = it
                         }
-                        OutlinedButton(
-                            onClick = { cropCorners = QREX_DOCUMENT_FULL_CORNERS },
-                            modifier = Modifier.fillMaxWidth()
-                                .heightIn(min = 48.dp)
-                                .testTag("qrex-document-reset-crop")
-                        ) { Text(tr("document_reset")) }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = {
+                                    if (!busy) {
+                                        busy = true
+                                        scope.launch {
+                                            runCatching {
+                                                withContext(Dispatchers.Default) {
+                                                    qrexDocumentSuggestEdges(bitmap)
+                                                }
+                                            }.onSuccess { suggestion ->
+                                                if (suggestion != null) {
+                                                    cropCorners = suggestion
+                                                    rectangleCrop = true
+                                                } else message = noEdgesText
+                                            }.onFailure { message = errorText }
+                                            busy = false
+                                        }
+                                    }
+                                },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 56.dp)
+                                    .testTag("qrex-document-auto-edges")
+                            ) { Text(tr("document_auto_edges"), maxLines = 2) }
+                            OutlinedButton(
+                                onClick = { cropCorners = QREX_DOCUMENT_FULL_CORNERS },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 56.dp)
+                                    .testTag("qrex-document-reset-crop")
+                            ) { Text(tr("document_reset"), maxLines = 2) }
+                        }
                         Button(onClick = {
                             if (!qrexDocumentQuadValid(cropCorners)) {
                                 message = invalidCornersText
