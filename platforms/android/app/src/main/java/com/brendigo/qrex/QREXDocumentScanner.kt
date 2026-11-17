@@ -42,6 +42,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -77,12 +79,35 @@ internal class QREXDocumentSession : ViewModel() {
     val pages = mutableStateListOf<Bitmap>()
     var pending by mutableStateOf<Bitmap?>(null)
         private set
-    fun updatePending(bitmap: Bitmap?) { pending = bitmap }
+    private var previousPending by mutableStateOf<Bitmap?>(null)
+    val canUndo: Boolean get() = previousPending != null
+
+    /** Importing, retaking or starting another page clears old edit history. */
+    fun updatePending(bitmap: Bitmap?) {
+        pending = bitmap
+        previousPending = null
+    }
+
+    /** One-step undo is bounded to one extra in-memory bitmap, never disk. */
+    fun transformPending(bitmap: Bitmap) {
+        if (bitmap !== pending) {
+            previousPending = pending
+            pending = bitmap
+        }
+    }
+
+    fun undoPending(): Boolean {
+        val previous = previousPending ?: return false
+        pending = previous
+        previousPending = null
+        return true
+    }
     fun accept(): Boolean {
         val bitmap = pending ?: return false
         if (pages.size >= QREX_DOCUMENT_MAX_PAGES) return false
         pages.add(bitmap)
         pending = null
+        previousPending = null
         return true
     }
     fun replace(index: Int, bitmap: Bitmap) {
@@ -94,7 +119,7 @@ internal class QREXDocumentSession : ViewModel() {
         val image = pages.removeAt(index)
         pages.add(target, image)
     }
-    fun clearSession() { pages.clear(); pending = null }
+    fun clearSession() { pages.clear(); pending = null; previousPending = null }
     override fun onCleared() {
         clearSession()
         super.onCleared()
@@ -161,24 +186,30 @@ internal fun QREXDocumentCamera(
 internal fun QREXDocumentCorners(
     source: Bitmap,
     corners: List<Float>,
+    rectangle: Boolean,
     onChange: (List<Float>) -> Unit
 ) {
-    var activeCorner by remember(source) { mutableIntStateOf(-1) }
+    var activeCorner by remember(source, rectangle) { mutableIntStateOf(-1) }
     val currentCorners by rememberUpdatedState(corners)
     val updateCorners by rememberUpdatedState(onChange)
     val viewportHeight = min(400, max(200, LocalConfiguration.current.screenHeightDp / 2))
     Canvas(Modifier.fillMaxWidth().height(viewportHeight.dp)
         .background(Color.Black, RoundedCornerShape(12.dp))
-        .pointerInput(source) {
+        .testTag("qrex-document-crop-canvas")
+        .pointerInput(source, rectangle) {
             detectDragGestures(
                 onDragStart = { touch ->
                     val r = qrexDocumentPreviewRect(
                         size.width.toFloat(), size.height.toFloat(), source.width, source.height
                     )
-                    activeCorner = (0..3).minByOrNull { i ->
+                    val candidate = (0..3).minByOrNull { i ->
                         hypot(touch.x - (r.left + currentCorners[i * 2] * r.width()),
                             touch.y - (r.top + currentCorners[i * 2 + 1] * r.height()))
                     } ?: -1
+                    activeCorner = if (candidate >= 0 && hypot(
+                        touch.x - (r.left + currentCorners[candidate * 2] * r.width()),
+                        touch.y - (r.top + currentCorners[candidate * 2 + 1] * r.height())
+                    ) <= 48.dp.toPx()) candidate else -1
                 },
                 onDragEnd = { activeCorner = -1 },
                 onDragCancel = { activeCorner = -1 },
@@ -187,12 +218,12 @@ internal fun QREXDocumentCorners(
                         size.width.toFloat(), size.height.toFloat(), source.width, source.height
                     )
                     if (activeCorner in 0..3 && r.width() > 0 && r.height() > 0) {
-                        val updated = currentCorners.toMutableList()
-                        updated[activeCorner * 2] =
-                            ((change.position.x - r.left) / r.width()).coerceIn(0f, 1f)
-                        updated[activeCorner * 2 + 1] =
-                            ((change.position.y - r.top) / r.height()).coerceIn(0f, 1f)
-                        updateCorners(updated)
+                        val updated = qrexDocumentMoveCorner(
+                            currentCorners, activeCorner,
+                            (change.position.x - r.left) / r.width(),
+                            (change.position.y - r.top) / r.height(), rectangle
+                        )
+                        if (updated !== currentCorners) updateCorners(updated)
                         change.consume()
                     }
                 }
@@ -209,11 +240,33 @@ internal fun QREXDocumentCorners(
             Offset(r.left + corners[it * 2] * r.width(),
                 r.top + corners[it * 2 + 1] * r.height())
         }
+        // Darken only the pixels outside the selected quadrilateral.
+        // The selection remains bright, with a thirds grid for alignment.
+        val mask = Path().apply {
+            fillType = PathFillType.EvenOdd
+            addRect(androidx.compose.ui.geometry.Rect(0f, 0f, size.width, size.height))
+            moveTo(positions[0].x, positions[0].y)
+            for (i in 1..3) lineTo(positions[i].x, positions[i].y)
+            close()
+        }
+        drawPath(mask, Color.Black.copy(alpha = .58f))
+        fun blend(a: Offset, b: Offset, fraction: Float): Offset =
+            Offset(a.x + (b.x - a.x) * fraction, a.y + (b.y - a.y) * fraction)
+        for (fraction in listOf(1f / 3f, 2f / 3f)) {
+            drawLine(Color.White.copy(alpha = .42f),
+                blend(positions[0], positions[1], fraction),
+                blend(positions[3], positions[2], fraction), 1.dp.toPx())
+            drawLine(Color.White.copy(alpha = .42f),
+                blend(positions[0], positions[3], fraction),
+                blend(positions[1], positions[2], fraction), 1.dp.toPx())
+        }
         for (i in 0..3) {
             drawLine(QrexDesign.cyan, positions[i], positions[(i + 1) % 4],
-                strokeWidth = 3.dp.toPx())
-            drawCircle(QrexDesign.cyan, radius = 11.dp.toPx(), center = positions[i])
-            drawCircle(Color.White, radius = 4.dp.toPx(), center = positions[i])
+                strokeWidth = 2.5.dp.toPx())
+            drawCircle(Color.Black.copy(alpha = .8f),
+                radius = 18.dp.toPx(), center = positions[i])
+            drawCircle(QrexDesign.cyan, radius = 13.dp.toPx(), center = positions[i])
+            drawCircle(Color.White, radius = 5.dp.toPx(), center = positions[i])
         }
     }
 }
@@ -254,10 +307,9 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     var documentName by rememberSaveable { mutableStateOf("QREX-document") }
     var exportedUri by remember { mutableStateOf<Uri?>(null) }
     var editingIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var cropCorners by remember { mutableStateOf(
-        listOf(.05f, .05f, .95f, .05f, .95f, .95f, .05f, .95f)
-    ) }
-    val defaultCorners = listOf(.05f, .05f, .95f, .05f, .95f, .95f, .05f, .95f)
+    var rectangleCrop by rememberSaveable { mutableStateOf(false) }
+    var cropCorners by remember { mutableStateOf(QREX_DOCUMENT_INSET_CORNERS) }
+    val defaultCorners = QREX_DOCUMENT_INSET_CORNERS
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
@@ -277,6 +329,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                     }.onSuccess {
                         session.updatePending(it)
                         editingIndex = -1
+                        cropCorners = defaultCorners
                         screen = "review"
                     }.onFailure { message = errorText }
                     busy = false
@@ -317,10 +370,19 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
             onExit()
         }
     }
-    BackHandler { if (busy) Unit else if (screen == "camera") exit()
-        else if (screen == "review" || screen == "crop") screen = "camera"
-        else if (screen == "pages" || screen == "export" || screen == "success") screen = "camera"
-        else exit()
+    BackHandler {
+        if (busy) Unit
+        else when (screen) {
+            "camera" -> exit()
+            "crop" -> screen = "review" // Never discard an accepted crop by Back.
+            "review" -> {
+                session.updatePending(null)
+                if (editingIndex >= 0) screen = "pages" else screen = "camera"
+                editingIndex = -1
+            }
+            "pages", "export", "success" -> screen = "camera"
+            else -> exit()
+        }
     }
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -421,7 +483,37 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                 } else {
                     if (screen == "crop") {
                         Text(tr("document_crop_hint"))
-                        QREXDocumentCorners(bitmap, cropCorners) { cropCorners = it }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = !rectangleCrop,
+                                onClick = { rectangleCrop = false },
+                                label = { Text(tr("document_perspective")) },
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-perspective-mode")
+                            )
+                            FilterChip(
+                                selected = rectangleCrop,
+                                onClick = {
+                                    cropCorners = qrexDocumentBoundingRectangle(cropCorners)
+                                    rectangleCrop = true
+                                },
+                                label = { Text(tr("document_rectangle")) },
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-rectangle-mode")
+                            )
+                        }
+                        QREXDocumentCorners(bitmap, cropCorners, rectangleCrop) {
+                            cropCorners = it
+                        }
+                        OutlinedButton(
+                            onClick = { cropCorners = QREX_DOCUMENT_FULL_CORNERS },
+                            modifier = Modifier.fillMaxWidth()
+                                .heightIn(min = 48.dp)
+                                .testTag("qrex-document-reset-crop")
+                        ) { Text(tr("document_reset")) }
                         Button(onClick = {
                             if (!qrexDocumentQuadValid(cropCorners)) {
                                 message = invalidCornersText
@@ -433,7 +525,8 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                             QREXDocumentProcessing.cropPerspective(bitmap, cropCorners)
                                         }
                                     }.onSuccess {
-                                        session.updatePending(it)
+                                        session.transformPending(it)
+                                        cropCorners = defaultCorners
                                         screen = "review"
                                     }.onFailure { message = errorText }
                                     busy = false
@@ -447,9 +540,23 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                             contentScale = ContentScale.Fit,
                             modifier = Modifier.fillMaxWidth()
                                 .height(min(440, max(220, LocalConfiguration.current.screenHeightDp / 2)).dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { screen = "crop" },
-                                modifier = Modifier.weight(1f)) { Text(tr("document_crop")) }
+                        if (session.canUndo) {
+                            OutlinedButton(
+                                onClick = { session.undoPending() },
+                                modifier = Modifier.fillMaxWidth()
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-undo")
+                            ) { Text(tr("document_undo")) }
+                        }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = {
+                                cropCorners = defaultCorners
+                                screen = "crop"
+                            }, modifier = Modifier.weight(1f)
+                                .heightIn(min = 48.dp)
+                                .testTag("qrex-document-open-crop")
+                            ) { Text(tr("document_crop")) }
                             OutlinedButton(onClick = {
                                 busy = true
                                 scope.launch {
@@ -457,7 +564,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                         withContext(Dispatchers.Default) {
                                             QREXDocumentProcessing.rotate(bitmap, 90)
                                         }
-                                    }.onSuccess { session.updatePending(it) }
+                                    }.onSuccess { session.transformPending(it) }
                                         .onFailure { message = errorText }
                                     busy = false
                                 }
