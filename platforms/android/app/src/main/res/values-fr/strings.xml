@@ -123,4 +123,8 @@
     <string name="document_success">PDF enregistré.</string>
     <string name="document_discard">Supprimer le document ?</string>
     <string name="document_exit_warning">Les pages non enregistrées seront perdues. Quitter ?</string>
+    <string name="document_perspective">Perspective</string>
+    <string name="document_rectangle">Rectangle</string>
+    <string name="document_reset">Réinitialiser le recadrage</string>
+    <string name="document_undo">Annuler</string>
 </resources>

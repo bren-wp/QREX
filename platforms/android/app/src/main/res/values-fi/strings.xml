@@ -123,4 +123,8 @@
     <string name="document_success">PDF tallennettu.</string>
     <string name="document_discard">Hylätäänkö asiakirja?</string>
     <string name="document_exit_warning">Tallentamattomat sivut häviävät. Poistutaanko?</string>
+    <string name="document_perspective">Perspektiivi</string>
+    <string name="document_rectangle">Suorakulmio</string>
+    <string name="document_reset">Palauta rajaus</string>
+    <string name="document_undo">Kumoa</string>
 </resources>

@@ -123,4 +123,8 @@
     <string name="document_success">PDF sikeresen mentve.</string>
     <string name="document_discard">Dokumentum elvetése?</string>
     <string name="document_exit_warning">A nem mentett oldalak elvesznek. Kilép?</string>
+    <string name="document_perspective">Perspektíva</string>
+    <string name="document_rectangle">Téglalap</string>
+    <string name="document_reset">Vágás visszaállítása</string>
+    <string name="document_undo">Visszavonás</string>
 </resources>

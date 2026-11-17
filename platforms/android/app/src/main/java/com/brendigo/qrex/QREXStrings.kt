@@ -132,6 +132,10 @@ object QREXStrings {
         "document_success" -> R.string.document_success
         "document_discard" -> R.string.document_discard
         "document_exit_warning" -> R.string.document_exit_warning
+        "document_perspective" -> R.string.document_perspective
+        "document_rectangle" -> R.string.document_rectangle
+        "document_reset" -> R.string.document_reset
+        "document_undo" -> R.string.document_undo
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

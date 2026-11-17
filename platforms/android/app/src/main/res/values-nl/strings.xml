@@ -123,4 +123,8 @@
     <string name="document_success">PDF opgeslagen.</string>
     <string name="document_discard">Document verwijderen?</string>
     <string name="document_exit_warning">Niet-opgeslagen pagina\'s gaan verloren. Wilt u afsluiten?</string>
+    <string name="document_perspective">Perspectief</string>
+    <string name="document_rectangle">Rechthoek</string>
+    <string name="document_reset">Uitsnede herstellen</string>
+    <string name="document_undo">Ongedaan maken</string>
 </resources>

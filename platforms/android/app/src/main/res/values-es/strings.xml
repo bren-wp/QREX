@@ -123,4 +123,8 @@
     <string name="document_success">PDF guardado correctamente.</string>
     <string name="document_discard">¿Descartar documento?</string>
     <string name="document_exit_warning">Se perderán las páginas sin guardar. ¿Quieres salir?</string>
+    <string name="document_perspective">Perspectiva</string>
+    <string name="document_rectangle">Rectángulo</string>
+    <string name="document_reset">Restablecer recorte</string>
+    <string name="document_undo">Deshacer</string>
 </resources>

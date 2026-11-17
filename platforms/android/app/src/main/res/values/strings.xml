@@ -123,4 +123,8 @@
     <string name="document_success">PDF saved successfully.</string>
     <string name="document_discard">Discard document?</string>
     <string name="document_exit_warning">Unsaved pages will be lost. Do you want to exit?</string>
+    <string name="document_perspective">Perspective</string>
+    <string name="document_rectangle">Rectangle</string>
+    <string name="document_reset">Reset crop</string>
+    <string name="document_undo">Undo</string>
 </resources>

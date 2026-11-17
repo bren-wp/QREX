@@ -123,4 +123,8 @@
     <string name="document_success">PDF zapisano pomyślnie.</string>
     <string name="document_discard">Odrzucić dokument?</string>
     <string name="document_exit_warning">Niezapisane strony zostaną utracone. Czy wyjść?</string>
+    <string name="document_perspective">Perspektywa</string>
+    <string name="document_rectangle">Prostokąt</string>
+    <string name="document_reset">Resetuj kadrowanie</string>
+    <string name="document_undo">Cofnij</string>
 </resources>

@@ -123,4 +123,8 @@
     <string name="document_success">PDF salvat cu succes.</string>
     <string name="document_discard">Renunți la document?</string>
     <string name="document_exit_warning">Paginile nesalvate se vor pierde. Vrei să ieși?</string>
+    <string name="document_perspective">Perspectivă</string>
+    <string name="document_rectangle">Dreptunghi</string>
+    <string name="document_reset">Resetează decuparea</string>
+    <string name="document_undo">Anulează</string>
 </resources>

@@ -123,4 +123,8 @@
     <string name="document_success">PDF збережено.</string>
     <string name="document_discard">Відхилити документ?</string>
     <string name="document_exit_warning">Незбережені сторінки буде втрачено. Вийти?</string>
+    <string name="document_perspective">Перспектива</string>
+    <string name="document_rectangle">Прямокутник</string>
+    <string name="document_reset">Скинути обрізання</string>
+    <string name="document_undo">Скасувати</string>
 </resources>

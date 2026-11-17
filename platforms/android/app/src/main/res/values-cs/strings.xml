@@ -123,4 +123,8 @@
     <string name="document_success">PDF úspěšně uloženo.</string>
     <string name="document_discard">Zahodit dokument?</string>
     <string name="document_exit_warning">Neuložené stránky budou ztraceny. Chcete odejít?</string>
+    <string name="document_perspective">Perspektiva</string>
+    <string name="document_rectangle">Obdélník</string>
+    <string name="document_reset">Obnovit ořez</string>
+    <string name="document_undo">Zpět</string>
 </resources>

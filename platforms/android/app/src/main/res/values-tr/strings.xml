@@ -123,4 +123,8 @@
     <string name="document_success">PDF kaydedildi.</string>
     <string name="document_discard">Belge silinsin mi?</string>
     <string name="document_exit_warning">Kaydedilmemiş sayfalar kaybolacak. Çıkılsın mı?</string>
+    <string name="document_perspective">Perspektif</string>
+    <string name="document_rectangle">Dikdörtgen</string>
+    <string name="document_reset">Kırpmayı sıfırla</string>
+    <string name="document_undo">Geri al</string>
 </resources>

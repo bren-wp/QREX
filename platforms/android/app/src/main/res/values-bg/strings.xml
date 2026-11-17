@@ -123,4 +123,8 @@
     <string name="document_success">PDF е запазен.</string>
     <string name="document_discard">Отхвърляне на документа?</string>
     <string name="document_exit_warning">Незапазените страници ще се загубят. Да излезете ли?</string>
+    <string name="document_perspective">Перспектива</string>
+    <string name="document_rectangle">Правоъгълник</string>
+    <string name="document_reset">Нулиране на изрязването</string>
+    <string name="document_undo">Отмяна</string>
 </resources>

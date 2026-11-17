@@ -123,4 +123,8 @@
     <string name="document_success">PDF salvato correttamente.</string>
     <string name="document_discard">Eliminare il documento?</string>
     <string name="document_exit_warning">Le pagine non salvate andranno perse. Vuoi uscire?</string>
+    <string name="document_perspective">Prospettiva</string>
+    <string name="document_rectangle">Rettangolo</string>
+    <string name="document_reset">Reimposta ritaglio</string>
+    <string name="document_undo">Annulla</string>
 </resources>

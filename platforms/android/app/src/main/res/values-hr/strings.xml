@@ -123,4 +123,8 @@
     <string name="document_success">PDF je uspješno spremljen.</string>
     <string name="document_discard">Odbaciti dokument?</string>
     <string name="document_exit_warning">Nespremljene stranice bit će izgubljene. Želite li izaći?</string>
+    <string name="document_perspective">Perspektiva</string>
+    <string name="document_rectangle">Pravokutnik</string>
+    <string name="document_reset">Vrati izrez</string>
+    <string name="document_undo">Poništi</string>
 </resources>

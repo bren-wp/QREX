@@ -123,4 +123,8 @@
     <string name="document_success">PDF je shranjen.</string>
     <string name="document_discard">Zavrzi dokument?</string>
     <string name="document_exit_warning">Neshranjene strani bodo izgubljene. Želite izstopiti?</string>
+    <string name="document_perspective">Perspektiva</string>
+    <string name="document_rectangle">Pravokotnik</string>
+    <string name="document_reset">Ponastavi obrez</string>
+    <string name="document_undo">Razveljavi</string>
 </resources>

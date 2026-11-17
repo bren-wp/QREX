@@ -123,4 +123,8 @@
     <string name="document_success">Το PDF αποθηκεύτηκε.</string>
     <string name="document_discard">Απόρριψη εγγράφου;</string>
     <string name="document_exit_warning">Οι μη αποθηκευμένες σελίδες θα χαθούν. Έξοδος;</string>
+    <string name="document_perspective">Προοπτική</string>
+    <string name="document_rectangle">Ορθογώνιο</string>
+    <string name="document_reset">Επαναφορά περικοπής</string>
+    <string name="document_undo">Αναίρεση</string>
 </resources>

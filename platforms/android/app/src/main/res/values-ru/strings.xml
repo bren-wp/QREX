@@ -123,4 +123,8 @@
     <string name="document_success">PDF сохранён.</string>
     <string name="document_discard">Отменить документ?</string>
     <string name="document_exit_warning">Несохранённые страницы будут потеряны. Выйти?</string>
+    <string name="document_perspective">Перспектива</string>
+    <string name="document_rectangle">Прямоугольник</string>
+    <string name="document_reset">Сбросить обрезку</string>
+    <string name="document_undo">Отменить</string>
 </resources>
