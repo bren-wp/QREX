@@ -526,7 +526,8 @@ internal fun QREXDocumentScanScreen(
                 }
                 if (session.pages.isNotEmpty()) {
                     Button(onClick = { screen = "pages" },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                            .testTag("qrex-document-open-pages")) {
                         Text(tr("document_pages") + " (" + session.pages.size + ")")
                     }
                 }
