@@ -136,6 +136,11 @@ object QREXStrings {
         "document_rectangle" -> R.string.document_rectangle
         "document_reset" -> R.string.document_reset
         "document_undo" -> R.string.document_undo
+        "document_enhance" -> R.string.document_enhance
+        "document_grayscale" -> R.string.document_grayscale
+        "document_bw" -> R.string.document_bw
+        "document_move_up" -> R.string.document_move_up
+        "document_move_down" -> R.string.document_move_down
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

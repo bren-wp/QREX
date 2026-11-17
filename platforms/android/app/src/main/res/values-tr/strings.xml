@@ -127,4 +127,9 @@
     <string name="document_rectangle">Dikdörtgen</string>
     <string name="document_reset">Kırpmayı sıfırla</string>
     <string name="document_undo">Geri al</string>
+    <string name="document_enhance">Okunabilirliği artır</string>
+    <string name="document_grayscale">Gri tonlama</string>
+    <string name="document_bw">Siyah beyaz</string>
+    <string name="document_move_up">Sayfayı yukarı taşı</string>
+    <string name="document_move_down">Sayfayı aşağı taşı</string>
 </resources>

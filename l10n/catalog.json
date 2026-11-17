@@ -130,7 +130,12 @@
         "document_perspective": "Perspective",
         "document_rectangle": "Rectangle",
         "document_reset": "Reset crop",
-        "document_undo": "Undo"
+        "document_undo": "Undo",
+        "document_enhance": "Enhance readability",
+        "document_grayscale": "Grayscale",
+        "document_bw": "Black & white",
+        "document_move_up": "Move page up",
+        "document_move_down": "Move page down"
       }
     },
     "hr": {
@@ -262,7 +267,12 @@
         "document_perspective": "Perspektiva",
         "document_rectangle": "Pravokutnik",
         "document_reset": "Vrati izrez",
-        "document_undo": "Poništi"
+        "document_undo": "Poništi",
+        "document_enhance": "Poboljšaj čitljivost",
+        "document_grayscale": "Sivi tonovi",
+        "document_bw": "Crno-bijelo",
+        "document_move_up": "Pomakni stranicu gore",
+        "document_move_down": "Pomakni stranicu dolje"
       }
     },
     "de": {
@@ -394,7 +404,12 @@
         "document_perspective": "Perspektive",
         "document_rectangle": "Rechteck",
         "document_reset": "Zuschnitt zurücksetzen",
-        "document_undo": "Rückgängig"
+        "document_undo": "Rückgängig",
+        "document_enhance": "Lesbarkeit verbessern",
+        "document_grayscale": "Graustufen",
+        "document_bw": "Schwarzweiß",
+        "document_move_up": "Seite nach oben",
+        "document_move_down": "Seite nach unten"
       }
     },
     "fr": {
@@ -526,7 +541,12 @@
         "document_perspective": "Perspective",
         "document_rectangle": "Rectangle",
         "document_reset": "Réinitialiser le recadrage",
-        "document_undo": "Annuler"
+        "document_undo": "Annuler",
+        "document_enhance": "Améliorer la lisibilité",
+        "document_grayscale": "Niveaux de gris",
+        "document_bw": "Noir et blanc",
+        "document_move_up": "Monter la page",
+        "document_move_down": "Descendre la page"
       }
     },
     "es": {
@@ -658,7 +678,12 @@
         "document_perspective": "Perspectiva",
         "document_rectangle": "Rectángulo",
         "document_reset": "Restablecer recorte",
-        "document_undo": "Deshacer"
+        "document_undo": "Deshacer",
+        "document_enhance": "Mejorar legibilidad",
+        "document_grayscale": "Escala de grises",
+        "document_bw": "Blanco y negro",
+        "document_move_up": "Subir página",
+        "document_move_down": "Bajar página"
       }
     },
     "it": {
@@ -790,7 +815,12 @@
         "document_perspective": "Prospettiva",
         "document_rectangle": "Rettangolo",
         "document_reset": "Reimposta ritaglio",
-        "document_undo": "Annulla"
+        "document_undo": "Annulla",
+        "document_enhance": "Migliora la leggibilità",
+        "document_grayscale": "Scala di grigi",
+        "document_bw": "Bianco e nero",
+        "document_move_up": "Sposta pagina su",
+        "document_move_down": "Sposta pagina giù"
       }
     },
     "pt": {
@@ -922,7 +952,12 @@
         "document_perspective": "Perspetiva",
         "document_rectangle": "Retângulo",
         "document_reset": "Repor recorte",
-        "document_undo": "Desfazer"
+        "document_undo": "Desfazer",
+        "document_enhance": "Melhorar legibilidade",
+        "document_grayscale": "Tons de cinzento",
+        "document_bw": "Preto e branco",
+        "document_move_up": "Subir página",
+        "document_move_down": "Descer página"
       }
     },
     "nl": {
@@ -1054,7 +1089,12 @@
         "document_perspective": "Perspectief",
         "document_rectangle": "Rechthoek",
         "document_reset": "Uitsnede herstellen",
-        "document_undo": "Ongedaan maken"
+        "document_undo": "Ongedaan maken",
+        "document_enhance": "Leesbaarheid verbeteren",
+        "document_grayscale": "Grijstinten",
+        "document_bw": "Zwart-wit",
+        "document_move_up": "Pagina omhoog",
+        "document_move_down": "Pagina omlaag"
       }
     },
     "pl": {
@@ -1186,7 +1226,12 @@
         "document_perspective": "Perspektywa",
         "document_rectangle": "Prostokąt",
         "document_reset": "Resetuj kadrowanie",
-        "document_undo": "Cofnij"
+        "document_undo": "Cofnij",
+        "document_enhance": "Popraw czytelność",
+        "document_grayscale": "Skala szarości",
+        "document_bw": "Czarno-białe",
+        "document_move_up": "Przesuń stronę w górę",
+        "document_move_down": "Przesuń stronę w dół"
       }
     },
     "cs": {
@@ -1318,7 +1363,12 @@
         "document_perspective": "Perspektiva",
         "document_rectangle": "Obdélník",
         "document_reset": "Obnovit ořez",
-        "document_undo": "Zpět"
+        "document_undo": "Zpět",
+        "document_enhance": "Zlepšit čitelnost",
+        "document_grayscale": "Odstíny šedi",
+        "document_bw": "Černobíle",
+        "document_move_up": "Posunout stránku nahoru",
+        "document_move_down": "Posunout stránku dolů"
       }
     },
     "sk": {
@@ -1450,7 +1500,12 @@
         "document_perspective": "Perspektíva",
         "document_rectangle": "Obdĺžnik",
         "document_reset": "Obnoviť orez",
-        "document_undo": "Späť"
+        "document_undo": "Späť",
+        "document_enhance": "Zlepšiť čitateľnosť",
+        "document_grayscale": "Odtiene sivej",
+        "document_bw": "Čiernobielo",
+        "document_move_up": "Posunúť stránku hore",
+        "document_move_down": "Posunúť stránku dole"
       }
     },
     "sl": {
@@ -1582,7 +1637,12 @@
         "document_perspective": "Perspektiva",
         "document_rectangle": "Pravokotnik",
         "document_reset": "Ponastavi obrez",
-        "document_undo": "Razveljavi"
+        "document_undo": "Razveljavi",
+        "document_enhance": "Izboljšaj berljivost",
+        "document_grayscale": "Sivine",
+        "document_bw": "Črno-belo",
+        "document_move_up": "Premakni stran navzgor",
+        "document_move_down": "Premakni stran navzdol"
       }
     },
     "hu": {
@@ -1714,7 +1774,12 @@
         "document_perspective": "Perspektíva",
         "document_rectangle": "Téglalap",
         "document_reset": "Vágás visszaállítása",
-        "document_undo": "Visszavonás"
+        "document_undo": "Visszavonás",
+        "document_enhance": "Olvashatóság javítása",
+        "document_grayscale": "Szürkeárnyalatos",
+        "document_bw": "Fekete-fehér",
+        "document_move_up": "Oldal feljebb",
+        "document_move_down": "Oldal lejjebb"
       }
     },
     "ro": {
@@ -1846,7 +1911,12 @@
         "document_perspective": "Perspectivă",
         "document_rectangle": "Dreptunghi",
         "document_reset": "Resetează decuparea",
-        "document_undo": "Anulează"
+        "document_undo": "Anulează",
+        "document_enhance": "Îmbunătățește lizibilitatea",
+        "document_grayscale": "Nuanțe de gri",
+        "document_bw": "Alb-negru",
+        "document_move_up": "Mută pagina în sus",
+        "document_move_down": "Mută pagina în jos"
       }
     },
     "bg": {
@@ -1978,7 +2048,12 @@
         "document_perspective": "Перспектива",
         "document_rectangle": "Правоъгълник",
         "document_reset": "Нулиране на изрязването",
-        "document_undo": "Отмяна"
+        "document_undo": "Отмяна",
+        "document_enhance": "Подобри четливостта",
+        "document_grayscale": "Нива на сивото",
+        "document_bw": "Черно-бяло",
+        "document_move_up": "Премести страницата нагоре",
+        "document_move_down": "Премести страницата надолу"
       }
     },
     "el": {
@@ -2110,7 +2185,12 @@
         "document_perspective": "Προοπτική",
         "document_rectangle": "Ορθογώνιο",
         "document_reset": "Επαναφορά περικοπής",
-        "document_undo": "Αναίρεση"
+        "document_undo": "Αναίρεση",
+        "document_enhance": "Βελτίωση αναγνωσιμότητας",
+        "document_grayscale": "Κλίμακα γκρι",
+        "document_bw": "Ασπρόμαυρο",
+        "document_move_up": "Μετακίνηση σελίδας πάνω",
+        "document_move_down": "Μετακίνηση σελίδας κάτω"
       }
     },
     "tr": {
@@ -2242,7 +2322,12 @@
         "document_perspective": "Perspektif",
         "document_rectangle": "Dikdörtgen",
         "document_reset": "Kırpmayı sıfırla",
-        "document_undo": "Geri al"
+        "document_undo": "Geri al",
+        "document_enhance": "Okunabilirliği artır",
+        "document_grayscale": "Gri tonlama",
+        "document_bw": "Siyah beyaz",
+        "document_move_up": "Sayfayı yukarı taşı",
+        "document_move_down": "Sayfayı aşağı taşı"
       }
     },
     "uk": {
@@ -2374,7 +2459,12 @@
         "document_perspective": "Перспектива",
         "document_rectangle": "Прямокутник",
         "document_reset": "Скинути обрізання",
-        "document_undo": "Скасувати"
+        "document_undo": "Скасувати",
+        "document_enhance": "Покращити читабельність",
+        "document_grayscale": "Відтінки сірого",
+        "document_bw": "Чорно-біле",
+        "document_move_up": "Перемістити сторінку вгору",
+        "document_move_down": "Перемістити сторінку вниз"
       }
     },
     "ru": {
@@ -2506,7 +2596,12 @@
         "document_perspective": "Перспектива",
         "document_rectangle": "Прямоугольник",
         "document_reset": "Сбросить обрезку",
-        "document_undo": "Отменить"
+        "document_undo": "Отменить",
+        "document_enhance": "Улучшить читаемость",
+        "document_grayscale": "Оттенки серого",
+        "document_bw": "Чёрно-белое",
+        "document_move_up": "Переместить страницу вверх",
+        "document_move_down": "Переместить страницу вниз"
       }
     },
     "sv": {
@@ -2638,7 +2733,12 @@
         "document_perspective": "Perspektiv",
         "document_rectangle": "Rektangel",
         "document_reset": "Återställ beskärning",
-        "document_undo": "Ångra"
+        "document_undo": "Ångra",
+        "document_enhance": "Förbättra läsbarheten",
+        "document_grayscale": "Gråskala",
+        "document_bw": "Svartvitt",
+        "document_move_up": "Flytta sidan upp",
+        "document_move_down": "Flytta sidan ned"
       }
     },
     "da": {
@@ -2770,7 +2870,12 @@
         "document_perspective": "Perspektiv",
         "document_rectangle": "Rektangel",
         "document_reset": "Nulstil beskæring",
-        "document_undo": "Fortryd"
+        "document_undo": "Fortryd",
+        "document_enhance": "Forbedr læsbarhed",
+        "document_grayscale": "Gråtoner",
+        "document_bw": "Sort-hvid",
+        "document_move_up": "Flyt side op",
+        "document_move_down": "Flyt side ned"
       }
     },
     "fi": {
@@ -2902,7 +3007,12 @@
         "document_perspective": "Perspektiivi",
         "document_rectangle": "Suorakulmio",
         "document_reset": "Palauta rajaus",
-        "document_undo": "Kumoa"
+        "document_undo": "Kumoa",
+        "document_enhance": "Paranna luettavuutta",
+        "document_grayscale": "Harmaasävy",
+        "document_bw": "Mustavalkoinen",
+        "document_move_up": "Siirrä sivua ylös",
+        "document_move_down": "Siirrä sivua alas"
       }
     },
     "nb": {
@@ -3034,7 +3144,12 @@
         "document_perspective": "Perspektiv",
         "document_rectangle": "Rektangel",
         "document_reset": "Nullstill beskjæring",
-        "document_undo": "Angre"
+        "document_undo": "Angre",
+        "document_enhance": "Forbedre lesbarhet",
+        "document_grayscale": "Gråtoner",
+        "document_bw": "Svart-hvitt",
+        "document_move_up": "Flytt side opp",
+        "document_move_down": "Flytt side ned"
       }
     }
   }

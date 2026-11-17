@@ -127,4 +127,9 @@
     <string name="document_rectangle">Rektangel</string>
     <string name="document_reset">Nulstil beskæring</string>
     <string name="document_undo">Fortryd</string>
+    <string name="document_enhance">Forbedr læsbarhed</string>
+    <string name="document_grayscale">Gråtoner</string>
+    <string name="document_bw">Sort-hvid</string>
+    <string name="document_move_up">Flyt side op</string>
+    <string name="document_move_down">Flyt side ned</string>
 </resources>

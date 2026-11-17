@@ -127,4 +127,9 @@
     <string name="document_rectangle">Obdélník</string>
     <string name="document_reset">Obnovit ořez</string>
     <string name="document_undo">Zpět</string>
+    <string name="document_enhance">Zlepšit čitelnost</string>
+    <string name="document_grayscale">Odstíny šedi</string>
+    <string name="document_bw">Černobíle</string>
+    <string name="document_move_up">Posunout stránku nahoru</string>
+    <string name="document_move_down">Posunout stránku dolů</string>
 </resources>

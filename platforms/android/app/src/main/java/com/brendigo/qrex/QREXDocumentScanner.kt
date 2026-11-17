@@ -23,6 +23,7 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +35,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.*
@@ -536,10 +541,53 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                             Text(tr("document_apply_crop"))
                         }
                     } else {
-                        Image(bitmap.asImageBitmap(), contentDescription = tr("document_pages"),
-                            contentScale = ContentScale.Fit,
+                        Surface(
                             modifier = Modifier.fillMaxWidth()
-                                .height(min(440, max(220, LocalConfiguration.current.screenHeightDp / 2)).dp))
+                                .testTag("qrex-document-review-preview"),
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(16.dp),
+                            border = BorderStroke(1.dp,
+                                MaterialTheme.colorScheme.outlineVariant)
+                        ) {
+                            Image(bitmap.asImageBitmap(),
+                                contentDescription = tr("document_pages"),
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.fillMaxWidth()
+                                    .height(min(440, max(220,
+                                        LocalConfiguration.current.screenHeightDp / 2)).dp))
+                        }
+                        Text(tr("document_enhance"),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurface)
+                        val applyEnhancement: (QREXDocumentFilter) -> Unit = { filter ->
+                            if (!busy) {
+                                busy = true
+                                scope.launch {
+                                    runCatching {
+                                        withContext(Dispatchers.Default) {
+                                            QREXDocumentFilters.apply(bitmap, filter)
+                                        }
+                                    }.onSuccess { session.transformPending(it) }
+                                        .onFailure { message = errorText }
+                                    busy = false
+                                }
+                            }
+                        }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = { applyEnhancement(QREXDocumentFilter.GRAYSCALE) },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f).heightIn(min = 56.dp)
+                                    .testTag("qrex-document-grayscale")
+                            ) { Text(tr("document_grayscale"), maxLines = 2) }
+                            OutlinedButton(
+                                onClick = { applyEnhancement(QREXDocumentFilter.BLACK_WHITE) },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f).heightIn(min = 56.dp)
+                                    .testTag("qrex-document-black-white")
+                            ) { Text(tr("document_bw"), maxLines = 2) }
+                        }
                         if (session.canUndo) {
                             OutlinedButton(
                                 onClick = { session.undoPending() },
@@ -596,29 +644,58 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                 Text(tr("document_session_note"),
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
                 session.pages.forEachIndexed { index, bitmap ->
-                    Surface(shape = RoundedCornerShape(12.dp),
-                        tonalElevation = 2.dp, modifier = Modifier.fillMaxWidth()) {
-                        Column(Modifier.padding(12.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        shape = RoundedCornerShape(16.dp), tonalElevation = 2.dp,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier.fillMaxWidth()
+                            .testTag("qrex-document-page-$index")
+                    ) {
+                        Column(Modifier.fillMaxWidth().padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically) {
                                 Image(bitmap.asImageBitmap(), contentDescription = null,
                                     contentScale = ContentScale.Fit,
-                                    modifier = Modifier.size(width = 70.dp, height = 100.dp))
+                                    modifier = Modifier.size(width = 70.dp, height = 94.dp))
                                 Spacer(Modifier.width(12.dp))
-                                Text((index + 1).toString(),
+                                Text(tr("document_pages") + " " + (index + 1),
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier.weight(1f))
-                                TextButton(onClick = { session.move(index, -1) },
-                                    enabled = index > 0) { Text("↑") }
-                                TextButton(onClick = { session.move(index, 1) },
-                                    enabled = index < session.pages.lastIndex) { Text("↓") }
-                                TextButton(onClick = {
+                            }
+                            // Separate action row: four 48dp targets never squeeze
+                            // the thumbnail/labels on 280-360dp devices.
+                            Row(Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly) {
+                                IconButton(onClick = { session.move(index, -1) },
+                                    enabled = !busy && index > 0,
+                                    modifier = Modifier.size(48.dp)
+                                        .testTag("qrex-document-page-up-$index")) {
+                                    Icon(Icons.Default.ArrowUpward,
+                                        contentDescription = tr("document_move_up"))
+                                }
+                                IconButton(onClick = { session.move(index, 1) },
+                                    enabled = !busy && index < session.pages.lastIndex,
+                                    modifier = Modifier.size(48.dp)
+                                        .testTag("qrex-document-page-down-$index")) {
+                                    Icon(Icons.Default.ArrowDownward,
+                                        contentDescription = tr("document_move_down"))
+                                }
+                                IconButton(onClick = {
                                     session.updatePending(bitmap)
                                     editingIndex = index
                                     cropCorners = defaultCorners
                                     screen = "review"
-                                }, enabled = !busy) { Text(tr("edit")) }
-                                TextButton(onClick = { session.pages.removeAt(index) },
-                                    enabled = !busy) { Text(tr("delete")) }
+                                }, enabled = !busy,
+                                    modifier = Modifier.size(48.dp)
+                                        .testTag("qrex-document-page-edit-$index")) {
+                                    Icon(Icons.Default.Edit, contentDescription = tr("edit"))
+                                }
+                                IconButton(onClick = { session.pages.removeAt(index) },
+                                    enabled = !busy,
+                                    modifier = Modifier.size(48.dp)
+                                        .testTag("qrex-document-page-delete-$index")) {
+                                    Icon(Icons.Default.Delete, contentDescription = tr("delete"))
+                                }
                             }
                         }
                     }

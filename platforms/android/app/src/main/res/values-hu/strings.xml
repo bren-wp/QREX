@@ -127,4 +127,9 @@
     <string name="document_rectangle">Téglalap</string>
     <string name="document_reset">Vágás visszaállítása</string>
     <string name="document_undo">Visszavonás</string>
+    <string name="document_enhance">Olvashatóság javítása</string>
+    <string name="document_grayscale">Szürkeárnyalatos</string>
+    <string name="document_bw">Fekete-fehér</string>
+    <string name="document_move_up">Oldal feljebb</string>
+    <string name="document_move_down">Oldal lejjebb</string>
 </resources>
