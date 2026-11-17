@@ -674,7 +674,8 @@ internal fun QREXDocumentScanScreen(
                         }
                         if (session.canUndo) {
                             OutlinedButton(
-                                onClick = { session.undoPending() },
+                                onClick = { if (!busy) session.undoPending() },
+                                enabled = !busy,
                                 modifier = Modifier.fillMaxWidth()
                                     .heightIn(min = 48.dp)
                                     .testTag("qrex-document-undo")
@@ -685,7 +686,7 @@ internal fun QREXDocumentScanScreen(
                             OutlinedButton(onClick = {
                                 cropCorners = defaultCorners
                                 screen = "crop"
-                            }, modifier = Modifier.weight(1f)
+                            }, enabled = !busy, modifier = Modifier.weight(1f)
                                 .heightIn(min = 48.dp)
                                 .testTag("qrex-document-open-crop")
                             ) { Text(tr("document_crop")) }
@@ -700,7 +701,11 @@ internal fun QREXDocumentScanScreen(
                                         .onFailure { message = errorText }
                                     busy = false
                                 }
-                            }, modifier = Modifier.weight(1f)) { Text(tr("document_rotate")) }
+                            }, enabled = !busy,
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-rotate")
+                            ) { Text(tr("document_rotate")) }
                         }
                         Button(onClick = {
                             if (editingIndex in session.pages.indices) {
