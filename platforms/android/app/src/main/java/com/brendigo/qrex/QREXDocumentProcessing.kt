@@ -50,6 +50,8 @@ internal fun qrexDocumentSafeName(name: String): String {
 /**
  * Four normalized corners: top-left, top-right, bottom-right, bottom-left.
  * Reject self-intersections, collapsed edges and shapes outside the bitmap.
+ * Allow small user-selected regions (down to a narrow ~2% image span) without
+ * rounding the user's tight crop back into a large default rectangle.
  */
 internal fun qrexDocumentQuadValid(p: List<Float>): Boolean {
     if (p.size != 8 || p.any { !it.isFinite() || it !in 0f..1f }) return false
@@ -63,13 +65,13 @@ internal fun qrexDocumentQuadValid(p: List<Float>): Boolean {
         val bx = p[k * 2] - p[j * 2]
         val by = p[k * 2 + 1] - p[j * 2 + 1]
         val cross = ax * by - ay * bx
-        if (abs(cross) < 0.002f) return false
+        if (abs(cross) < 0.00001f) return false
         val direction = if (cross > 0) 1 else -1
         if (sign != 0 && sign != direction) return false
         sign = direction
         signedArea += p[i * 2] * p[j * 2 + 1] - p[j * 2] * p[i * 2 + 1]
     }
-    return abs(signedArea) >= 0.04f
+    return abs(signedArea) >= 0.0005f
 }
 
 /** In-memory only: neither imported photos nor camera captures reach app storage. */
