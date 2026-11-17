@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Report only allowlisted Android test identifiers, never payloads or stack traces.
+"""Report allowlisted Android test IDs, exception types and test source lines.
 
-Runs on CI after an instrumented test failure. XML reports may include scanned
-QR contents in failure messages; ignore ALL message, body, system-out/err fields.
+Runs after instrumentation failure. XML may include QR contents; never output
+untrusted exception messages, stack traces, test parameters or system logs.
 """
 from __future__ import annotations
 
@@ -28,8 +28,8 @@ TYPE = re.compile(
     r"org[.]junit[.]ComparisonFailure)$"
 )
 FRAME = re.compile(
-    r"(?m)^\\s+at com[.]brendigo[.]qrex[.](QREX[A-Za-z0-9_]+Test)"
-    r"[.][A-Za-z0-9_$<>]+\\(([A-Za-z0-9_]+[.]kt):([0-9]{1,4})\\)"
+    r"(?m)^\s+at com[.]brendigo[.]qrex[.](QREX[A-Za-z0-9_]+Test)"
+    r"[.][A-Za-z0-9_$<>]+\(([A-Za-z0-9_]+[.]kt):([0-9]{1,4})\)"
 )
 
 def failed_test_diagnostics(path: pathlib.Path) -> list[str]:
