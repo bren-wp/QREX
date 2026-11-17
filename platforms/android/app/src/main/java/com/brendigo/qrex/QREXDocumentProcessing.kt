@@ -85,8 +85,13 @@ internal object QREXDocumentProcessing {
         val ratio = min(1.0, kotlin.math.sqrt(QREX_DOCUMENT_MAX_PIXELS.toDouble() / pixels))
         val width = max(1, (source.width * ratio).roundToInt())
         val height = max(1, (source.height * ratio).roundToInt())
-        return Bitmap.createScaledBitmap(source, width, height, true)
-            .copy(Bitmap.Config.ARGB_8888, false)
+        val scaled = Bitmap.createScaledBitmap(source, width, height, true)
+        if (scaled.config == Bitmap.Config.ARGB_8888) return scaled
+        val converted = scaled.copy(Bitmap.Config.ARGB_8888, false)
+        // The resize intermediate must not remain allocated alongside the
+        // original camera image and the final PDF page.
+        if (scaled !== source) scaled.recycle()
+        return converted
     }
 
     fun rotate(source: Bitmap, degrees: Int): Bitmap {

@@ -21,10 +21,10 @@ This release checklist covers the **single Kotlin/Jetpack Compose Android applic
 - [ ] Local history search, saved favorites, remove/delete all, Keystore unavailable/corrupt data recovery.
 - [ ] PNG, PDF and ZIP exports, cancellation, revoked picker permission and contents of exported records.
 
-## Document Scanner PR #120 (not yet release-certified)
+## Document Scanner (merged PR #120; crop editor PR #121 not yet release-certified)
 - [ ] Confirm CameraX photo capture on API 26, 31, 34, 35, 36 and physical cameras, including denial, interruptions and orientation.
 - [ ] Verify Photo Picker import, EXIF orientation, corrupt/oversized images and memory pressure.
-- [ ] Verify manual four-corner gestures, corner validity and perspective-crop output on several phone/tablet sizes.
+- [ ] Verify manual four-corner gestures, valid small selections, perspective/rectangle modes, reset, one-step Undo, grid and real crop output on several phone/tablet sizes.
 - [ ] Verify adding/re-editing/rotating/moving/deleting pages, eight-page maximum and Activity recreation without losing the current session.
 - [ ] Verify back/discard confirmation and no unexpected plaintext image cache files.
 - [ ] Verify single-page and multi-page A4 PDF content, orientations, page counts and compatibility with third-party readers.
