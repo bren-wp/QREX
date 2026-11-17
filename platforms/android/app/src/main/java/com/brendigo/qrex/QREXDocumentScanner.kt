@@ -746,20 +746,21 @@ internal fun QREXDocumentScanScreen(
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier.weight(1f))
                             }
-                            // Separate action row: four 48dp targets never squeeze
-                            // the thumbnail/labels on 280-360dp devices.
+                            // Separate action row: four 56dp controls preserve a real
+                            // 48dp-or-larger touch area after density rounding on
+                            // API 26/31; do not squeeze the thumbnail or labels.
                             Row(Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly) {
                                 IconButton(onClick = { session.move(index, -1) },
                                     enabled = !busy && index > 0,
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier.size(56.dp)
                                         .testTag("qrex-document-page-up-$index")) {
                                     Icon(Icons.Default.ArrowUpward,
                                         contentDescription = tr("document_move_up"))
                                 }
                                 IconButton(onClick = { session.move(index, 1) },
                                     enabled = !busy && index < session.pages.lastIndex,
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier.size(56.dp)
                                         .testTag("qrex-document-page-down-$index")) {
                                     Icon(Icons.Default.ArrowDownward,
                                         contentDescription = tr("document_move_down"))
@@ -770,13 +771,13 @@ internal fun QREXDocumentScanScreen(
                                     cropCorners = defaultCorners
                                     screen = "review"
                                 }, enabled = !busy,
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier.size(56.dp)
                                         .testTag("qrex-document-page-edit-$index")) {
                                     Icon(Icons.Default.Edit, contentDescription = tr("edit"))
                                 }
                                 IconButton(onClick = { session.pages.removeAt(index) },
                                     enabled = !busy,
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier.size(56.dp)
                                         .testTag("qrex-document-page-delete-$index")) {
                                     Icon(Icons.Default.Delete, contentDescription = tr("delete"))
                                 }

@@ -71,6 +71,10 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
+    // createComposeRule() requires a host ComponentActivity in the debug APK.
+    // Without the test manifest, both manual crop gesture tests fail before
+    // dispatching a touch event (unlike createAndroidComposeRule<MainActivity>).
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test:rules:1.7.0")
 }

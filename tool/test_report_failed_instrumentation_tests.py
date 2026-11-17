@@ -34,6 +34,17 @@ class SanitizedInstrumentationTests(unittest.TestCase):
             self.assertNotIn("super-secret", str(safe))
             self.assertNotIn("Fake", str(safe))
 
+    def test_known_framework_failure_class_is_safe_but_messages_are_hidden(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            (folder / "TEST-failure.xml").write_text(
+                """<testsuite><testcase classname="com.brendigo.qrex.QREXDocumentCropGestureTest" name="draggingPerspectiveHandleUpdatesSourceNormalizedCorners"><failure type="androidx.compose.ui.test.junit4.SomeTestFailure" message="secret-password">secret-password</failure></testcase></testsuite>""",
+                encoding="utf-8")
+            self.assertEqual(
+                ["QREXDocumentCropGestureTest#draggingPerspectiveHandleUpdatesSourceNormalizedCorners -> UnknownFailure"],
+                failed_test_diagnostics(folder))
+            self.assertNotIn("secret-password", str(failed_test_diagnostics(folder)))
+
     def test_malformed_and_non_allowlisted_names_are_ignored(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)

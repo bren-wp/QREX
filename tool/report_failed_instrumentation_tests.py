@@ -20,12 +20,11 @@ METHOD = re.compile(r"^[A-Za-z][A-Za-z0-9_]{1,90}$")
 # Diagnostic labels are printed only for QREX-owned, allowlisted test methods.
 # The XML exception messages and untrusted stack bodies are never printed.
 TYPE = re.compile(
-    r"^(?:java[.]lang[.](?:AssertionError|IllegalStateException|"
-    r"IllegalArgumentException|NullPointerException|RuntimeException)|"
-    r"androidx[.]compose[.]ui[.]test[.](?:AssertionError|"
-    r"ComposeTimeoutException|ComposeNotIdleException|"
-    r"SemanticsNodeInteractionException)|"
-    r"org[.]junit[.]ComparisonFailure)$"
+    # Only trusted framework namespaces, never QR payloads or arbitrary text.
+    r"^(?:(?:java[.]lang|junit[.]framework|org[.]junit|"
+    r"androidx[.]compose[.]ui[.]test|androidx[.]test[.]runner|"
+    r"androidx[.]test[.]core[.]app)[.])"
+    r"[A-Za-z][A-Za-z0-9_]{0,90}$"
 )
 FRAME = re.compile(
     r"(?m)^\s+at com[.]brendigo[.]qrex[.](QREX[A-Za-z0-9_]+Test)"
