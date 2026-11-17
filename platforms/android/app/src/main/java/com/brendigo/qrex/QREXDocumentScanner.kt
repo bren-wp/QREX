@@ -27,6 +27,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -199,7 +200,8 @@ internal fun QREXDocumentCorners(
     val updateCorners by rememberUpdatedState(onChange)
     val viewportHeight = min(400, max(200, LocalConfiguration.current.screenHeightDp / 2))
     Canvas(Modifier.fillMaxWidth().height(viewportHeight.dp)
-        .background(Color.Black, RoundedCornerShape(12.dp))
+        .clip(RoundedCornerShape(12.dp))
+        .background(Color.Black)
         .testTag("qrex-document-crop-canvas")
         .pointerInput(source, rectangle) {
             detectDragGestures(
@@ -350,7 +352,9 @@ internal fun QREXDocumentScanScreen(
     var exportedUri by remember { mutableStateOf<Uri?>(null) }
     var editingIndex by rememberSaveable { mutableIntStateOf(-1) }
     var rectangleCrop by rememberSaveable { mutableStateOf(false) }
-    var cropCorners by remember { mutableStateOf(QREX_DOCUMENT_INSET_CORNERS) }
+    // Save the manual corner coordinates across orientation and density changes.
+    // Session bitmaps remain Activity-retained rather than written to disk.
+    var cropCorners by rememberSaveable { mutableStateOf(QREX_DOCUMENT_INSET_CORNERS) }
     val defaultCorners = QREX_DOCUMENT_INSET_CORNERS
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
@@ -544,7 +548,7 @@ internal fun QREXDocumentScanScreen(
                             FilterChip(
                                 selected = !rectangleCrop,
                                 onClick = { rectangleCrop = false },
-                                label = { Text(tr("document_perspective")) },
+                                label = { Text(tr("document_perspective"), maxLines = 2) },
                                 modifier = Modifier.weight(1f)
                                     .heightIn(min = 48.dp)
                                     .testTag("qrex-document-perspective-mode")
@@ -555,7 +559,7 @@ internal fun QREXDocumentScanScreen(
                                     cropCorners = qrexDocumentBoundingRectangle(cropCorners)
                                     rectangleCrop = true
                                 },
-                                label = { Text(tr("document_rectangle")) },
+                                label = { Text(tr("document_rectangle"), maxLines = 2) },
                                 modifier = Modifier.weight(1f)
                                     .heightIn(min = 48.dp)
                                     .testTag("qrex-document-rectangle-mode")
