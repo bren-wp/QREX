@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
 """Require genuine document captures to ship with the next stable QREX release."""
 from pathlib import Path
+import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 PUBLISHER = ROOT / ".github/workflows/github-release.yml"
 CAPTURE = ROOT / ".github/workflows/capture-screenshots.yml"
+GRADLE = ROOT / "platforms/android/app/build.gradle.kts"
 
 class DocumentScreenshotReleaseTests(unittest.TestCase):
     def test_editor_gallery_has_eight_disambiguated_actual_capture_links(self):
         readme = README.read_text("utf-8")
+        version = re.search(r'versionName\s*=\s*"(1\.0\.\d+)"',
+                            GRADLE.read_text("utf-8"))
+        self.assertIsNotNone(version)
         expected = [f"document-{theme}-{screen}.png"
                     for theme in ("dark", "light")
                     for screen in ("review", "crop", "pages", "export")]
         for name in expected:
             with self.subTest(name=name):
                 self.assertEqual(1, readme.count(
-                    "/releases/download/v1.0.51/" + name))
+                    "/releases/download/v" + version.group(1) + "/" + name))
                 self.assertIn("actual", readme.lower())
         self.assertIn("synthetic paper", readme)
         self.assertIn("0% pixel-difference", readme)

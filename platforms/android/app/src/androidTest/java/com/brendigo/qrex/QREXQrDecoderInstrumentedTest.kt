@@ -22,11 +22,11 @@ class QREXQrDecoderInstrumentedTest {
             gray[(y + top) * width + x + left] =
                 if (modules.get(x, y)) 0.toByte() else 0xff.toByte()
         }
-        assertEquals(payload, QREXQrDecoder.decodeLuma(gray, width, height))
+        assertEquals(payload, QREXQrDecoder.decodeLuma(gray, width, height, centerFallback = true))
         val inverted = ByteArray(gray.size) { index ->
             (gray[index].toInt() xor 0xff).toByte()
         }
-        assertEquals(payload, QREXQrDecoder.decodeLuma(inverted, width, height))
+        assertEquals(payload, QREXQrDecoder.decodeLuma(inverted, width, height, centerFallback = true))
         assertNull(QREXQrDecoder.decodeLuma(ByteArray(width * height), 0, height))
     }
 

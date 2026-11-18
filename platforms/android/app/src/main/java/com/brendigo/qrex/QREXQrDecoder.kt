@@ -55,7 +55,7 @@ internal object QREXQrDecoder {
                     ((luminance * alpha + 255 * (255 - alpha)) / 255).toByte()
             }
         }
-        return decodeLuma(gray, w, h)
+        return decodeLuma(gray, w, h, centerFallback = true)
     }
 
     /** Extract Y bytes while correctly respecting CameraX row and pixel strides. */
@@ -116,7 +116,9 @@ internal object QREXQrDecoder {
     }
 
     /** Try ordinary and inverse/white-on-black QR codes. */
-    internal fun decodeLuma(data: ByteArray, width: Int, height: Int): String? {
+    internal fun decodeLuma(
+        data: ByteArray, width: Int, height: Int, centerFallback: Boolean = false
+    ): String? {
         if (width <= 0 || height <= 0 || width.toLong() * height != data.size.toLong() ||
             data.size.toLong() > MAX_PIXELS) return null
         val source = PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false)
@@ -132,7 +134,9 @@ internal object QREXQrDecoder {
         }
         val whole = read(BinaryBitmap(HybridBinarizer(source)))
             ?: read(BinaryBitmap(HybridBinarizer(source.invert())))
-        if (whole != null || width < 240 || height < 240) return whole
+        if (whole != null || !centerFallback || width < 240 || height < 240) return whole
+        // Gallery-only fallback: never double the work of the live CameraX
+        // analyzer on every missing QR frame (battery/thermal protection).
         // On wide gallery images a small, centered code can be lost among
         // unrelated background texture. Retry only the central 60% region
         // without a second full-frame luminance allocation. A code near the
