@@ -7,6 +7,13 @@ set -Eeuo pipefail
 sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
 manager="${QREX_SDKMANAGER:-${sdk_root}/cmdline-tools/latest/bin/sdkmanager}"
 emulator="${QREX_EMULATOR_BIN:-${sdk_root}/emulator/emulator}"
+# Ubuntu hosted runners may already provide a working emulator executable.
+# Re-downloading it can fail when the SDK repository is briefly unavailable.
+# This is NOT a substitute for the mandatory real AVD boot/ADB/test gate.
+if [[ -f "$emulator" && -x "$emulator" ]]; then
+  echo "Android Emulator executable already installed; live boot validation follows."
+  exit 0
+fi
 # GitHub hosted runners expose cmdline-tools inside ANDROID_HOME; the tools
 # are not necessarily on PATH before Android Emulator Runner starts.
 if [[ ! -x "$manager" ]]; then
@@ -32,7 +39,7 @@ for attempt in 1 2 3; do
   # Never print the raw sdkmanager output: a failed dependency URL may carry
   # access parameters. Print only the known, safe failure classification.
   if ! grep -Eiq 'ZipFile unknown archive|Error on ZipFile|ZipException|zip END header not found|Unexpected end of ZLIB input stream|Read timed out|Connection reset|HTTP (429|500|502|503|504)' "$log_file"; then
-    echo "Non-transient Android SDK install failure (not retried)." >&2
+    echo "Unclassified Android SDK installation failure (not retried; raw output withheld)." >&2
     exit 1
   fi
   if (( attempt == 3 )); then

@@ -87,7 +87,24 @@ class P03CrashLogTests(unittest.TestCase):
             emu.write_text("#!/usr/bin/env bash\nexit 42\n", encoding="utf-8")
             emu.chmod(0o755)
 
-            def run_mock(failure: str, fails_before_success: int):
+            # A previously installed executable is sufficient for preflight,
+            # but does not bypass Android Emulator Runner's live boot test.
+            env = dict(os.environ)
+            env.update({
+                "QREX_SDKMANAGER": str(work / "missing-sdkmanager"),
+                "QREX_EMULATOR_BIN": str(emu),
+                "RUNNER_TEMP": directory,
+            })
+            preinstalled = subprocess.run(
+                ["bash", str(script)], env=env,
+                capture_output=True, text=True, timeout=15
+            )
+            self.assertEqual(0, preinstalled.returncode)
+            self.assertIn("already installed", preinstalled.stdout)
+
+            def run_mock(failure: str, fails_before_success: int, create_binary: bool = True):
+                if emu.exists():
+                    emu.unlink()
                 state.write_text("0", encoding="utf-8")
                 sdk.write_text(
                     '#!/usr/bin/env bash\n'
@@ -96,6 +113,9 @@ class P03CrashLogTests(unittest.TestCase):
                     'printf "%s" "$n" > "$QREX_TEST_ATTEMPTS"\n'
                     f"if (( n <= {fails_before_success} )); then "
                     f"echo '{failure}' >&2; exit 1; fi\n"
+                    'if [[ "${QREX_MOCK_INSTALL_BIN:-1}" == 1 ]]; then '
+                    'printf "#!/usr/bin/env bash\\nexit 42\\n" > "${QREX_EMULATOR_BIN}"; '
+                    'chmod +x "${QREX_EMULATOR_BIN}"; fi\n'
                     'exit 0\n', encoding="utf-8"
                 )
                 sdk.chmod(0o755)
@@ -106,6 +126,7 @@ class P03CrashLogTests(unittest.TestCase):
                     "QREX_RETRY_SLEEP_SECONDS": "0",
                     "QREX_TEST_ATTEMPTS": str(state),
                     "RUNNER_TEMP": directory,
+                    "QREX_MOCK_INSTALL_BIN": "1" if create_binary else "0",
                 })
                 result = subprocess.run(["bash", str(script)], env=env,
                                         capture_output=True, text=True, timeout=15)
@@ -130,7 +151,7 @@ class P03CrashLogTests(unittest.TestCase):
             self.assertEqual(0, installed.returncode)
             self.assertEqual(1, attempts)
             emu.unlink()
-            missing, attempts = run_mock("ignored", 0)
+            missing, attempts = run_mock("ignored", 0, create_binary=False)
             self.assertNotEqual(0, missing.returncode)
             self.assertEqual(1, attempts)
 
