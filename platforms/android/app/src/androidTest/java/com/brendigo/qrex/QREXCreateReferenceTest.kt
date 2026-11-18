@@ -54,12 +54,16 @@ class QREXCreateReferenceTest {
         val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
         input.performTextReplacement("https://brendigo.com")
         input.performImeAction()
+        // An absent inset snapshot does not prove the IME is hidden.
+        // API 26 may deliver its first insets after Compose has gone idle.
         rule.waitUntil(timeoutMillis = 15_000L) {
-            ViewCompat.getRootWindowInsets(rule.activity.window.decorView)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) != true
+            val insets = ViewCompat.getRootWindowInsets(rule.activity.window.decorView)
+            insets != null && !insets.isVisible(WindowInsetsCompat.Type.ime())
         }
         rule.waitForIdle()
         await("qrex-create-clear-url")
+        rule.onNodeWithTag("qrex-create-clear-url", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test fun urlClearGlyphRemainsVisibleAfterImeDone() {
@@ -79,6 +83,17 @@ class QREXCreateReferenceTest {
 
     @Test fun urlClearGlyphHasAtLeast48DpHeight() {
         prepareClearUrlTouchTarget()
+        // The older Android IME can finish its inset transition after
+        // keyboard dismissal. Check the actual native hit target once it
+        // settles; never lower the 48dp accessibility requirement.
+        rule.waitUntil(timeoutMillis = 10_000L) {
+            runCatching {
+                val hit = rule.onNodeWithTag(
+                    "qrex-create-clear-url", useUnmergedTree = true
+                ).getUnclippedBoundsInRoot()
+                hit.bottom - hit.top >= 48.dp
+            }.getOrDefault(false)
+        }
         val hit = rule.onNodeWithTag(
             "qrex-create-clear-url", useUnmergedTree = true
         ).getUnclippedBoundsInRoot()

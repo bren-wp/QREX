@@ -86,24 +86,33 @@ internal class QREXDocumentSession : ViewModel() {
     var pending by mutableStateOf<Bitmap?>(null)
         private set
     private var previousPending by mutableStateOf<Bitmap?>(null)
+    // Reject background results targeting a page that has since been undone,
+    // replaced or discarded. All session mutations take place on the UI thread.
+    private var pendingRevision: Long = 0L
+    val revision: Long get() = pendingRevision
     val canUndo: Boolean get() = previousPending != null
 
     /** Importing, retaking or starting another page clears old edit history. */
     fun updatePending(bitmap: Bitmap?) {
+        pendingRevision++
         pending = bitmap
         previousPending = null
     }
 
-    /** One-step undo is bounded to one extra in-memory bitmap, never disk. */
-    fun transformPending(bitmap: Bitmap) {
+    /** Return false for a stale async result; caller then owns its bitmap. */
+    fun transformPending(bitmap: Bitmap, expectedRevision: Long = revision): Boolean {
+        if (expectedRevision != pendingRevision || pending == null) return false
         if (bitmap !== pending) {
             previousPending = pending
             pending = bitmap
+            pendingRevision++
         }
+        return true
     }
 
     fun undoPending(): Boolean {
         val previous = previousPending ?: return false
+        pendingRevision++
         pending = previous
         previousPending = null
         return true
@@ -112,6 +121,7 @@ internal class QREXDocumentSession : ViewModel() {
         val bitmap = pending ?: return false
         if (pages.size >= QREX_DOCUMENT_MAX_PAGES) return false
         pages.add(bitmap)
+        pendingRevision++
         pending = null
         previousPending = null
         return true
@@ -125,7 +135,12 @@ internal class QREXDocumentSession : ViewModel() {
         val image = pages.removeAt(index)
         pages.add(target, image)
     }
-    fun clearSession() { pages.clear(); pending = null; previousPending = null }
+    fun clearSession() {
+        pendingRevision++
+        pages.clear()
+        pending = null
+        previousPending = null
+    }
     override fun onCleared() {
         clearSession()
         super.onCleared()
@@ -608,15 +623,20 @@ internal fun QREXDocumentScanScreen(
                                 message = invalidCornersText
                             } else {
                                 busy = true
+                                val expectedRevision = session.revision
+                                val selectedCorners = cropCorners.toList()
                                 scope.launch {
                                     runCatching {
                                         withContext(Dispatchers.Default) {
-                                            QREXDocumentProcessing.cropPerspective(bitmap, cropCorners)
+                                            QREXDocumentProcessing.cropPerspective(bitmap, selectedCorners)
                                         }
-                                    }.onSuccess {
-                                        session.transformPending(it)
-                                        cropCorners = defaultCorners
-                                        screen = "review"
+                                    }.onSuccess { processed ->
+                                        if (session.transformPending(processed, expectedRevision)) {
+                                            cropCorners = defaultCorners
+                                            screen = "review"
+                                        } else if (processed !== session.pending) {
+                                            processed.recycle()
+                                        }
                                     }.onFailure { message = errorText }
                                     busy = false
                                 }
@@ -646,13 +666,16 @@ internal fun QREXDocumentScanScreen(
                         val applyEnhancement: (QREXDocumentFilter) -> Unit = { filter ->
                             if (!busy) {
                                 busy = true
+                                val expectedRevision = session.revision
                                 scope.launch {
                                     runCatching {
                                         withContext(Dispatchers.Default) {
                                             QREXDocumentFilters.apply(bitmap, filter)
                                         }
-                                    }.onSuccess { session.transformPending(it) }
-                                        .onFailure { message = errorText }
+                                    }.onSuccess { processed ->
+                                        if (!session.transformPending(processed, expectedRevision) &&
+                                            processed !== session.pending) processed.recycle()
+                                    }.onFailure { message = errorText }
                                     busy = false
                                 }
                             }
@@ -692,13 +715,16 @@ internal fun QREXDocumentScanScreen(
                             ) { Text(tr("document_crop")) }
                             OutlinedButton(onClick = {
                                 busy = true
+                                val expectedRevision = session.revision
                                 scope.launch {
                                     runCatching {
                                         withContext(Dispatchers.Default) {
                                             QREXDocumentProcessing.rotate(bitmap, 90)
                                         }
-                                    }.onSuccess { session.transformPending(it) }
-                                        .onFailure { message = errorText }
+                                    }.onSuccess { processed ->
+                                        if (!session.transformPending(processed, expectedRevision) &&
+                                            processed !== session.pending) processed.recycle()
+                                    }.onFailure { message = errorText }
                                     busy = false
                                 }
                             }, enabled = !busy,

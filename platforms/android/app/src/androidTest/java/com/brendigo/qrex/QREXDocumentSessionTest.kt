@@ -44,6 +44,31 @@ class QREXDocumentSessionTest {
         }
     }
 
+    @Test fun staleAsyncTransformCannotOverwriteUndoneOrReplacedDocument() {
+        val session = QREXDocumentSession()
+        val original = bitmap()
+        val replacement = bitmap()
+        val stale = bitmap()
+        try {
+            session.updatePending(original)
+            val beforeOperation = session.revision
+            assertTrue(session.transformPending(replacement, beforeOperation))
+            assertTrue(session.undoPending())
+            assertSame(original, session.pending)
+            // A background filter based on the pre-Undo pixels arrives late.
+            assertFalse(session.transformPending(stale, beforeOperation))
+            assertSame(original, session.pending)
+            assertFalse(session.canUndo)
+            session.updatePending(null)
+            assertFalse(session.transformPending(stale, session.revision))
+        } finally {
+            session.clearSession()
+            original.recycle()
+            replacement.recycle()
+            stale.recycle()
+        }
+    }
+
     @Test fun undoCannotRestorePageAfterExplicitDiscard() {
         val session = QREXDocumentSession()
         val before = bitmap()
