@@ -39,6 +39,24 @@ class PublishedDocsSyncTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 updated_documents(root, "1.0.46", "1.0.47", 146, "a" * 40)
 
+            # PR #121 uses a longer pending status than the older fixture.
+            # The actual v1.0.50 release failed because the previous sync
+            # implementation rejected this text after passing package gates.
+            version_note = root / "docs/releases/v1.0.47.md"
+            version_note.write_text(
+                "**Status:** Candidate pending exact-commit verification. "
+                "GitHub publication must pass all checks before this version is marked released.",
+                "utf-8"
+            )
+            candidate_updates = updated_documents(root, "1.0.46", "1.0.47", 147, "a" * 40)
+            self.assertIn(
+                "**Status:** Published from verified commit " + "a" * 40,
+                candidate_updates[version_note]
+            )
+            version_note.write_text("**Status:** Candidate pending without verification.", "utf-8")
+            with self.assertRaises(ValueError):
+                updated_documents(root, "1.0.46", "1.0.47", 147, "a" * 40)
+
 
     def test_partial_writes_and_repeated_recovery_are_idempotent(self):
         with TemporaryDirectory() as tmp:

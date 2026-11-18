@@ -102,8 +102,16 @@ def updated_documents(root: Path, previous: str, current: str, code: int, sha: s
         f"**Status:** Published from verified commit {sha}. "
         f"[GitHub Release v{current}](https://github.com/bren-wp/QREX/releases/tag/v{current})."
     )
-    if version_text.count(marker) == 1:
-        version_text = version_text.replace(marker, status)
+    # The release candidate also uses the longer human-readable status line.
+    # Both forms are pending-only; never accept a mismatched published SHA.
+    candidate_marker = (
+        "**Status:** Candidate pending exact-commit verification. "
+        "GitHub publication must pass all checks before this version is marked released."
+    )
+    pending = [value for value in (marker, candidate_marker)
+               if version_text.count(value) == 1]
+    if len(pending) == 1:
+        version_text = version_text.replace(pending[0], status)
     elif version_text.count(status) != 1:
         raise ValueError("Published release status does not match the exact SHA")
 
