@@ -51,3 +51,9 @@ This release checklist covers the **single Kotlin/Jetpack Compose Android applic
 - [ ] Check old releases/tags retired **after** verified signed v1.0.0 publication.
 
 **Status:** Open acceptance checklist; nothing unchecked is reported as complete. No iOS or Flutter runtime is built.
+
+### Android 12 emulator graphics diagnostics (PR #121)
+
+- API 31's `-gpu software` auto-selected backend produced repeated host-side `Failed to find ColorBuffer` and `Failed to bind to texture` messages, despite the exact-head 30-cycle instrumentation suite passing with zero QREX crashes/ANRs. This is a renderer warning, **not** by itself an app crash.
+- The API 31 P03 matrix now explicitly selects supported `-gpu swiftshader` rather than deprecated `swiftshader_indirect`; APIs 26/34/35/36 keep their existing software renderer. This is an experimental targeted mitigation, not a verified fix until the next complete P03 run.
+- Keep the full unfiltered suite, real UI assertions, crash triage and release gate mandatory. Recheck actual crop/preview pixels and hardware camera on physical devices; emulator log improvements do not establish 1:1 design parity.
