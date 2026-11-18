@@ -51,7 +51,7 @@ def updated_documents(root: Path, previous: str, current: str, code: int, sha: s
     index_path = root / "docs/releases/INDEX.md"
     index = index_path.read_text("utf-8")
     current_row = (f"| {current} | [v{current}](https://github.com/bren-wp/QREX/releases/tag/v{current}) "
-                   "| APK · AAB · Play-unsigned QA AAB · 12 genuine Android screenshots · SHA256SUMS |")
+                   "| APK · AAB · Play-unsigned QA AAB · 12 genuine main + 8 document-editor screenshots · SHA256SUMS |")
     rows = [line for line in index.splitlines() if re.match(r"^\| 1\.0\.\d+ \| ", line)]
     found = [row for row in rows if row.startswith(f"| {current} | ")]
     if len(found) > 1 or (found and found[0] != current_row):
@@ -81,7 +81,8 @@ def updated_documents(root: Path, previous: str, current: str, code: int, sha: s
     published = (
         f"## Published: v{current} · Android versionCode {code}\n\n"
         f"Published from verified main commit {sha}. The source revision passed native "
-        "Kotlin tests, R8/Lint, locale checks, twelve real Android screenshots and "
+        "Kotlin tests, R8/Lint, locale checks, twelve real Android screenshots, "
+        "eight document-editor captures and "
         "the API 26/31/34/35/36 emulator lifecycle matrix. The downloadable APK/AAB "
         "use a disposable GitHub-only signing certificate; neither is an authorized "
         "Google Play upload bundle. Assets have SHA-256 checksums.\n\n"
