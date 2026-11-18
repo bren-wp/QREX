@@ -25,47 +25,47 @@ Scan a code in seconds, create your own, and keep the ones that matter — all o
 
 **Real Android interface. Real scanner. Real QR results.** Browse the app's everyday workflow below, from scanning and creating codes to saving favorites and tailoring settings.
 
-**These are real QREX screens, not AI illustrations or phone mockups.** The complete gallery below contains twelve authentic captures from the published **v1.0.49** Android emulator run, including the scanner, QR generator, history, settings, and privacy dialogs. All full-resolution PNG files are available with the [verified release](https://github.com/bren-wp/QREX/releases/tag/v1.0.49).
+**These are real QREX screens, not AI illustrations or phone mockups.** The complete gallery below contains twelve authentic captures from the published **v1.0.50** Android emulator run, including the scanner, QR generator, history, settings, and privacy dialogs. All full-resolution PNG files are available with the [verified release](https://github.com/bren-wp/QREX/releases/tag/v1.0.50).
 
 <div align="center">
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-scan.png" width="180" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-create.png" width="180" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-scan.png" width="180" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-create.png" width="180" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-result.png" width="180" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-history.png" width="180" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-result.png" width="180" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-history.png" width="180" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-saved.png" width="180" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-wifi.png" width="180" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-saved.png" width="180" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-wifi.png" width="180" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-more.png" width="180" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-export.png" width="180" alt="Actual QREX PDF export page"><br><b>PDF export</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-more.png" width="180" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-export.png" width="180" alt="Actual QREX PDF export page"><br><b>PDF export</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-language.png" width="180" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-about.png" width="180" alt="Actual QREX About dialog"><br><b>About</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-language.png" width="180" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-about.png" width="180" alt="Actual QREX About dialog"><br><b>About</b></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-privacy.png" width="180" alt="Actual QREX Privacy dialog"><br><b>Privacy</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.49/android-splash.png" width="180" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-privacy.png" width="180" alt="Actual QREX Privacy dialog"><br><b>Privacy</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.50/android-splash.png" width="180" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
 </tr>
 </table>
 
-[**See all twelve original v1.0.49 screenshots**](https://github.com/bren-wp/QREX/releases/tag/v1.0.49)
+[**See all twelve original v1.0.50 screenshots**](https://github.com/bren-wp/QREX/releases/tag/v1.0.50)
 
 </div>
 
 
 ### What you see is what ships
 
-The native screens are built with Jetpack Compose; the scanner uses a live CameraX preview rather than a static sample image. The published v1.0.49 capture set is the source of the gallery above. The six illustrated phone-frame design references are **visual targets**, not pixel-aligned device captures; exact 0% pixel mismatch has **not** been independently verified.
+The native screens are built with Jetpack Compose; the scanner uses a live CameraX preview rather than a static sample image. The published v1.0.50 capture set is the source of the gallery above. The six illustrated phone-frame design references are **visual targets**, not pixel-aligned device captures; exact 0% pixel mismatch has **not** been independently verified.
 
-**Current release: v1.0.49 (published).** It includes further refinements to Splash, Scanner, Result, Create, History and More. All twelve captures come from the published v1.0.49 release. [Inspect the actual release artifacts](https://github.com/bren-wp/QREX/releases/tag/v1.0.49).
+**Current release: v1.0.50 (published).** It includes further refinements to Splash, Scanner, Result, Create, History and More. All twelve captures come from the published v1.0.50 release. [Inspect the actual release artifacts](https://github.com/bren-wp/QREX/releases/tag/v1.0.50).
 
 ## Everything you need
 
@@ -75,7 +75,7 @@ The document-scanning foundation was merged through [PR #120](https://github.com
 
 **New in the [PR #121 development candidate](https://github.com/bren-wp/QREX/pull/121):** choose between perspective and rectangular crop, request a conservative offline suggestion of page boundaries (with manual adjustment when detection is uncertain), drag larger corner handles against a high-contrast grid, reset selection to the entire page, crop small details and undo the most recent applied crop or rotation. Mirrored EXIF orientations on imported pictures are also supported. The editor retains only a single additional previous bitmap for Undo. Once a page is accepted and its edit history discarded, an earlier uncropped original cannot be reconstructed.
 
-**Release status:** the latest published, downloadable release remains [v1.0.49](https://github.com/bren-wp/QREX/releases/tag/v1.0.49); neither PR #120 nor the PR #121 editing upgrade is represented as a separately published v1.0.50 APK/AAB. New editor workflows still need full physical-device and UI-reference verification before release. Automatic document-edge detection, advanced contrast filters and process-death recovery remain future work. Exported PDFs are not encrypted.
+**Release status:** the latest published, downloadable release remains [v1.0.50](https://github.com/bren-wp/QREX/releases/tag/v1.0.50); neither PR #120 nor the PR #121 editing upgrade is represented as a separately published v1.0.50 APK/AAB. New editor workflows still need full physical-device and UI-reference verification before release. Automatic document-edge detection, advanced contrast filters and process-death recovery remain future work. Exported PDFs are not encrypted.
 
 
 No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating together in a compact interface designed for everyday use.
@@ -117,13 +117,13 @@ Install from Google Play, or inspect the published GitHub assets and SHA-256 che
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Install QREX from Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-Latest published release: **[v1.0.49](https://github.com/bren-wp/QREX/releases/tag/v1.0.49)** (`com.brendigo.qrex`, versionCode 149).
+Latest published release: **[v1.0.50](https://github.com/bren-wp/QREX/releases/tag/v1.0.50)** (`com.brendigo.qrex`, versionCode 150).
 
-**Latest published version: QREX v1.0.49 (Android build 149).** This release includes the six-screen alignment for Splash, Scanner, Result, Create, History and More, plus genuine emulator captures from the same published release. The 12 PNG files above are actual emulator screenshots, not promotional renders; pixel-perfect equality with framed mockups remains unverified. [Release notes](docs/releases/v1.0.49.md).
+**Latest published version: QREX v1.0.50 (Android build 150).** This release includes the six-screen alignment for Splash, Scanner, Result, Create, History and More, plus genuine emulator captures from the same published release. The 12 PNG files above are actual emulator screenshots, not promotional renders; pixel-perfect equality with framed mockups remains unverified. [Release notes](docs/releases/v1.0.50.md).
 
-[**Download verified v1.0.49 APK / AAB and 12 screenshots**](https://github.com/bren-wp/QREX/releases/tag/v1.0.49) · [**Browse all releases**](https://github.com/bren-wp/QREX/releases)
+[**Download verified v1.0.50 APK / AAB and 12 screenshots**](https://github.com/bren-wp/QREX/releases/tag/v1.0.50) · [**Browse all releases**](https://github.com/bren-wp/QREX/releases)
 
-**App identity:** `com.brendigo.qrex` · `versionName 1.0.49` · `versionCode 149` · Android 8.0+ (API 26). The release provides `QREX-Android-1.0.49.apk`, `QREX-Android-1.0.49.aab`, `QREX-Android-1.0.49-Play-UNSIGNED-QA.aab`, `SHA256SUMS.txt` and 12 actual screenshots.
+**App identity:** `com.brendigo.qrex` · `versionName 1.0.50` · `versionCode 150` · Android 8.0+ (API 26). The release provides `QREX-Android-1.0.50.apk`, `QREX-Android-1.0.50.aab`, `QREX-Android-1.0.50-Play-UNSIGNED-QA.aab`, `SHA256SUMS.txt` and 12 actual screenshots.
 
 **Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
 
@@ -159,4 +159,4 @@ Created by [Brendigo](https://brendigo.com) · [Open-source license](LICENSE)
 </div>
 
 
-**Last complete screenshot release: v1.0.49.** All twelve screenshots above come from that published Android emulator release. No generated images are presented as real app screens.
+**Last complete screenshot release: v1.0.50.** All twelve screenshots above come from that published Android emulator release. No generated images are presented as real app screens.
