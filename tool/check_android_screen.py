@@ -71,6 +71,13 @@ def validate(xml_content: str, screen: str = "create") -> None:
         "responsive-terms": ("uvjeti korištenja", "provjerite odredište", "zatvori"),
         "responsive-export": ("izvoz arhive", "pdf"),
         "scan": ("qrex", "skeniranje se događa na vašem uređaju.", "iz galerije", "usmjeri kameru prema qr kodu"),
+        "document-review": ("skeniraj dokument", "poboljšaj čitljivost",
+                            "sivi tonovi", "crno-bijelo"),
+        "document-crop": ("skeniraj dokument", "perspektiva", "pravokutnik",
+                          "vrati izrez"),
+        "document-pages": ("skeniraj dokument", "stranice", "izvezi pdf"),
+        "document-export": ("skeniraj dokument", "naziv pdf datoteke",
+                            "izvezi pdf"),
     }
     if screen not in expected:
         raise ValueError("Unsupported screenshot screen")

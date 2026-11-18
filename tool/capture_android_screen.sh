@@ -107,6 +107,40 @@ for screen in splash scan wifi result history saved more language export about p
     exit 1
   fi
 done
+# Capture the four REAL document Compose states in both themes. The sample
+# page is generated only in debuggable builds; the app UI is never mocked.
+# Store these separate from Google Play/public 12-screen screenshots.
+mkdir -p docs/screenshots/document
+for appearance in dark light; do
+  for screen in document-review document-crop document-pages document-export; do
+    short="${screen#document-}"
+    screenshot="docs/screenshots/document/${appearance}-${short}.png"
+    hierarchy="docs/screenshots/document/${appearance}-${short}-hierarchy.xml"
+    rm -f "$screenshot" "$hierarchy"
+    for attempt in 1 2 3; do
+      timeout -k 2s 12s adb shell am force-stop com.brendigo.qrex || true
+      timeout -k 3s 25s adb shell am start -W -n com.brendigo.qrex/.MainActivity \
+        --es qrex_screenshot "$screen" --es qrex_language hr \
+        --es qrex_theme "$appearance"
+      sleep 4
+      if timeout -k 3s 35s adb shell uiautomator dump /sdcard/qrex-window.xml >/dev/null 2>&1 \
+        && timeout -k 3s 15s adb exec-out cat /sdcard/qrex-window.xml > "$hierarchy" \
+        && test -s "$hierarchy" \
+        && python3 tool/check_android_screen.py "$hierarchy" "$screen" \
+        && timeout -k 3s 20s adb exec-out screencap -p > "$screenshot" \
+        && python3 tool/verify_screenshots.py "$screenshot"; then
+        echo "Captured real QREX ${appearance} ${screen} UI (${attempt}/3)."
+        break
+      fi
+      rm -f "$screenshot" "$hierarchy"
+    done
+    if ! test -s "$screenshot"; then
+      echo "No validated QREX ${appearance} ${screen}; fail closed." >&2
+      exit 1
+    fi
+  done
+done
+python3 tool/verify_screenshots.py docs/screenshots/document/*.png
 python3 tool/verify_screenshots.py docs/screenshots/android-*.png
 # Verify the real frame is dark, not just a dark-themed filename. The PNG
 # samples come from the actual emulator capture, not marketing artwork.

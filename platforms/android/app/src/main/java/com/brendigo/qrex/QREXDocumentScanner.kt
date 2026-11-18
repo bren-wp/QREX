@@ -23,9 +23,11 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -34,6 +36,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.*
@@ -42,6 +48,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -77,12 +85,35 @@ internal class QREXDocumentSession : ViewModel() {
     val pages = mutableStateListOf<Bitmap>()
     var pending by mutableStateOf<Bitmap?>(null)
         private set
-    fun updatePending(bitmap: Bitmap?) { pending = bitmap }
+    private var previousPending by mutableStateOf<Bitmap?>(null)
+    val canUndo: Boolean get() = previousPending != null
+
+    /** Importing, retaking or starting another page clears old edit history. */
+    fun updatePending(bitmap: Bitmap?) {
+        pending = bitmap
+        previousPending = null
+    }
+
+    /** One-step undo is bounded to one extra in-memory bitmap, never disk. */
+    fun transformPending(bitmap: Bitmap) {
+        if (bitmap !== pending) {
+            previousPending = pending
+            pending = bitmap
+        }
+    }
+
+    fun undoPending(): Boolean {
+        val previous = previousPending ?: return false
+        pending = previous
+        previousPending = null
+        return true
+    }
     fun accept(): Boolean {
         val bitmap = pending ?: return false
         if (pages.size >= QREX_DOCUMENT_MAX_PAGES) return false
         pages.add(bitmap)
         pending = null
+        previousPending = null
         return true
     }
     fun replace(index: Int, bitmap: Bitmap) {
@@ -94,7 +125,7 @@ internal class QREXDocumentSession : ViewModel() {
         val image = pages.removeAt(index)
         pages.add(target, image)
     }
-    fun clearSession() { pages.clear(); pending = null }
+    fun clearSession() { pages.clear(); pending = null; previousPending = null }
     override fun onCleared() {
         clearSession()
         super.onCleared()
@@ -161,24 +192,31 @@ internal fun QREXDocumentCamera(
 internal fun QREXDocumentCorners(
     source: Bitmap,
     corners: List<Float>,
+    rectangle: Boolean,
     onChange: (List<Float>) -> Unit
 ) {
-    var activeCorner by remember(source) { mutableIntStateOf(-1) }
+    var activeCorner by remember(source, rectangle) { mutableIntStateOf(-1) }
     val currentCorners by rememberUpdatedState(corners)
     val updateCorners by rememberUpdatedState(onChange)
     val viewportHeight = min(400, max(200, LocalConfiguration.current.screenHeightDp / 2))
     Canvas(Modifier.fillMaxWidth().height(viewportHeight.dp)
-        .background(Color.Black, RoundedCornerShape(12.dp))
-        .pointerInput(source) {
+        .clip(RoundedCornerShape(12.dp))
+        .background(Color.Black)
+        .testTag("qrex-document-crop-canvas")
+        .pointerInput(source, rectangle) {
             detectDragGestures(
                 onDragStart = { touch ->
                     val r = qrexDocumentPreviewRect(
                         size.width.toFloat(), size.height.toFloat(), source.width, source.height
                     )
-                    activeCorner = (0..3).minByOrNull { i ->
+                    val candidate = (0..3).minByOrNull { i ->
                         hypot(touch.x - (r.left + currentCorners[i * 2] * r.width()),
                             touch.y - (r.top + currentCorners[i * 2 + 1] * r.height()))
                     } ?: -1
+                    activeCorner = if (candidate >= 0 && hypot(
+                        touch.x - (r.left + currentCorners[candidate * 2] * r.width()),
+                        touch.y - (r.top + currentCorners[candidate * 2 + 1] * r.height())
+                    ) <= 48.dp.toPx()) candidate else -1
                 },
                 onDragEnd = { activeCorner = -1 },
                 onDragCancel = { activeCorner = -1 },
@@ -187,12 +225,12 @@ internal fun QREXDocumentCorners(
                         size.width.toFloat(), size.height.toFloat(), source.width, source.height
                     )
                     if (activeCorner in 0..3 && r.width() > 0 && r.height() > 0) {
-                        val updated = currentCorners.toMutableList()
-                        updated[activeCorner * 2] =
-                            ((change.position.x - r.left) / r.width()).coerceIn(0f, 1f)
-                        updated[activeCorner * 2 + 1] =
-                            ((change.position.y - r.top) / r.height()).coerceIn(0f, 1f)
-                        updateCorners(updated)
+                        val updated = qrexDocumentMoveCorner(
+                            currentCorners, activeCorner,
+                            (change.position.x - r.left) / r.width(),
+                            (change.position.y - r.top) / r.height(), rectangle
+                        )
+                        if (updated !== currentCorners) updateCorners(updated)
                         change.consume()
                     }
                 }
@@ -209,17 +247,76 @@ internal fun QREXDocumentCorners(
             Offset(r.left + corners[it * 2] * r.width(),
                 r.top + corners[it * 2 + 1] * r.height())
         }
+        // Darken only the pixels outside the selected quadrilateral.
+        // The selection remains bright, with a thirds grid for alignment.
+        val mask = Path().apply {
+            fillType = PathFillType.EvenOdd
+            addRect(androidx.compose.ui.geometry.Rect(0f, 0f, size.width, size.height))
+            moveTo(positions[0].x, positions[0].y)
+            for (i in 1..3) lineTo(positions[i].x, positions[i].y)
+            close()
+        }
+        drawPath(mask, Color.Black.copy(alpha = .58f))
+        fun blend(a: Offset, b: Offset, fraction: Float): Offset =
+            Offset(a.x + (b.x - a.x) * fraction, a.y + (b.y - a.y) * fraction)
+        for (fraction in listOf(1f / 3f, 2f / 3f)) {
+            drawLine(Color.White.copy(alpha = .42f),
+                blend(positions[0], positions[1], fraction),
+                blend(positions[3], positions[2], fraction), 1.dp.toPx())
+            drawLine(Color.White.copy(alpha = .42f),
+                blend(positions[0], positions[3], fraction),
+                blend(positions[1], positions[2], fraction), 1.dp.toPx())
+        }
         for (i in 0..3) {
             drawLine(QrexDesign.cyan, positions[i], positions[(i + 1) % 4],
-                strokeWidth = 3.dp.toPx())
-            drawCircle(QrexDesign.cyan, radius = 11.dp.toPx(), center = positions[i])
-            drawCircle(Color.White, radius = 4.dp.toPx(), center = positions[i])
+                strokeWidth = 2.5.dp.toPx())
+            drawCircle(Color.Black.copy(alpha = .8f),
+                radius = 18.dp.toPx(), center = positions[i])
+            drawCircle(QrexDesign.cyan, radius = 13.dp.toPx(), center = positions[i])
+            drawCircle(Color.White, radius = 5.dp.toPx(), center = positions[i])
         }
     }
 }
 
+/**
+ * Neutral, generated-in-memory sample page for actual native UI screenshots.
+ * Only reachable through MainActivity's debuggable-only intent allowlist.
+ * It is not a camera capture or a user's document.
+ */
+private fun qrexDocumentDebugPage(): Bitmap {
+    val bitmap = Bitmap.createBitmap(720, 1020, Bitmap.Config.ARGB_8888)
+    val canvas = android.graphics.Canvas(bitmap)
+    canvas.drawColor(android.graphics.Color.WHITE)
+    val heading = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.rgb(8, 107, 216)
+        textSize = 48f
+        typeface = android.graphics.Typeface.DEFAULT_BOLD
+    }
+    canvas.drawText("QREX DEMO", 56f, 98f, heading)
+    val accent = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.rgb(24, 184, 220)
+    }
+    canvas.drawRoundRect(RectF(56f, 130f, 664f, 142f), 6f, 6f, accent)
+    val line = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = android.graphics.Color.rgb(222, 228, 239)
+    }
+    for (index in 0..7) {
+        val top = 198f + index * 84f
+        canvas.drawRoundRect(
+            RectF(56f, top, if (index % 3 == 2) 490f else 664f, top + 23f),
+            8f, 8f, line
+        )
+        canvas.drawRoundRect(RectF(56f, top + 34f, 460f, top + 47f),
+            6f, 6f, line)
+    }
+    return bitmap
+}
+
 @Composable
-internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
+internal fun QREXDocumentScanScreen(
+    onExit: () -> Unit,
+    screenshotFixture: String? = null
+) {
     val context = LocalContext.current
     val activity = context as ComponentActivity
     val session = remember(activity) {
@@ -229,7 +326,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     val scope = rememberCoroutineScope()
     val executor = remember { Executors.newSingleThreadExecutor() }
     DisposableEffect(Unit) { onDispose { executor.shutdown() } }
-    var screen by rememberSaveable { mutableStateOf("camera") }
+    var screen by rememberSaveable(screenshotFixture) { mutableStateOf("camera") }
     var message by remember { mutableStateOf<String?>(null) }
     var showExitConfirmation by remember { mutableStateOf(false) }
     var cameraAllowed by remember {
@@ -254,13 +351,28 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
     var documentName by rememberSaveable { mutableStateOf("QREX-document") }
     var exportedUri by remember { mutableStateOf<Uri?>(null) }
     var editingIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var cropCorners by remember { mutableStateOf(
-        listOf(.05f, .05f, .95f, .05f, .95f, .95f, .05f, .95f)
-    ) }
-    val defaultCorners = listOf(.05f, .05f, .95f, .05f, .95f, .95f, .05f, .95f)
+    var rectangleCrop by rememberSaveable { mutableStateOf(false) }
+    // Save the manual corner coordinates across orientation and density changes.
+    // Session bitmaps remain Activity-retained rather than written to disk.
+    var cropCorners by rememberSaveable { mutableStateOf(QREX_DOCUMENT_INSET_CORNERS) }
+    val defaultCorners = QREX_DOCUMENT_INSET_CORNERS
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
+    val noEdgesText = tr("document_auto_not_found")
+    // Debug-only screenshot routing: the captured PNGs remain genuine app UI
+    // pixels while the fictional paper page contains no user information.
+    LaunchedEffect(screenshotFixture) {
+        if (screenshotFixture != null && session.pages.isEmpty() &&
+            session.pending == null) {
+            val demo = qrexDocumentDebugPage()
+            when (screenshotFixture) {
+                "document-review", "document-crop" -> session.updatePending(demo)
+                "document-pages", "document-export" -> session.pages.add(demo)
+            }
+            screen = screenshotFixture.removePrefix("document-")
+        }
+    }
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -277,6 +389,7 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                     }.onSuccess {
                         session.updatePending(it)
                         editingIndex = -1
+                        cropCorners = defaultCorners
                         screen = "review"
                     }.onFailure { message = errorText }
                     busy = false
@@ -317,10 +430,19 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
             onExit()
         }
     }
-    BackHandler { if (busy) Unit else if (screen == "camera") exit()
-        else if (screen == "review" || screen == "crop") screen = "camera"
-        else if (screen == "pages" || screen == "export" || screen == "success") screen = "camera"
-        else exit()
+    BackHandler {
+        if (busy) Unit
+        else when (screen) {
+            "camera" -> exit()
+            "crop" -> screen = "review" // Never discard an accepted crop by Back.
+            "review" -> {
+                session.updatePending(null)
+                if (editingIndex >= 0) screen = "pages" else screen = "camera"
+                editingIndex = -1
+            }
+            "pages", "export", "success" -> screen = "camera"
+            else -> exit()
+        }
     }
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -409,7 +531,8 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                 }
                 if (session.pages.isNotEmpty()) {
                     Button(onClick = { screen = "pages" },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                            .testTag("qrex-document-open-pages")) {
                         Text(tr("document_pages") + " (" + session.pages.size + ")")
                     }
                 }
@@ -421,7 +544,65 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                 } else {
                     if (screen == "crop") {
                         Text(tr("document_crop_hint"))
-                        QREXDocumentCorners(bitmap, cropCorners) { cropCorners = it }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = !rectangleCrop,
+                                onClick = { rectangleCrop = false },
+                                label = { Text(tr("document_perspective"), maxLines = 2) },
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-perspective-mode")
+                            )
+                            FilterChip(
+                                selected = rectangleCrop,
+                                onClick = {
+                                    cropCorners = qrexDocumentBoundingRectangle(cropCorners)
+                                    rectangleCrop = true
+                                },
+                                label = { Text(tr("document_rectangle"), maxLines = 2) },
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-rectangle-mode")
+                            )
+                        }
+                        QREXDocumentCorners(bitmap, cropCorners, rectangleCrop) {
+                            cropCorners = it
+                        }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = {
+                                    if (!busy) {
+                                        busy = true
+                                        scope.launch {
+                                            runCatching {
+                                                withContext(Dispatchers.Default) {
+                                                    qrexDocumentSuggestEdges(bitmap)
+                                                }
+                                            }.onSuccess { suggestion ->
+                                                if (suggestion != null) {
+                                                    cropCorners = suggestion
+                                                    rectangleCrop = true
+                                                } else message = noEdgesText
+                                            }.onFailure { message = errorText }
+                                            busy = false
+                                        }
+                                    }
+                                },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 56.dp)
+                                    .testTag("qrex-document-auto-edges")
+                            ) { Text(tr("document_auto_edges"), maxLines = 2) }
+                            OutlinedButton(
+                                onClick = { cropCorners = QREX_DOCUMENT_FULL_CORNERS },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 56.dp)
+                                    .testTag("qrex-document-reset-crop")
+                            ) { Text(tr("document_reset"), maxLines = 2) }
+                        }
                         Button(onClick = {
                             if (!qrexDocumentQuadValid(cropCorners)) {
                                 message = invalidCornersText
@@ -433,7 +614,8 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                             QREXDocumentProcessing.cropPerspective(bitmap, cropCorners)
                                         }
                                     }.onSuccess {
-                                        session.updatePending(it)
+                                        session.transformPending(it)
+                                        cropCorners = defaultCorners
                                         screen = "review"
                                     }.onFailure { message = errorText }
                                     busy = false
@@ -443,13 +625,71 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                             Text(tr("document_apply_crop"))
                         }
                     } else {
-                        Image(bitmap.asImageBitmap(), contentDescription = tr("document_pages"),
-                            contentScale = ContentScale.Fit,
+                        Surface(
                             modifier = Modifier.fillMaxWidth()
-                                .height(min(440, max(220, LocalConfiguration.current.screenHeightDp / 2)).dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { screen = "crop" },
-                                modifier = Modifier.weight(1f)) { Text(tr("document_crop")) }
+                                .testTag("qrex-document-review-preview"),
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(16.dp),
+                            border = BorderStroke(1.dp,
+                                MaterialTheme.colorScheme.outlineVariant)
+                        ) {
+                            Image(bitmap.asImageBitmap(),
+                                contentDescription = tr("document_pages"),
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.fillMaxWidth()
+                                    .height(min(440, max(220,
+                                        LocalConfiguration.current.screenHeightDp / 2)).dp))
+                        }
+                        Text(tr("document_enhance"),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurface)
+                        val applyEnhancement: (QREXDocumentFilter) -> Unit = { filter ->
+                            if (!busy) {
+                                busy = true
+                                scope.launch {
+                                    runCatching {
+                                        withContext(Dispatchers.Default) {
+                                            QREXDocumentFilters.apply(bitmap, filter)
+                                        }
+                                    }.onSuccess { session.transformPending(it) }
+                                        .onFailure { message = errorText }
+                                    busy = false
+                                }
+                            }
+                        }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = { applyEnhancement(QREXDocumentFilter.GRAYSCALE) },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f).heightIn(min = 56.dp)
+                                    .testTag("qrex-document-grayscale")
+                            ) { Text(tr("document_grayscale"), maxLines = 2) }
+                            OutlinedButton(
+                                onClick = { applyEnhancement(QREXDocumentFilter.BLACK_WHITE) },
+                                enabled = !busy,
+                                modifier = Modifier.weight(1f).heightIn(min = 56.dp)
+                                    .testTag("qrex-document-black-white")
+                            ) { Text(tr("document_bw"), maxLines = 2) }
+                        }
+                        if (session.canUndo) {
+                            OutlinedButton(
+                                onClick = { if (!busy) session.undoPending() },
+                                enabled = !busy,
+                                modifier = Modifier.fillMaxWidth()
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-undo")
+                            ) { Text(tr("document_undo")) }
+                        }
+                        Row(Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = {
+                                cropCorners = defaultCorners
+                                screen = "crop"
+                            }, enabled = !busy, modifier = Modifier.weight(1f)
+                                .heightIn(min = 48.dp)
+                                .testTag("qrex-document-open-crop")
+                            ) { Text(tr("document_crop")) }
                             OutlinedButton(onClick = {
                                 busy = true
                                 scope.launch {
@@ -457,11 +697,15 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                                         withContext(Dispatchers.Default) {
                                             QREXDocumentProcessing.rotate(bitmap, 90)
                                         }
-                                    }.onSuccess { session.updatePending(it) }
+                                    }.onSuccess { session.transformPending(it) }
                                         .onFailure { message = errorText }
                                     busy = false
                                 }
-                            }, modifier = Modifier.weight(1f)) { Text(tr("document_rotate")) }
+                            }, enabled = !busy,
+                                modifier = Modifier.weight(1f)
+                                    .heightIn(min = 48.dp)
+                                    .testTag("qrex-document-rotate")
+                            ) { Text(tr("document_rotate")) }
                         }
                         Button(onClick = {
                             if (editingIndex in session.pages.indices) {
@@ -489,29 +733,59 @@ internal fun QREXDocumentScanScreen(onExit: () -> Unit) {
                 Text(tr("document_session_note"),
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
                 session.pages.forEachIndexed { index, bitmap ->
-                    Surface(shape = RoundedCornerShape(12.dp),
-                        tonalElevation = 2.dp, modifier = Modifier.fillMaxWidth()) {
-                        Column(Modifier.padding(12.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        shape = RoundedCornerShape(16.dp), tonalElevation = 2.dp,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier.fillMaxWidth()
+                            .testTag("qrex-document-page-$index")
+                    ) {
+                        Column(Modifier.fillMaxWidth().padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically) {
                                 Image(bitmap.asImageBitmap(), contentDescription = null,
                                     contentScale = ContentScale.Fit,
-                                    modifier = Modifier.size(width = 70.dp, height = 100.dp))
+                                    modifier = Modifier.size(width = 70.dp, height = 94.dp))
                                 Spacer(Modifier.width(12.dp))
-                                Text((index + 1).toString(),
+                                Text(tr("document_pages") + " " + (index + 1),
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier.weight(1f))
-                                TextButton(onClick = { session.move(index, -1) },
-                                    enabled = index > 0) { Text("↑") }
-                                TextButton(onClick = { session.move(index, 1) },
-                                    enabled = index < session.pages.lastIndex) { Text("↓") }
-                                TextButton(onClick = {
+                            }
+                            // Separate action row: four 56dp controls preserve a real
+                            // 48dp-or-larger touch area after density rounding on
+                            // API 26/31; do not squeeze the thumbnail or labels.
+                            Row(Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly) {
+                                IconButton(onClick = { session.move(index, -1) },
+                                    enabled = !busy && index > 0,
+                                    modifier = Modifier.size(56.dp)
+                                        .testTag("qrex-document-page-up-$index")) {
+                                    Icon(Icons.Default.ArrowUpward,
+                                        contentDescription = tr("document_move_up"))
+                                }
+                                IconButton(onClick = { session.move(index, 1) },
+                                    enabled = !busy && index < session.pages.lastIndex,
+                                    modifier = Modifier.size(56.dp)
+                                        .testTag("qrex-document-page-down-$index")) {
+                                    Icon(Icons.Default.ArrowDownward,
+                                        contentDescription = tr("document_move_down"))
+                                }
+                                IconButton(onClick = {
                                     session.updatePending(bitmap)
                                     editingIndex = index
                                     cropCorners = defaultCorners
                                     screen = "review"
-                                }, enabled = !busy) { Text(tr("edit")) }
-                                TextButton(onClick = { session.pages.removeAt(index) },
-                                    enabled = !busy) { Text(tr("delete")) }
+                                }, enabled = !busy,
+                                    modifier = Modifier.size(56.dp)
+                                        .testTag("qrex-document-page-edit-$index")) {
+                                    Icon(Icons.Default.Edit, contentDescription = tr("edit"))
+                                }
+                                IconButton(onClick = { session.pages.removeAt(index) },
+                                    enabled = !busy,
+                                    modifier = Modifier.size(56.dp)
+                                        .testTag("qrex-document-page-delete-$index")) {
+                                    Icon(Icons.Default.Delete, contentDescription = tr("delete"))
+                                }
                             }
                         }
                     }

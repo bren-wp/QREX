@@ -123,4 +123,15 @@
     <string name="document_success">PDF je shranjen.</string>
     <string name="document_discard">Zavrzi dokument?</string>
     <string name="document_exit_warning">Neshranjene strani bodo izgubljene. Želite izstopiti?</string>
+    <string name="document_perspective">Perspektiva</string>
+    <string name="document_rectangle">Pravokotnik</string>
+    <string name="document_reset">Ponastavi obrez</string>
+    <string name="document_undo">Razveljavi</string>
+    <string name="document_enhance">Izboljšaj berljivost</string>
+    <string name="document_grayscale">Sivine</string>
+    <string name="document_bw">Črno-belo</string>
+    <string name="document_move_up">Premakni stran navzgor</string>
+    <string name="document_move_down">Premakni stran navzdol</string>
+    <string name="document_auto_edges">Predlagaj robove</string>
+    <string name="document_auto_not_found">Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno.</string>
 </resources>

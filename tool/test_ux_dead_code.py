@@ -387,6 +387,28 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("if (!persist()) historyReadable = false", self.core)
 
 
+
+
+class QREXDocumentConcurrencyRegressionTests(unittest.TestCase):
+    """Guard against Undo and navigation overwriting pending transformations."""
+
+    def test_review_actions_disable_during_pending_image_work(self):
+        source = (Path(__file__).resolve().parents[1] /
+                  "platforms/android/app/src/main/java/com/brendigo/qrex/QREXDocumentScanner.kt"
+                 ).read_text(encoding="utf-8")
+        section = source[source.index('if (session.canUndo) {'):
+                         source.index('Text(tr("document_accept"))')]
+        for tag in ("qrex-document-undo", "qrex-document-open-crop",
+                    "qrex-document-rotate"):
+            self.assertIn(tag, section)
+        self.assertIn('onClick = { if (!busy) session.undoPending() }', section)
+        self.assertIn('enabled = !busy,', section)
+        for action in section.split('OutlinedButton(')[1:]:
+            if any(tag in action for tag in ("qrex-document-undo",
+                                             "qrex-document-open-crop",
+                                             "qrex-document-rotate")):
+                self.assertIn('enabled = !busy', action.split(') { Text(')[0])
+
 if __name__ == "__main__":
     unittest.main()
 

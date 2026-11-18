@@ -123,4 +123,15 @@
     <string name="document_success">PDF enregistré.</string>
     <string name="document_discard">Supprimer le document ?</string>
     <string name="document_exit_warning">Les pages non enregistrées seront perdues. Quitter ?</string>
+    <string name="document_perspective">Perspective</string>
+    <string name="document_rectangle">Rectangle</string>
+    <string name="document_reset">Réinitialiser le recadrage</string>
+    <string name="document_undo">Annuler</string>
+    <string name="document_enhance">Améliorer la lisibilité</string>
+    <string name="document_grayscale">Niveaux de gris</string>
+    <string name="document_bw">Noir et blanc</string>
+    <string name="document_move_up">Monter la page</string>
+    <string name="document_move_down">Descendre la page</string>
+    <string name="document_auto_edges">Suggérer les bords</string>
+    <string name="document_auto_not_found">Aucun bord net détecté. Ajustez les coins manuellement.</string>
 </resources>

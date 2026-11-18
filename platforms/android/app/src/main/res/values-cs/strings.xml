@@ -123,4 +123,15 @@
     <string name="document_success">PDF úspěšně uloženo.</string>
     <string name="document_discard">Zahodit dokument?</string>
     <string name="document_exit_warning">Neuložené stránky budou ztraceny. Chcete odejít?</string>
+    <string name="document_perspective">Perspektiva</string>
+    <string name="document_rectangle">Obdélník</string>
+    <string name="document_reset">Obnovit ořez</string>
+    <string name="document_undo">Zpět</string>
+    <string name="document_enhance">Zlepšit čitelnost</string>
+    <string name="document_grayscale">Odstíny šedi</string>
+    <string name="document_bw">Černobíle</string>
+    <string name="document_move_up">Posunout stránku nahoru</string>
+    <string name="document_move_down">Posunout stránku dolů</string>
+    <string name="document_auto_edges">Navrhnout okraje</string>
+    <string name="document_auto_not_found">Nebyly nalezeny jasné okraje. Upravte rohy ručně.</string>
 </resources>

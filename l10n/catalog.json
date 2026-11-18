@@ -126,7 +126,18 @@
         "document_saved_warning": "Exported PDFs are readable by apps with file access and are not encrypted by QREX.",
         "document_success": "PDF saved successfully.",
         "document_discard": "Discard document?",
-        "document_exit_warning": "Unsaved pages will be lost. Do you want to exit?"
+        "document_exit_warning": "Unsaved pages will be lost. Do you want to exit?",
+        "document_perspective": "Perspective",
+        "document_rectangle": "Rectangle",
+        "document_reset": "Reset crop",
+        "document_undo": "Undo",
+        "document_enhance": "Enhance readability",
+        "document_grayscale": "Grayscale",
+        "document_bw": "Black & white",
+        "document_move_up": "Move page up",
+        "document_move_down": "Move page down",
+        "document_auto_edges": "Suggest borders",
+        "document_auto_not_found": "No clear page boundary found. Adjust corners manually."
       }
     },
     "hr": {
@@ -254,7 +265,18 @@
         "document_saved_warning": "Izvezeni PDF-ovi čitljivi su aplikacijama s pristupom datoteci i QREX ih ne šifrira.",
         "document_success": "PDF je uspješno spremljen.",
         "document_discard": "Odbaciti dokument?",
-        "document_exit_warning": "Nespremljene stranice bit će izgubljene. Želite li izaći?"
+        "document_exit_warning": "Nespremljene stranice bit će izgubljene. Želite li izaći?",
+        "document_perspective": "Perspektiva",
+        "document_rectangle": "Pravokutnik",
+        "document_reset": "Vrati izrez",
+        "document_undo": "Poništi",
+        "document_enhance": "Poboljšaj čitljivost",
+        "document_grayscale": "Sivi tonovi",
+        "document_bw": "Crno-bijelo",
+        "document_move_up": "Pomakni stranicu gore",
+        "document_move_down": "Pomakni stranicu dolje",
+        "document_auto_edges": "Predloži rubove",
+        "document_auto_not_found": "Nisu pronađeni jasni rubovi. Ručno namjestite kutove."
       }
     },
     "de": {
@@ -382,7 +404,18 @@
         "document_saved_warning": "Exportierte PDFs sind für Apps mit Dateizugriff lesbar und werden nicht von QREX verschlüsselt.",
         "document_success": "PDF erfolgreich gespeichert.",
         "document_discard": "Dokument verwerfen?",
-        "document_exit_warning": "Nicht gespeicherte Seiten gehen verloren. Möchten Sie beenden?"
+        "document_exit_warning": "Nicht gespeicherte Seiten gehen verloren. Möchten Sie beenden?",
+        "document_perspective": "Perspektive",
+        "document_rectangle": "Rechteck",
+        "document_reset": "Zuschnitt zurücksetzen",
+        "document_undo": "Rückgängig",
+        "document_enhance": "Lesbarkeit verbessern",
+        "document_grayscale": "Graustufen",
+        "document_bw": "Schwarzweiß",
+        "document_move_up": "Seite nach oben",
+        "document_move_down": "Seite nach unten",
+        "document_auto_edges": "Ränder vorschlagen",
+        "document_auto_not_found": "Keine klaren Seitenränder erkannt. Ecken manuell anpassen."
       }
     },
     "fr": {
@@ -510,7 +543,18 @@
         "document_saved_warning": "Les PDF exportés sont lisibles par les applications autorisées et ne sont pas chiffrés par QREX.",
         "document_success": "PDF enregistré.",
         "document_discard": "Supprimer le document ?",
-        "document_exit_warning": "Les pages non enregistrées seront perdues. Quitter ?"
+        "document_exit_warning": "Les pages non enregistrées seront perdues. Quitter ?",
+        "document_perspective": "Perspective",
+        "document_rectangle": "Rectangle",
+        "document_reset": "Réinitialiser le recadrage",
+        "document_undo": "Annuler",
+        "document_enhance": "Améliorer la lisibilité",
+        "document_grayscale": "Niveaux de gris",
+        "document_bw": "Noir et blanc",
+        "document_move_up": "Monter la page",
+        "document_move_down": "Descendre la page",
+        "document_auto_edges": "Suggérer les bords",
+        "document_auto_not_found": "Aucun bord net détecté. Ajustez les coins manuellement."
       }
     },
     "es": {
@@ -638,7 +682,18 @@
         "document_saved_warning": "Las aplicaciones con acceso al archivo pueden leer los PDF exportados; QREX no los cifra.",
         "document_success": "PDF guardado correctamente.",
         "document_discard": "¿Descartar documento?",
-        "document_exit_warning": "Se perderán las páginas sin guardar. ¿Quieres salir?"
+        "document_exit_warning": "Se perderán las páginas sin guardar. ¿Quieres salir?",
+        "document_perspective": "Perspectiva",
+        "document_rectangle": "Rectángulo",
+        "document_reset": "Restablecer recorte",
+        "document_undo": "Deshacer",
+        "document_enhance": "Mejorar legibilidad",
+        "document_grayscale": "Escala de grises",
+        "document_bw": "Blanco y negro",
+        "document_move_up": "Subir página",
+        "document_move_down": "Bajar página",
+        "document_auto_edges": "Sugerir bordes",
+        "document_auto_not_found": "No se detectaron bordes claros. Ajusta las esquinas manualmente."
       }
     },
     "it": {
@@ -766,7 +821,18 @@
         "document_saved_warning": "I PDF esportati sono leggibili dalle app con accesso al file e non sono crittografati da QREX.",
         "document_success": "PDF salvato correttamente.",
         "document_discard": "Eliminare il documento?",
-        "document_exit_warning": "Le pagine non salvate andranno perse. Vuoi uscire?"
+        "document_exit_warning": "Le pagine non salvate andranno perse. Vuoi uscire?",
+        "document_perspective": "Prospettiva",
+        "document_rectangle": "Rettangolo",
+        "document_reset": "Reimposta ritaglio",
+        "document_undo": "Annulla",
+        "document_enhance": "Migliora la leggibilità",
+        "document_grayscale": "Scala di grigi",
+        "document_bw": "Bianco e nero",
+        "document_move_up": "Sposta pagina su",
+        "document_move_down": "Sposta pagina giù",
+        "document_auto_edges": "Suggerisci bordi",
+        "document_auto_not_found": "Bordi non rilevati. Regola gli angoli manualmente."
       }
     },
     "pt": {
@@ -894,7 +960,18 @@
         "document_saved_warning": "Os PDF exportados podem ser lidos por apps com acesso ao ficheiro e não são encriptados pelo QREX.",
         "document_success": "PDF guardado com sucesso.",
         "document_discard": "Descartar documento?",
-        "document_exit_warning": "As páginas não guardadas serão perdidas. Quer sair?"
+        "document_exit_warning": "As páginas não guardadas serão perdidas. Quer sair?",
+        "document_perspective": "Perspetiva",
+        "document_rectangle": "Retângulo",
+        "document_reset": "Repor recorte",
+        "document_undo": "Desfazer",
+        "document_enhance": "Melhorar legibilidade",
+        "document_grayscale": "Tons de cinzento",
+        "document_bw": "Preto e branco",
+        "document_move_up": "Subir página",
+        "document_move_down": "Descer página",
+        "document_auto_edges": "Sugerir margens",
+        "document_auto_not_found": "Não foram detetados limites claros. Ajuste os cantos manualmente."
       }
     },
     "nl": {
@@ -1022,7 +1099,18 @@
         "document_saved_warning": "Geëxporteerde PDF's zijn leesbaar voor apps met bestandstoegang en worden niet door QREX versleuteld.",
         "document_success": "PDF opgeslagen.",
         "document_discard": "Document verwijderen?",
-        "document_exit_warning": "Niet-opgeslagen pagina's gaan verloren. Wilt u afsluiten?"
+        "document_exit_warning": "Niet-opgeslagen pagina's gaan verloren. Wilt u afsluiten?",
+        "document_perspective": "Perspectief",
+        "document_rectangle": "Rechthoek",
+        "document_reset": "Uitsnede herstellen",
+        "document_undo": "Ongedaan maken",
+        "document_enhance": "Leesbaarheid verbeteren",
+        "document_grayscale": "Grijstinten",
+        "document_bw": "Zwart-wit",
+        "document_move_up": "Pagina omhoog",
+        "document_move_down": "Pagina omlaag",
+        "document_auto_edges": "Randen voorstellen",
+        "document_auto_not_found": "Geen duidelijke paginarand gevonden. Pas hoeken handmatig aan."
       }
     },
     "pl": {
@@ -1150,7 +1238,18 @@
         "document_saved_warning": "Pliki PDF mogą być odczytane przez aplikacje z dostępem do pliku i nie są szyfrowane przez QREX.",
         "document_success": "PDF zapisano pomyślnie.",
         "document_discard": "Odrzucić dokument?",
-        "document_exit_warning": "Niezapisane strony zostaną utracone. Czy wyjść?"
+        "document_exit_warning": "Niezapisane strony zostaną utracone. Czy wyjść?",
+        "document_perspective": "Perspektywa",
+        "document_rectangle": "Prostokąt",
+        "document_reset": "Resetuj kadrowanie",
+        "document_undo": "Cofnij",
+        "document_enhance": "Popraw czytelność",
+        "document_grayscale": "Skala szarości",
+        "document_bw": "Czarno-białe",
+        "document_move_up": "Przesuń stronę w górę",
+        "document_move_down": "Przesuń stronę w dół",
+        "document_auto_edges": "Zaproponuj krawędzie",
+        "document_auto_not_found": "Nie wykryto wyraźnych krawędzi. Dostosuj rogi ręcznie."
       }
     },
     "cs": {
@@ -1278,7 +1377,18 @@
         "document_saved_warning": "Exportovaná PDF mohou číst aplikace s přístupem k souboru a QREX je nešifruje.",
         "document_success": "PDF úspěšně uloženo.",
         "document_discard": "Zahodit dokument?",
-        "document_exit_warning": "Neuložené stránky budou ztraceny. Chcete odejít?"
+        "document_exit_warning": "Neuložené stránky budou ztraceny. Chcete odejít?",
+        "document_perspective": "Perspektiva",
+        "document_rectangle": "Obdélník",
+        "document_reset": "Obnovit ořez",
+        "document_undo": "Zpět",
+        "document_enhance": "Zlepšit čitelnost",
+        "document_grayscale": "Odstíny šedi",
+        "document_bw": "Černobíle",
+        "document_move_up": "Posunout stránku nahoru",
+        "document_move_down": "Posunout stránku dolů",
+        "document_auto_edges": "Navrhnout okraje",
+        "document_auto_not_found": "Nebyly nalezeny jasné okraje. Upravte rohy ručně."
       }
     },
     "sk": {
@@ -1406,7 +1516,18 @@
         "document_saved_warning": "Exportované PDF môžu čítať aplikácie s prístupom k súboru a QREX ich nešifruje.",
         "document_success": "PDF úspešne uložené.",
         "document_discard": "Zahodiť dokument?",
-        "document_exit_warning": "Neuložené strany sa stratia. Chcete odísť?"
+        "document_exit_warning": "Neuložené strany sa stratia. Chcete odísť?",
+        "document_perspective": "Perspektíva",
+        "document_rectangle": "Obdĺžnik",
+        "document_reset": "Obnoviť orez",
+        "document_undo": "Späť",
+        "document_enhance": "Zlepšiť čitateľnosť",
+        "document_grayscale": "Odtiene sivej",
+        "document_bw": "Čiernobielo",
+        "document_move_up": "Posunúť stránku hore",
+        "document_move_down": "Posunúť stránku dole",
+        "document_auto_edges": "Navrhnúť okraje",
+        "document_auto_not_found": "Nenašli sa jasné okraje. Upravte rohy ručne."
       }
     },
     "sl": {
@@ -1534,7 +1655,18 @@
         "document_saved_warning": "Izvožene datoteke PDF lahko berejo aplikacije z dostopom do datoteke in jih QREX ne šifrira.",
         "document_success": "PDF je shranjen.",
         "document_discard": "Zavrzi dokument?",
-        "document_exit_warning": "Neshranjene strani bodo izgubljene. Želite izstopiti?"
+        "document_exit_warning": "Neshranjene strani bodo izgubljene. Želite izstopiti?",
+        "document_perspective": "Perspektiva",
+        "document_rectangle": "Pravokotnik",
+        "document_reset": "Ponastavi obrez",
+        "document_undo": "Razveljavi",
+        "document_enhance": "Izboljšaj berljivost",
+        "document_grayscale": "Sivine",
+        "document_bw": "Črno-belo",
+        "document_move_up": "Premakni stran navzgor",
+        "document_move_down": "Premakni stran navzdol",
+        "document_auto_edges": "Predlagaj robove",
+        "document_auto_not_found": "Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno."
       }
     },
     "hu": {
@@ -1662,7 +1794,18 @@
         "document_saved_warning": "Az exportált PDF-eket a fájlhoz hozzáférő alkalmazások olvashatják; a QREX nem titkosítja őket.",
         "document_success": "PDF sikeresen mentve.",
         "document_discard": "Dokumentum elvetése?",
-        "document_exit_warning": "A nem mentett oldalak elvesznek. Kilép?"
+        "document_exit_warning": "A nem mentett oldalak elvesznek. Kilép?",
+        "document_perspective": "Perspektíva",
+        "document_rectangle": "Téglalap",
+        "document_reset": "Vágás visszaállítása",
+        "document_undo": "Visszavonás",
+        "document_enhance": "Olvashatóság javítása",
+        "document_grayscale": "Szürkeárnyalatos",
+        "document_bw": "Fekete-fehér",
+        "document_move_up": "Oldal feljebb",
+        "document_move_down": "Oldal lejjebb",
+        "document_auto_edges": "Szegélyek javaslata",
+        "document_auto_not_found": "Nem találhatók egyértelmű szélek. Állítsa be a sarkokat kézzel."
       }
     },
     "ro": {
@@ -1790,7 +1933,18 @@
         "document_saved_warning": "PDF-urile exportate pot fi citite de aplicațiile cu acces la fișier și nu sunt criptate de QREX.",
         "document_success": "PDF salvat cu succes.",
         "document_discard": "Renunți la document?",
-        "document_exit_warning": "Paginile nesalvate se vor pierde. Vrei să ieși?"
+        "document_exit_warning": "Paginile nesalvate se vor pierde. Vrei să ieși?",
+        "document_perspective": "Perspectivă",
+        "document_rectangle": "Dreptunghi",
+        "document_reset": "Resetează decuparea",
+        "document_undo": "Anulează",
+        "document_enhance": "Îmbunătățește lizibilitatea",
+        "document_grayscale": "Nuanțe de gri",
+        "document_bw": "Alb-negru",
+        "document_move_up": "Mută pagina în sus",
+        "document_move_down": "Mută pagina în jos",
+        "document_auto_edges": "Sugerează marginile",
+        "document_auto_not_found": "Nu s-au găsit margini clare. Reglați colțurile manual."
       }
     },
     "bg": {
@@ -1918,7 +2072,18 @@
         "document_saved_warning": "Експортираните PDF файлове са достъпни за приложения с достъп до файла и не са криптирани от QREX.",
         "document_success": "PDF е запазен.",
         "document_discard": "Отхвърляне на документа?",
-        "document_exit_warning": "Незапазените страници ще се загубят. Да излезете ли?"
+        "document_exit_warning": "Незапазените страници ще се загубят. Да излезете ли?",
+        "document_perspective": "Перспектива",
+        "document_rectangle": "Правоъгълник",
+        "document_reset": "Нулиране на изрязването",
+        "document_undo": "Отмяна",
+        "document_enhance": "Подобри четливостта",
+        "document_grayscale": "Нива на сивото",
+        "document_bw": "Черно-бяло",
+        "document_move_up": "Премести страницата нагоре",
+        "document_move_down": "Премести страницата надолу",
+        "document_auto_edges": "Предложи краища",
+        "document_auto_not_found": "Не са открити ясни граници. Настройте ъглите ръчно."
       }
     },
     "el": {
@@ -2046,7 +2211,18 @@
         "document_saved_warning": "Τα εξαγόμενα PDF διαβάζονται από εφαρμογές με πρόσβαση στο αρχείο και δεν κρυπτογραφούνται από το QREX.",
         "document_success": "Το PDF αποθηκεύτηκε.",
         "document_discard": "Απόρριψη εγγράφου;",
-        "document_exit_warning": "Οι μη αποθηκευμένες σελίδες θα χαθούν. Έξοδος;"
+        "document_exit_warning": "Οι μη αποθηκευμένες σελίδες θα χαθούν. Έξοδος;",
+        "document_perspective": "Προοπτική",
+        "document_rectangle": "Ορθογώνιο",
+        "document_reset": "Επαναφορά περικοπής",
+        "document_undo": "Αναίρεση",
+        "document_enhance": "Βελτίωση αναγνωσιμότητας",
+        "document_grayscale": "Κλίμακα γκρι",
+        "document_bw": "Ασπρόμαυρο",
+        "document_move_up": "Μετακίνηση σελίδας πάνω",
+        "document_move_down": "Μετακίνηση σελίδας κάτω",
+        "document_auto_edges": "Πρόταση ορίων",
+        "document_auto_not_found": "Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες."
       }
     },
     "tr": {
@@ -2174,7 +2350,18 @@
         "document_saved_warning": "Dışa aktarılan PDF'ler dosyaya erişimi olan uygulamalarca okunabilir; QREX tarafından şifrelenmez.",
         "document_success": "PDF kaydedildi.",
         "document_discard": "Belge silinsin mi?",
-        "document_exit_warning": "Kaydedilmemiş sayfalar kaybolacak. Çıkılsın mı?"
+        "document_exit_warning": "Kaydedilmemiş sayfalar kaybolacak. Çıkılsın mı?",
+        "document_perspective": "Perspektif",
+        "document_rectangle": "Dikdörtgen",
+        "document_reset": "Kırpmayı sıfırla",
+        "document_undo": "Geri al",
+        "document_enhance": "Okunabilirliği artır",
+        "document_grayscale": "Gri tonlama",
+        "document_bw": "Siyah beyaz",
+        "document_move_up": "Sayfayı yukarı taşı",
+        "document_move_down": "Sayfayı aşağı taşı",
+        "document_auto_edges": "Kenarları öner",
+        "document_auto_not_found": "Belirgin sayfa kenarı bulunamadı. Köşeleri elle ayarlayın."
       }
     },
     "uk": {
@@ -2302,7 +2489,18 @@
         "document_saved_warning": "Експортовані PDF доступні програмам з доступом до файлу й не шифруються QREX.",
         "document_success": "PDF збережено.",
         "document_discard": "Відхилити документ?",
-        "document_exit_warning": "Незбережені сторінки буде втрачено. Вийти?"
+        "document_exit_warning": "Незбережені сторінки буде втрачено. Вийти?",
+        "document_perspective": "Перспектива",
+        "document_rectangle": "Прямокутник",
+        "document_reset": "Скинути обрізання",
+        "document_undo": "Скасувати",
+        "document_enhance": "Покращити читабельність",
+        "document_grayscale": "Відтінки сірого",
+        "document_bw": "Чорно-біле",
+        "document_move_up": "Перемістити сторінку вгору",
+        "document_move_down": "Перемістити сторінку вниз",
+        "document_auto_edges": "Запропонувати межі",
+        "document_auto_not_found": "Чітких меж не знайдено. Налаштуйте кути вручну."
       }
     },
     "ru": {
@@ -2430,7 +2628,18 @@
         "document_saved_warning": "Экспортированные PDF доступны приложениям с доступом к файлу и не шифруются QREX.",
         "document_success": "PDF сохранён.",
         "document_discard": "Отменить документ?",
-        "document_exit_warning": "Несохранённые страницы будут потеряны. Выйти?"
+        "document_exit_warning": "Несохранённые страницы будут потеряны. Выйти?",
+        "document_perspective": "Перспектива",
+        "document_rectangle": "Прямоугольник",
+        "document_reset": "Сбросить обрезку",
+        "document_undo": "Отменить",
+        "document_enhance": "Улучшить читаемость",
+        "document_grayscale": "Оттенки серого",
+        "document_bw": "Чёрно-белое",
+        "document_move_up": "Переместить страницу вверх",
+        "document_move_down": "Переместить страницу вниз",
+        "document_auto_edges": "Предложить границы",
+        "document_auto_not_found": "Чёткие границы не найдены. Настройте углы вручную."
       }
     },
     "sv": {
@@ -2558,7 +2767,18 @@
         "document_saved_warning": "Exporterade PDF-filer kan läsas av appar med filåtkomst och krypteras inte av QREX.",
         "document_success": "PDF sparad.",
         "document_discard": "Kasta dokumentet?",
-        "document_exit_warning": "Osparade sidor går förlorade. Vill du avsluta?"
+        "document_exit_warning": "Osparade sidor går förlorade. Vill du avsluta?",
+        "document_perspective": "Perspektiv",
+        "document_rectangle": "Rektangel",
+        "document_reset": "Återställ beskärning",
+        "document_undo": "Ångra",
+        "document_enhance": "Förbättra läsbarheten",
+        "document_grayscale": "Gråskala",
+        "document_bw": "Svartvitt",
+        "document_move_up": "Flytta sidan upp",
+        "document_move_down": "Flytta sidan ned",
+        "document_auto_edges": "Föreslå kanter",
+        "document_auto_not_found": "Ingen tydlig sidkant hittades. Justera hörnen manuellt."
       }
     },
     "da": {
@@ -2686,7 +2906,18 @@
         "document_saved_warning": "Eksporterede PDF'er kan læses af apps med filadgang og krypteres ikke af QREX.",
         "document_success": "PDF gemt.",
         "document_discard": "Kassér dokument?",
-        "document_exit_warning": "Ikke-gemte sider går tabt. Vil du afslutte?"
+        "document_exit_warning": "Ikke-gemte sider går tabt. Vil du afslutte?",
+        "document_perspective": "Perspektiv",
+        "document_rectangle": "Rektangel",
+        "document_reset": "Nulstil beskæring",
+        "document_undo": "Fortryd",
+        "document_enhance": "Forbedr læsbarhed",
+        "document_grayscale": "Gråtoner",
+        "document_bw": "Sort-hvid",
+        "document_move_up": "Flyt side op",
+        "document_move_down": "Flyt side ned",
+        "document_auto_edges": "Foreslå kanter",
+        "document_auto_not_found": "Ingen tydelig sidekant fundet. Juster hjørnerne manuelt."
       }
     },
     "fi": {
@@ -2814,7 +3045,18 @@
         "document_saved_warning": "Vietyjä PDF-tiedostoja voivat lukea sovellukset, joilla on tiedoston käyttöoikeus. QREX ei salaa niitä.",
         "document_success": "PDF tallennettu.",
         "document_discard": "Hylätäänkö asiakirja?",
-        "document_exit_warning": "Tallentamattomat sivut häviävät. Poistutaanko?"
+        "document_exit_warning": "Tallentamattomat sivut häviävät. Poistutaanko?",
+        "document_perspective": "Perspektiivi",
+        "document_rectangle": "Suorakulmio",
+        "document_reset": "Palauta rajaus",
+        "document_undo": "Kumoa",
+        "document_enhance": "Paranna luettavuutta",
+        "document_grayscale": "Harmaasävy",
+        "document_bw": "Mustavalkoinen",
+        "document_move_up": "Siirrä sivua ylös",
+        "document_move_down": "Siirrä sivua alas",
+        "document_auto_edges": "Ehdota reunoja",
+        "document_auto_not_found": "Selkeitä sivun reunoja ei löytynyt. Säädä kulmat käsin."
       }
     },
     "nb": {
@@ -2942,7 +3184,18 @@
         "document_saved_warning": "Eksporterte PDF-er kan leses av apper med filtilgang og krypteres ikke av QREX.",
         "document_success": "PDF lagret.",
         "document_discard": "Forkaste dokumentet?",
-        "document_exit_warning": "Ulagrede sider går tapt. Vil du avslutte?"
+        "document_exit_warning": "Ulagrede sider går tapt. Vil du avslutte?",
+        "document_perspective": "Perspektiv",
+        "document_rectangle": "Rektangel",
+        "document_reset": "Nullstill beskjæring",
+        "document_undo": "Angre",
+        "document_enhance": "Forbedre lesbarhet",
+        "document_grayscale": "Gråtoner",
+        "document_bw": "Svart-hvitt",
+        "document_move_up": "Flytt side opp",
+        "document_move_down": "Flytt side ned",
+        "document_auto_edges": "Foreslå kanter",
+        "document_auto_not_found": "Ingen tydelig sidekant funnet. Juster hjørnene manuelt."
       }
     }
   }

@@ -123,4 +123,15 @@
     <string name="document_success">PDF je uspješno spremljen.</string>
     <string name="document_discard">Odbaciti dokument?</string>
     <string name="document_exit_warning">Nespremljene stranice bit će izgubljene. Želite li izaći?</string>
+    <string name="document_perspective">Perspektiva</string>
+    <string name="document_rectangle">Pravokutnik</string>
+    <string name="document_reset">Vrati izrez</string>
+    <string name="document_undo">Poništi</string>
+    <string name="document_enhance">Poboljšaj čitljivost</string>
+    <string name="document_grayscale">Sivi tonovi</string>
+    <string name="document_bw">Crno-bijelo</string>
+    <string name="document_move_up">Pomakni stranicu gore</string>
+    <string name="document_move_down">Pomakni stranicu dolje</string>
+    <string name="document_auto_edges">Predloži rubove</string>
+    <string name="document_auto_not_found">Nisu pronađeni jasni rubovi. Ručno namjestite kutove.</string>
 </resources>

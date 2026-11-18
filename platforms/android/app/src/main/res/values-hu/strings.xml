@@ -123,4 +123,15 @@
     <string name="document_success">PDF sikeresen mentve.</string>
     <string name="document_discard">Dokumentum elvetése?</string>
     <string name="document_exit_warning">A nem mentett oldalak elvesznek. Kilép?</string>
+    <string name="document_perspective">Perspektíva</string>
+    <string name="document_rectangle">Téglalap</string>
+    <string name="document_reset">Vágás visszaállítása</string>
+    <string name="document_undo">Visszavonás</string>
+    <string name="document_enhance">Olvashatóság javítása</string>
+    <string name="document_grayscale">Szürkeárnyalatos</string>
+    <string name="document_bw">Fekete-fehér</string>
+    <string name="document_move_up">Oldal feljebb</string>
+    <string name="document_move_down">Oldal lejjebb</string>
+    <string name="document_auto_edges">Szegélyek javaslata</string>
+    <string name="document_auto_not_found">Nem találhatók egyértelmű szélek. Állítsa be a sarkokat kézzel.</string>
 </resources>

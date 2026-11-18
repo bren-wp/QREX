@@ -132,6 +132,17 @@ object QREXStrings {
         "document_success" -> R.string.document_success
         "document_discard" -> R.string.document_discard
         "document_exit_warning" -> R.string.document_exit_warning
+        "document_perspective" -> R.string.document_perspective
+        "document_rectangle" -> R.string.document_rectangle
+        "document_reset" -> R.string.document_reset
+        "document_undo" -> R.string.document_undo
+        "document_enhance" -> R.string.document_enhance
+        "document_grayscale" -> R.string.document_grayscale
+        "document_bw" -> R.string.document_bw
+        "document_move_up" -> R.string.document_move_up
+        "document_move_down" -> R.string.document_move_down
+        "document_auto_edges" -> R.string.document_auto_edges
+        "document_auto_not_found" -> R.string.document_auto_not_found
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

@@ -172,7 +172,8 @@ class MainActivity : ComponentActivity() {
         val screenshotMode = if (isDebug)
             intent.getStringExtra("qrex_screenshot")?.takeIf {
                 it in setOf("splash", "create", "scan", "result", "history",
-                    "saved", "more", "wifi", "language", "export", "about", "privacy", "terms")
+                    "saved", "more", "wifi", "language", "export", "about", "privacy", "terms",
+                    "document-review", "document-crop", "document-pages", "document-export")
             }
         else null
         val screenshotLanguage = if (isDebug && screenshotMode != null)
@@ -222,7 +223,9 @@ private fun QREXApp(
         })
     }
     // Document workflow stays inside Scan; retain its route on rotation.
-    var documentMode by rememberSaveable(screenshotMode) { mutableStateOf(false) }
+    var documentMode by rememberSaveable(screenshotMode) {
+        mutableStateOf(screenshotMode?.startsWith("document-") == true)
+    }
     var currentCode by remember(screenshotMode) {
         mutableStateOf(if (screenshotMode == "result") "https://brendigo.com" else null)
     }
@@ -368,7 +371,10 @@ private fun QREXApp(
                 androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
                 .padding(padding)) {
                 if (documentMode) {
-                    QREXDocumentScanScreen(onExit = { documentMode = false })
+                    QREXDocumentScanScreen(
+                        onExit = { documentMode = false },
+                        screenshotFixture = screenshotMode?.takeIf { it.startsWith("document-") }
+                    )
                 } else if (currentCode != null) {
                     ResultScreen(
                         raw = currentCode!!,

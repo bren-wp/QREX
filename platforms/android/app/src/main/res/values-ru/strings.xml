@@ -123,4 +123,15 @@
     <string name="document_success">PDF сохранён.</string>
     <string name="document_discard">Отменить документ?</string>
     <string name="document_exit_warning">Несохранённые страницы будут потеряны. Выйти?</string>
+    <string name="document_perspective">Перспектива</string>
+    <string name="document_rectangle">Прямоугольник</string>
+    <string name="document_reset">Сбросить обрезку</string>
+    <string name="document_undo">Отменить</string>
+    <string name="document_enhance">Улучшить читаемость</string>
+    <string name="document_grayscale">Оттенки серого</string>
+    <string name="document_bw">Чёрно-белое</string>
+    <string name="document_move_up">Переместить страницу вверх</string>
+    <string name="document_move_down">Переместить страницу вниз</string>
+    <string name="document_auto_edges">Предложить границы</string>
+    <string name="document_auto_not_found">Чёткие границы не найдены. Настройте углы вручную.</string>
 </resources>

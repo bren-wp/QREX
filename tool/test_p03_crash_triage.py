@@ -37,8 +37,17 @@ class P03CrashLogTests(unittest.TestCase):
         self.assertIn("sudo udevadm trigger --name-match=kvm", workflow)
         options = next(line.strip() for line in workflow.splitlines()
                        if line.strip().startswith("emulator-options:"))
-        self.assertIn("-gpu software", options)
+        self.assertIn("-gpu ${{ matrix.gpu }}", options)
         self.assertNotIn("-gpu swiftshader_indirect", options)
+        self.assertIn("- { api: 31, memory: 3072, gpu: swiftshader }", workflow)
+        for api, memory in ((26, 2048), (34, 3072), (35, 3072), (36, 1536)):
+            self.assertIn(
+                f"- {{ api: {api}, memory: {memory}, gpu: software }}",
+                workflow,
+            )
+        # An emulator renderer mitigation must not hide a real QREX failure.
+        self.assertIn("script: bash tool/run_p03_emulator.sh ${{ matrix.api }}", workflow)
+        self.assertIn("fail-fast: false", workflow)
         self.assertIn("-no-snapshot", options)
         self.assertIn("disable-spellchecker: true", workflow)
 

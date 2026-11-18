@@ -69,11 +69,13 @@ The native screens are built with Jetpack Compose; the scanner uses a live Camer
 
 ## Everything you need
 
-### Document Scanner — development preview (PR #120)
+### Document Scanner — included in main, crop-editor upgrade in PR #121
 
-The next QREX feature is being developed **inside the existing Scan tab**, without adding a sixth root tab. The current code introduces CameraX paper capture, Android Photo Picker import, four-corner perspective cropping, orientation correction, page rotation, page re-editing and ordering, and A4 portrait/landscape multi-page PDF export through Android's document picker. It is designed to remain offline and limit processing to eight memory-resident pages.
+The document-scanning foundation was merged through [PR #120](https://github.com/bren-wp/QREX/pull/120). Inside the existing **Scan** tab (no sixth root tab), QREX captures paper pages with CameraX or imports photos with Android Photo Picker. Users can adjust four corners, correct perspective, rotate, re-edit current pages, reorder or delete up to eight pages, and export a multi-page portrait/landscape A4 PDF through Android's system file picker. All document processing stays on-device.
 
-**Status:** this is a **Draft pull request**, not a feature of the [published v1.0.49 release](https://github.com/bren-wp/QREX/releases/tag/v1.0.49). Actual camera, PDF, memory, accessibility and emulator verification is pending. Automatic border detection, advanced image filters, undo and recovery after process death are still planned. No screenshots from this development branch are presented as published release captures. [Follow PR #120](https://github.com/bren-wp/QREX/pull/120).
+**New in the [PR #121 development candidate](https://github.com/bren-wp/QREX/pull/121):** choose between perspective and rectangular crop, request a conservative offline suggestion of page boundaries (with manual adjustment when detection is uncertain), drag larger corner handles against a high-contrast grid, reset selection to the entire page, crop small details and undo the most recent applied crop or rotation. Mirrored EXIF orientations on imported pictures are also supported. The editor retains only a single additional previous bitmap for Undo. Once a page is accepted and its edit history discarded, an earlier uncropped original cannot be reconstructed.
+
+**Release status:** the latest published, downloadable release remains [v1.0.49](https://github.com/bren-wp/QREX/releases/tag/v1.0.49); neither PR #120 nor the PR #121 editing upgrade is represented as a separately published v1.0.50 APK/AAB. New editor workflows still need full physical-device and UI-reference verification before release. Automatic document-edge detection, advanced contrast filters and process-death recovery remain future work. Exported PDFs are not encrypted.
 
 
 No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating together in a compact interface designed for everyday use.

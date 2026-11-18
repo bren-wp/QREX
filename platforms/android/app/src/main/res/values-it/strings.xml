@@ -123,4 +123,15 @@
     <string name="document_success">PDF salvato correttamente.</string>
     <string name="document_discard">Eliminare il documento?</string>
     <string name="document_exit_warning">Le pagine non salvate andranno perse. Vuoi uscire?</string>
+    <string name="document_perspective">Prospettiva</string>
+    <string name="document_rectangle">Rettangolo</string>
+    <string name="document_reset">Reimposta ritaglio</string>
+    <string name="document_undo">Annulla</string>
+    <string name="document_enhance">Migliora la leggibilità</string>
+    <string name="document_grayscale">Scala di grigi</string>
+    <string name="document_bw">Bianco e nero</string>
+    <string name="document_move_up">Sposta pagina su</string>
+    <string name="document_move_down">Sposta pagina giù</string>
+    <string name="document_auto_edges">Suggerisci bordi</string>
+    <string name="document_auto_not_found">Bordi non rilevati. Regola gli angoli manualmente.</string>
 </resources>

@@ -90,6 +90,42 @@ class PixelAuditTests(unittest.TestCase):
                            bytes((7, 11, 31, 255))))
             self.assertEqual(main(args), 1)
 
+    def test_document_editor_comparison_includes_both_themes_and_all_states(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            reference, actual = base / "target", base / "actual"
+            reference.mkdir()
+            actual.mkdir()
+            flags = ["--document", "--reference-dir", str(reference),
+                     "--actual-dir", str(actual), "--max-mismatch-percent", "0"]
+            sample = sample_png(2, 1, bytes((5, 30, 60, 255)) * 2)
+            for theme in ("dark", "light"):
+                for screen in ("review", "crop", "pages", "export"):
+                    filename = f"{theme}-{screen}.png"
+                    (reference / filename).write_bytes(sample)
+                    (actual / filename).write_bytes(sample)
+            self.assertEqual(main(flags), 0)
+            (actual / "light-crop.png").write_bytes(
+                sample_png(2, 1, bytes((6, 30, 60, 255)) +
+                           bytes((5, 30, 60, 255))))
+            self.assertEqual(main(flags), 1)
+            self.assertEqual(main(flags + ["--theme", "dark"]), 0)
+            self.assertEqual(main(flags + ["--theme", "light",
+                                           "--document-screen", "review"]), 0)
+
+    def test_missing_document_reference_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            reference, actual = base / "reference", base / "actual"
+            reference.mkdir()
+            actual.mkdir()
+            (actual / "dark-review.png").write_bytes(sample_png(
+                1, 1, bytes((5, 30, 60, 255))))
+            self.assertEqual(main(["--reference-dir", str(reference),
+                                   "--actual-dir", str(actual),
+                                   "--document", "--theme", "dark",
+                                   "--document-screen", "review"]), 1)
+
     def test_about_modal_is_a_selectable_exact_pixel_audit_target(self):
         with tempfile.TemporaryDirectory() as td:
             folder = Path(td)

@@ -123,4 +123,15 @@
     <string name="document_success">PDF збережено.</string>
     <string name="document_discard">Відхилити документ?</string>
     <string name="document_exit_warning">Незбережені сторінки буде втрачено. Вийти?</string>
+    <string name="document_perspective">Перспектива</string>
+    <string name="document_rectangle">Прямокутник</string>
+    <string name="document_reset">Скинути обрізання</string>
+    <string name="document_undo">Скасувати</string>
+    <string name="document_enhance">Покращити читабельність</string>
+    <string name="document_grayscale">Відтінки сірого</string>
+    <string name="document_bw">Чорно-біле</string>
+    <string name="document_move_up">Перемістити сторінку вгору</string>
+    <string name="document_move_down">Перемістити сторінку вниз</string>
+    <string name="document_auto_edges">Запропонувати межі</string>
+    <string name="document_auto_not_found">Чітких меж не знайдено. Налаштуйте кути вручну.</string>
 </resources>

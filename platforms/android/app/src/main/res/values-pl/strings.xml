@@ -123,4 +123,15 @@
     <string name="document_success">PDF zapisano pomyślnie.</string>
     <string name="document_discard">Odrzucić dokument?</string>
     <string name="document_exit_warning">Niezapisane strony zostaną utracone. Czy wyjść?</string>
+    <string name="document_perspective">Perspektywa</string>
+    <string name="document_rectangle">Prostokąt</string>
+    <string name="document_reset">Resetuj kadrowanie</string>
+    <string name="document_undo">Cofnij</string>
+    <string name="document_enhance">Popraw czytelność</string>
+    <string name="document_grayscale">Skala szarości</string>
+    <string name="document_bw">Czarno-białe</string>
+    <string name="document_move_up">Przesuń stronę w górę</string>
+    <string name="document_move_down">Przesuń stronę w dół</string>
+    <string name="document_auto_edges">Zaproponuj krawędzie</string>
+    <string name="document_auto_not_found">Nie wykryto wyraźnych krawędzi. Dostosuj rogi ręcznie.</string>
 </resources>

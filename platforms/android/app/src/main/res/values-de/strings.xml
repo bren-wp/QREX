@@ -123,4 +123,15 @@
     <string name="document_success">PDF erfolgreich gespeichert.</string>
     <string name="document_discard">Dokument verwerfen?</string>
     <string name="document_exit_warning">Nicht gespeicherte Seiten gehen verloren. Möchten Sie beenden?</string>
+    <string name="document_perspective">Perspektive</string>
+    <string name="document_rectangle">Rechteck</string>
+    <string name="document_reset">Zuschnitt zurücksetzen</string>
+    <string name="document_undo">Rückgängig</string>
+    <string name="document_enhance">Lesbarkeit verbessern</string>
+    <string name="document_grayscale">Graustufen</string>
+    <string name="document_bw">Schwarzweiß</string>
+    <string name="document_move_up">Seite nach oben</string>
+    <string name="document_move_down">Seite nach unten</string>
+    <string name="document_auto_edges">Ränder vorschlagen</string>
+    <string name="document_auto_not_found">Keine klaren Seitenränder erkannt. Ecken manuell anpassen.</string>
 </resources>

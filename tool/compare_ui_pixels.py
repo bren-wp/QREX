@@ -19,6 +19,8 @@ SCREENS = (
     "splash", "scan", "create", "wifi", "result",
     "history", "saved", "more", "language", "export", "about", "privacy",
 )
+DOCUMENT_SCREENS = ("review", "crop", "pages", "export")
+DOCUMENT_THEMES = ("dark", "light")
 
 
 @dataclass(frozen=True)
@@ -146,14 +148,32 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--actual-dir", type=Path, required=True)
     parser.add_argument("--screen", action="append", choices=SCREENS,
                         help="Repeat to check a subset; all twelve by default")
+    parser.add_argument("--document", action="store_true",
+                        help="Compare the real document editor reference states")
+    parser.add_argument("--document-screen", choices=DOCUMENT_SCREENS, action="append",
+                        help="Select specific editor state (repeatable)")
+    parser.add_argument("--theme", choices=("dark", "light", "both"), default="both",
+                        help="Document screenshots: dark, light, or both (default)")
     parser.add_argument("--channel-tolerance", type=int, default=0)
     parser.add_argument("--max-mismatch-percent", type=float, default=0.0)
     args = parser.parse_args(argv)
     if not 0 <= args.channel_tolerance <= 255 or not 0 <= args.max_mismatch_percent <= 100:
         parser.error("Tolerance and mismatch percentage outside valid range")
+    if args.document and args.screen:
+        parser.error("--screen applies only to the main QREX UI; use --document-screen")
+    if not args.document and args.document_screen:
+        parser.error("--document-screen requires --document")
+    if not args.document and args.theme != "both":
+        parser.error("--theme applies only to --document mode")
     failed = False
-    for screen in args.screen or SCREENS:
-        name = f"android-{screen}.png"
+    names = (
+        [f"{theme}-{screen}.png"
+         for theme in (DOCUMENT_THEMES if args.theme == "both" else (args.theme,))
+         for screen in (args.document_screen or DOCUMENT_SCREENS)]
+        if args.document
+        else [f"android-{screen}.png" for screen in (args.screen or SCREENS)]
+    )
+    for name in names:
         try:
             diff = compare(read_png(args.reference_dir / name),
                            read_png(args.actual_dir / name), args.channel_tolerance)

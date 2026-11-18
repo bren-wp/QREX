@@ -50,6 +50,8 @@ internal fun qrexDocumentSafeName(name: String): String {
 /**
  * Four normalized corners: top-left, top-right, bottom-right, bottom-left.
  * Reject self-intersections, collapsed edges and shapes outside the bitmap.
+ * Allow small user-selected regions (down to a narrow ~2% image span) without
+ * rounding the user's tight crop back into a large default rectangle.
  */
 internal fun qrexDocumentQuadValid(p: List<Float>): Boolean {
     if (p.size != 8 || p.any { !it.isFinite() || it !in 0f..1f }) return false
@@ -63,13 +65,13 @@ internal fun qrexDocumentQuadValid(p: List<Float>): Boolean {
         val bx = p[k * 2] - p[j * 2]
         val by = p[k * 2 + 1] - p[j * 2 + 1]
         val cross = ax * by - ay * bx
-        if (abs(cross) < 0.002f) return false
+        if (abs(cross) < 0.00001f) return false
         val direction = if (cross > 0) 1 else -1
         if (sign != 0 && sign != direction) return false
         sign = direction
         signedArea += p[i * 2] * p[j * 2 + 1] - p[j * 2] * p[i * 2 + 1]
     }
-    return abs(signedArea) >= 0.04f
+    return abs(signedArea) >= 0.0005f
 }
 
 /** In-memory only: neither imported photos nor camera captures reach app storage. */
@@ -83,8 +85,13 @@ internal object QREXDocumentProcessing {
         val ratio = min(1.0, kotlin.math.sqrt(QREX_DOCUMENT_MAX_PIXELS.toDouble() / pixels))
         val width = max(1, (source.width * ratio).roundToInt())
         val height = max(1, (source.height * ratio).roundToInt())
-        return Bitmap.createScaledBitmap(source, width, height, true)
-            .copy(Bitmap.Config.ARGB_8888, false)
+        val scaled = Bitmap.createScaledBitmap(source, width, height, true)
+        if (scaled.config == Bitmap.Config.ARGB_8888) return scaled
+        val converted = scaled.copy(Bitmap.Config.ARGB_8888, false)
+        // The resize intermediate must not remain allocated alongside the
+        // original camera image and the final PDF page.
+        if (scaled !== source) scaled.recycle()
+        return converted
     }
 
     fun rotate(source: Bitmap, degrees: Int): Bitmap {
@@ -119,13 +126,19 @@ internal object QREXDocumentProcessing {
         val decoded = resolver.openInputStream(uri)?.use {
             BitmapFactory.decodeStream(it, null, options)
         } ?: error("Cannot decode document image")
+        // Full EXIF support matters for photographed paper documents: simple
+        // rotationDegrees silently drops horizontally mirrored phone images.
+        // Reuse the tested QR-gallery orientation helper (all eight variants).
         val orientation = resolver.openInputStream(uri)?.use {
-            runCatching { ExifInterface(it).rotationDegrees }.getOrDefault(0)
-        } ?: 0
-        val oriented = rotate(decoded, orientation)
+            runCatching {
+                ExifInterface(it).getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+                )
+            }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
+        } ?: ExifInterface.ORIENTATION_NORMAL
+        val oriented = orientGalleryBitmap(decoded, orientation)
         val sized = downsize(oriented)
         if (oriented !== sized) oriented.recycle()
-        if (decoded !== oriented && decoded !== sized) decoded.recycle()
         return sized
     }
 

@@ -21,16 +21,17 @@ This release checklist covers the **single Kotlin/Jetpack Compose Android applic
 - [ ] Local history search, saved favorites, remove/delete all, Keystore unavailable/corrupt data recovery.
 - [ ] PNG, PDF and ZIP exports, cancellation, revoked picker permission and contents of exported records.
 
-## Document Scanner PR #120 (not yet release-certified)
+## Document Scanner (merged PR #120; crop editor PR #121 not yet release-certified)
 - [ ] Confirm CameraX photo capture on API 26, 31, 34, 35, 36 and physical cameras, including denial, interruptions and orientation.
 - [ ] Verify Photo Picker import, EXIF orientation, corrupt/oversized images and memory pressure.
-- [ ] Verify manual four-corner gestures, corner validity and perspective-crop output on several phone/tablet sizes.
-- [ ] Verify adding/re-editing/rotating/moving/deleting pages, eight-page maximum and Activity recreation without losing the current session.
+- [ ] Verify manual four-corner gestures, offline conservative automatic rectangle suggestion/fallback, valid small selections, perspective/rectangle modes, reset, one-step Undo, grid and real crop output on several phone/tablet sizes.
+- [ ] Verify adding/re-editing/rotating/moving/deleting pages, grayscale/black-and-white enhancements with Undo, eight-page maximum and Activity recreation without losing the current session.
 - [ ] Verify back/discard confirmation and no unexpected plaintext image cache files.
 - [ ] Verify single-page and multi-page A4 PDF content, orientations, page counts and compatibility with third-party readers.
 - [ ] Verify SAF cancellation, revoked write permission, out-of-space failure and exported PDF sharing grants.
 - [ ] Verify all 23 localizations, TalkBack labels, 200% font and dark/light/system appearance.
-- [ ] Capture real new-document screenshots and compare to approved flat image references. Do not infer 0% pixel variance from marketing mockups.
+- [ ] Capture four actual document editor screen states in dark/light via debug-only fictional page, validate foreground/UI controls, and compare to approved flat image references. Use `python3 tool/compare_ui_pixels.py --document --reference-dir <approved-reference-dir> --actual-dir docs/screenshots/document` for strict per-pixel checks; missing references must fail closed. Real UI capture does not itself establish 0% pixel variance.
+- [ ] Verify manually moved crop handles survive rotation/recreation; source images must remain in volatile Activity-retained memory.
 - [ ] Run static source/manifest audit, dependency license review, JVM tests, instrumentation, Android Lint and R8 before release.
 - [ ] Verify no unintended regressions to existing QR scan, QR creation, history, favorites or saved-QR PDF export.
 
@@ -50,3 +51,9 @@ This release checklist covers the **single Kotlin/Jetpack Compose Android applic
 - [ ] Check old releases/tags retired **after** verified signed v1.0.0 publication.
 
 **Status:** Open acceptance checklist; nothing unchecked is reported as complete. No iOS or Flutter runtime is built.
+
+### Android 12 emulator graphics diagnostics (PR #121)
+
+- API 31's `-gpu software` auto-selected backend produced repeated host-side `Failed to find ColorBuffer` and `Failed to bind to texture` messages, despite the exact-head 30-cycle instrumentation suite passing with zero QREX crashes/ANRs. This is a renderer warning, **not** by itself an app crash.
+- The API 31 P03 matrix now explicitly selects supported `-gpu swiftshader` rather than deprecated `swiftshader_indirect`; APIs 26/34/35/36 keep their existing software renderer. This is an experimental targeted mitigation, not a verified fix until the next complete P03 run.
+- Keep the full unfiltered suite, real UI assertions, crash triage and release gate mandatory. Recheck actual crop/preview pixels and hardware camera on physical devices; emulator log improvements do not establish 1:1 design parity.

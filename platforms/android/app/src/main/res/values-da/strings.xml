@@ -123,4 +123,15 @@
     <string name="document_success">PDF gemt.</string>
     <string name="document_discard">Kassér dokument?</string>
     <string name="document_exit_warning">Ikke-gemte sider går tabt. Vil du afslutte?</string>
+    <string name="document_perspective">Perspektiv</string>
+    <string name="document_rectangle">Rektangel</string>
+    <string name="document_reset">Nulstil beskæring</string>
+    <string name="document_undo">Fortryd</string>
+    <string name="document_enhance">Forbedr læsbarhed</string>
+    <string name="document_grayscale">Gråtoner</string>
+    <string name="document_bw">Sort-hvid</string>
+    <string name="document_move_up">Flyt side op</string>
+    <string name="document_move_down">Flyt side ned</string>
+    <string name="document_auto_edges">Foreslå kanter</string>
+    <string name="document_auto_not_found">Ingen tydelig sidekant fundet. Juster hjørnerne manuelt.</string>
 </resources>

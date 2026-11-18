@@ -29,8 +29,8 @@ timeout -k 15s 1200s gradle -p platforms/android --no-daemon --stacktrace \
   :app:connectedDebugAndroidTest \
   || test_status=$?
 
-# Give contributors actionable test IDs without exposing raw QR values, failure
-# messages, stacks, test arguments or ADB logs in public CI.
+# Give contributors allowlisted test IDs, exception classes and test source
+# locations only. Never expose QR values, exception messages or ADB logs.
 if (( test_status != 0 )); then
   python3 tool/report_failed_instrumentation_tests.py || true
 fi

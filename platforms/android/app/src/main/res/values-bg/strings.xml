@@ -123,4 +123,15 @@
     <string name="document_success">PDF е запазен.</string>
     <string name="document_discard">Отхвърляне на документа?</string>
     <string name="document_exit_warning">Незапазените страници ще се загубят. Да излезете ли?</string>
+    <string name="document_perspective">Перспектива</string>
+    <string name="document_rectangle">Правоъгълник</string>
+    <string name="document_reset">Нулиране на изрязването</string>
+    <string name="document_undo">Отмяна</string>
+    <string name="document_enhance">Подобри четливостта</string>
+    <string name="document_grayscale">Нива на сивото</string>
+    <string name="document_bw">Черно-бяло</string>
+    <string name="document_move_up">Премести страницата нагоре</string>
+    <string name="document_move_down">Премести страницата надолу</string>
+    <string name="document_auto_edges">Предложи краища</string>
+    <string name="document_auto_not_found">Не са открити ясни граници. Настройте ъглите ръчно.</string>
 </resources>

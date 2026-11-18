@@ -108,6 +108,14 @@ jobs:
           for image in Path("docs/screenshots").glob("android-*.png"):
               assert verify(image) == (1080, 1920), f"Google Play screenshot has invalid dimensions: {image}"
           PY
+      - name: Verify all eight actual document editor screenshots
+        run: |
+          for theme in dark light; do
+            for screen in review crop pages export; do
+              test -s "docs/screenshots/document/${theme}-${screen}.png"
+            done
+          done
+          python3 tool/verify_screenshots.py docs/screenshots/document/*.png
       - name: Verify compact, reference and large-font device captures
         run: |
           for profile in compact reference; do
@@ -166,6 +174,11 @@ jobs:
         with:
           name: qrex-all-screen-measurements
           path: docs/screenshots/all-screen-measurements.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: qrex-actual-document-editor
+          path: docs/screenshots/document/*.png
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:

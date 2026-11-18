@@ -55,6 +55,23 @@ class ForegroundTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "generiraj qr kod"):
                     validate(obscured, mode)
 
+    def test_document_editor_requires_actual_localized_controls(self):
+        snapshots = {
+            "document-review": "Skeniraj dokument Poboljšaj čitljivost Sivi tonovi Crno-bijelo",
+            "document-crop": "Skeniraj dokument Perspektiva Pravokutnik Vrati izrez",
+            "document-pages": "Skeniraj dokument Stranice Izvezi PDF",
+            "document-export": "Skeniraj dokument Naziv PDF datoteke Izvezi PDF",
+        }
+        for mode, content in snapshots.items():
+            with self.subTest(mode=mode):
+                validate(screen(
+                    '<node package="com.brendigo.qrex" text="' + content + '" />'
+                ), mode)
+                with self.assertRaises(ValueError):
+                    validate(screen(
+                        '<node package="com.brendigo.qrex" text="Skeniraj dokument" />'
+                    ), mode)
+
     def test_genuine_result_screen_is_accepted(self):
         validate(screen(
             '<node package="com.brendigo.qrex" text="Rezultat" />'

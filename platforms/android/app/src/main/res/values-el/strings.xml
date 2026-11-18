@@ -123,4 +123,15 @@
     <string name="document_success">Το PDF αποθηκεύτηκε.</string>
     <string name="document_discard">Απόρριψη εγγράφου;</string>
     <string name="document_exit_warning">Οι μη αποθηκευμένες σελίδες θα χαθούν. Έξοδος;</string>
+    <string name="document_perspective">Προοπτική</string>
+    <string name="document_rectangle">Ορθογώνιο</string>
+    <string name="document_reset">Επαναφορά περικοπής</string>
+    <string name="document_undo">Αναίρεση</string>
+    <string name="document_enhance">Βελτίωση αναγνωσιμότητας</string>
+    <string name="document_grayscale">Κλίμακα γκρι</string>
+    <string name="document_bw">Ασπρόμαυρο</string>
+    <string name="document_move_up">Μετακίνηση σελίδας πάνω</string>
+    <string name="document_move_down">Μετακίνηση σελίδας κάτω</string>
+    <string name="document_auto_edges">Πρόταση ορίων</string>
+    <string name="document_auto_not_found">Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες.</string>
 </resources>

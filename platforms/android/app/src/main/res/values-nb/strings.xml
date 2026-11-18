@@ -123,4 +123,15 @@
     <string name="document_success">PDF lagret.</string>
     <string name="document_discard">Forkaste dokumentet?</string>
     <string name="document_exit_warning">Ulagrede sider går tapt. Vil du avslutte?</string>
+    <string name="document_perspective">Perspektiv</string>
+    <string name="document_rectangle">Rektangel</string>
+    <string name="document_reset">Nullstill beskjæring</string>
+    <string name="document_undo">Angre</string>
+    <string name="document_enhance">Forbedre lesbarhet</string>
+    <string name="document_grayscale">Gråtoner</string>
+    <string name="document_bw">Svart-hvitt</string>
+    <string name="document_move_up">Flytt side opp</string>
+    <string name="document_move_down">Flytt side ned</string>
+    <string name="document_auto_edges">Foreslå kanter</string>
+    <string name="document_auto_not_found">Ingen tydelig sidekant funnet. Juster hjørnene manuelt.</string>
 </resources>
