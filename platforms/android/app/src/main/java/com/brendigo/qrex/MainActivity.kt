@@ -307,11 +307,17 @@ private fun QREXApp(
         } else {
         // Result retains the shared bottom tabs in the supplied November
         // reference. Back still returns to the originating destination.
-        BackHandler(enabled = currentCode != null) {
+        // System Back and the pinned Result header must perform the same
+        // keyboard/focus teardown before returning to the originating tab.
+        // This avoids a late Android 12 IME inset transition intercepting
+        // the next physical tap after scrolling Result.
+        val closeResult: () -> Unit = {
+            keyboardController?.hide()
             focusManager.clearFocus(force = true)
             currentCode = null
             resultShowsQr = false
         }
+        BackHandler(enabled = currentCode != null) { closeResult() }
         Scaffold(containerColor = colors.background, bottomBar = {
             if (!documentMode) {
             // All six supplied reference screens, including Result, retain
@@ -381,7 +387,7 @@ private fun QREXApp(
                         store = store,
                         screenshotFixture = screenshotMode == "result",
                         showQrOnOpen = resultShowsQr,
-                        onClose = { currentCode = null; resultShowsQr = false },
+                        onClose = closeResult,
                         onEdit = { raw ->
                             editPayload = raw
                             currentCode = null

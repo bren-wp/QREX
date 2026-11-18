@@ -11,6 +11,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
@@ -201,13 +202,28 @@ class QREXNavigationStressTest {
         requireScreenTag("qrex-create-screen", 0, "open Create")
         rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
             .performTextReplacement("https://example.org/p03/pinned-close")
+        // This case isolates the scroll/pinned-header contract. The separate
+        // pinnedCloseReturnsToCreateAfterScrollingWithIme test exercises
+        // an in-flight IME. Keep a physical tap in both tests.
+        rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
+            .performImeAction()
         awaitCreateAction(0, "single-cycle pre-result")
         rule.onNodeWithTag("qrex-create-show").assertIsDisplayed().performClick()
         requireScreenTag("qrex-result-close", 0, "pinned close before scrolling")
+        val beforeScroll = rule.onNodeWithTag(
+            "qrex-result-close", useUnmergedTree = true
+        ).assertIsDisplayed().getUnclippedBoundsInRoot()
         rule.onNodeWithTag("qrex-result-scroll").performTouchInput { swipeUp() }
+        rule.waitForIdle()
+        val afterScroll = rule.onNodeWithTag(
+            "qrex-result-close", useUnmergedTree = true
+        ).assertIsDisplayed().getUnclippedBoundsInRoot()
+        assertTrue("Pinned Result Back must not scroll vertically",
+            kotlin.math.abs((afterScroll.top - beforeScroll.top).value) <= 2f)
         rule.onNodeWithTag("qrex-result-close", useUnmergedTree = true)
-            .assertIsDisplayed().performClick()
+            .performClick()
         requireScreenTag("qrex-create-screen", 0, "return after Result scroll")
+        rule.onNodeWithTag("qrex-tab-1").assertIsSelected()
     }
 
     @Test
