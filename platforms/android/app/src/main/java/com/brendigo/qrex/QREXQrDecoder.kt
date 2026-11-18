@@ -130,7 +130,20 @@ internal object QREXQrDecoder {
                 reader.reset()
             }
         }
-        return read(BinaryBitmap(HybridBinarizer(source)))
+        val whole = read(BinaryBitmap(HybridBinarizer(source)))
             ?: read(BinaryBitmap(HybridBinarizer(source.invert())))
+        if (whole != null || width < 240 || height < 240) return whole
+        // On wide gallery images a small, centered code can be lost among
+        // unrelated background texture. Retry only the central 60% region
+        // without a second full-frame luminance allocation. A code near the
+        // edge still has the full-frame first pass above.
+        val cropWidth = width * 3 / 5
+        val cropHeight = height * 3 / 5
+        val center = PlanarYUVLuminanceSource(
+            data, width, height, (width - cropWidth) / 2,
+            (height - cropHeight) / 2, cropWidth, cropHeight, false
+        )
+        return read(BinaryBitmap(HybridBinarizer(center)))
+            ?: read(BinaryBitmap(HybridBinarizer(center.invert())))
     }
 }
