@@ -340,7 +340,15 @@ internal fun QREXDocumentScanScreen(
     val owner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     val executor = remember { Executors.newSingleThreadExecutor() }
-    DisposableEffect(Unit) { onDispose { executor.shutdown() } }
+    // CameraX may finish a capture after Compose has left this screen. A
+    // canceled Compose scope would strand the produced bitmap in native RAM.
+    val captureCallbacksActive = remember { AtomicBoolean(true) }
+    DisposableEffect(Unit) {
+        onDispose {
+            captureCallbacksActive.set(false)
+            executor.shutdown()
+        }
+    }
     var screen by rememberSaveable(screenshotFixture) { mutableStateOf("camera") }
     var message by remember { mutableStateOf<String?>(null) }
     var showExitConfirmation by remember { mutableStateOf(false) }
@@ -494,29 +502,54 @@ internal fun QREXDocumentScanScreen(
                         busy = true
                         capture.takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
                             override fun onCaptureSuccess(image: ImageProxy) {
+                                var original: Bitmap? = null
+                                var rotated: Bitmap? = null
+                                var delivered: Bitmap? = null
                                 try {
-                                    val original = image.toBitmap()
-                                    val rotated = QREXDocumentProcessing.rotate(
+                                    original = image.toBitmap()
+                                    rotated = QREXDocumentProcessing.rotate(
                                         original, image.imageInfo.rotationDegrees
                                     )
                                     val fitted = QREXDocumentProcessing.downsize(rotated)
-                                    if (rotated !== fitted) rotated.recycle()
-                                    if (original !== fitted && original !== rotated) original.recycle()
-                                    scope.launch {
-                                        session.updatePending(fitted)
-                                        editingIndex = -1
-                                        cropCorners = defaultCorners
-                                        screen = "review"
-                                        busy = false
+                                    delivered = fitted
+                                    // The ownership of the final bitmap moves to
+                                    // the main-thread callback, not the canceled
+                                    // rememberCoroutineScope.
+                                    ContextCompat.getMainExecutor(context).execute {
+                                        if (!captureCallbacksActive.get()) {
+                                            if (!fitted.isRecycled) fitted.recycle()
+                                        } else {
+                                            session.updatePending(fitted)
+                                            editingIndex = -1
+                                            cropCorners = defaultCorners
+                                            screen = "review"
+                                            busy = false
+                                        }
                                     }
                                 } catch (_: Exception) {
-                                    scope.launch { busy = false; message = errorText }
+                                    ContextCompat.getMainExecutor(context).execute {
+                                        if (captureCallbacksActive.get()) {
+                                            busy = false
+                                            message = errorText
+                                        }
+                                    }
                                 } finally {
+                                    // Never recycle the bitmap transferred to
+                                    // Compose: RenderThread can still draw it.
+                                    if (rotated != null && rotated !== delivered &&
+                                        rotated !== original && !rotated.isRecycled) rotated.recycle()
+                                    if (original != null && original !== delivered &&
+                                        !original.isRecycled) original.recycle()
                                     image.close()
                                 }
                             }
                             override fun onError(exception: ImageCaptureException) {
-                                scope.launch { busy = false; message = errorText }
+                                ContextCompat.getMainExecutor(context).execute {
+                                    if (captureCallbacksActive.get()) {
+                                        busy = false
+                                        message = errorText
+                                    }
+                                }
                             }
                         })
                     }, enabled = !busy && camera != null,

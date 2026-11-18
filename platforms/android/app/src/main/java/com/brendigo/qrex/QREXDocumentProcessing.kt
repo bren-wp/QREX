@@ -136,10 +136,19 @@ internal object QREXDocumentProcessing {
                 )
             }.getOrDefault(ExifInterface.ORIENTATION_NORMAL)
         } ?: ExifInterface.ORIENTATION_NORMAL
-        val oriented = orientGalleryBitmap(decoded, orientation)
-        val sized = downsize(oriented)
-        if (oriented !== sized) oriented.recycle()
-        return sized
+        // QR and document imports share the EXIF helper, which consumes the
+        // input Bitmap when it actually rotates/mirrors it. Own the current
+        // intermediate until the final bounded bitmap is transferred to UI.
+        var working = decoded
+        try {
+            working = orientGalleryBitmap(working, orientation)
+            val fitted = downsize(working)
+            if (fitted !== working && !working.isRecycled) working.recycle()
+            return fitted
+        } catch (failure: Exception) {
+            if (!working.isRecycled) working.recycle()
+            throw failure
+        }
     }
 
     fun cropPerspective(source: Bitmap, p: List<Float>): Bitmap {

@@ -190,7 +190,7 @@ jobs:
           cp "$apk" production/QREX-Android-$RELEASE_VERSION.apk
           cp "$aab" production/QREX-Android-$RELEASE_VERSION.aab
           (cd production && sha256sum QREX-Android-$RELEASE_VERSION.apk QREX-Android-$RELEASE_VERSION.aab > SHA256SUMS.txt)
-      - name: Retrieve twelve real screenshots from exact-SHA emulator CI
+      - name: Retrieve twelve main and eight document-editor screenshots from exact-SHA emulator CI
         shell: bash
         run: |
           set -euo pipefail
@@ -204,6 +204,20 @@ jobs:
           for screen in splash create scan wifi result history saved more language export about privacy; do
             test -s "production/android-${screen}.png"
           done
+          # Document-editor images must come from the SAME successful
+          # exact-SHA capture run; never substitute illustrations, stale assets
+          # or a previous release's synthetic paper fixture.
+          mkdir -p "$RUNNER_TEMP/qrex-document-shots"
+          gh run download "$capture_run" --repo "$GITHUB_REPOSITORY" \
+            --name qrex-actual-document-editor --dir "$RUNNER_TEMP/qrex-document-shots"
+          for theme in dark light; do
+            for screen in review crop pages export; do
+              original="$RUNNER_TEMP/qrex-document-shots/$theme-$screen.png"
+              test -s "$original"
+              cp "$original" "production/document-$theme-$screen.png"
+            done
+          done
+          python3 tool/verify_screenshots.py production/document-*.png
           python3 tool/verify_screenshots.py production/android-*.png
           python3 tool/check_dark_screenshots.py production/android-{create,scan,wifi,result,history,saved,more,language,export,about,privacy}.png
           python3 - <<'PY'
@@ -213,6 +227,14 @@ jobs:
           assert len(screens) == 12, "Release requires twelve real captures"
           for shot in screens:
               assert verify(shot) == (1080, 1920), f"Not a Play-size screenshot: {shot}"
+          documents = sorted(Path("production").glob("document-*.png"))
+          expected = {f"document-{theme}-{screen}.png"
+                      for theme in ("dark", "light")
+                      for screen in ("review", "crop", "pages", "export")}
+          assert {shot.name for shot in documents} == expected, (
+              "Release requires all eight genuine document editor captures")
+          for shot in documents:
+              assert verify(shot) == (1080, 1920), f"Not a document UI screenshot: {shot}"
           PY
           # Retrieve only the unsigned Google Play QA candidate; it is not
           # signed for upload and must not be mistaken for a store-ready AAB.
@@ -227,7 +249,7 @@ jobs:
           test -s "$RUNNER_TEMP/qa-play/app-release.aab"
           cp "$RUNNER_TEMP/qa-play/app-release.aab" \
             production/QREX-Android-$RELEASE_VERSION-Play-UNSIGNED-QA.aab
-          (cd production && sha256sum QREX-Android-$RELEASE_VERSION*.apk QREX-Android-$RELEASE_VERSION*.aab android-*.png > SHA256SUMS.txt)
+          (cd production && sha256sum QREX-Android-$RELEASE_VERSION*.apk QREX-Android-$RELEASE_VERSION*.aab android-*.png document-*.png > SHA256SUMS.txt)
           (cd production && sha256sum --check SHA256SUMS.txt)
 
       - name: Prove post-publication documentation checks before publishing
@@ -259,6 +281,7 @@ jobs:
             production/QREX-Android-$RELEASE_VERSION-Play-UNSIGNED-QA.aab \
             production/SHA256SUMS.txt \
             production/android-*.png \
+            production/document-*.png \
             --repo "$GITHUB_REPOSITORY" --target "$RELEASE_SHA" \
             --title "QREX $RELEASE_VERSION — Android GitHub release" \
             --notes-file "$RUNNER_TEMP/qrex-published-release-notes.md" --latest
@@ -273,7 +296,11 @@ jobs:
                   "android-splash.png", "android-create.png", "android-scan.png", "android-wifi.png",
                   "android-result.png", "android-history.png", "android-saved.png",
                   "android-more.png", "android-language.png", "android-export.png",
-                  "android-about.png", "android-privacy.png"] | sort)
+                  "android-about.png", "android-privacy.png",
+                  "document-dark-review.png", "document-dark-crop.png",
+                  "document-dark-pages.png", "document-dark-export.png",
+                  "document-light-review.png", "document-light-crop.png",
+                  "document-light-pages.png", "document-light-export.png"] | sort)
               and all(.assets[]; .size > 0)
             ' >/dev/null
 
@@ -301,7 +328,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$RELEASE_VERSION" |
-            jq -e --arg sha "$RELEASE_SHA" '.target_commitish == $sha and .draft == false and .prerelease == false and (.assets | length) == 16' >/dev/null
+            jq -e --arg sha "$RELEASE_SHA" '.target_commitish == $sha and .draft == false and .prerelease == false and (.assets | length) == 24' >/dev/null
           previous="$(grep -m1 'Latest published release:' README.md | grep -oE 'v1[.]0[.][0-9]+' | head -1 | cut -c2-)"
           [[ "$previous" =~ ^1[.]0[.][0-9]+$ ]]
           python3 tool/sync_published_release.py "$previous" "$RELEASE_VERSION" "$RELEASE_CODE" "$RELEASE_SHA"

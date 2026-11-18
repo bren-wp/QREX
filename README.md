@@ -69,14 +69,42 @@ The native screens are built with Jetpack Compose; the scanner uses a live Camer
 
 ## Everything you need
 
-### Document Scanner — included in main, crop-editor upgrade in PR #121
+### Document Scanner — real native editor
 
-The document-scanning foundation was merged through [PR #120](https://github.com/bren-wp/QREX/pull/120). Inside the existing **Scan** tab (no sixth root tab), QREX captures paper pages with CameraX or imports photos with Android Photo Picker. Users can adjust four corners, correct perspective, rotate, re-edit current pages, reorder or delete up to eight pages, and export a multi-page portrait/landscape A4 PDF through Android's system file picker. All document processing stays on-device.
+The document-scanning foundation and perspective editor from [PR #120](https://github.com/bren-wp/QREX/pull/120) and [PR #121](https://github.com/bren-wp/QREX/pull/121) are already in the **published v1.0.50** app. Open **Scan → Document scan**, capture a paper page with CameraX, or import an image with Android Photo Picker. You can choose perspective or rectangular crop, adjust all four corners, request conservative offline page-boundary suggestions, rotate, apply grayscale or black/white enhancement, undo one applied edit, and rearrange/edit/delete up to **eight pages** before exporting a portrait/landscape A4 PDF through Android's system document picker.
 
-**New in the [PR #121 development candidate](https://github.com/bren-wp/QREX/pull/121):** choose between perspective and rectangular crop, request a conservative offline suggestion of page boundaries (with manual adjustment when detection is uncertain), drag larger corner handles against a high-contrast grid, reset selection to the entire page, crop small details and undo the most recent applied crop or rotation. Mirrored EXIF orientations on imported pictures are also supported. The editor retains only a single additional previous bitmap for Undo. Once a page is accepted and its edit history discarded, an earlier uncropped original cannot be reconstructed.
+The **v1.0.51 update in [PR #122](https://github.com/bren-wp/QREX/pull/122)** strengthens EXIF-oriented image ownership, protects CameraX background callbacks when the editor closes and adds another fallback for difficult QR gallery images. These changes are not represented as published until the release verification succeeds.
 
-**Release status:** the latest published, downloadable release remains [v1.0.50](https://github.com/bren-wp/QREX/releases/tag/v1.0.50); neither PR #120 nor the PR #121 editing upgrade is represented as a separately published v1.0.50 APK/AAB. New editor workflows still need full physical-device and UI-reference verification before release. Automatic document-edge detection, advanced contrast filters and process-death recovery remain future work. Exported PDFs are not encrypted.
+[Document-scanner guide](docs/DOCUMENT_SCANNER.md) · [v1.0.50 release notes](docs/releases/v1.0.50.md) · [Latest verified release](https://github.com/bren-wp/QREX/releases)
 
+#### Real document editor screenshots
+
+These **eight screenshots are captured from the running native Compose app**, using synthetic paper content in debug mode to avoid exposing personal documents. They show Review, Crop, Pages and Export in **dark and light** themes. They are **not AI-generated images or screenshots of a marketing mockup**. For v1.0.51, the exact-commit release publisher must upload them as permanent release assets and verify their 1080 × 1920 PNG dimensions and SHA-256 checksums. **Links below become available only after v1.0.51 is actually published.**
+
+<div align="center">
+<table>
+<tr><th colspan="2">Dark theme — Android emulator UI</th></tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-review.png" width="180" alt="Actual QREX review page screen, dark theme"><br><b>Review page</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-crop.png" width="180" alt="Actual QREX adjust crop screen, dark theme"><br><b>Adjust crop</b></td>
+</tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-pages.png" width="180" alt="Actual QREX manage pages screen, dark theme"><br><b>Manage pages</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-export.png" width="180" alt="Actual QREX pdf export screen, dark theme"><br><b>PDF export</b></td>
+</tr>
+<tr><th colspan="2">Light theme — Android emulator UI</th></tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-review.png" width="180" alt="Actual QREX review page screen, light theme"><br><b>Review page</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-crop.png" width="180" alt="Actual QREX adjust crop screen, light theme"><br><b>Adjust crop</b></td>
+</tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-pages.png" width="180" alt="Actual QREX manage pages screen, light theme"><br><b>Manage pages</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-export.png" width="180" alt="Actual QREX pdf export screen, light theme"><br><b>PDF export</b></td>
+</tr>
+</table>
+</div>
+
+A live-camera test on physical Android devices and a **0% pixel-difference comparison against approved flat reference PNGs** remain separate QA requirements. Documents stay local; exported PDF files are not encrypted. No user document is uploaded to the QREX server.
 
 No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating together in a compact interface designed for everyday use.
 
@@ -141,7 +169,7 @@ generate or substitute images for real UI captures.
 
 ### Explore more
 
-[Release history](docs/releases/INDEX.md) · [What's new](RELEASE_NOTES.md) · [Screenshots & release packages](https://github.com/bren-wp/QREX/releases) · [Support](https://brendigo.com)
+[Release history](docs/releases/INDEX.md) · [Document scanner guide](docs/DOCUMENT_SCANNER.md) · [What's new](RELEASE_NOTES.md) · [Screenshots & release packages](https://github.com/bren-wp/QREX/releases) · [Support](https://brendigo.com)
 
 Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3), [v1.0.4](https://github.com/bren-wp/QREX/releases/tag/v1.0.4) and [v1.0.5](https://github.com/bren-wp/QREX/releases/tag/v1.0.5) remain archived and downloadable.
 
