@@ -1,3 +1,18 @@
+## Unpublished candidate: v1.0.52 · Android versionCode 152
+
+Proposed integration of DocuScan functionality into the existing QREX document scanner.
+Adds offline PDF import from Android Storage Access Framework (up to the remaining
+eight-page session capacity), bounded PdfRenderer rasterization, atomic rejection
+of invalid/oversized PDFs, and adaptive Auto enhance with one-step Undo.
+Maintains the existing QREX UI/UX, CameraX document capture, QR code functions,
+private memory-only document workflow and 23-language localization.
+Includes Android PDF import and enhancement instrumented tests plus MIT source
+attribution: [DocuScan integration license](docs/THIRD_PARTY_DOCUSCAN.md).
+
+**Release status:** candidate only. QREX v1.0.51 remains the latest published
+release until exact-commit compilation, localization, lint, Android emulator and
+distribution gates pass and a new release is actually published.
+
 ## Published: v1.0.51 · Android versionCode 151
 
 Published from verified main commit 3cd741b46be2e0fd0ddc6d93f683da1daf88f6f0. The source revision passed native Kotlin tests, R8/Lint, locale checks, twelve real Android screenshots, eight document-editor captures and the API 26/31/34/35/36 emulator lifecycle matrix. The downloadable APK/AAB use a disposable GitHub-only signing certificate; neither is an authorized Google Play upload bundle. Assets have SHA-256 checksums.

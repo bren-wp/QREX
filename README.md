@@ -71,6 +71,9 @@ The native screens are built with Jetpack Compose; the scanner uses a live Camer
 
 ### Document Scanner — real native editor
 
+**Upcoming v1.0.52 integration (pending exact-commit CI and publication):** QREX absorbs selected DocuScan functionality inside the existing QREX document workflow. The camera and Pages screens gain **Import PDF** using Android's system document picker; imported pages can be cropped, rotated, reordered and exported alongside captured pages. The Review screen gains **Auto enhance**, an adaptive, undoable document contrast filter. Existing QREX Compose components, colors, navigation, themes, privacy defaults and eight-page cap are retained. No DocuScan-branded screens, separate application ID, OpenCV dependency or persistent document history are introduced. [Integration guide](docs/DOCUMENT_SCANNER.md) · [DocuScan upstream attribution](docs/THIRD_PARTY_DOCUSCAN.md).
+
+
 The document-scanning foundation and perspective editor from [PR #120](https://github.com/bren-wp/QREX/pull/120) and [PR #121](https://github.com/bren-wp/QREX/pull/121) are already in the **published v1.0.51** app. Open **Scan → Document scan**, capture a paper page with CameraX, or import an image with Android Photo Picker. You can choose perspective or rectangular crop, adjust all four corners, request conservative offline page-boundary suggestions, rotate, apply grayscale or black/white enhancement, undo one applied edit, and rearrange/edit/delete up to **eight pages** before exporting a portrait/landscape A4 PDF through Android's system document picker.
 
 The **v1.0.51 update in [PR #122](https://github.com/bren-wp/QREX/pull/122)** strengthens EXIF-oriented image ownership, protects CameraX background callbacks when the editor closes and adds another fallback for difficult QR gallery images. These changes are not represented as published until the release verification succeeds.

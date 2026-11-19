@@ -391,6 +391,7 @@ internal fun QREXDocumentScanScreen(
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
     val noEdgesText = tr("document_auto_not_found")
+    val pdfInvalidText = tr("document_pdf_invalid")
     // Debug-only screenshot routing: the captured PNGs remain genuine app UI
     // pixels while the fictional paper page contains no user information.
     LaunchedEffect(screenshotFixture) {
@@ -455,7 +456,7 @@ internal fun QREXDocumentScanScreen(
                             message = maxText
                         }
                     } catch (_: Exception) {
-                        message = tr("document_pdf_invalid")
+                        message = pdfInvalidText
                     } finally {
                         busy = false
                     }
