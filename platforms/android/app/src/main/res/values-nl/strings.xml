@@ -134,4 +134,7 @@
     <string name="document_move_down">Pagina omlaag</string>
     <string name="document_auto_edges">Randen voorstellen</string>
     <string name="document_auto_not_found">Geen duidelijke paginarand gevonden. Pas hoeken handmatig aan.</string>
+    <string name="document_import_pdf">PDF importeren</string>
+    <string name="document_pdf_invalid">Kan deze PDF niet importeren. Controleer het formaat en de resterende paginalimiet.</string>
+    <string name="document_auto_enhance">Automatisch verbeteren</string>
 </resources>

@@ -134,4 +134,7 @@
     <string name="document_move_down">Flytt side ned</string>
     <string name="document_auto_edges">Foreslå kanter</string>
     <string name="document_auto_not_found">Ingen tydelig sidekant funnet. Juster hjørnene manuelt.</string>
+    <string name="document_import_pdf">Importer PDF</string>
+    <string name="document_pdf_invalid">Kan ikke importere PDF-filen. Kontroller formatet og gjenværende sidegrense.</string>
+    <string name="document_auto_enhance">Forbedre automatisk</string>
 </resources>

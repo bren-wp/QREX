@@ -134,4 +134,7 @@
     <string name="document_move_down">Przesuń stronę w dół</string>
     <string name="document_auto_edges">Zaproponuj krawędzie</string>
     <string name="document_auto_not_found">Nie wykryto wyraźnych krawędzi. Dostosuj rogi ręcznie.</string>
+    <string name="document_import_pdf">Importuj PDF</string>
+    <string name="document_pdf_invalid">Nie można zaimportować pliku PDF. Sprawdź format i pozostały limit stron.</string>
+    <string name="document_auto_enhance">Ulepsz automatycznie</string>
 </resources>

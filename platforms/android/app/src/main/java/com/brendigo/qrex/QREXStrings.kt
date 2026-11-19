@@ -143,6 +143,9 @@ object QREXStrings {
         "document_move_down" -> R.string.document_move_down
         "document_auto_edges" -> R.string.document_auto_edges
         "document_auto_not_found" -> R.string.document_auto_not_found
+        "document_import_pdf" -> R.string.document_import_pdf
+        "document_pdf_invalid" -> R.string.document_pdf_invalid
+        "document_auto_enhance" -> R.string.document_auto_enhance
             else -> R.string.scan
         }
         val locale = if (code == "system") context.resources.configuration.locales[0]

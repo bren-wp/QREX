@@ -134,4 +134,7 @@
     <string name="document_move_down">Posunúť stránku dole</string>
     <string name="document_auto_edges">Navrhnúť okraje</string>
     <string name="document_auto_not_found">Nenašli sa jasné okraje. Upravte rohy ručne.</string>
+    <string name="document_import_pdf">Importovať PDF</string>
+    <string name="document_pdf_invalid">Súbor PDF nemožno importovať. Skontrolujte formát a zostávajúci limit strán.</string>
+    <string name="document_auto_enhance">Automaticky vylepšiť</string>
 </resources>

@@ -134,4 +134,7 @@
     <string name="document_move_down">Descendre la page</string>
     <string name="document_auto_edges">Suggérer les bords</string>
     <string name="document_auto_not_found">Aucun bord net détecté. Ajustez les coins manuellement.</string>
+    <string name="document_import_pdf">Importer un PDF</string>
+    <string name="document_pdf_invalid">Impossible d’importer ce PDF. Vérifiez le format et le nombre de pages restantes.</string>
+    <string name="document_auto_enhance">Amélioration automatique</string>
 </resources>

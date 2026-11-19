@@ -134,4 +134,7 @@
     <string name="document_move_down">Переместить страницу вниз</string>
     <string name="document_auto_edges">Предложить границы</string>
     <string name="document_auto_not_found">Чёткие границы не найдены. Настройте углы вручную.</string>
+    <string name="document_import_pdf">Импортировать PDF</string>
+    <string name="document_pdf_invalid">Не удалось импортировать PDF. Проверьте формат и оставшийся лимит страниц.</string>
+    <string name="document_auto_enhance">Автоулучшение</string>
 </resources>

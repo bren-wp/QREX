@@ -134,4 +134,7 @@
     <string name="document_move_down">Премести страницата надолу</string>
     <string name="document_auto_edges">Предложи краища</string>
     <string name="document_auto_not_found">Не са открити ясни граници. Настройте ъглите ръчно.</string>
+    <string name="document_import_pdf">Импортиране на PDF</string>
+    <string name="document_pdf_invalid">PDF файлът не може да бъде импортиран. Проверете формата и оставащия лимит страници.</string>
+    <string name="document_auto_enhance">Автоматично подобряване</string>
 </resources>
