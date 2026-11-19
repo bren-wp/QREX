@@ -13,16 +13,30 @@ GRADLE = ROOT / "platforms/android/app/build.gradle.kts"
 class DocumentScreenshotReleaseTests(unittest.TestCase):
     def test_editor_gallery_has_eight_disambiguated_actual_capture_links(self):
         readme = README.read_text("utf-8")
-        version = re.search(r'versionName\s*=\s*"(1\.0\.\d+)"',
-                            GRADLE.read_text("utf-8"))
-        self.assertIsNotNone(version)
+        # The README embeds proven, *published* screenshot assets.
+        # A newer Gradle candidate must not imply its future captures exist.
+        published = re.search(
+            r'Current release: v(1\.0\.\d+) \(published\)', readme
+        )
+        candidate = re.search(
+            r'versionName\s*=\s*"(1\.0\.\d+)"',
+            GRADLE.read_text("utf-8")
+        )
+        self.assertIsNotNone(published)
+        self.assertIsNotNone(candidate)
+        self.assertGreaterEqual(
+            int(candidate.group(1).split(".")[-1]),
+            int(published.group(1).split(".")[-1])
+        )
+        if candidate.group(1) != published.group(1):
+            self.assertIn("Upcoming v" + candidate.group(1), readme)
         expected = [f"document-{theme}-{screen}.png"
                     for theme in ("dark", "light")
                     for screen in ("review", "crop", "pages", "export")]
         for name in expected:
             with self.subTest(name=name):
                 self.assertEqual(1, readme.count(
-                    "/releases/download/v" + version.group(1) + "/" + name))
+                    "/releases/download/v" + published.group(1) + "/" + name))
                 self.assertIn("actual", readme.lower())
         self.assertIn("synthetic paper", readme)
         self.assertIn("0% pixel-difference", readme)
