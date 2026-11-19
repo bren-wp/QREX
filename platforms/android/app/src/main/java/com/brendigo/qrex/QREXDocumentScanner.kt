@@ -392,6 +392,8 @@ internal fun QREXDocumentScanScreen(
     val invalidCornersText = tr("document_corners_invalid")
     val noEdgesText = tr("document_auto_not_found")
     val pdfInvalidText = tr("document_pdf_invalid")
+    val pngErrorText = tr("png_save_failed")
+    val savedText = tr("saved")
     // Debug-only screenshot routing: the captured PNGs remain genuine app UI
     // pixels while the fictional paper page contains no user information.
     LaunchedEffect(screenshotFixture) {
@@ -462,6 +464,31 @@ internal fun QREXDocumentScanScreen(
                     }
                 }
             }
+        }
+    }
+    // Save only a user-selected page; no intermediate plaintext image file.
+    var pngSnapshot by remember { mutableStateOf<Bitmap?>(null) }
+    val pngExport = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("image/png")
+    ) { uri ->
+        val snapshot = pngSnapshot
+        if (uri != null && snapshot != null) {
+            busy = true
+            scope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        QREXDocumentImageExport.exportPng(context, snapshot, uri)
+                    }
+                    message = savedText
+                } catch (_: Exception) {
+                    message = pngErrorText
+                } finally {
+                    busy = false
+                    pngSnapshot = null
+                }
+            }
+        } else {
+            pngSnapshot = null
         }
     }
     // Snapshot before SAF opens; the user must explicitly approve the destination.
@@ -906,6 +933,15 @@ internal fun QREXDocumentScanScreen(
                                     Icon(Icons.Default.Delete, contentDescription = tr("delete"))
                                 }
                             }
+                            OutlinedButton(
+                                onClick = {
+                                    pngSnapshot = bitmap
+                                    pngExport.launch("QREX-page-" + (index + 1) + ".png")
+                                },
+                                enabled = !busy,
+                                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                                    .testTag("qrex-document-page-png-$index")
+                            ) { Text(tr("export_png")) }
                         }
                     }
                 }

@@ -10,7 +10,7 @@ QREX is an **offline Android** QR and document utility. CameraX and FLOSS ZXing 
 2. Review the page. Choose **Crop** for four draggable perspective corners or rectangular crop. **Auto edges** makes a conservative, local suggestion and can decline if background contrast is insufficient; you can always adjust manually.
 3. Apply crop or return to Review. Rotate by 90 degrees, enhance with **Auto enhance** (adaptive contrast), grayscale or high-contrast black/white, and use **Undo** for the immediately preceding bitmap edit. Undo does not preserve a limitless history.
 4. Accept a page. Repeat for up to **eight** pages. Re-edit, move up/down or remove pages from the Pages view.
-5. Select **Export PDF**, choose a destination through Android's system document picker, and explicitly save. The PDF retains portrait/landscape A4 orientation based on each page.
+5. Select **Export PDF**, choose a destination through Android's system document picker, and explicitly save. The PDF retains portrait/landscape A4 orientation based on each page. On the Pages screen, **Export PNG** saves an individual page using Android's file picker.
 
 ### Memory, privacy and limitations
 
