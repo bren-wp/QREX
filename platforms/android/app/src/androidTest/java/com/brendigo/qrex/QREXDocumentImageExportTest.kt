@@ -21,7 +21,8 @@ class QREXDocumentImageExportTest {
             page.eraseColor(Color.rgb(12, 34, 56))
             QREXDocumentImageExport.exportPng(context, page, Uri.fromFile(file))
             assertTrue(file.length() > 16)
-            val header = file.inputStream().use { it.readNBytes(8) }
+            val header = ByteArray(8)
+            file.inputStream().use { assertEquals(8, it.read(header)) }
             assertEquals("89504e470d0a1a0a",
                 header.joinToString("") { "%02x".format(it.toInt() and 255) })
             assertEquals(Color.rgb(12, 34, 56), page.getPixel(0, 0))
