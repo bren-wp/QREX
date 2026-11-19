@@ -105,7 +105,7 @@
         "copy_link": "Copy link",
         "no_matches": "No matching QR codes",
         "document_scan": "Scan document",
-        "document_camera_hint": "Capture a paper page or import a photo.",
+        "document_camera_hint": "Capture a paper page, import a photo or open a PDF.",
         "document_capture": "Capture page",
         "document_permission": "Allow camera access to scan documents, or import a photo.",
         "document_working": "Processing document…",
@@ -137,7 +137,10 @@
         "document_move_up": "Move page up",
         "document_move_down": "Move page down",
         "document_auto_edges": "Suggest borders",
-        "document_auto_not_found": "No clear page boundary found. Adjust corners manually."
+        "document_auto_not_found": "No clear page boundary found. Adjust corners manually.",
+        "document_import_pdf": "Import PDF",
+        "document_pdf_invalid": "Cannot import this PDF. Check the file format and remaining page limit.",
+        "document_auto_enhance": "Auto enhance"
       }
     },
     "hr": {
@@ -244,7 +247,7 @@
         "copy_link": "Kopiraj link",
         "no_matches": "Nema odgovarajućih QR kodova",
         "document_scan": "Skeniraj dokument",
-        "document_camera_hint": "Fotografirajte papirnatu stranicu ili uvezite fotografiju.",
+        "document_camera_hint": "Fotografirajte stranicu, uvezite fotografiju ili otvorite PDF.",
         "document_capture": "Fotografiraj stranicu",
         "document_permission": "Dopustite pristup kameri ili uvezite fotografiju.",
         "document_working": "Obrada dokumenta…",
@@ -276,7 +279,10 @@
         "document_move_up": "Pomakni stranicu gore",
         "document_move_down": "Pomakni stranicu dolje",
         "document_auto_edges": "Predloži rubove",
-        "document_auto_not_found": "Nisu pronađeni jasni rubovi. Ručno namjestite kutove."
+        "document_auto_not_found": "Nisu pronađeni jasni rubovi. Ručno namjestite kutove.",
+        "document_import_pdf": "Uvezi PDF",
+        "document_pdf_invalid": "Nije moguće uvesti PDF. Provjerite format i preostali broj stranica.",
+        "document_auto_enhance": "Automatski poboljšaj"
       }
     },
     "de": {
@@ -415,7 +421,10 @@
         "document_move_up": "Seite nach oben",
         "document_move_down": "Seite nach unten",
         "document_auto_edges": "Ränder vorschlagen",
-        "document_auto_not_found": "Keine klaren Seitenränder erkannt. Ecken manuell anpassen."
+        "document_auto_not_found": "Keine klaren Seitenränder erkannt. Ecken manuell anpassen.",
+        "document_import_pdf": "PDF importieren",
+        "document_pdf_invalid": "PDF kann nicht importiert werden. Dateiformat und verbleibende Seiten prüfen.",
+        "document_auto_enhance": "Automatisch verbessern"
       }
     },
     "fr": {
@@ -554,7 +563,10 @@
         "document_move_up": "Monter la page",
         "document_move_down": "Descendre la page",
         "document_auto_edges": "Suggérer les bords",
-        "document_auto_not_found": "Aucun bord net détecté. Ajustez les coins manuellement."
+        "document_auto_not_found": "Aucun bord net détecté. Ajustez les coins manuellement.",
+        "document_import_pdf": "Importer un PDF",
+        "document_pdf_invalid": "Impossible d’importer ce PDF. Vérifiez le format et le nombre de pages restantes.",
+        "document_auto_enhance": "Amélioration automatique"
       }
     },
     "es": {
@@ -693,7 +705,10 @@
         "document_move_up": "Subir página",
         "document_move_down": "Bajar página",
         "document_auto_edges": "Sugerir bordes",
-        "document_auto_not_found": "No se detectaron bordes claros. Ajusta las esquinas manualmente."
+        "document_auto_not_found": "No se detectaron bordes claros. Ajusta las esquinas manualmente.",
+        "document_import_pdf": "Importar PDF",
+        "document_pdf_invalid": "No se puede importar este PDF. Comprueba el formato y el límite de páginas restante.",
+        "document_auto_enhance": "Mejora automática"
       }
     },
     "it": {
@@ -832,7 +847,10 @@
         "document_move_up": "Sposta pagina su",
         "document_move_down": "Sposta pagina giù",
         "document_auto_edges": "Suggerisci bordi",
-        "document_auto_not_found": "Bordi non rilevati. Regola gli angoli manualmente."
+        "document_auto_not_found": "Bordi non rilevati. Regola gli angoli manualmente.",
+        "document_import_pdf": "Importa PDF",
+        "document_pdf_invalid": "Impossibile importare questo PDF. Controlla il formato e il limite di pagine rimanenti.",
+        "document_auto_enhance": "Miglioramento automatico"
       }
     },
     "pt": {
@@ -971,7 +989,10 @@
         "document_move_up": "Subir página",
         "document_move_down": "Descer página",
         "document_auto_edges": "Sugerir margens",
-        "document_auto_not_found": "Não foram detetados limites claros. Ajuste os cantos manualmente."
+        "document_auto_not_found": "Não foram detetados limites claros. Ajuste os cantos manualmente.",
+        "document_import_pdf": "Importar PDF",
+        "document_pdf_invalid": "Não foi possível importar este PDF. Verifique o formato e o limite de páginas restantes.",
+        "document_auto_enhance": "Melhorar automaticamente"
       }
     },
     "nl": {
@@ -1110,7 +1131,10 @@
         "document_move_up": "Pagina omhoog",
         "document_move_down": "Pagina omlaag",
         "document_auto_edges": "Randen voorstellen",
-        "document_auto_not_found": "Geen duidelijke paginarand gevonden. Pas hoeken handmatig aan."
+        "document_auto_not_found": "Geen duidelijke paginarand gevonden. Pas hoeken handmatig aan.",
+        "document_import_pdf": "PDF importeren",
+        "document_pdf_invalid": "Kan deze PDF niet importeren. Controleer het formaat en de resterende paginalimiet.",
+        "document_auto_enhance": "Automatisch verbeteren"
       }
     },
     "pl": {
@@ -1249,7 +1273,10 @@
         "document_move_up": "Przesuń stronę w górę",
         "document_move_down": "Przesuń stronę w dół",
         "document_auto_edges": "Zaproponuj krawędzie",
-        "document_auto_not_found": "Nie wykryto wyraźnych krawędzi. Dostosuj rogi ręcznie."
+        "document_auto_not_found": "Nie wykryto wyraźnych krawędzi. Dostosuj rogi ręcznie.",
+        "document_import_pdf": "Importuj PDF",
+        "document_pdf_invalid": "Nie można zaimportować pliku PDF. Sprawdź format i pozostały limit stron.",
+        "document_auto_enhance": "Ulepsz automatycznie"
       }
     },
     "cs": {
@@ -1388,7 +1415,10 @@
         "document_move_up": "Posunout stránku nahoru",
         "document_move_down": "Posunout stránku dolů",
         "document_auto_edges": "Navrhnout okraje",
-        "document_auto_not_found": "Nebyly nalezeny jasné okraje. Upravte rohy ručně."
+        "document_auto_not_found": "Nebyly nalezeny jasné okraje. Upravte rohy ručně.",
+        "document_import_pdf": "Importovat PDF",
+        "document_pdf_invalid": "Tento soubor PDF nelze importovat. Zkontrolujte formát a zbývající limit stránek.",
+        "document_auto_enhance": "Automaticky vylepšit"
       }
     },
     "sk": {
@@ -1527,7 +1557,10 @@
         "document_move_up": "Posunúť stránku hore",
         "document_move_down": "Posunúť stránku dole",
         "document_auto_edges": "Navrhnúť okraje",
-        "document_auto_not_found": "Nenašli sa jasné okraje. Upravte rohy ručne."
+        "document_auto_not_found": "Nenašli sa jasné okraje. Upravte rohy ručne.",
+        "document_import_pdf": "Importovať PDF",
+        "document_pdf_invalid": "Súbor PDF nemožno importovať. Skontrolujte formát a zostávajúci limit strán.",
+        "document_auto_enhance": "Automaticky vylepšiť"
       }
     },
     "sl": {
@@ -1666,7 +1699,10 @@
         "document_move_up": "Premakni stran navzgor",
         "document_move_down": "Premakni stran navzdol",
         "document_auto_edges": "Predlagaj robove",
-        "document_auto_not_found": "Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno."
+        "document_auto_not_found": "Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno.",
+        "document_import_pdf": "Uvozi PDF",
+        "document_pdf_invalid": "PDF-ja ni mogoče uvoziti. Preverite obliko in preostalo omejitev strani.",
+        "document_auto_enhance": "Samodejno izboljšaj"
       }
     },
     "hu": {
@@ -1805,7 +1841,10 @@
         "document_move_up": "Oldal feljebb",
         "document_move_down": "Oldal lejjebb",
         "document_auto_edges": "Szegélyek javaslata",
-        "document_auto_not_found": "Nem találhatók egyértelmű szélek. Állítsa be a sarkokat kézzel."
+        "document_auto_not_found": "Nem találhatók egyértelmű szélek. Állítsa be a sarkokat kézzel.",
+        "document_import_pdf": "PDF importálása",
+        "document_pdf_invalid": "A PDF nem importálható. Ellenőrizze a formátumot és a fennmaradó oldalkorlátot.",
+        "document_auto_enhance": "Automatikus javítás"
       }
     },
     "ro": {
@@ -1944,7 +1983,10 @@
         "document_move_up": "Mută pagina în sus",
         "document_move_down": "Mută pagina în jos",
         "document_auto_edges": "Sugerează marginile",
-        "document_auto_not_found": "Nu s-au găsit margini clare. Reglați colțurile manual."
+        "document_auto_not_found": "Nu s-au găsit margini clare. Reglați colțurile manual.",
+        "document_import_pdf": "Importă PDF",
+        "document_pdf_invalid": "PDF-ul nu poate fi importat. Verifică formatul și limita de pagini rămasă.",
+        "document_auto_enhance": "Îmbunătățire automată"
       }
     },
     "bg": {
@@ -2083,7 +2125,10 @@
         "document_move_up": "Премести страницата нагоре",
         "document_move_down": "Премести страницата надолу",
         "document_auto_edges": "Предложи краища",
-        "document_auto_not_found": "Не са открити ясни граници. Настройте ъглите ръчно."
+        "document_auto_not_found": "Не са открити ясни граници. Настройте ъглите ръчно.",
+        "document_import_pdf": "Импортиране на PDF",
+        "document_pdf_invalid": "PDF файлът не може да бъде импортиран. Проверете формата и оставащия лимит страници.",
+        "document_auto_enhance": "Автоматично подобряване"
       }
     },
     "el": {
@@ -2222,7 +2267,10 @@
         "document_move_up": "Μετακίνηση σελίδας πάνω",
         "document_move_down": "Μετακίνηση σελίδας κάτω",
         "document_auto_edges": "Πρόταση ορίων",
-        "document_auto_not_found": "Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες."
+        "document_auto_not_found": "Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες.",
+        "document_import_pdf": "Εισαγωγή PDF",
+        "document_pdf_invalid": "Δεν είναι δυνατή η εισαγωγή αυτού του PDF. Ελέγξτε τη μορφή και το όριο σελίδων που απομένει.",
+        "document_auto_enhance": "Αυτόματη βελτίωση"
       }
     },
     "tr": {
@@ -2361,7 +2409,10 @@
         "document_move_up": "Sayfayı yukarı taşı",
         "document_move_down": "Sayfayı aşağı taşı",
         "document_auto_edges": "Kenarları öner",
-        "document_auto_not_found": "Belirgin sayfa kenarı bulunamadı. Köşeleri elle ayarlayın."
+        "document_auto_not_found": "Belirgin sayfa kenarı bulunamadı. Köşeleri elle ayarlayın.",
+        "document_import_pdf": "PDF içe aktar",
+        "document_pdf_invalid": "PDF içe aktarılamıyor. Biçimi ve kalan sayfa sınırını kontrol edin.",
+        "document_auto_enhance": "Otomatik iyileştir"
       }
     },
     "uk": {
@@ -2500,7 +2551,10 @@
         "document_move_up": "Перемістити сторінку вгору",
         "document_move_down": "Перемістити сторінку вниз",
         "document_auto_edges": "Запропонувати межі",
-        "document_auto_not_found": "Чітких меж не знайдено. Налаштуйте кути вручну."
+        "document_auto_not_found": "Чітких меж не знайдено. Налаштуйте кути вручну.",
+        "document_import_pdf": "Імпортувати PDF",
+        "document_pdf_invalid": "Не вдається імпортувати PDF. Перевірте формат і залишковий ліміт сторінок.",
+        "document_auto_enhance": "Автоматичне покращення"
       }
     },
     "ru": {
@@ -2639,7 +2693,10 @@
         "document_move_up": "Переместить страницу вверх",
         "document_move_down": "Переместить страницу вниз",
         "document_auto_edges": "Предложить границы",
-        "document_auto_not_found": "Чёткие границы не найдены. Настройте углы вручную."
+        "document_auto_not_found": "Чёткие границы не найдены. Настройте углы вручную.",
+        "document_import_pdf": "Импортировать PDF",
+        "document_pdf_invalid": "Не удалось импортировать PDF. Проверьте формат и оставшийся лимит страниц.",
+        "document_auto_enhance": "Автоулучшение"
       }
     },
     "sv": {
@@ -2778,7 +2835,10 @@
         "document_move_up": "Flytta sidan upp",
         "document_move_down": "Flytta sidan ned",
         "document_auto_edges": "Föreslå kanter",
-        "document_auto_not_found": "Ingen tydlig sidkant hittades. Justera hörnen manuellt."
+        "document_auto_not_found": "Ingen tydlig sidkant hittades. Justera hörnen manuellt.",
+        "document_import_pdf": "Importera PDF",
+        "document_pdf_invalid": "Det går inte att importera PDF-filen. Kontrollera formatet och återstående sidgräns.",
+        "document_auto_enhance": "Förbättra automatiskt"
       }
     },
     "da": {
@@ -2917,7 +2977,10 @@
         "document_move_up": "Flyt side op",
         "document_move_down": "Flyt side ned",
         "document_auto_edges": "Foreslå kanter",
-        "document_auto_not_found": "Ingen tydelig sidekant fundet. Juster hjørnerne manuelt."
+        "document_auto_not_found": "Ingen tydelig sidekant fundet. Juster hjørnerne manuelt.",
+        "document_import_pdf": "Importér PDF",
+        "document_pdf_invalid": "PDF-filen kan ikke importeres. Kontrollér formatet og den resterende sidegrænse.",
+        "document_auto_enhance": "Automatisk forbedring"
       }
     },
     "fi": {
@@ -3056,7 +3119,10 @@
         "document_move_up": "Siirrä sivua ylös",
         "document_move_down": "Siirrä sivua alas",
         "document_auto_edges": "Ehdota reunoja",
-        "document_auto_not_found": "Selkeitä sivun reunoja ei löytynyt. Säädä kulmat käsin."
+        "document_auto_not_found": "Selkeitä sivun reunoja ei löytynyt. Säädä kulmat käsin.",
+        "document_import_pdf": "Tuo PDF",
+        "document_pdf_invalid": "PDF-tiedostoa ei voi tuoda. Tarkista tiedostomuoto ja jäljellä oleva sivuraja.",
+        "document_auto_enhance": "Paranna automaattisesti"
       }
     },
     "nb": {
@@ -3195,7 +3261,10 @@
         "document_move_up": "Flytt side opp",
         "document_move_down": "Flytt side ned",
         "document_auto_edges": "Foreslå kanter",
-        "document_auto_not_found": "Ingen tydelig sidekant funnet. Juster hjørnene manuelt."
+        "document_auto_not_found": "Ingen tydelig sidekant funnet. Juster hjørnene manuelt.",
+        "document_import_pdf": "Importer PDF",
+        "document_pdf_invalid": "Kan ikke importere PDF-filen. Kontroller formatet og gjenværende sidegrense.",
+        "document_auto_enhance": "Forbedre automatisk"
       }
     }
   }

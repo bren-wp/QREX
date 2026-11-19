@@ -134,4 +134,7 @@
     <string name="document_move_down">Перемістити сторінку вниз</string>
     <string name="document_auto_edges">Запропонувати межі</string>
     <string name="document_auto_not_found">Чітких меж не знайдено. Налаштуйте кути вручну.</string>
+    <string name="document_import_pdf">Імпортувати PDF</string>
+    <string name="document_pdf_invalid">Не вдається імпортувати PDF. Перевірте формат і залишковий ліміт сторінок.</string>
+    <string name="document_auto_enhance">Автоматичне покращення</string>
 </resources>

@@ -134,4 +134,7 @@
     <string name="document_move_down">Premakni stran navzdol</string>
     <string name="document_auto_edges">Predlagaj robove</string>
     <string name="document_auto_not_found">Jasnih robov ni bilo mogoče zaznati. Kote nastavite ročno.</string>
+    <string name="document_import_pdf">Uvozi PDF</string>
+    <string name="document_pdf_invalid">PDF-ja ni mogoče uvoziti. Preverite obliko in preostalo omejitev strani.</string>
+    <string name="document_auto_enhance">Samodejno izboljšaj</string>
 </resources>

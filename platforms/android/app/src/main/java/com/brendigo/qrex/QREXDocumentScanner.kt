@@ -126,6 +126,14 @@ internal class QREXDocumentSession : ViewModel() {
         previousPending = null
         return true
     }
+    /** Import a PDF atomically: never partially replace an existing scan session. */
+    fun appendImportedPages(imported: List<Bitmap>): Boolean {
+        if (imported.isEmpty() || imported.any { it.isRecycled ||
+                it.width.toLong() * it.height > QREX_DOCUMENT_MAX_PIXELS } ||
+            pages.size + imported.size > QREX_DOCUMENT_MAX_PAGES) return false
+        pages.addAll(imported)
+        return true
+    }
     fun replace(index: Int, bitmap: Bitmap) {
         if (index in pages.indices) pages[index] = bitmap
     }
@@ -383,6 +391,9 @@ internal fun QREXDocumentScanScreen(
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
     val noEdgesText = tr("document_auto_not_found")
+    val pdfInvalidText = tr("document_pdf_invalid")
+    val pngErrorText = tr("png_save_failed")
+    val savedText = tr("saved")
     // Debug-only screenshot routing: the captured PNGs remain genuine app UI
     // pixels while the fictional paper page contains no user information.
     LaunchedEffect(screenshotFixture) {
@@ -418,6 +429,66 @@ internal fun QREXDocumentScanScreen(
                     busy = false
                 }
             }
+        }
+    }
+    // Import directly from Android's document provider without copying the PDF
+    // into app storage. Keep the session's existing pages on invalid input.
+    val pdfPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            val room = QREX_DOCUMENT_MAX_PAGES - session.pages.size
+            if (busy || room <= 0) {
+                message = maxText
+            } else {
+                busy = true
+                scope.launch {
+                    try {
+                        val imported = withContext(Dispatchers.IO) {
+                            QREXDocumentPdfImport.render(context, uri, room)
+                        }
+                        if (session.appendImportedPages(imported)) {
+                            session.updatePending(null)
+                            editingIndex = -1
+                            cropCorners = defaultCorners
+                            exportedUri = null
+                            screen = "pages"
+                        } else {
+                            imported.forEach { if (!it.isRecycled) it.recycle() }
+                            message = maxText
+                        }
+                    } catch (_: Exception) {
+                        message = pdfInvalidText
+                    } finally {
+                        busy = false
+                    }
+                }
+            }
+        }
+    }
+    // Save only a user-selected page; no intermediate plaintext image file.
+    var pngSnapshot by remember { mutableStateOf<Bitmap?>(null) }
+    val pngExport = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("image/png")
+    ) { uri ->
+        val snapshot = pngSnapshot
+        if (uri != null && snapshot != null) {
+            busy = true
+            scope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        QREXDocumentImageExport.exportPng(context, snapshot, uri)
+                    }
+                    message = savedText
+                } catch (_: Exception) {
+                    message = pngErrorText
+                } finally {
+                    busy = false
+                    pngSnapshot = null
+                }
+            }
+        } else {
+            pngSnapshot = null
         }
     }
     // Snapshot before SAF opens; the user must explicitly approve the destination.
@@ -577,6 +648,16 @@ internal fun QREXDocumentScanScreen(
                     Spacer(Modifier.width(8.dp))
                     Text(tr("from_gallery"))
                 }
+                OutlinedButton(
+                    onClick = { pdfPicker.launch(arrayOf("application/pdf")) },
+                    enabled = !busy && session.pages.size < QREX_DOCUMENT_MAX_PAGES,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                        .testTag("qrex-document-import-pdf")
+                ) {
+                    Icon(Icons.Default.DocumentScanner, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(tr("document_import_pdf"))
+                }
                 if (session.pages.isNotEmpty()) {
                     Button(onClick = { screen = "pages" },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
@@ -713,6 +794,12 @@ internal fun QREXDocumentScanScreen(
                                 }
                             }
                         }
+                        OutlinedButton(
+                            onClick = { applyEnhancement(QREXDocumentFilter.AUTO) },
+                            enabled = !busy,
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                                .testTag("qrex-document-auto-enhance")
+                        ) { Text(tr("document_auto_enhance")) }
                         Row(Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(
@@ -846,12 +933,29 @@ internal fun QREXDocumentScanScreen(
                                     Icon(Icons.Default.Delete, contentDescription = tr("delete"))
                                 }
                             }
+                            OutlinedButton(
+                                onClick = {
+                                    pngSnapshot = bitmap
+                                    pngExport.launch("QREX-page-" + (index + 1) + ".png")
+                                },
+                                enabled = !busy,
+                                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                                    .testTag("qrex-document-page-png-$index")
+                            ) { Text(tr("export_png")) }
                         }
                     }
                 }
                 OutlinedButton(onClick = { screen = "camera" },
-                    enabled = session.pages.size < QREX_DOCUMENT_MAX_PAGES,
-                    modifier = Modifier.fillMaxWidth()) { Text(tr("document_add_page")) }
+                    enabled = !busy && session.pages.size < QREX_DOCUMENT_MAX_PAGES,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(tr("document_add_page"))
+                }
+                OutlinedButton(
+                    onClick = { pdfPicker.launch(arrayOf("application/pdf")) },
+                    enabled = !busy && session.pages.size < QREX_DOCUMENT_MAX_PAGES,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                        .testTag("qrex-document-pages-import-pdf")
+                ) { Text(tr("document_import_pdf")) }
                 Button(onClick = { screen = "export" },
                     enabled = session.pages.isNotEmpty(), modifier = Modifier.fillMaxWidth()) {
                     Text(tr("document_export"))

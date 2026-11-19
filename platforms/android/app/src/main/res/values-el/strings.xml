@@ -134,4 +134,7 @@
     <string name="document_move_down">Μετακίνηση σελίδας κάτω</string>
     <string name="document_auto_edges">Πρόταση ορίων</string>
     <string name="document_auto_not_found">Δεν βρέθηκαν σαφή όρια. Ρυθμίστε χειροκίνητα τις γωνίες.</string>
+    <string name="document_import_pdf">Εισαγωγή PDF</string>
+    <string name="document_pdf_invalid">Δεν είναι δυνατή η εισαγωγή αυτού του PDF. Ελέγξτε τη μορφή και το όριο σελίδων που απομένει.</string>
+    <string name="document_auto_enhance">Αυτόματη βελτίωση</string>
 </resources>

@@ -361,19 +361,25 @@ class ReleaseIntegrityTests(unittest.TestCase):
         # Resolve the newest *published* version from the README rather than
         # freezing this regression gate at a previous GitHub release.
         latest = re.search(
-            r"Latest published release: \*\*\[v(?P<version>[0-9]+[.][0-9]+[.][0-9]+)\].*?"
-            r"versionCode (?P<code>[0-9]+)", readme,
+            r"Latest published release: \*\*\[v(?P<version>[0-9]+[.][0-9]+[.][0-9]+)\]",
+            readme,
         )
-        self.assertIsNotNone(latest, "Missing published version and build code")
-        version, build_code = latest.group("version", "code")
+        self.assertIsNotNone(latest, "README must link the published version")
+        version = latest.group("version")
+        # Verify the Android build code in release notes, while keeping the
+        # customer-facing README focused on actual app functionality.
+        release_metadata = re.search(
+            rf"(?m)^## Published: v{re.escape(version)} · Android versionCode (?P<code>[0-9]+)",
+            notes,
+        )
+        self.assertIsNotNone(release_metadata, "Release notes must record the published build")
+        build_code = release_metadata.group("code")
         current_build = re.search(r"versionCode\s*=\s*([0-9]+)", gradle)
         self.assertIsNotNone(current_build)
         self.assertLessEqual(int(build_code), int(current_build.group(1)))
         self.assertIn(f"releases/tag/v{version}", readme)
         self.assertIn(f"| {version} | [v{version}]", archive)
-        self.assertIn(
-            f"## Published: v{version} · Android versionCode {build_code}", notes
-        )
+        
         screenshot_source = re.search(
             r"Last complete screenshot release: v([0-9]+\.[0-9]+\.[0-9]+)", readme
         )

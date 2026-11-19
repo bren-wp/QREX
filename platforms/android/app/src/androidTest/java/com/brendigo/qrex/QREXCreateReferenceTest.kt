@@ -47,18 +47,19 @@ class QREXCreateReferenceTest {
      * to stop occluding the TextField before evaluating the clear icon.
      * Dedicated test names keep the public P03 report privacy-safe but precise.
      */
-    private fun prepareClearUrlTouchTarget() {
+    private fun prepareClearUrlTouchTarget(finishIme: Boolean = true) {
         await("qrex-tab-1")
         rule.onNodeWithTag("qrex-tab-1").performClick()
         await("qrex-create-content")
         val input = rule.onNodeWithTag("qrex-create-content", useUnmergedTree = true)
         input.performTextReplacement("https://brendigo.com")
-        input.performImeAction()
-        // An absent inset snapshot does not prove the IME is hidden.
-        // API 26 may deliver its first insets after Compose has gone idle.
-        rule.waitUntil(timeoutMillis = 15_000L) {
-            val insets = ViewCompat.getRootWindowInsets(rule.activity.window.decorView)
-            insets != null && !insets.isVisible(WindowInsetsCompat.Type.ime())
+        if (finishIme) {
+            input.performImeAction()
+            // Wait for the native keyboard to finish its dismissal.
+            rule.waitUntil(timeoutMillis = 15_000L) {
+                val insets = ViewCompat.getRootWindowInsets(rule.activity.window.decorView)
+                insets != null && !insets.isVisible(WindowInsetsCompat.Type.ime())
+            }
         }
         rule.waitForIdle()
         await("qrex-create-clear-url")
@@ -73,7 +74,11 @@ class QREXCreateReferenceTest {
     }
 
     @Test fun urlClearGlyphHasAtLeast48DpWidth() {
-        prepareClearUrlTouchTarget()
+        // API 36 sometimes rejects a synthetic IME Done while the keyboard
+        // animates. Width is a property of the real IconButton, not of IME
+        // dismissal; other tests cover the actual Done interaction.
+        // Measure the real tap target without conflating those transitions.
+        prepareClearUrlTouchTarget(finishIme = false)
         val hit = rule.onNodeWithTag(
             "qrex-create-clear-url", useUnmergedTree = true
         ).getUnclippedBoundsInRoot()

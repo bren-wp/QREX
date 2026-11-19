@@ -134,4 +134,7 @@
     <string name="document_move_down">Mută pagina în jos</string>
     <string name="document_auto_edges">Sugerează marginile</string>
     <string name="document_auto_not_found">Nu s-au găsit margini clare. Reglați colțurile manual.</string>
+    <string name="document_import_pdf">Importă PDF</string>
+    <string name="document_pdf_invalid">PDF-ul nu poate fi importat. Verifică formatul și limita de pagini rămasă.</string>
+    <string name="document_auto_enhance">Îmbunătățire automată</string>
 </resources>

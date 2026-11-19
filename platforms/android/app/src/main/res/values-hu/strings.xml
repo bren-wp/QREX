@@ -134,4 +134,7 @@
     <string name="document_move_down">Oldal lejjebb</string>
     <string name="document_auto_edges">Szegélyek javaslata</string>
     <string name="document_auto_not_found">Nem találhatók egyértelmű szélek. Állítsa be a sarkokat kézzel.</string>
+    <string name="document_import_pdf">PDF importálása</string>
+    <string name="document_pdf_invalid">A PDF nem importálható. Ellenőrizze a formátumot és a fennmaradó oldalkorlátot.</string>
+    <string name="document_auto_enhance">Automatikus javítás</string>
 </resources>

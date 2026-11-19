@@ -134,4 +134,7 @@
     <string name="document_move_down">Descer página</string>
     <string name="document_auto_edges">Sugerir margens</string>
     <string name="document_auto_not_found">Não foram detetados limites claros. Ajuste os cantos manualmente.</string>
+    <string name="document_import_pdf">Importar PDF</string>
+    <string name="document_pdf_invalid">Não foi possível importar este PDF. Verifique o formato e o limite de páginas restantes.</string>
+    <string name="document_auto_enhance">Melhorar automaticamente</string>
 </resources>

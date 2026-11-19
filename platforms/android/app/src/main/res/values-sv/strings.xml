@@ -134,4 +134,7 @@
     <string name="document_move_down">Flytta sidan ned</string>
     <string name="document_auto_edges">Föreslå kanter</string>
     <string name="document_auto_not_found">Ingen tydlig sidkant hittades. Justera hörnen manuellt.</string>
+    <string name="document_import_pdf">Importera PDF</string>
+    <string name="document_pdf_invalid">Det går inte att importera PDF-filen. Kontrollera formatet och återstående sidgräns.</string>
+    <string name="document_auto_enhance">Förbättra automatiskt</string>
 </resources>

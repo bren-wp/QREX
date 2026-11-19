@@ -101,7 +101,7 @@
     <string name="copy_link">Kopiraj link</string>
     <string name="no_matches">Nema odgovarajućih QR kodova</string>
     <string name="document_scan">Skeniraj dokument</string>
-    <string name="document_camera_hint">Fotografirajte papirnatu stranicu ili uvezite fotografiju.</string>
+    <string name="document_camera_hint">Fotografirajte stranicu, uvezite fotografiju ili otvorite PDF.</string>
     <string name="document_capture">Fotografiraj stranicu</string>
     <string name="document_permission">Dopustite pristup kameri ili uvezite fotografiju.</string>
     <string name="document_working">Obrada dokumenta…</string>
@@ -134,4 +134,7 @@
     <string name="document_move_down">Pomakni stranicu dolje</string>
     <string name="document_auto_edges">Predloži rubove</string>
     <string name="document_auto_not_found">Nisu pronađeni jasni rubovi. Ručno namjestite kutove.</string>
+    <string name="document_import_pdf">Uvezi PDF</string>
+    <string name="document_pdf_invalid">Nije moguće uvesti PDF. Provjerite format i preostali broj stranica.</string>
+    <string name="document_auto_enhance">Automatski poboljšaj</string>
 </resources>
