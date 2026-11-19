@@ -1,193 +1,155 @@
 <div align="center">
 
-<img src="assets/brand/qrex-logo.svg" alt="QREX — Scan. Create. Share." width="380">
+<img src="assets/brand/qrex-logo.svg" width="380" alt="QREX — Scan. Create. Share.">
 
 # Scan. Create. Share.
 
-**One privacy-first place for every QR code.**
+### Your everyday QR code and document scanner — in one beautifully simple app.
 
-Scan a code in seconds, create your own, and keep the ones that matter — all on your Android device.
+**Scan QR codes. Capture documents. Create PDFs. All from your phone.**
 
-**📷 Instant scanning &nbsp;·&nbsp; ✨ QR creation &nbsp;·&nbsp; 🔐 Local-first privacy**
+📷 **QR & document scanning** &nbsp; · &nbsp; ✨ **Smart editing** &nbsp; · &nbsp; 🔒 **Privacy first**
 
-**Free · Offline · No ads · No account**
+**Free · Offline · No ads · No account required**
 
-<a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Get QREX on Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play — QREX for Android" height="64"></a>
+<a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Get QREX on Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-[See the real app](#see-qrex-in-action) · [Features](#everything-you-need) · [Privacy](#privacy-comes-first) · [Download](#get-qrex)
+[Explore QREX](#everything-you-need) · [View screenshots](#see-qrex-in-action) · [Download](#get-qrex)
 
 </div>
 
 ---
 
+## One app. More possibilities.
 
-## See QREX in action
+Whether you're sharing a link, connecting to Wi-Fi or turning paper into a clear PDF, QREX keeps the entire experience fast and easy. No sign-ups, unnecessary steps or cluttered screens.
 
-**Real Android interface. Real scanner. Real QR results.** Browse the app's everyday workflow below, from scanning and creating codes to saving favorites and tailoring settings.
-
-**These are real QREX screens, not AI illustrations or phone mockups.** The complete gallery below contains twelve authentic captures from the published **v1.0.51** Android emulator run, including the scanner, QR generator, history, settings, and privacy dialogs. All full-resolution PNG files are available with the [verified release](https://github.com/bren-wp/QREX/releases/tag/v1.0.51).
-
-<div align="center">
-
-<table>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-scan.png" width="180" alt="Actual QREX scanner screen"><br><b>Scan QR</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-create.png" width="180" alt="Actual QREX Create screen"><br><b>Create QR</b></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-result.png" width="180" alt="Actual QREX QR result screen"><br><b>Review results</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-history.png" width="180" alt="Actual QREX History screen with demo records"><br><b>History</b></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-saved.png" width="180" alt="Actual QREX saved QR history filter"><br><b>Saved codes</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-wifi.png" width="180" alt="Actual QREX Wi-Fi QR creation screen with demo SSID"><br><b>Wi-Fi QR</b></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-more.png" width="180" alt="Actual QREX settings and export screen"><br><b>Settings</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-export.png" width="180" alt="Actual QREX PDF export page"><br><b>PDF export</b></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-language.png" width="180" alt="Actual QREX Language settings with offline language selection"><br><b>Language</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-about.png" width="180" alt="Actual QREX About dialog"><br><b>About</b></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-privacy.png" width="180" alt="Actual QREX Privacy dialog"><br><b>Privacy</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-splash.png" width="180" alt="Actual QREX dark splash screen"><br><b>Dark splash</b></td>
-</tr>
-</table>
-
-[**See all twelve original v1.0.51 screenshots**](https://github.com/bren-wp/QREX/releases/tag/v1.0.51)
-
-</div>
-
-
-### What you see is what ships
-
-The native screens are built with Jetpack Compose; the scanner uses a live CameraX preview rather than a static sample image. The published v1.0.51 capture set is the source of the gallery above. The six illustrated phone-frame design references are **visual targets**, not pixel-aligned device captures; exact 0% pixel mismatch has **not** been independently verified.
-
-**Current release: v1.0.51 (published).** It includes further refinements to Splash, Scanner, Result, Create, History and More. All twelve captures come from the published v1.0.51 release. [Inspect the actual release artifacts](https://github.com/bren-wp/QREX/releases/tag/v1.0.51).
+| 📱 Scan & create QR codes | 📄 Scan & edit documents | 🔐 Keep control |
+|:--|:--|:--|
+| Read codes instantly, create your own and keep favorites close. | Capture paper, adjust corners, improve readability and save to PDF. | Work locally, choose what to save and share files only when you decide. |
 
 ## Everything you need
 
-### Document Scanner — real native editor
+### 📷 QR Scanner & Creator
 
-**Upcoming v1.0.52 integration (pending exact-commit CI and publication):** QREX absorbs selected DocuScan functionality inside the existing QREX document workflow. The camera and Pages screens gain **Import PDF** using Android's system document picker; imported pages can be cropped, rotated, reordered and exported alongside captured pages. The Review screen gains **Auto enhance**, an adaptive, undoable document contrast filter. The Pages screen also supports explicit **Export PNG** for an individual document page without creating hidden copies. Existing QREX Compose components, colors, navigation, themes, privacy defaults and eight-page cap are retained. No DocuScan-branded screens, separate application ID, OpenCV dependency or persistent document history are introduced. [Integration guide](docs/DOCUMENT_SCANNER.md) · [DocuScan upstream attribution](docs/THIRD_PARTY_DOCUSCAN.md).
+Point the camera at a code or pick an image from your gallery. QREX makes it simple to review the result, copy or share it, save favorites, and create your own codes for links, Wi-Fi, text, contact details, events and more.
 
+- **Instant QR scanning** — live camera and gallery import
+- **Quick QR creation** — useful code types for everyday sharing
+- **Saved codes and history** — the important things stay within reach
+- **Thoughtful safety** — review links before opening them
 
-The document-scanning foundation and perspective editor from [PR #120](https://github.com/bren-wp/QREX/pull/120) and [PR #121](https://github.com/bren-wp/QREX/pull/121) are already in the **published v1.0.51** app. Open **Scan → Document scan**, capture a paper page with CameraX, or import an image with Android Photo Picker. You can choose perspective or rectangular crop, adjust all four corners, request conservative offline page-boundary suggestions, rotate, apply grayscale or black/white enhancement, undo one applied edit, and rearrange/edit/delete up to **eight pages** before exporting a portrait/landscape A4 PDF through Android's system document picker.
+### 📄 Document Scanner & PDF Studio
 
-The **v1.0.51 update in [PR #122](https://github.com/bren-wp/QREX/pull/122)** strengthens EXIF-oriented image ownership, protects CameraX background callbacks when the editor closes and adds another fallback for difficult QR gallery images. These changes are not represented as published until the release verification succeeds.
+Turn your phone into a practical pocket document scanner. Capture a receipt, a letter or multiple pages, then make every page look clean and easy to read — using the familiar QREX interface.
 
-[Document-scanner guide](docs/DOCUMENT_SCANNER.md) · [v1.0.51 release notes](docs/releases/v1.0.51.md) · [Latest verified release](https://github.com/bren-wp/QREX/releases)
+- **Capture or import** — photograph documents, choose an image or open an existing PDF
+- **Smart crop** — automatic border suggestions and manual four-corner adjustment
+- **Perspective correction** — straighten paper captured at an angle
+- **Improve readability** — Auto enhance, grayscale and black-and-white filters
+- **Organize pages** — rotate, reorder, edit or remove pages; combine up to eight
+- **Export & share** — make a multipage PDF or save individual pages as PNG
 
-#### Real document editor screenshots
+No separate document app to learn. Open **Scan → Document scan** to get started.
 
-These **eight screenshots are captured from the running native Compose app**, using synthetic paper content in debug mode to avoid exposing personal documents. They show Review, Crop, Pages and Export in **dark and light** themes. They are **not AI-generated images or screenshots of a marketing mockup**. For v1.0.51, the exact-commit release publisher must upload them as permanent release assets and verify their 1080 × 1920 PNG dimensions and SHA-256 checksums. **Links below become available only after v1.0.51 is actually published.**
+### 🌙 Designed to feel right
+
+Enjoy a clean layout, accessible controls, dark and light themes, and an experience that's designed around the task — not a maze of menus. QREX is available in **23 languages**.
+
+## See QREX in action
+
+These are screenshots of the actual QREX Android interface.
 
 <div align="center">
+
 <table>
-<tr><th colspan="2">Dark theme — Android emulator UI</th></tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-review.png" width="180" alt="Actual QREX review page screen, dark theme"><br><b>Review page</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-crop.png" width="180" alt="Actual QREX adjust crop screen, dark theme"><br><b>Adjust crop</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-scan.png" width="176" alt="Actual QREX Scan instantly screen"><p><strong>Scan instantly</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-create.png" width="176" alt="Actual QREX Create your QR screen"><p><strong>Create your QR</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-result.png" width="176" alt="Actual QREX Smart results screen"><p><strong>Smart results</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-history.png" width="176" alt="Actual QREX Your scans screen"><p><strong>Your scans</strong></p></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-pages.png" width="180" alt="Actual QREX manage pages screen, dark theme"><br><b>Manage pages</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-export.png" width="180" alt="Actual QREX pdf export screen, dark theme"><br><b>PDF export</b></td>
-</tr>
-<tr><th colspan="2">Light theme — Android emulator UI</th></tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-review.png" width="180" alt="Actual QREX review page screen, light theme"><br><b>Review page</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-crop.png" width="180" alt="Actual QREX adjust crop screen, light theme"><br><b>Adjust crop</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-saved.png" width="176" alt="Actual QREX Favorites screen"><p><strong>Favorites</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-wifi.png" width="176" alt="Actual QREX Wi-Fi codes screen"><p><strong>Wi-Fi codes</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-more.png" width="176" alt="Actual QREX More tools screen"><p><strong>More tools</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-export.png" width="176" alt="Actual QREX Export screen"><p><strong>Export</strong></p></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-pages.png" width="180" alt="Actual QREX manage pages screen, light theme"><br><b>Manage pages</b></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-export.png" width="180" alt="Actual QREX pdf export screen, light theme"><br><b>PDF export</b></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-language.png" width="176" alt="Actual QREX Languages screen"><p><strong>Languages</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-about.png" width="176" alt="Actual QREX About QREX screen"><p><strong>About QREX</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-privacy.png" width="176" alt="Actual QREX Privacy screen"><p><strong>Privacy</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/android-splash.png" width="176" alt="Actual QREX QREX launch screen"><p><strong>QREX launch</strong></p></td>
 </tr>
 </table>
+
 </div>
 
-A live-camera test on physical Android devices and a **0% pixel-difference comparison against approved flat reference PNGs** remain separate QA requirements. Documents stay local; exported PDF files are not encrypted. No user document is uploaded to the QREX server.
+### Document scanning, your way
 
-No sign-up, no ads, no extra steps. QREX brings scanning, sharing and creating together in a compact interface designed for everyday use.
+From page review and precision cropping to document organization and PDF export.
 
-| | Feature |
-|:--|:--|
-| 📷 **Scan from camera or photos** | Point your camera at a QR code or select an image from Android's system photo picker. |
-| ✨ **Create QR codes** | Make QR codes for links, text, Wi-Fi, contact details, email, phone numbers, places and calendar events. |
-| 🔎 **Review before opening** | Choose whether to open a scanned website. No automatic URL opening. |
-| 🔖 **History & saved codes** | Browse, search, save and remove locally stored QR codes; get a clear, localized empty state when your search finds no matching entries. |
-| 🔐 **Private QR history** | All local QR history entries, including URLs, notes, contacts and manually saved Wi-Fi codes, are encrypted with Android Keystore-backed AES-GCM. Wi-Fi credentials are not recorded automatically. |
-| 📄 **Save and export** | Export individual PNG images or your manually saved QR collection as an unencrypted PDF. |
-| 🌍 **23 languages** | Including English and Croatian, all without an online translation service. |
-| 🌗 **Make it yours** | A consistent midnight-blue appearance, accessible controls and responsive layouts. |
+<div align="center">
 
-### A simpler QR workflow
+<table>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-review.png" width="176" alt="Actual QREX dark Review screen"><p><strong>Review · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-crop.png" width="176" alt="Actual QREX dark Crop screen"><p><strong>Crop · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-pages.png" width="176" alt="Actual QREX dark Pages screen"><p><strong>Pages · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-dark-export.png" width="176" alt="Actual QREX dark Export screen"><p><strong>Export · Dark</strong></p></td>
+</tr>
+<tr>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-review.png" width="176" alt="Actual QREX light Review screen"><p><strong>Review · Light</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-crop.png" width="176" alt="Actual QREX light Crop screen"><p><strong>Crop · Light</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-pages.png" width="176" alt="Actual QREX light Pages screen"><p><strong>Pages · Light</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.51/document-light-export.png" width="176" alt="Actual QREX light Export screen"><p><strong>Export · Light</strong></p></td>
+</tr>
+</table>
 
-Whether it is a website, Wi-Fi network, event or contact, each QR code follows the same simple flow: scan or create, review, then choose what to do next.
+</div>
 
-| 01 · **Scan** | 02 · **Review** | 03 · **Keep or share** |
-|:--|:--|:--|
-| Point the camera at a code or choose a picture from your gallery. | Check the content before opening a link or using QR data. | Copy, share, save a favorite or create your own QR code. |
+Screens shown are from the published QREX release. Discover the latest app screens and downloads in [GitHub Releases](https://github.com/bren-wp/QREX/releases).
 
 ## Privacy comes first
 
-QREX scans and generates QR codes **on your phone**, without a developer cloud account, advertising, analytics or a required Internet connection. Camera access is requested only for camera scanning; you can choose a gallery image without granting camera permission.
+Your QR scans and document edits are processed on your device. QREX does not require an account or add advertisements. You choose when to save, export or share.
 
-QREX asks before sharing or exporting Wi-Fi credentials. All locally persisted QR history payloads use AES-GCM encryption backed by Android Keystore, including older plaintext entries migrated on-device. Android clipboard previews are suppressed for QR content. The QR details you explicitly open, copy, share or export remain readable to you and to the application you choose.
+- **Offline by design** — scanning and document editing don't require a cloud service.
+- **In your hands** — control what stays in history and what gets exported.
+- **Share intentionally** — export files only to a destination you select.
 
-**Exported PDF documents are not encrypted.** Protect those files when they include private information.
-
-[Privacy Policy](docs/PRIVACY.md) · [Terms of Use](docs/TERMS.md) · [Support](https://brendigo.com)
+PDF files you export are not automatically encrypted. Keep sensitive documents in a trusted location.
 
 ## Get QREX
 
-**Android 8.0+ (API 26)** · Package `com.brendigo.qrex` · Created by **Brendigo**
+Download QREX for Android or explore the latest published GitHub release.
 
-Install from Google Play, or inspect the published GitHub assets and SHA-256 checksums. GitHub CI builds are independently signed for distribution and **not** suitable for updating a Google Play installation.
+<div align="center">
 
-<a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Install QREX from Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
+<a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Get QREX on Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-Latest published release: **[v1.0.51](https://github.com/bren-wp/QREX/releases/tag/v1.0.51)** (`com.brendigo.qrex`, versionCode 151).
+**Latest published release: [v1.0.51](https://github.com/bren-wp/QREX/releases/tag/v1.0.51)**
 
-**Latest published version: QREX v1.0.51 (Android build 151).** This release includes the six-screen alignment for Splash, Scanner, Result, Create, History and More, plus genuine emulator captures from the same published release. The 12 PNG files above are actual emulator screenshots, not promotional renders; pixel-perfect equality with framed mockups remains unverified. [Release notes](docs/releases/v1.0.51.md).
+[**Download QREX for Android**](https://github.com/bren-wp/QREX/releases/tag/v1.0.51) · [All releases](https://github.com/bren-wp/QREX/releases)
 
-[**Download verified v1.0.51 APK / AAB and 12 screenshots**](https://github.com/bren-wp/QREX/releases/tag/v1.0.51) · [**Browse all releases**](https://github.com/bren-wp/QREX/releases)
+</div>
 
-**App identity:** `com.brendigo.qrex` · `versionName 1.0.51` · `versionCode 151` · Android 8.0+ (API 26). The release provides `QREX-Android-1.0.51.apk`, `QREX-Android-1.0.51.aab`, `QREX-Android-1.0.51-Play-UNSIGNED-QA.aab`, `SHA256SUMS.txt` and 12 actual screenshots.
+### A few good things to know
 
-**Important update warning:** GitHub APK versions use *different disposable signing certificates*. They **cannot update prior GitHub or Google Play installations in place**. Uninstalling may erase local history, favorites and Keystore-protected QR information; back up anything important first. Google Play updates require the original approved upload identity.
+QREX works on **Android 8.0 and newer**. The public GitHub app downloads use a different signing identity from Google Play, so a GitHub download cannot replace an existing Google Play installation in place. Before changing installation channels, preserve anything important from your saved data.
 
-**Google Play:** [Signing and submission guidance](docs/PLAY_STORE_SUBMISSION.md). Do not upload the public GitHub AAB as a Play update.
-
-### Screen-by-screen quality evidence
-
-The native design is verified using actual Android screenshots: twelve
-standard screenshots and a thirteenth Terms dialog capture, plus responsive
-phone, large-font, landscape and tablet profiles. CI publishes SHA-256 and
-viewport measurements for each screen state. The supplied original phone
-mockups are perspective/framed artwork, **not** identical-resolution flat
-baselines, so zero-pixel (1:1) equivalence remains unverified. We do not
-generate or substitute images for real UI captures.
-
-### Explore more
-
-[Release history](docs/releases/INDEX.md) · [Document scanner guide](docs/DOCUMENT_SCANNER.md) · [What's new](RELEASE_NOTES.md) · [Screenshots & release packages](https://github.com/bren-wp/QREX/releases) · [Support](https://brendigo.com)
-
-Earlier versions [v1.0.0](https://github.com/bren-wp/QREX/releases/tag/v1.0.0), [v1.0.1](https://github.com/bren-wp/QREX/releases/tag/v1.0.1), [v1.0.2](https://github.com/bren-wp/QREX/releases/tag/v1.0.2), [v1.0.3](https://github.com/bren-wp/QREX/releases/tag/v1.0.3), [v1.0.4](https://github.com/bren-wp/QREX/releases/tag/v1.0.4) and [v1.0.5](https://github.com/bren-wp/QREX/releases/tag/v1.0.5) remain archived and downloadable.
+For details, visit the [Privacy Policy](docs/PRIVACY.md) or [Help & Support](https://brendigo.com).
 
 ---
 
 <div align="center">
 
-<img src="assets/brand/qrex-icon.svg" alt="QREX by Brendigo" width="85">
+<img src="assets/brand/qrex-icon.svg" width="78" alt="QREX icon">
 
-**QREX — Scan. Create. Share.**
+**QREX by [Brendigo](https://brendigo.com)**
 
-Created by [Brendigo](https://brendigo.com) · [Open-source license](LICENSE)
+*Scan. Create. Share.*
 
+<sub>Latest published version: QREX v1.0.51 · Last complete screenshot release: v1.0.51 · Current release: v1.0.51 (published).</sub>
 
 </div>
-
-
-**Last complete screenshot release: v1.0.51.** All twelve screenshots above come from that published Android emulator release. No generated images are presented as real app screens.

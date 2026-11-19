@@ -34,7 +34,7 @@ The [README](../README.md) embeds **12 genuine main-screen emulator captures** f
 
 The GitHub publisher must verify APK/AAB signatures, SHA256 checksums, real image files, Kotlin/R8/Lint, 23-language localization and the API 26/31/34/35/36 emulator matrix. An existing Google Play installation cannot be upgraded with the **disposable GitHub signing key**.
 
-**Visual limits:** 1080 × 1920 screenshots, responsive emulators and instrumented tests are not a mathematical proof of 1:1 parity with perspective-framed marketing art or proof of physical-camera functionality on all OEM devices. Exact comparison requires original flat PNGs with matching device dimensions and font scale.
+**Visual limits:** A 0% pixel-difference claim requires matching unframed visual baselines and identical device configuration. 1080 × 1920 screenshots, responsive emulators and instrumented tests are not a mathematical proof of 1:1 parity with perspective-framed marketing art or proof of physical-camera functionality on all OEM devices. Exact comparison requires original flat PNGs with matching device dimensions and font scale.
 
 ## Troubleshooting
 
