@@ -128,7 +128,7 @@ Download QREX for Android or explore the latest published GitHub release.
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Get QREX on Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-**Latest published release: [v1.0.51](https://github.com/bren-wp/QREX/releases/tag/v1.0.51)**
+Latest published release: **[v1.0.51](https://github.com/bren-wp/QREX/releases/tag/v1.0.51)**
 
 [**Download QREX for Android**](https://github.com/bren-wp/QREX/releases/tag/v1.0.51) · [All releases](https://github.com/bren-wp/QREX/releases)
 
