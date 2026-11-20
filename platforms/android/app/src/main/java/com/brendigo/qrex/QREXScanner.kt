@@ -29,6 +29,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
@@ -494,7 +495,22 @@ fun ScanScreen(onMore: () -> Unit = {}, onDocumentScan: () -> Unit = {}, onRead:
     ) {
         val cameraPanel = if (scrollHome) previewModifier
             else previewModifier.weight(1f)
-        QrexBrandHeader(onMore = onMore, onDocumentScan = onDocumentScan)
+        QrexBrandHeader(onMore = onMore)
+        Button(
+            onClick = onDocumentScan,
+            modifier = Modifier.fillMaxWidth()
+                .heightIn(min = 56.dp)
+                .testTag("qrex-document-entry"),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = QrexDesign.actionBlue,
+                contentColor = Color.White
+            )
+        ) {
+            Icon(Icons.Default.Description, contentDescription = null)
+            Spacer(Modifier.width(10.dp))
+            Text(tr("document_scan"), maxLines = 2, fontSize = 15.sp)
+        }
         Spacer(Modifier.height(if (compactScan) 4.dp else 8.dp))
         if (allowed) {
             val preview = remember { PreviewView(context) }

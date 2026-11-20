@@ -21,8 +21,8 @@ android {
         applicationId = "com.brendigo.qrex"
         minSdk = 26
         targetSdk = 36
-        versionCode = 152
-        versionName = "1.0.52"
+        versionCode = 153
+        versionName = "1.0.53"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {

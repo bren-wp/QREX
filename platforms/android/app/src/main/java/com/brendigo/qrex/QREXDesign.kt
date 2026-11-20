@@ -124,8 +124,7 @@ internal fun QrexBrandMark(
 @Composable
 internal fun QrexBrandHeader(
     modifier: Modifier = Modifier,
-    onMore: () -> Unit = {},
-    onDocumentScan: (() -> Unit)? = null
+    onMore: () -> Unit = {}
 ) {
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -140,19 +139,6 @@ internal fun QrexBrandHeader(
                     color = QrexDesign.accentBright)
             }
             Spacer(Modifier.weight(1f))
-            // Expose document scanning without reducing the scanner viewport.
-            // The 48dp icon button remains reachable on API 35+ edge-to-edge
-            // windows and provides a localized TalkBack action.
-            if (onDocumentScan != null) {
-                IconButton(
-                    onClick = onDocumentScan,
-                    modifier = Modifier.size(48.dp).testTag("qrex-document-entry")
-                ) {
-                    Icon(Icons.Default.Description,
-                        contentDescription = tr("document_scan"),
-                        tint = MaterialTheme.colorScheme.primary)
-                }
-            }
             Icon(Icons.Default.Shield, contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(19.dp))
             IconButton(onClick = onMore, modifier = Modifier.size(48.dp)) {
