@@ -11,7 +11,7 @@ CAPTURE = ROOT / ".github/workflows/capture-screenshots.yml"
 GRADLE = ROOT / "platforms/android/app/build.gradle.kts"
 
 class DocumentScreenshotReleaseTests(unittest.TestCase):
-    def test_editor_gallery_has_eight_disambiguated_actual_capture_links(self):
+    def test_editor_gallery_has_four_dark_actual_capture_links(self):
         readme = README.read_text("utf-8")
         # The README embeds proven, *published* screenshot assets.
         # A newer Gradle candidate must not imply its future captures exist.
@@ -33,7 +33,7 @@ class DocumentScreenshotReleaseTests(unittest.TestCase):
             self.assertTrue(release_notes.is_file(),
                             "A new release candidate needs release notes")
         expected = [f"document-{theme}-{screen}.png"
-                    for theme in ("dark", "light")
+                    for theme in ("dark",)
                     for screen in ("review", "crop", "pages", "export")]
         for name in expected:
             with self.subTest(name=name):
@@ -56,7 +56,7 @@ class DocumentScreenshotReleaseTests(unittest.TestCase):
         self.assertIn('assert {shot.name for shot in documents} == expected', publisher)
         self.assertIn("production/document-*.png", publisher)
         self.assertIn("document-*.png > SHA256SUMS.txt", publisher)
-        self.assertIn('(.assets | length) == 24', publisher)
+        self.assertIn('(.assets | length) == 20', publisher)
         self.assertIn("sha256sum --check SHA256SUMS.txt", publisher)
 
 if __name__ == "__main__":

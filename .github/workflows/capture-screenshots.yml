@@ -108,9 +108,9 @@ jobs:
           for image in Path("docs/screenshots").glob("android-*.png"):
               assert verify(image) == (1080, 1920), f"Google Play screenshot has invalid dimensions: {image}"
           PY
-      - name: Verify all eight actual document editor screenshots
+      - name: Verify all four actual dark document editor screenshots
         run: |
-          for theme in dark light; do
+          for theme in dark; do
             for screen in review crop pages export; do
               test -s "docs/screenshots/document/${theme}-${screen}.png"
             done
@@ -125,9 +125,6 @@ jobs:
           done
           for screen in scan create result history saved more language export about privacy terms; do
             test -s "docs/screenshots/responsive/largefont-${screen}.png"
-          done
-          for screen in create scan more about privacy terms; do
-            test -s "docs/screenshots/responsive/light-${screen}.png"
           done
           for profile in tiny tablet; do
             for screen in create result history saved more language export terms; do

@@ -38,16 +38,15 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("alwaysShowLabel = true", self.main)
         self.assertIn("fontSize = if (compactNavigation) 10.sp else 11.sp", self.main)
 
-    def test_system_dark_light_palette_and_pdf_export(self):
-        self.assertIn("if (darkUi) darkColorScheme(", self.main)
-        self.assertIn("else lightColorScheme(", self.main)
-        self.assertIn('"system" -> isSystemInDarkTheme()', self.main)
-        self.assertIn('store.themeMode', self.main)
-        self.assertIn('testTag("qrex-more-theme")', self.main)
+    def test_dark_only_palette_and_pdf_export(self):
+        self.assertIn("val colors = darkColorScheme(", self.main)
+        self.assertNotIn("lightColorScheme(", self.main)
+        self.assertNotIn("themeMode", self.main)
+        self.assertNotIn("showTheme", self.main)
         self.assertIn('testTag("qrex-more-settings-stack")', self.main)
         self.assertNotIn("useCompactMoreList(", self.main)
         self.assertIn('testTag("qrex-more-settings-stack")', self.main)
-        self.assertIn('testTag("qrex-theme-dialog")', self.main)
+        self.assertNotIn('testTag("qrex-theme-dialog")', self.main)
         self.assertNotIn("updateLightMode(", self.main)
         self.assertNotIn("updateLightMode(", self.core)
         self.assertNotIn("exportSavedPdfZip(", self.main)
@@ -55,17 +54,15 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertNotIn('CreateDocument("application/zip")', self.main)
         self.assertIn("QrexDesign.backgroundDeep", self.main)
         self.assertIn("onSurfaceVariant = QrexDesign.muted", self.main)
-        self.assertIn("QrexBrandHeader(onMore = onMore, onDocumentScan = onDocumentScan)", self.scanner)
+        self.assertIn("QrexBrandHeader(onMore = onMore)", self.scanner)
 
-    def test_document_scanner_header_entry_retains_preview_space(self):
-        # The document route must not add a full-height row above CameraX.
-        # Keep the QR camera controls in view on Android API 35/36 devices.
+    def test_document_scanner_has_prominent_accessible_entry(self):
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
-        self.assertIn("QrexBrandHeader(onMore = onMore, onDocumentScan = onDocumentScan)", self.scanner)
-        self.assertNotIn('OutlinedButton(\n            onClick = onDocumentScan', self.scanner)
-        self.assertIn("if (onDocumentScan != null)", design)
-        self.assertIn('Modifier.size(48.dp).testTag("qrex-document-entry")', design)
-        self.assertIn('contentDescription = tr("document_scan")', design)
+        self.assertIn("QrexBrandHeader(onMore = onMore)", self.scanner)
+        self.assertIn('testTag("qrex-document-entry")', self.scanner)
+        self.assertIn('Text(tr("document_scan")', self.scanner)
+        self.assertIn("heightIn(min = 56.dp)", self.scanner)
+        self.assertNotIn('testTag("qrex-document-entry")', design)
 
     def test_reference_splash_tagline_and_android_26_window_theme(self):
         splash = (NATIVE / "QREXSplash.kt").read_text("utf-8")
@@ -109,11 +106,11 @@ class UXDeadCodeRegressionTests(unittest.TestCase):
         self.assertIn("val referenceButtonBrush = Brush.verticalGradient(", design)
 
     def test_reference_dark_navigation_and_result_hierarchy(self):
-        self.assertIn("val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue", self.main)
+        self.assertIn("val selectedNavigationColor = QrexDesign.cyan", self.main)
         self.assertIn('testTag("qrex-bottom-navigation")', self.main)
-        self.assertIn("containerColor = if (darkUi) QrexDesign.backgroundDeep", self.main)
-        self.assertIn("HorizontalDivider(color = if (darkUi)", self.main)
-        self.assertIn("indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer", self.main)
+        self.assertIn("containerColor = QrexDesign.backgroundDeep", self.main)
+        self.assertIn("HorizontalDivider(color = QrexDesign.stroke,", self.main)
+        self.assertIn("indicatorColor = Color.Transparent", self.main)
         self.assertIn("textAlign = TextAlign.Center, fontWeight = FontWeight.ExtraBold", self.main)
         design = (NATIVE / "QREXDesign.kt").read_text("utf-8")
         self.assertIn("modifier = modifier.fillMaxWidth().heightIn(", design)

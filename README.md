@@ -26,7 +26,7 @@ Whether you're sharing a link, connecting to Wi-Fi or turning paper into a clear
 
 | 📱 Scan & create QR codes | 📄 Scan & edit documents | 🔐 Keep control |
 |:--|:--|:--|
-| Read codes instantly, create your own and keep favorites close. | Capture paper, adjust corners, improve readability and save to PDF. | Work locally, choose what to save and share files only when you decide. |
+| Read codes instantly, create your own and keep favorites close. | Capture paper, adjust the suggested crop immediately, then save to PDF. | Work locally, choose what to save and share files only when you decide. |
 
 ## Everything you need
 
@@ -44,17 +44,17 @@ Point the camera at a code or pick an image from your gallery. QREX makes it sim
 Turn your phone into a practical pocket document scanner. Capture a receipt, a letter or multiple pages, then make every page look clean and easy to read — using the familiar QREX interface.
 
 - **Capture or import** — photograph documents, choose an image or open an existing PDF
-- **Smart crop** — automatic border suggestions and manual four-corner adjustment
+- **Immediate crop** — open the crop editor automatically after each photo or image import; adjust suggested page edges by hand
 - **Perspective correction** — straighten paper captured at an angle
 - **Improve readability** — Auto enhance, grayscale and black-and-white filters
 - **Organize pages** — rotate, reorder, edit or remove pages; combine up to eight
 - **Export & share** — make a multipage PDF or save individual pages as PNG
 
-No separate document app to learn. Open **Scan → Document scan** to get started.
+No separate document app to learn. Tap the prominent **Document scan** button on **Scan**; each new page goes straight to cropping and then Pages.
 
 ### 🌙 Designed to feel right
 
-Enjoy a clean layout, accessible controls, dark and light themes, and an experience that's designed around the task — not a maze of menus. QREX is available in **23 languages**.
+Enjoy a consistent and accessible **dark-only** interface, with fewer steps between capturing, cropping and PDF export. QREX is available in **23 languages**.
 
 ## See QREX in action
 
@@ -87,7 +87,7 @@ These are screenshots of the actual QREX Android interface.
 
 ### Document scanning, your way
 
-From page review and precision cropping to document organization and PDF export.
+From immediate precision cropping to document organization and PDF export.
 
 <div align="center">
 
@@ -97,12 +97,6 @@ From page review and precision cropping to document organization and PDF export.
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-crop.png" width="176" alt="Actual QREX dark Crop screen"><p><strong>Crop · Dark</strong></p></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-pages.png" width="176" alt="Actual QREX dark Pages screen"><p><strong>Pages · Dark</strong></p></td>
 <td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-export.png" width="176" alt="Actual QREX dark Export screen"><p><strong>Export · Dark</strong></p></td>
-</tr>
-<tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-light-review.png" width="176" alt="Actual QREX light Review screen"><p><strong>Review · Light</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-light-crop.png" width="176" alt="Actual QREX light Crop screen"><p><strong>Crop · Light</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-light-pages.png" width="176" alt="Actual QREX light Pages screen"><p><strong>Pages · Light</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-light-export.png" width="176" alt="Actual QREX light Export screen"><p><strong>Export · Light</strong></p></td>
 </tr>
 </table>
 

@@ -18,13 +18,13 @@ class QREXMoreAboutTest {
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun darkReferenceMoreUsesSixFunctionalTilesInResponsiveRows() {
+    fun darkReferenceMoreUsesFiveFunctionalTilesInResponsiveRows() {
         rule.waitUntil(timeoutMillis = 15_000L) {
             rule.onAllNodesWithTag("qrex-tab-4", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
         rule.onNodeWithTag("qrex-tab-4").performClick()
-        val tags = listOf("qrex-more-theme", "qrex-more-language",
+        val tags = listOf("qrex-more-language",
             "qrex-more-export", "qrex-more-privacy",
             "qrex-more-terms", "qrex-more-about")
         val config = rule.activity.resources.configuration
@@ -43,7 +43,7 @@ class QREXMoreAboutTest {
         val second = rule.onNodeWithTag(tags[1], useUnmergedTree = true)
             .performScrollTo().getUnclippedBoundsInRoot()
         if (columns == 2) {
-            assertTrue("theme and language are in the same reference row",
+            assertTrue("language and export are in the same reference row",
                 kotlin.math.abs((first.top - second.top).value) <= 2f)
             assertTrue("reference pair has distinct non-overlapping columns",
                 first.right <= second.left)
@@ -61,7 +61,7 @@ class QREXMoreAboutTest {
         }
         rule.onNodeWithTag("qrex-tab-4").performClick()
         rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
-        // Seven cards intentionally scroll above persistent bottom navigation.
+        // Six cards remain reachable above persistent bottom navigation.
         rule.onNodeWithTag("qrex-more-delete", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
     }

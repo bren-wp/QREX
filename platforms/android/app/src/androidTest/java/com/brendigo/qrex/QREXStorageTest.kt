@@ -23,7 +23,6 @@ private fun QREXStore.clearAll(): Boolean {
     if (!legacyCleared || !preferencesCleared) return false
     resetDelegate("historyEnabled", true)
     resetDelegate("language", "system")
-    resetDelegate("themeMode", "dark")
     return true
 }
 
@@ -57,12 +56,11 @@ class QREXStorageTest {
         assertFalse(restarted.historyEnabled)
         assertTrue(restarted.updateHistoryEnabled(true))
         assertTrue(restarted.updateLanguage("system"))
-        assertTrue(restarted.updateThemeMode("light"))
-        assertEquals("light", QREXStore(context).themeMode)
-        assertTrue(restarted.updateThemeMode("system"))
-        assertEquals("system", QREXStore(context).themeMode)
-        assertTrue(restarted.updateThemeMode("dark"))
-        assertEquals("dark", QREXStore(context).themeMode)
+        // Legacy preference must never reenable the removed light mode.
+        val preferences = context.getSharedPreferences("qrex.user", 0)
+        assertTrue(preferences.edit().putString("themeMode", "light").commit())
+        assertTrue(QREXStore(context).historyEnabled)
+        assertEquals("system", QREXStore(context).language)
         assertTrue(restarted.clearAll())
     }
 

@@ -23,7 +23,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.background
@@ -179,14 +178,7 @@ class MainActivity : ComponentActivity() {
         val screenshotLanguage = if (isDebug && screenshotMode != null)
             intent.getStringExtra("qrex_language")?.takeIf { it in QREXStrings.languages }
         else null
-        // UI screenshot-only override: never accepted in release builds or
-        // normal user sessions, and never written to persisted settings.
-        val screenshotTheme = if (isDebug && screenshotMode != null)
-            (intent.getStringExtra("qrex_theme")?.takeIf {
-                it in setOf("dark", "light")
-            } ?: "dark")
-        else null
-        setContent { QREXApp(store, screenshotMode, screenshotLanguage, screenshotTheme) }
+        setContent { QREXApp(store, screenshotMode, screenshotLanguage) }
     }
 }
 
@@ -194,8 +186,7 @@ class MainActivity : ComponentActivity() {
 private fun QREXApp(
     store: QREXStore,
     screenshotMode: String? = null,
-    screenshotLanguage: String? = null,
-    screenshotTheme: String? = null
+    screenshotLanguage: String? = null
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -270,31 +261,19 @@ private fun QREXApp(
     }
     // Result back navigation is handled once inside the visible Scaffold.
     // A second handler here would shadow its focus and QR-preview cleanup.
-    val darkUi = when (screenshotTheme ?: store.themeMode) {
-        "light" -> false
-        "system" -> isSystemInDarkTheme()
-        else -> true
-    }
-    val colors = if (darkUi) darkColorScheme(
+    val colors = darkColorScheme(
         primary = QrexDesign.accentBright, secondary = purple,
         background = midnight, surface = card, surfaceVariant = QrexDesign.surfaceRaised,
         onSurface = white, onBackground = white,
         onSurfaceVariant = QrexDesign.muted, outlineVariant = QrexDesign.stroke,
         error = QrexDesign.danger, primaryContainer = QrexDesign.surfaceRaised
-    ) else lightColorScheme(
-        primary = QrexDesign.actionBlue, secondary = QrexDesign.purple,
-        background = Color(0xFFF7FAFF), surface = Color.White,
-        surfaceVariant = Color(0xFFEAF1FB),
-        onSurface = Color(0xFF091A32), onBackground = Color(0xFF091A32),
-        onSurfaceVariant = Color(0xFF52647D), outlineVariant = Color(0xFFD5E1F0),
-        error = Color(0xFFBC2941), primaryContainer = Color(0xFFE7F0FF)
     )
     val hostActivity = context as? ComponentActivity
     SideEffect {
         hostActivity?.let { activity ->
             WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
-                isAppearanceLightStatusBars = !darkUi
-                isAppearanceLightNavigationBars = !darkUi
+                isAppearanceLightStatusBars = false
+                isAppearanceLightNavigationBars = false
             }
         }
     }
@@ -323,17 +302,16 @@ private fun QREXApp(
             // All six supplied reference screens, including Result, retain
             // the same five native destinations. Never overlay the Result body.
             Column(Modifier.fillMaxWidth()) {
-                HorizontalDivider(color = if (darkUi) QrexDesign.stroke else colors.outlineVariant,
+                HorizontalDivider(color = QrexDesign.stroke,
                     thickness = 1.dp)
                 NavigationBar(
                     modifier = Modifier.fillMaxWidth().testTag("qrex-bottom-navigation"),
-                    containerColor = if (darkUi) QrexDesign.backgroundDeep else Color(0xFFF0F5FD),
+                    containerColor = QrexDesign.backgroundDeep,
                     tonalElevation = 0.dp
                 ) {
                 pages.forEachIndexed { index, label ->
                     val target = navTargets[index]
-                    val selectedNavigationColor = if (!darkUi) QrexDesign.actionBlue
-                        else QrexDesign.cyan
+                    val selectedNavigationColor = QrexDesign.cyan
                     NavigationBarItem(modifier = Modifier.testTag("qrex-tab-$index"),
                         selected = selected == target,
                         onClick = {
@@ -367,14 +345,13 @@ private fun QREXApp(
                             selectedTextColor = selectedNavigationColor,
                             unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = if (darkUi) Color.Transparent else colors.primaryContainer))
+                            indicatorColor = Color.Transparent))
                 }
                 }
             } // Divider and five-tab navigation on main and Result destinations
             }
         }) { padding ->
-            Box(Modifier.fillMaxSize().background(if (darkUi) QrexDesign.heroBrush else
-                androidx.compose.ui.graphics.Brush.verticalGradient(listOf(Color(0xFFF7FAFF), Color.White)))
+            Box(Modifier.fillMaxSize().background(QrexDesign.heroBrush)
                 .padding(padding)) {
                 if (documentMode) {
                     QREXDocumentScanScreen(
@@ -429,7 +406,6 @@ private fun QREXApp(
                         else -> MoreScreen(store,
                             initialDetailPage = if (screenshotMode == "language" ||
                                 screenshotMode == "export") screenshotMode else "root",
-                            isDarkAppearance = darkUi,
                             initialShowAbout = screenshotMode == "about",
                             initialShowPrivacy = screenshotMode == "privacy",
                             initialShowTerms = screenshotMode == "terms")
@@ -2200,12 +2176,11 @@ private fun HistoryScreen(
     }
 }
 
-/** Settings always uses one accessible full-width card per action, in both themes. */
+/** Settings uses a single coherent production dark theme. */
 @Composable
 private fun MoreScreen(
     store: QREXStore,
     initialDetailPage: String = "root",
-    isDarkAppearance: Boolean = true,
     initialShowAbout: Boolean = false,
     initialShowPrivacy: Boolean = false,
     initialShowTerms: Boolean = false
@@ -2213,7 +2188,6 @@ private fun MoreScreen(
     val context = LocalContext.current
     val operationFailed = tr("operation_failed")
     var showDelete by remember { mutableStateOf(false) }
-    var showTheme by remember { mutableStateOf(false) }
     // The real privacy dialog can be captured in debug-only screenshot mode.
     var showPrivacy by remember(initialShowPrivacy) { mutableStateOf(initialShowPrivacy) }
     var showTerms by remember(initialShowTerms) { mutableStateOf(initialShowTerms) }
@@ -2241,7 +2215,7 @@ private fun MoreScreen(
             }
         }
     }
-    // The supplied light reference has separate Language and Export screens,
+    // Language and Export retain distinct accessible screens,
     // not oversized dropdown menus. Preserve this local, nonsensitive page
     // over configuration recreation, without touching QR history.
     var detailPage by rememberSaveable(initialDetailPage) {
@@ -2262,11 +2236,6 @@ private fun MoreScreen(
         }.getOrNull()
         val version = info?.versionName.orEmpty()
         if (version.isBlank()) "QREX" else "QREX v$version"
-    }
-    val themeTitle = when (store.themeMode) {
-        "system" -> tr("theme_system")
-        "light" -> tr("theme_light")
-        else -> tr("theme_dark")
     }
     when (detailPage) {
     "language" -> QrexLanguageDetails(store, onBack = { detailPage = "root" })
@@ -2299,12 +2268,6 @@ private fun MoreScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                QrexSettingsListRow(tr("theme"), Icons.Default.Brightness6,
-                    subtitle = themeTitle, onClick = { showTheme = true },
-                    modifier = Modifier.weight(1f).testTag("qrex-more-theme"),
-                    tileMode = moreTiles,
-                    accentOverride = if (isDarkAppearance) QrexDesign.accentBright
-                        else MaterialTheme.colorScheme.primary)
                 QrexSettingsListRow(tr("language"), Icons.Default.Language,
                     subtitle = languageName, onClick = { detailPage = "language" },
                     modifier = Modifier.weight(1f).testTag("qrex-more-language"),
@@ -2323,8 +2286,7 @@ private fun MoreScreen(
                     onClick = { showTerms = true },
                     modifier = Modifier.weight(1f).testTag("qrex-more-terms"),
                     tileMode = moreTiles,
-                    accentOverride = if (isDarkAppearance) QrexDesign.accentBright
-                        else MaterialTheme.colorScheme.primary)
+                    accentOverride = QrexDesign.accentBright)
                 QrexSettingsListRow(tr("about"), Icons.Default.Info,
                     subtitle = currentVersionLabel, onClick = { showAbout = true },
                     modifier = Modifier.weight(1f).testTag("qrex-more-about"),
@@ -2340,48 +2302,6 @@ private fun MoreScreen(
         }
         Spacer(Modifier.height(4.dp))
     }
-    }
-    if (showTheme) {
-        AlertDialog(
-            onDismissRequest = { showTheme = false },
-            modifier = Modifier.testTag("qrex-theme-dialog"),
-            title = { Text(tr("theme")) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    listOf("system", "dark", "light").forEach { mode ->
-                        val label = when (mode) {
-                            "system" -> tr("theme_system")
-                            "light" -> tr("theme_light")
-                            else -> tr("theme_dark")
-                        }
-                        Surface(
-                            onClick = {
-                                if (store.updateThemeMode(mode)) showTheme = false
-                                else Toast.makeText(context, operationFailed, Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)
-                                .testTag("qrex-theme-choice-$mode")
-                                .semantics { selected = store.themeMode == mode },
-                            color = MaterialTheme.colorScheme.surface
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 8.dp)) {
-                                RadioButton(selected = store.themeMode == mode, onClick = null)
-                                Spacer(Modifier.width(8.dp))
-                                Text(label, color = MaterialTheme.colorScheme.onSurface)
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { showTheme = false },
-                    modifier = Modifier.heightIn(min = 48.dp)
-                        .testTag("qrex-theme-close")
-                ) { Text(tr("close")) }
-            }
-        )
     }
     if (showAbout) {
         val versionName = remember(context) {

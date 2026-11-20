@@ -63,7 +63,7 @@ class ResultNavigationReferenceTest(unittest.TestCase):
         self.assertIn("QrexNavigationGlyph(", self.main)
         self.assertIn("selected = selected == target", self.main)
         self.assertIn("onClick = {\n                            focusManager.clearFocus()", self.main)
-        self.assertIn("HorizontalDivider(color = if (darkUi)", self.main)
+        self.assertIn("HorizontalDivider(color = QrexDesign.stroke,", self.main)
         self.assertIn("NavigationBarItem(", self.main)
         self.assertIn("if (selected)", self.design)
         self.assertIn("if (icon == Icons.Default.QrCodeScanner)", self.design)

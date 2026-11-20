@@ -1,5 +1,6 @@
 package com.brendigo.qrex
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
@@ -37,28 +38,17 @@ class QREXMoreRootTest {
         assertTrue("$tag must be 48dp high", bounds.bottom - bounds.top >= 48.dp)
     }
 
-    @Test fun themeDialogShowsActualSelectedModeAndClosesWithoutSaving() {
-        val initial = QREXStore(rule.activity.applicationContext).themeMode
+    @Test fun darkOnlyMoreDoesNotExposeThemeSelector() {
         openMore()
-        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true)
-            .performScrollTo().performClick()
-        await("qrex-theme-dialog")
-        for (mode in listOf("system", "dark", "light")) {
-            assertTarget("qrex-theme-choice-$mode")
-        }
-        rule.onNodeWithTag("qrex-theme-choice-$initial", useUnmergedTree = true)
-            .assertIsSelected()
-        assertTarget("qrex-theme-close")
-        rule.onNodeWithTag("qrex-theme-close", useUnmergedTree = true)
-            .performClick()
-        rule.onNodeWithTag("qrex-more-screen").assertIsDisplayed()
-        assertTrue("Dismissing theme must not change preference",
-            QREXStore(rule.activity.applicationContext).themeMode == initial)
+        rule.onAllNodesWithTag("qrex-more-theme", useUnmergedTree = true)
+            .assertCountEquals(0)
+        rule.onAllNodesWithTag("qrex-theme-dialog", useUnmergedTree = true)
+            .assertCountEquals(0)
     }
 
     @Test fun referenceAboutTileOpensRealInstalledVersionWithoutChangingSettings() {
         val settings = QREXStore(rule.activity.applicationContext)
-        val before = settings.themeMode to settings.language
+        val before = settings.language
         openMore()
         val about = rule.onNodeWithTag("qrex-more-about", useUnmergedTree = true)
             .performScrollTo().assertIsDisplayed()
@@ -78,10 +68,8 @@ class QREXMoreRootTest {
             version == "v$installed")
         rule.onNodeWithTag("qrex-about-close", useUnmergedTree = true)
             .performClick()
-        assertTrue("Opening About must not modify theme or language",
-            QREXStore(rule.activity.applicationContext).let {
-                it.themeMode to it.language
-            } == before)
+        assertTrue("Opening About must not modify language",
+            QREXStore(rule.activity.applicationContext).language == before)
     }
 
     @Test fun clearHistoryDialogCancelDoesNotDeleteAnyRecords() {

@@ -59,7 +59,9 @@ jobs:
                   "android-splash.png", "android-create.png", "android-scan.png",
                   "android-wifi.png", "android-result.png", "android-history.png",
                   "android-saved.png", "android-more.png", "android-language.png",
-                  "android-export.png", "android-about.png", "android-privacy.png"] | sort)
+                  "android-export.png", "android-about.png", "android-privacy.png",
+                  "document-dark-review.png", "document-dark-crop.png",
+                  "document-dark-pages.png", "document-dark-export.png"] | sort)
               and all(.assets[]; .size > 0)' > /dev/null
           previous="$(grep -m1 'Latest published release:' README.md | grep -oE 'v1[.]0[.][0-9]+' | head -1 | cut -c2-)"
           [[ "$previous" =~ ^1[.]0[.][0-9]+$ ]]
