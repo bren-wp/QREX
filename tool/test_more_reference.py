@@ -18,15 +18,14 @@ class MoreReferenceTests(unittest.TestCase):
         cls.main = MAIN.read_text("utf-8")
         cls.design = DESIGN.read_text("utf-8")
         cls.more = cls.main.split("private fun MoreScreen(", 1)[1].split(
-            "    if (showTheme) {", 1
+            "    if (showAbout) {", 1
         )[0]
         cls.cards = cls.design.split("internal fun QrexSettingsListRow(", 1)[1].split(
             "/** Window-class layout rules", 1
         )[0]
 
-    def test_all_seven_cards_have_unique_real_callbacks(self):
+    def test_all_six_cards_have_unique_real_callbacks(self):
         mapping = (
-            ("theme", "Brightness6", "showTheme = true"),
             ("language", "Language", 'detailPage = "language"'),
             ("export", "Download", 'detailPage = "export"'),
             ("privacy", "Lock", "showPrivacy = true"),
@@ -34,7 +33,7 @@ class MoreReferenceTests(unittest.TestCase):
             ("about", "Info", "showAbout = true"),
             ("delete", "DeleteForever", "showDelete = true"),
         )
-        self.assertEqual(self.more.count("QrexSettingsListRow("), 7)
+        self.assertEqual(self.more.count("QrexSettingsListRow("), 6)
         for tag, icon, callback in mapping:
             with self.subTest(card=tag):
                 self.assertEqual(
@@ -43,7 +42,7 @@ class MoreReferenceTests(unittest.TestCase):
                 self.assertIn(f"Icons.Default.{icon}", self.more)
                 self.assertIn(callback, self.more)
 
-    def test_reference_six_tiles_and_safe_accessible_fallback(self):
+    def test_reference_five_tiles_and_safe_accessible_fallback(self):
         self.assertIn('testTag("qrex-more-settings-stack")', self.more)
         self.assertIn('testTag("qrex-more-reference-grid")', self.more)
         self.assertIn("FlowRow(", self.more)
@@ -51,8 +50,8 @@ class MoreReferenceTests(unittest.TestCase):
         self.assertIn("horizontalArrangement = Arrangement.spacedBy(10.dp)", self.more)
         self.assertIn("qrexMoreTileColumns(", self.more)
         self.assertIn("tileMode = moreTiles", self.more)
-        self.assertEqual(self.more.count("tileMode = moreTiles"), 6)
-        self.assertEqual(self.more.count("Modifier.weight(1f).testTag"), 6)
+        self.assertEqual(self.more.count("tileMode = moreTiles"), 5)
+        self.assertEqual(self.more.count("Modifier.weight(1f).testTag"), 5)
         self.assertIn("if (tileMode) 104.dp", self.cards)
         self.assertIn("verticalArrangement = Arrangement.spacedBy(4.dp)", self.cards)
         self.assertIn("widthDp < 360 || heightDp < 500 || fontScale >= 1.30f", self.cards)
