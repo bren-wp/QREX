@@ -390,10 +390,30 @@ internal fun QREXDocumentScanScreen(
     val errorText = tr("document_error")
     val maxText = tr("document_limit")
     val invalidCornersText = tr("document_corners_invalid")
-    val noEdgesText = tr("document_auto_not_found")
     val pdfInvalidText = tr("document_pdf_invalid")
     val pngErrorText = tr("png_save_failed")
     val savedText = tr("saved")
+    // Every newly captured or imported page opens the crop editor directly.
+    // Suggest borders in the background, never block the UI or overwrite a
+    // user's manual drag after the pending page's revision changes.
+    val openCropFor: (Bitmap) -> Unit = { page ->
+        session.updatePending(page)
+        editingIndex = -1
+        rectangleCrop = false
+        cropCorners = defaultCorners
+        screen = "crop"
+        val revision = session.revision
+        scope.launch {
+            val suggestion = runCatching {
+                withContext(Dispatchers.Default) { qrexDocumentSuggestEdges(page) }
+            }.getOrNull()
+            if (suggestion != null && session.revision == revision &&
+                session.pending === page && screen == "crop" &&
+                cropCorners == defaultCorners) {
+                cropCorners = suggestion
+            }
+        }
+    }
     // Debug-only screenshot routing: the captured PNGs remain genuine app UI
     // pixels while the fictional paper page contains no user information.
     LaunchedEffect(screenshotFixture) {
@@ -421,10 +441,7 @@ internal fun QREXDocumentScanScreen(
                             QREXDocumentProcessing.readFromPicker(context, uri)
                         }
                     }.onSuccess {
-                        session.updatePending(it)
-                        editingIndex = -1
-                        cropCorners = defaultCorners
-                        screen = "review"
+                        openCropFor(it)
                     }.onFailure { message = errorText }
                     busy = false
                 }
@@ -528,7 +545,12 @@ internal fun QREXDocumentScanScreen(
         if (busy) Unit
         else when (screen) {
             "camera" -> exit()
-            "crop" -> screen = "review" // Never discard an accepted crop by Back.
+            "crop" -> {
+                // Cancel a new crop without introducing an unnecessary Review step.
+                session.updatePending(null)
+                if (editingIndex >= 0) screen = "pages" else screen = "camera"
+                editingIndex = -1
+            }
             "review" -> {
                 session.updatePending(null)
                 if (editingIndex >= 0) screen = "pages" else screen = "camera"
@@ -590,10 +612,7 @@ internal fun QREXDocumentScanScreen(
                                         if (!captureCallbacksActive.get()) {
                                             if (!fitted.isRecycled) fitted.recycle()
                                         } else {
-                                            session.updatePending(fitted)
-                                            editingIndex = -1
-                                            cropCorners = defaultCorners
-                                            screen = "review"
+                                            openCropFor(fitted)
                                             busy = false
                                         }
                                     }
@@ -698,40 +717,12 @@ internal fun QREXDocumentScanScreen(
                         QREXDocumentCorners(bitmap, cropCorners, rectangleCrop) {
                             cropCorners = it
                         }
-                        Row(Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(
-                                onClick = {
-                                    if (!busy) {
-                                        busy = true
-                                        scope.launch {
-                                            runCatching {
-                                                withContext(Dispatchers.Default) {
-                                                    qrexDocumentSuggestEdges(bitmap)
-                                                }
-                                            }.onSuccess { suggestion ->
-                                                if (suggestion != null) {
-                                                    cropCorners = suggestion
-                                                    rectangleCrop = true
-                                                } else message = noEdgesText
-                                            }.onFailure { message = errorText }
-                                            busy = false
-                                        }
-                                    }
-                                },
-                                enabled = !busy,
-                                modifier = Modifier.weight(1f)
-                                    .heightIn(min = 56.dp)
-                                    .testTag("qrex-document-auto-edges")
-                            ) { Text(tr("document_auto_edges"), maxLines = 2) }
-                            OutlinedButton(
-                                onClick = { cropCorners = QREX_DOCUMENT_FULL_CORNERS },
-                                enabled = !busy,
-                                modifier = Modifier.weight(1f)
-                                    .heightIn(min = 56.dp)
-                                    .testTag("qrex-document-reset-crop")
-                            ) { Text(tr("document_reset"), maxLines = 2) }
-                        }
+                        TextButton(
+                            onClick = { cropCorners = QREX_DOCUMENT_FULL_CORNERS },
+                            enabled = !busy,
+                            modifier = Modifier.align(Alignment.End)
+                                .testTag("qrex-document-reset-crop")
+                        ) { Text(tr("document_reset")) }
                         Button(onClick = {
                             if (!qrexDocumentQuadValid(cropCorners)) {
                                 message = invalidCornersText
@@ -747,7 +738,19 @@ internal fun QREXDocumentScanScreen(
                                     }.onSuccess { processed ->
                                         if (session.transformPending(processed, expectedRevision)) {
                                             cropCorners = defaultCorners
-                                            screen = "review"
+                                            // The crop is the only mandatory post-capture
+                                            // editing step. Accept directly; further
+                                            // enhancements remain in Pages > Edit.
+                                            if (editingIndex in session.pages.indices) {
+                                                session.replace(editingIndex, processed)
+                                                session.updatePending(null)
+                                                editingIndex = -1
+                                                screen = "pages"
+                                            } else if (session.accept()) {
+                                                screen = "pages"
+                                            } else {
+                                                message = maxText
+                                            }
                                         } else if (processed !== session.pending) {
                                             processed.recycle()
                                         }
