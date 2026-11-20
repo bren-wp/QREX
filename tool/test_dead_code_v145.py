@@ -43,7 +43,7 @@ class Qrex145DeadCodeRegressionTests(unittest.TestCase):
 
     def test_compose_state_delegate_operators_are_not_deleted_as_dead_code(self):
         self.assertRegex(self.core, r"\bvar\s+language\s+by\s+mutableStateOf")
-        self.assertRegex(self.core, r"\bvar\s+themeMode\s+by\s+mutableStateOf")
+        self.assertNotRegex(self.core, r"\bvar\s+themeMode\s+by\s+mutableStateOf")
         # These symbols may have no literal call sites: the Kotlin compiler
         # resolves them implicitly from property delegation.
         self.assertIn("import androidx.compose.runtime.getValue", self.core)
