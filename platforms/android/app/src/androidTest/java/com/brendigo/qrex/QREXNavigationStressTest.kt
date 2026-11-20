@@ -517,22 +517,26 @@ class QREXNavigationStressTest {
     }
 
     @Test
-    fun darkReferenceSettingsHaveSixRealCardsAndThemeSelection() {
+    fun darkReferenceSettingsHaveFiveAccessibleCardsAndNoAppearanceSelector() {
         rule.onNodeWithTag("qrex-tab-4").performClick()
-        requireScreenTag("qrex-more-screen", 0, "reference More")
-        assertTouchTarget("qrex-more-theme")
-        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true).performClick()
-        requireScreenTag("qrex-theme-dialog", 0, "native theme selector")
-        rule.onNodeWithTag("qrex-theme-choice-light", useUnmergedTree = true)
-            .assertIsDisplayed().performClick()
-        requireScreenTag("qrex-more-screen", 0, "after light selection")
-        rule.onNodeWithTag("qrex-more-theme", useUnmergedTree = true).performClick()
-        rule.onNodeWithTag("qrex-theme-choice-dark", useUnmergedTree = true)
-            .assertIsDisplayed().performClick()
-        rule.onNodeWithTag("qrex-more-language", useUnmergedTree = true)
-            .assertIsDisplayed()
+        requireScreenTag("qrex-more-screen", 0, "reference dark More")
+        // Removed appearance choices must remain absent after upgrade; do not
+        // restore the light/system dialog simply to make this test green.
+        rule.onAllNodesWithTag("qrex-more-theme", useUnmergedTree = true)
+            .assertCountEquals(0)
+        rule.onAllNodesWithTag("qrex-theme-dialog", useUnmergedTree = true)
+            .assertCountEquals(0)
+        val cards = listOf(
+            "qrex-more-language", "qrex-more-export", "qrex-more-privacy",
+            "qrex-more-terms", "qrex-more-about"
+        )
+        for (tag in cards) {
+            rule.onNodeWithTag(tag, useUnmergedTree = true)
+                .performScrollTo().assertIsDisplayed()
+            assertTouchTarget(tag)
+        }
         rule.onNodeWithTag("qrex-more-export", useUnmergedTree = true)
-            .assertIsDisplayed().performClick()
+            .performScrollTo().performClick()
         requireScreenTag("qrex-export-screen", 0, "PDF export")
         rule.onNodeWithTag("qrex-export-pdf", useUnmergedTree = true)
             .assertIsDisplayed()
