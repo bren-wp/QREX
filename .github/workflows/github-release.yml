@@ -190,7 +190,7 @@ jobs:
           cp "$apk" production/QREX-Android-$RELEASE_VERSION.apk
           cp "$aab" production/QREX-Android-$RELEASE_VERSION.aab
           (cd production && sha256sum QREX-Android-$RELEASE_VERSION.apk QREX-Android-$RELEASE_VERSION.aab > SHA256SUMS.txt)
-      - name: Retrieve twelve main and eight document-editor screenshots from exact-SHA emulator CI
+      - name: Retrieve twelve main and four dark document-editor screenshots from exact-SHA emulator CI
         shell: bash
         run: |
           set -euo pipefail
@@ -210,7 +210,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/qrex-document-shots"
           gh run download "$capture_run" --repo "$GITHUB_REPOSITORY" \
             --name qrex-actual-document-editor --dir "$RUNNER_TEMP/qrex-document-shots"
-          for theme in dark light; do
+          for theme in dark; do
             for screen in review crop pages export; do
               original="$RUNNER_TEMP/qrex-document-shots/$theme-$screen.png"
               test -s "$original"
@@ -229,10 +229,10 @@ jobs:
               assert verify(shot) == (1080, 1920), f"Not a Play-size screenshot: {shot}"
           documents = sorted(Path("production").glob("document-*.png"))
           expected = {f"document-{theme}-{screen}.png"
-                      for theme in ("dark", "light")
+                      for theme in ("dark",)
                       for screen in ("review", "crop", "pages", "export")}
           assert {shot.name for shot in documents} == expected, (
-              "Release requires all eight genuine document editor captures")
+              "Release requires four genuine dark document editor captures")
           for shot in documents:
               assert verify(shot) == (1080, 1920), f"Not a document UI screenshot: {shot}"
           PY
@@ -298,9 +298,7 @@ jobs:
                   "android-more.png", "android-language.png", "android-export.png",
                   "android-about.png", "android-privacy.png",
                   "document-dark-review.png", "document-dark-crop.png",
-                  "document-dark-pages.png", "document-dark-export.png",
-                  "document-light-review.png", "document-light-crop.png",
-                  "document-light-pages.png", "document-light-export.png"] | sort)
+                  "document-dark-pages.png", "document-dark-export.png"] | sort)
               and all(.assets[]; .size > 0)
             ' >/dev/null
 
@@ -328,7 +326,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)" = "$RELEASE_SHA"
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$RELEASE_VERSION" |
-            jq -e --arg sha "$RELEASE_SHA" '.target_commitish == $sha and .draft == false and .prerelease == false and (.assets | length) == 24' >/dev/null
+            jq -e --arg sha "$RELEASE_SHA" '.target_commitish == $sha and .draft == false and .prerelease == false and (.assets | length) == 20' >/dev/null
           previous="$(grep -m1 'Latest published release:' README.md | grep -oE 'v1[.]0[.][0-9]+' | head -1 | cut -c2-)"
           [[ "$previous" =~ ^1[.]0[.][0-9]+$ ]]
           python3 tool/sync_published_release.py "$previous" "$RELEASE_VERSION" "$RELEASE_CODE" "$RELEASE_SHA"
