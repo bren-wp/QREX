@@ -1,3 +1,9 @@
+## Published: v1.0.53 · Android versionCode 153
+
+Published from verified main commit 758db2d6c1457d672a8243a44a3b46530cba67cc. The source revision passed native Kotlin tests, R8/Lint, locale checks, twelve real Android screenshots, four dark document-editor captures and the API 26/31/34/35/36 emulator lifecycle matrix. The downloadable APK/AAB use a disposable GitHub-only signing certificate; neither is an authorized Google Play upload bundle. Assets have SHA-256 checksums.
+
+[Download QREX v1.0.53](https://github.com/bren-wp/QREX/releases/tag/v1.0.53) · [Release details](docs/releases/v1.0.53.md).
+
 ## Published: v1.0.52 · Android versionCode 152
 
 Published from verified main commit 3b3ca174b7ef155c62bb43d138b77e6746a8d3e5. The source revision passed native Kotlin tests, R8/Lint, locale checks, twelve real Android screenshots, eight document-editor captures and the API 26/31/34/35/36 emulator lifecycle matrix. The downloadable APK/AAB use a disposable GitHub-only signing certificate; neither is an authorized Google Play upload bundle. Assets have SHA-256 checksums.

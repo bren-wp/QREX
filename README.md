@@ -64,22 +64,22 @@ These are screenshots of the actual QREX Android interface.
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-scan.png" width="176" alt="Actual QREX Scan instantly screen"><p><strong>Scan instantly</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-create.png" width="176" alt="Actual QREX Create your QR screen"><p><strong>Create your QR</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-result.png" width="176" alt="Actual QREX Smart results screen"><p><strong>Smart results</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-history.png" width="176" alt="Actual QREX Your scans screen"><p><strong>Your scans</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-scan.png" width="176" alt="Actual QREX Scan instantly screen"><p><strong>Scan instantly</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-create.png" width="176" alt="Actual QREX Create your QR screen"><p><strong>Create your QR</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-result.png" width="176" alt="Actual QREX Smart results screen"><p><strong>Smart results</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-history.png" width="176" alt="Actual QREX Your scans screen"><p><strong>Your scans</strong></p></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-saved.png" width="176" alt="Actual QREX Favorites screen"><p><strong>Favorites</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-wifi.png" width="176" alt="Actual QREX Wi-Fi codes screen"><p><strong>Wi-Fi codes</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-more.png" width="176" alt="Actual QREX More tools screen"><p><strong>More tools</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-export.png" width="176" alt="Actual QREX Export screen"><p><strong>Export</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-saved.png" width="176" alt="Actual QREX Favorites screen"><p><strong>Favorites</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-wifi.png" width="176" alt="Actual QREX Wi-Fi codes screen"><p><strong>Wi-Fi codes</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-more.png" width="176" alt="Actual QREX More tools screen"><p><strong>More tools</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-export.png" width="176" alt="Actual QREX Export screen"><p><strong>Export</strong></p></td>
 </tr>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-language.png" width="176" alt="Actual QREX Languages screen"><p><strong>Languages</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-about.png" width="176" alt="Actual QREX About QREX screen"><p><strong>About QREX</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-privacy.png" width="176" alt="Actual QREX Privacy screen"><p><strong>Privacy</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/android-splash.png" width="176" alt="Actual QREX QREX launch screen"><p><strong>QREX launch</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-language.png" width="176" alt="Actual QREX Languages screen"><p><strong>Languages</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-about.png" width="176" alt="Actual QREX About QREX screen"><p><strong>About QREX</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-privacy.png" width="176" alt="Actual QREX Privacy screen"><p><strong>Privacy</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/android-splash.png" width="176" alt="Actual QREX QREX launch screen"><p><strong>QREX launch</strong></p></td>
 </tr>
 </table>
 
@@ -93,10 +93,10 @@ From immediate precision cropping to document organization and PDF export.
 
 <table>
 <tr>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-review.png" width="176" alt="Actual QREX dark Review screen"><p><strong>Review · Dark</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-crop.png" width="176" alt="Actual QREX dark Crop screen"><p><strong>Crop · Dark</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-pages.png" width="176" alt="Actual QREX dark Pages screen"><p><strong>Pages · Dark</strong></p></td>
-<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.52/document-dark-export.png" width="176" alt="Actual QREX dark Export screen"><p><strong>Export · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/document-dark-review.png" width="176" alt="Actual QREX dark Review screen"><p><strong>Review · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/document-dark-crop.png" width="176" alt="Actual QREX dark Crop screen"><p><strong>Crop · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/document-dark-pages.png" width="176" alt="Actual QREX dark Pages screen"><p><strong>Pages · Dark</strong></p></td>
+<td align="center"><img src="https://github.com/bren-wp/QREX/releases/download/v1.0.53/document-dark-export.png" width="176" alt="Actual QREX dark Export screen"><p><strong>Export · Dark</strong></p></td>
 </tr>
 </table>
 
@@ -122,9 +122,9 @@ Download QREX for Android or explore the latest published GitHub release.
 
 <a href="https://play.google.com/store/apps/details?id=com.brendigo.qrex" aria-label="Get QREX on Google Play"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get QREX on Google Play" height="64"></a>
 
-Latest published release: **[v1.0.52](https://github.com/bren-wp/QREX/releases/tag/v1.0.52)**
+Latest published release: **[v1.0.53](https://github.com/bren-wp/QREX/releases/tag/v1.0.53)**
 
-[**Download QREX for Android**](https://github.com/bren-wp/QREX/releases/tag/v1.0.52) · [All releases](https://github.com/bren-wp/QREX/releases)
+[**Download QREX for Android**](https://github.com/bren-wp/QREX/releases/tag/v1.0.53) · [All releases](https://github.com/bren-wp/QREX/releases)
 
 </div>
 
@@ -144,6 +144,6 @@ For details, visit the [Privacy Policy](docs/PRIVACY.md) or [Help & Support](htt
 
 *Scan. Create. Share.*
 
-<sub>Latest published version: QREX v1.0.52 · Last complete screenshot release: v1.0.52 · Current release: v1.0.52 (published).</sub>
+<sub>Latest published version: QREX v1.0.53 · Last complete screenshot release: v1.0.53 · Current release: v1.0.53 (published).</sub>
 
 </div>

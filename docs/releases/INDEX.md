@@ -57,8 +57,9 @@ Every entry below is an **existing, verified GitHub Release** with an immutable 
 | 1.0.50 | [v1.0.50](https://github.com/bren-wp/QREX/releases/tag/v1.0.50) | APK · AAB · Play-unsigned QA AAB · 12 genuine Android screenshots · SHA256SUMS |
 | 1.0.51 | [v1.0.51](https://github.com/bren-wp/QREX/releases/tag/v1.0.51) | APK · AAB · Play-unsigned QA AAB · 12 genuine main + 8 document-editor screenshots · SHA256SUMS |
 | 1.0.52 | [v1.0.52](https://github.com/bren-wp/QREX/releases/tag/v1.0.52) | APK · AAB · Play-unsigned QA AAB · 12 genuine main + 8 document-editor screenshots · SHA256SUMS |
+| 1.0.53 | [v1.0.53](https://github.com/bren-wp/QREX/releases/tag/v1.0.53) | APK · AAB · Play-unsigned QA AAB · 12 genuine main + 4 dark document-editor screenshots · SHA256SUMS |
 
-Published releases through v1.0.52 were checked against the GitHub release API on 2026-11-20. The v1.0.22 screenshot assets were not present in the GitHub release API during the v1.0.23 audit; do not treat README screenshot links as available until verified.
+Published releases through v1.0.53 were checked against the GitHub release API on 2026-11-20. The v1.0.22 screenshot assets were not present in the GitHub release API during the v1.0.23 audit; do not treat README screenshot links as available until verified.
 
 ## Preserve old app installations and signing identity
 
