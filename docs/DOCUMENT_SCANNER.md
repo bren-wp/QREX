@@ -2,13 +2,13 @@
 
 ## Overview
 
-QREX is an **offline Android** QR and document utility. CameraX and FLOSS ZXing decode QR codes without a cloud backend. The Document Scanner is accessible from the existing **Scan** tab, not a separate root tab.
+QREX is an **offline Android** QR and document utility. CameraX and FLOSS ZXing decode QR codes without a cloud backend. The Document Scanner is accessible from a prominent button on **Scan**, not a separate root tab. QREX uses one dark theme.
 
 ## Scan a document
 
-1. Open **Scan → Document scan**. Choose camera capture (CAMERA permission required), Android Photo Picker, or **Import PDF** through Android's system document picker (no broad media permission). PDF import is available from Camera and Pages.
-2. Review the page. Choose **Crop** for four draggable perspective corners or rectangular crop. **Auto edges** makes a conservative, local suggestion and can decline if background contrast is insufficient; you can always adjust manually.
-3. Apply crop or return to Review. Rotate by 90 degrees, enhance with **Auto enhance** (adaptive contrast), grayscale or high-contrast black/white, and use **Undo** for the immediately preceding bitmap edit. Undo does not preserve a limitless history.
+1. On **Scan**, tap the prominently labeled **Document scan** button. Take a photo (CAMERA permission) or use Android Photo Picker (no broad media permission). Existing PDFs can also be imported using Android's document picker.
+2. **Crop opens immediately** after each new camera capture or gallery image import. QREX suggests paper edges automatically and locally. Adjust four corners if needed; choose perspective or rectangle and Reset only when necessary.
+3. Tap **Apply crop** to add the page directly to **Pages**, without a redundant Review/Accept screen. Additional rotation, Auto enhance, grayscale or black-and-white are available under each saved page's **Edit** controls, with one-step Undo.
 4. Accept a page. Repeat for up to **eight** pages. Re-edit, move up/down or remove pages from the Pages view.
 5. Select **Export PDF**, choose a destination through Android's system document picker, and explicitly save. The PDF retains portrait/landscape A4 orientation based on each page. On the Pages screen, **Export PNG** saves an individual page using Android's file picker.
 
@@ -30,7 +30,7 @@ QREX is an **offline Android** QR and document utility. CameraX and FLOSS ZXing 
 
 ## Real UI and release verification
 
-The [README](../README.md) embeds **12 genuine main-screen emulator captures** for the latest already published release. When [v1.0.51](https://github.com/bren-wp/QREX/releases/tag/v1.0.51) is verified and published, it will also host **8 real editor screenshots** (dark/light Review, Crop, Pages and Export) from the same exact-commit screenshot workflow. Their paper content is synthetic debug fixture content; the UI pixels are from the running app.
+The [README](../README.md) embeds **12 genuine main-screen emulator captures** for the latest already published release. For v1.0.53 onward, the release workflow requires **4 real dark-only editor screenshots** (Review, Crop, Pages and Export) from the exact-commit emulator screenshot workflow. Their paper content is synthetic debug fixture content; the UI pixels are from the running app.
 
 The GitHub publisher must verify APK/AAB signatures, SHA256 checksums, real image files, Kotlin/R8/Lint, 23-language localization and the API 26/31/34/35/36 emulator matrix. An existing Google Play installation cannot be upgraded with the **disposable GitHub signing key**.
 

@@ -35,7 +35,7 @@ class ReadmeScreenshotIntegrityTest(unittest.TestCase):
         found = readme_capture_versions(readme)
         self.assertEqual(EXPECTED_CAPTURE_NAMES, set(found))
         declared = re.search(
-            r'Latest published version: QREX v(\d+\.\d+\.\d+)', readme
+            r'Latest published release: \\*\\*\\[v(\d+\.\d+\.\d+)', readme
         )
         self.assertIsNotNone(declared, "README must identify the last actual release")
         self.assertEqual({"v" + declared.group(1)}, set(found.values()))
@@ -47,7 +47,7 @@ class ReadmeScreenshotIntegrityTest(unittest.TestCase):
     def test_readme_release_is_not_a_future_unbuilt_version(self):
         readme = README.read_text("utf-8")
         gradle = GRADLE.read_text("utf-8")
-        declared = re.search(r'Latest published version: QREX v(\d+\.\d+\.\d+)', readme)
+        declared = re.search(r'Latest published release: \\*\\*\\[v(\d+\.\d+\.\d+)', readme)
         configured = re.search(r'versionName\s*=\s*"(\d+\.\d+\.\d+)"', gradle)
         self.assertIsNotNone(declared)
         self.assertIsNotNone(configured)
